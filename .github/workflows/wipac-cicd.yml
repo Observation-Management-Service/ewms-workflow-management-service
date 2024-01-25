@@ -49,9 +49,6 @@ jobs:
     needs: [py-versions]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ fromJSON(needs.py-versions.outputs.matrix)[0] }}
       # dependabot can't access normal secrets
       #   & don't run non-branch triggers (like tags)
       - if: |
@@ -65,7 +62,7 @@ jobs:
           github.actor != 'dependabot[bot]' &&
           github.ref_type == 'branch'
         name: wipac-dev-py-setup-action (only for non-dependabot non-default branches)
-        uses: WIPACrepo/wipac-dev-py-setup-action@v2.9
+        uses: WIPACrepo/wipac-dev-py-setup-action@python-version-patch
         with:
           base-keywords: WIPAC IceCube "Observation Management Service" "Event Workflow Management Service"
 
