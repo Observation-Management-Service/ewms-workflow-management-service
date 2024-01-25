@@ -46,7 +46,6 @@ jobs:
       - uses: WIPACrepo/wipac-dev-mypy-action@v2.0
 
   py-setup:
-    needs: [py-versions]
     runs-on: ubuntu-latest
     steps:
       # dependabot can't access normal secrets
