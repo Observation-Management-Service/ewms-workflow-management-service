@@ -46,8 +46,12 @@ jobs:
       - uses: WIPACrepo/wipac-dev-mypy-action@v2.0
 
   py-setup:
+    needs: [py-versions]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ fromJSON(needs.py-versions.outputs.matrix)[0] }}
       # dependabot can't access normal secrets
       #   & don't run non-branch triggers (like tags)
       - if: |
