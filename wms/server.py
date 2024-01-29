@@ -38,7 +38,7 @@ async def make(
     rs = RestServer(debug=debug)
 
     for klass in [
-        # rest_handlers.
+        rest_handlers.base_handlers.MainHandler,
     ]:
         try:
             rs.add_route(getattr(klass, "ROUTE"), klass, args)
