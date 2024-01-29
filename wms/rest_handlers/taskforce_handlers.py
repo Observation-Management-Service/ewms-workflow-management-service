@@ -12,7 +12,7 @@ LOGGER = logging.getLogger(__name__)
 # ----------------------------------------------------------------------------
 
 
-class TaskforceHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskforceHandlerUUID(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for a taskforce."""
 
     ROUTE = r"/tms/taskforce/(?P<taskforce_uuid>\w+)$"
@@ -54,7 +54,7 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforceRunningHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a running taskforce."""
 
     ROUTE = r"/tms/taskforce/running/(?P<taskforce_uuid>\w+)$"
@@ -69,20 +69,6 @@ class TaskforceRunningHandler(BaseWMSHandler):  # pylint: disable=W0223
 
 
 class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions with a stopped taskforce."""
-
-    ROUTE = r"/tms/taskforce/stop/(?P<taskforce_uuid>\w+)$"
-
-    @auth.service_account_auth(roles=[auth.TMS_ACCT])  # type: ignore
-    async def delete(self, taskforce_uuid: str) -> None:
-        """Handle DELETE."""
-        self.write({})
-
-
-# ----------------------------------------------------------------------------
-
-
-class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a taskforce designated to be stopped."""
 
     ROUTE = r"/tms/taskforce/stop$"
@@ -90,6 +76,20 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=[auth.USER_ACCT, auth.TMS_ACCT])  # type: ignore
     async def get(self) -> None:
         """Handle GET."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------
+
+
+class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a stopped taskforce."""
+
+    ROUTE = r"/tms/taskforce/stop/(?P<taskforce_uuid>\w+)$"
+
+    @auth.service_account_auth(roles=[auth.TMS_ACCT])  # type: ignore
+    async def delete(self, taskforce_uuid: str) -> None:
+        """Handle DELETE."""
         self.write({})
 
 

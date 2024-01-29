@@ -39,6 +39,16 @@ async def make(
 
     for klass in [
         rest_handlers.base_handlers.MainHandler,
+        #
+        rest_handlers.job_event_log_handlers.JobEventLogHandler,
+        #
+        rest_handlers.taskforce_handlers.TaskforceHandlerUUID,
+        rest_handlers.taskforce_handlers.TaskforcesFindHandler,
+        rest_handlers.taskforce_handlers.TaskforcePendingHandler,
+        rest_handlers.taskforce_handlers.TaskforceRunningUUIDHandler,
+        rest_handlers.taskforce_handlers.TaskforceStopHandler,
+        rest_handlers.taskforce_handlers.TaskforceStopUUIDHandler,
+        rest_handlers.taskforce_handlers.TaskforcesReportHandler,
     ]:
         try:
             rs.add_route(getattr(klass, "ROUTE"), klass, args)
