@@ -3,16 +3,108 @@
 
 import logging
 
+from . import auth
+from .base_handlers import BaseWMSHandler
+
 LOGGER = logging.getLogger(__name__)
 
 
-f"/tms/taskforce/running/{args['taskforce_uuid']}",
+# ----------------------------------------------------------------------------
 
-f"/tms/taskforce/stop/{args['taskforce_uuid']}",
 
-f"/tms/taskforce/{taskforce_uuid}",
+class TaskforceHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions for a taskforce."""
 
-"/tms/taskforces/find"
-"/tms/taskforce/pending"
-"/tms/taskforces/report"
-"/tms/taskforce/stop"
+    ROUTE = r"/tms/taskforce/(?P<taskforce_uuid>\w+)$"
+
+    @auth.service_account_auth(roles=[auth.USER_ACCT, auth.TMS_ACCT])  # type: ignore
+    async def get(self) -> None:
+        """Handle GET."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------
+
+
+class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions for finding taskforces."""
+
+    ROUTE = r"/tms/taskforces/find$"
+
+    @auth.service_account_auth(roles=[auth.USER_ACCT, auth.TMS_ACCT])  # type: ignore
+    async def post(self) -> None:
+        """Handle POST."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------
+
+
+class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a pending taskforce."""
+
+    ROUTE = r"/tms/taskforce/pending$"
+
+    @auth.service_account_auth(roles=[auth.USER_ACCT, auth.TMS_ACCT])  # type: ignore
+    async def get(self) -> None:
+        """Handle GET."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------
+
+
+class TaskforceRunningHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a running taskforce."""
+
+    ROUTE = r"/tms/taskforce/running/(?P<taskforce_uuid>\w+)$"
+
+    @auth.service_account_auth(roles=[auth.TMS_ACCT])  # type: ignore
+    async def post(self, taskforce_uuid: str) -> None:
+        """Handle POST."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------
+
+
+class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a stopped taskforce."""
+
+    ROUTE = r"/tms/taskforce/stop/(?P<taskforce_uuid>\w+)$"
+
+    @auth.service_account_auth(roles=[auth.TMS_ACCT])  # type: ignore
+    async def delete(self, taskforce_uuid: str) -> None:
+        """Handle DELETE."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------
+
+
+class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a taskforce designated to be stopped."""
+
+    ROUTE = r"/tms/taskforce/stop$"
+
+    @auth.service_account_auth(roles=[auth.USER_ACCT, auth.TMS_ACCT])  # type: ignore
+    async def get(self) -> None:
+        """Handle GET."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------
+
+
+class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with reports for taskforce(s)."""
+
+    ROUTE = r"/tms/taskforces/report$"
+
+    @auth.service_account_auth(roles=[auth.TMS_ACCT])  # type: ignore
+    async def post(self) -> None:
+        """Handle POST."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------

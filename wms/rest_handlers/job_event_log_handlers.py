@@ -3,7 +3,21 @@
 
 import logging
 
+from . import auth
+from .base_handlers import BaseWMSHandler
+
 LOGGER = logging.getLogger(__name__)
 
 
-f"/tms/job-event-log/{urllib.parse.quote(str(jel_fpath),safe='')}",
+class JobEventLogHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a job event log."""
+
+    ROUTE = r"/tms/job-event-log/(?P<jel_fpath>\w+)$"
+
+    @auth.service_account_auth(roles=[auth.TMS_ACCT])  # type: ignore
+    async def post(self, jel_fpath: str) -> None:
+        """Handle POST."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------
