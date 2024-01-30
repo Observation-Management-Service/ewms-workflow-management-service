@@ -35,6 +35,8 @@ async def make(mongo_client: AsyncIOMotorClient) -> RestServer:  # type: ignore[
     for klass in [
         rest_handlers.base_handlers.MainHandler,
         #
+        rest_handlers.schema_handler.SchemaHandler,
+        #
         rest_handlers.job_event_log_handlers.JobEventLogHandler,
         #
         rest_handlers.taskforce_handlers.TaskforceHandlerUUID,
@@ -49,14 +51,5 @@ async def make(mongo_client: AsyncIOMotorClient) -> RestServer:  # type: ignore[
         route = getattr(klass, "ROUTE")  # -> AttributeError
         rs.add_route(route, klass, args)
         LOGGER.info(f"Added handler: {klass.__name__}")
-
-        # register a JSON-schema handler (if present)
-        try:
-            jsh = rest_handlers.schema_handlers.get_json_schema_handler(route)
-        except KeyError:
-            pass
-        else:
-            rs.add_route(getattr(jsh, "ROUTE"), jsh, args)  # -> AttributeError
-            LOGGER.info(f"Added JSON-schema handler for {klass.__name__}")
 
     return rs
