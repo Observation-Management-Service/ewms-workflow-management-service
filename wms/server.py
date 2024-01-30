@@ -50,10 +50,18 @@ async def make(
         rest_handlers.taskforce_handlers.TaskforceStopUUIDHandler,
         rest_handlers.taskforce_handlers.TaskforcesReportHandler,
     ]:
+        # register route handler
+        route = getattr(klass, "ROUTE")  # -> AttributeError
+        rs.add_route(route, klass, args)
+        LOGGER.info(f"Added handler: {klass.__name__}")
+
+        # register a JSON-schema handler (if present)
         try:
-            rs.add_route(getattr(klass, "ROUTE"), klass, args)
-            LOGGER.info(f"Added handler: {klass.__name__}")
-        except AttributeError:
-            continue
+            jsh = rest_handlers.schema_handlers.get_json_schema_handler(route)
+        except KeyError:
+            pass
+        else:
+            rs.add_route(getattr(jsh, "ROUTE"), jsh, args)  # -> AttributeError
+            LOGGER.info(f"Added JSON-schema handler for {klass.__name__}")
 
     return rs
