@@ -17,7 +17,7 @@ class TaskforceHandlerUUID(BaseWMSHandler):  # pylint: disable=W0223
 
     ROUTE = r"/tms/taskforce/(?P<taskforce_uuid>\w+)$"
 
-    @auth.service_account_auth(roles=[auth.AuthAccounts.USER, auth.AuthAccounts.TMS])  # type: ignore
+    @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     async def get(self) -> None:
         """Handle GET."""
         self.write({})
@@ -31,7 +31,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
 
     ROUTE = r"/tms/taskforces/find$"
 
-    @auth.service_account_auth(roles=[auth.AuthAccounts.USER, auth.AuthAccounts.TMS])  # type: ignore
+    @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     async def post(self) -> None:
         """Handle POST."""
         self.write({})
@@ -45,7 +45,7 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
 
     ROUTE = r"/tms/taskforce/pending$"
 
-    @auth.service_account_auth(roles=[auth.AuthAccounts.USER, auth.AuthAccounts.TMS])  # type: ignore
+    @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     async def get(self) -> None:
         """Handle GET."""
         self.write({})
@@ -73,7 +73,7 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
 
     ROUTE = r"/tms/taskforce/stop$"
 
-    @auth.service_account_auth(roles=[auth.AuthAccounts.USER, auth.AuthAccounts.TMS])  # type: ignore
+    @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     async def get(self) -> None:
         """Handle GET."""
         self.write({})

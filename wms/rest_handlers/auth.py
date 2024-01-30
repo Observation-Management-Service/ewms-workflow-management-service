@@ -18,6 +18,9 @@ class AuthAccounts(enum.StrEnum):  # attrs are str subclass types! (no `.value` 
     TMS = "system-tms"
 
 
+ALL_AUTH_ACCOUNTS = list(AuthAccounts.__members__.values())
+
+
 if is_testing():
 
     def service_account_auth(**kwargs):  # type: ignore

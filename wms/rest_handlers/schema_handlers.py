@@ -25,7 +25,7 @@ def get_json_schema_handler(objective_route: str) -> type[BaseWMSHandler]:
     class JSONSchemaHandler(BaseWMSHandler):  # pylint: disable=W0223
         ROUTE = f"/schema{objective_route}"
 
-        @auth.service_account_auth(roles=[auth.AuthAccounts.USER, auth.AuthAccounts.TMS])  # type: ignore
+        @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
         async def get(self, *args: Any, **kwargs: Any) -> None:
             self.write(this_schema)
 
