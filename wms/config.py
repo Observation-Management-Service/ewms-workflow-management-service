@@ -26,8 +26,7 @@ def _get_json_schema_specs(fpath: Path) -> dict[str, jsonschema.protocols.Valida
     for key, entry in dicto.items():
         LOGGER.info(f"validating JSON-schema spec for {key} ({fpath})")
         jsonschema.protocols.Validator.check_schema(entry)
-    registry = referencing.jsonschema.SchemaRegistry()  # possible future dev
-    return {k: jsonschema.protocols.Validator(v, registry) for k, v in dicto.items()}
+    return {k: jsonschema.protocols.Validator(v) for k, v in dicto.items()}
 
 
 DATABASE_JSON_SCHEMA_LOOKUP = _get_json_schema_specs(
