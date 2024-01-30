@@ -7,7 +7,7 @@ from typing import Any
 from motor.motor_asyncio import AsyncIOMotorClient
 from rest_tools.server import RestHandler
 
-from .. import database
+from .. import database as db
 from . import auth
 
 LOGGER = logging.getLogger(__name__)
@@ -25,8 +25,8 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
         """Initialize a BaseWMSHandler object."""
         super().initialize(*args, **kwargs)  # type: ignore[no-untyped-call]
         # pylint: disable=W0201
-        self.task_directives = database.interface.TaskDirectivesClient(mongo_client)
-        self.backlog = database.interface.BacklogClient(mongo_client)
+        self.task_directives = db.task_directive.TaskDirectiveMongoClient(mongo_client)
+        self.backlog = db.backlog.BacklogMongoClient(mongo_client)
 
 
 # ----------------------------------------------------------------------------
