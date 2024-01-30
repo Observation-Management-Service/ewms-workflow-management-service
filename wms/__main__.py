@@ -4,7 +4,7 @@
 import asyncio
 import logging
 
-from . import backlog, database, server
+from . import backlogger, database, server
 from .config import ENV, config_logging
 
 LOGGER = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ async def main() -> None:
 
     # Backlogger
     LOGGER.info("Starting scan backlog runner...")
-    backlogger_task = asyncio.create_task(backlog.backlogger.startup(mongo_client))
+    backlogger_task = asyncio.create_task(backlogger.startup(mongo_client))
     await asyncio.sleep(0)  # start up previous task
 
     # REST Server
