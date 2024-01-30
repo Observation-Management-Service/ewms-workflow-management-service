@@ -37,7 +37,7 @@ class MainHandler(BaseWMSHandler):  # pylint: disable=W0223
 
     ROUTE = r"/$"
 
-    @auth.service_account_auth(roles=[auth.USER_ACCT])  # type: ignore
+    @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     async def get(self) -> None:
         """Handle GET."""
         self.write({})

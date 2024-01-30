@@ -1,6 +1,7 @@
 """Constants and tools for handling REST-requestor auth."""
 
 
+import enum
 import logging
 
 from rest_tools.server import token_attribute_role_mapping_auth
@@ -10,8 +11,11 @@ from ..config import is_testing
 LOGGER = logging.getLogger(__name__)
 
 
-USER_ACCT = "user"
-TMS_ACCT = "system-tms"
+class AuthAccounts(enum.StrEnum):  # attrs are str subclass types! (no `.value` needed)
+    """Accounts for auth."""
+
+    USER = "user"
+    TMS = "system-tms"
 
 
 if is_testing():
@@ -29,7 +33,7 @@ if is_testing():
 else:
     service_account_auth = token_attribute_role_mapping_auth(  # type: ignore[no-untyped-call]
         role_attrs={
-            USER_ACCT: ["groups=/institutions/IceCube.*"],
-            TMS_ACCT: ["ewms_role=system-tms"],
+            AuthAccounts.USER: ["groups=/institutions/IceCube.*"],
+            AuthAccounts.TMS: ["ewms_role=system-tms"],
         }
     )

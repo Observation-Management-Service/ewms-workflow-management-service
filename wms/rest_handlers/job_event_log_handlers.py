@@ -14,7 +14,7 @@ class JobEventLogHandler(BaseWMSHandler):  # pylint: disable=W0223
 
     ROUTE = r"/tms/job-event-log/(?P<jel_fpath>\w+)$"
 
-    @auth.service_account_auth(roles=[auth.TMS_ACCT])  # type: ignore
+    @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     async def post(self, jel_fpath: str) -> None:
         """Handle POST."""
         self.write({})
