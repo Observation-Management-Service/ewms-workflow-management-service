@@ -6,6 +6,8 @@
 ########################################################################
 #  pip freeze
 ########################################################################
+asgiref==3.7.2
+attrs==23.2.0
 backoff==2.2.1
 cachetools==5.3.2
 certifi==2023.11.17
@@ -20,7 +22,18 @@ grpcio==1.60.0
 humanfriendly==10.0
 idna==3.6
 importlib-metadata==6.11.0
+isodate==0.6.1
+jsonschema==4.21.1
+jsonschema-path==0.3.2
+jsonschema-spec==0.2.4
+jsonschema-specifications==2023.7.1
+lazy-object-proxy==1.10.0
+MarkupSafe==2.1.4
+more-itertools==10.2.0
 motor==3.3.2
+openapi-core==0.18.2
+openapi-schema-validator==0.6.2
+openapi-spec-validator==0.7.1
 opentelemetry-api==1.22.0
 opentelemetry-exporter-jaeger==1.21.0
 opentelemetry-exporter-jaeger-proto-grpc==1.21.0
@@ -30,20 +43,27 @@ opentelemetry-exporter-otlp-proto-http==1.22.0
 opentelemetry-proto==1.22.0
 opentelemetry-sdk==1.22.0
 opentelemetry-semantic-conventions==0.43b0
+parse==1.20.1
+pathable==0.4.3
 protobuf==4.25.2
 pycparser==2.21
 PyJWT==2.8.0
 pymongo==4.6.1
 pypng==0.20220715.0
+PyYAML==6.0.1
 qrcode==7.4.2
+referencing==0.30.2
 requests==2.31.0
 requests-futures==1.0.1
+rfc3339-validator==0.1.4
+rpds-py==0.17.1
 setuptools==69.0.3
 six==1.16.0
 thrift==0.16.0
 tornado==6.4
 typing_extensions==4.9.0
 urllib3==2.2.0
+Werkzeug==3.0.1
 wheel==0.42.0
 wipac-dev-tools==1.8.2
 wipac-rest-tools==1.6.0
@@ -150,9 +170,145 @@ wipac-telemetry==0.3.0
     │   └── urllib3 [required: >=1.21.1,<3, installed: 2.2.0]
     └── typing-extensions [required: Any, installed: 4.9.0]
 wms
+├── jsonschema [required: Any, installed: 4.21.1]
+│   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2023.7.1]
+│   │   └── referencing [required: >=0.28.0, installed: 0.30.2]
+│   │       ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │       └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   ├── referencing [required: >=0.28.4, installed: 0.30.2]
+│   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   └── rpds-py [required: >=0.7.1, installed: 0.17.1]
 ├── motor [required: Any, installed: 3.3.2]
 │   └── pymongo [required: >=4.5,<5, installed: 4.6.1]
 │       └── dnspython [required: >=1.16.0,<3.0.0, installed: 2.5.0]
+├── openapi-core [required: Any, installed: 0.18.2]
+│   ├── asgiref [required: >=3.6.0,<4.0.0, installed: 3.7.2]
+│   ├── isodate [required: Any, installed: 0.6.1]
+│   │   └── six [required: Any, installed: 1.16.0]
+│   ├── jsonschema [required: >=4.18.0,<5.0.0, installed: 4.21.1]
+│   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2023.7.1]
+│   │   │   └── referencing [required: >=0.28.0, installed: 0.30.2]
+│   │   │       ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │       └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   ├── referencing [required: >=0.28.4, installed: 0.30.2]
+│   │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   └── rpds-py [required: >=0.7.1, installed: 0.17.1]
+│   ├── jsonschema-spec [required: >=0.2.3,<0.3.0, installed: 0.2.4]
+│   │   ├── pathable [required: >=0.4.1,<0.5.0, installed: 0.4.3]
+│   │   ├── PyYAML [required: >=5.1, installed: 6.0.1]
+│   │   ├── referencing [required: >=0.28.0,<0.31.0, installed: 0.30.2]
+│   │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   └── requests [required: >=2.31.0,<3.0.0, installed: 2.31.0]
+│   │       ├── certifi [required: >=2017.4.17, installed: 2023.11.17]
+│   │       ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
+│   │       ├── idna [required: >=2.5,<4, installed: 3.6]
+│   │       └── urllib3 [required: >=1.21.1,<3, installed: 2.2.0]
+│   ├── more-itertools [required: Any, installed: 10.2.0]
+│   ├── openapi-schema-validator [required: >=0.6.0,<0.7.0, installed: 0.6.2]
+│   │   ├── jsonschema [required: >=4.19.1,<5.0.0, installed: 4.21.1]
+│   │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2023.7.1]
+│   │   │   │   └── referencing [required: >=0.28.0, installed: 0.30.2]
+│   │   │   │       ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   │       └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   │   ├── referencing [required: >=0.28.4, installed: 0.30.2]
+│   │   │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   │   └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   │   └── rpds-py [required: >=0.7.1, installed: 0.17.1]
+│   │   ├── jsonschema-specifications [required: >=2023.5.2,<2024.0.0, installed: 2023.7.1]
+│   │   │   └── referencing [required: >=0.28.0, installed: 0.30.2]
+│   │   │       ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │       └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   └── rfc3339-validator [required: Any, installed: 0.1.4]
+│   │       └── six [required: Any, installed: 1.16.0]
+│   ├── openapi-spec-validator [required: >=0.7.1,<0.8.0, installed: 0.7.1]
+│   │   ├── jsonschema [required: >=4.18.0,<5.0.0, installed: 4.21.1]
+│   │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2023.7.1]
+│   │   │   │   └── referencing [required: >=0.28.0, installed: 0.30.2]
+│   │   │   │       ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   │       └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   │   ├── referencing [required: >=0.28.4, installed: 0.30.2]
+│   │   │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   │   └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   │   └── rpds-py [required: >=0.7.1, installed: 0.17.1]
+│   │   ├── jsonschema-path [required: >=0.3.1,<0.4.0, installed: 0.3.2]
+│   │   │   ├── pathable [required: >=0.4.1,<0.5.0, installed: 0.4.3]
+│   │   │   ├── PyYAML [required: >=5.1, installed: 6.0.1]
+│   │   │   ├── referencing [required: >=0.28.0,<0.32.0, installed: 0.30.2]
+│   │   │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   │   └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   │   └── requests [required: >=2.31.0,<3.0.0, installed: 2.31.0]
+│   │   │       ├── certifi [required: >=2017.4.17, installed: 2023.11.17]
+│   │   │       ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
+│   │   │       ├── idna [required: >=2.5,<4, installed: 3.6]
+│   │   │       └── urllib3 [required: >=1.21.1,<3, installed: 2.2.0]
+│   │   ├── lazy-object-proxy [required: >=1.7.1,<2.0.0, installed: 1.10.0]
+│   │   └── openapi-schema-validator [required: >=0.6.0,<0.7.0, installed: 0.6.2]
+│   │       ├── jsonschema [required: >=4.19.1,<5.0.0, installed: 4.21.1]
+│   │       │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │       │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2023.7.1]
+│   │       │   │   └── referencing [required: >=0.28.0, installed: 0.30.2]
+│   │       │   │       ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │       │   │       └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │       │   ├── referencing [required: >=0.28.4, installed: 0.30.2]
+│   │       │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │       │   │   └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │       │   └── rpds-py [required: >=0.7.1, installed: 0.17.1]
+│   │       ├── jsonschema-specifications [required: >=2023.5.2,<2024.0.0, installed: 2023.7.1]
+│   │       │   └── referencing [required: >=0.28.0, installed: 0.30.2]
+│   │       │       ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │       │       └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │       └── rfc3339-validator [required: Any, installed: 0.1.4]
+│   │           └── six [required: Any, installed: 1.16.0]
+│   ├── parse [required: Any, installed: 1.20.1]
+│   └── werkzeug [required: Any, installed: 3.0.1]
+│       └── MarkupSafe [required: >=2.1.1, installed: 2.1.4]
+├── openapi-spec-validator [required: Any, installed: 0.7.1]
+│   ├── jsonschema [required: >=4.18.0,<5.0.0, installed: 4.21.1]
+│   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2023.7.1]
+│   │   │   └── referencing [required: >=0.28.0, installed: 0.30.2]
+│   │   │       ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │       └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   ├── referencing [required: >=0.28.4, installed: 0.30.2]
+│   │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   └── rpds-py [required: >=0.7.1, installed: 0.17.1]
+│   ├── jsonschema-path [required: >=0.3.1,<0.4.0, installed: 0.3.2]
+│   │   ├── pathable [required: >=0.4.1,<0.5.0, installed: 0.4.3]
+│   │   ├── PyYAML [required: >=5.1, installed: 6.0.1]
+│   │   ├── referencing [required: >=0.28.0,<0.32.0, installed: 0.30.2]
+│   │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│   │   │   └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│   │   └── requests [required: >=2.31.0,<3.0.0, installed: 2.31.0]
+│   │       ├── certifi [required: >=2017.4.17, installed: 2023.11.17]
+│   │       ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
+│   │       ├── idna [required: >=2.5,<4, installed: 3.6]
+│   │       └── urllib3 [required: >=1.21.1,<3, installed: 2.2.0]
+│   ├── lazy-object-proxy [required: >=1.7.1,<2.0.0, installed: 1.10.0]
+│   └── openapi-schema-validator [required: >=0.6.0,<0.7.0, installed: 0.6.2]
+│       ├── jsonschema [required: >=4.19.1,<5.0.0, installed: 4.21.1]
+│       │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│       │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2023.7.1]
+│       │   │   └── referencing [required: >=0.28.0, installed: 0.30.2]
+│       │   │       ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│       │   │       └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│       │   ├── referencing [required: >=0.28.4, installed: 0.30.2]
+│       │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│       │   │   └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│       │   └── rpds-py [required: >=0.7.1, installed: 0.17.1]
+│       ├── jsonschema-specifications [required: >=2023.5.2,<2024.0.0, installed: 2023.7.1]
+│       │   └── referencing [required: >=0.28.0, installed: 0.30.2]
+│       │       ├── attrs [required: >=22.2.0, installed: 23.2.0]
+│       │       └── rpds-py [required: >=0.7.0, installed: 0.17.1]
+│       └── rfc3339-validator [required: Any, installed: 0.1.4]
+│           └── six [required: Any, installed: 1.16.0]
 ├── wipac-dev-tools [required: Any, installed: 1.8.2]
 │   ├── requests [required: Any, installed: 2.31.0]
 │   │   ├── certifi [required: >=2017.4.17, installed: 2023.11.17]
