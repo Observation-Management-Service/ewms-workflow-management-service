@@ -4,7 +4,6 @@
 import logging
 from typing import Any
 
-import kubernetes.client  # type: ignore[import-untyped]
 from motor.motor_asyncio import AsyncIOMotorClient
 from rest_tools.server import RestHandlerSetup, RestServer
 
@@ -14,10 +13,7 @@ from .config import ENV, is_testing
 LOGGER = logging.getLogger(__name__)
 
 
-async def make(
-    mongo_client: AsyncIOMotorClient,  # type: ignore[valid-type]
-    k8s_batch_api: kubernetes.client.BatchV1Api,
-) -> RestServer:
+async def make(mongo_client: AsyncIOMotorClient) -> RestServer:  # type: ignore[valid-type]
     """Make a WMS REST service (does not start up automatically)."""
     debug = is_testing()
 
@@ -32,7 +28,6 @@ async def make(
     #
     # Setup clients/apis
     args["mongo_client"] = mongo_client
-    args["k8s_batch_api"] = k8s_batch_api
 
     # Configure REST Routes
     rs = RestServer(debug=debug)

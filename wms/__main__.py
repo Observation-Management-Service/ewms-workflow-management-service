@@ -4,7 +4,7 @@
 import asyncio
 import logging
 
-from . import backlogger, database, server
+from . import backlog, database, server
 from .config import ENV, config_logging
 
 LOGGER = logging.getLogger(__name__)
@@ -15,14 +15,14 @@ async def main() -> None:
 
     # Mongo client
     LOGGER.info("Setting up Mongo client...")
-    mongo_client = await database.create_mongodb_client()
+    mongo_client = await database.utils.create_mongodb_client()
     indexing_task = asyncio.create_task(database.utils.ensure_indexes(mongo_client))
     await asyncio.sleep(0)  # start up previous task
     LOGGER.info("Mongo client connected.")
 
     # Backlogger
     LOGGER.info("Starting scan backlog runner...")
-    backlogger_task = asyncio.create_task(backlogger.startup(mongo_client))
+    backlogger_task = asyncio.create_task(backlog.backlogger.startup(mongo_client))
     await asyncio.sleep(0)  # start up previous task
 
     # REST Server
