@@ -7,8 +7,9 @@ from typing import Any
 from motor.motor_asyncio import AsyncIOMotorClient
 from rest_tools.server import RestHandler
 
+from .. import config
 from .. import database as db
-from . import auth
+from . import auth, utils
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,6 +39,7 @@ class MainHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
+    @utils.validate_with_openapi_spec(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self) -> None:
         """Handle GET."""
         self.write({})
