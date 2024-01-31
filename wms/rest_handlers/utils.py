@@ -27,3 +27,13 @@ def validate_with_openapi_spec(spec: OpenAPI):  # type: ignore
         return wrapper
 
     return make_wrapper
+
+
+def openapi_validate_and_write(
+    self: RequestHandler,
+    spec: OpenAPI,
+    chunk: str | bytes | dict,
+) -> None:
+    """Validate the response and `write()`."""
+    spec.validate_response(self.request, chunk)
+    self.write(chunk)
