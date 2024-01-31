@@ -29,7 +29,7 @@ def _get_json_schema_specs(fpath: Path) -> dict[str, dict[str, Any]]:
 
 
 DATABASE_JSON_SCHEMA_LOOKUP = _get_json_schema_specs(
-    Path(__file__).parent / "schema/database_schema.json"
+    Path(__file__).parent / "schema/db_jsonschema_specs.json"
 )
 
 
