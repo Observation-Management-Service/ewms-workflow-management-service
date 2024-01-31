@@ -19,16 +19,16 @@ LOGGER = logging.getLogger(__name__)
 # --------------------------------------------------------------------------------------
 
 
-def _get_json_schema_specs(fpath: Path) -> dict[str, dict[str, Any]]:
+def _get_jsonschema_specs(fpath: Path) -> dict[str, dict[str, Any]]:
     with open(fpath) as f:
-        dicto = json.load(f)
-    for key, entry in dicto.items():
+        specs = json.load(f)  # validates keys
+    for key, entry in specs.items():
         LOGGER.info(f"validating JSON-schema spec for {key} ({fpath})")
-        jsonschema.protocols.Validator.check_schema(entry)
-    return dicto
+        jsonschema.protocols.Validator.check_schema(entry)  # validates entry
+    return specs  # type: ignore[no-any-return]
 
 
-DATABASE_JSON_SCHEMA_LOOKUP = _get_json_schema_specs(
+DB_JSONSCHEMA_SPECS = _get_jsonschema_specs(
     Path(__file__).parent / "schema/db_jsonschema_specs.json"
 )
 
