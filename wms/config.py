@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Any
 
 import jsonschema
-import referencing
 from openapi_core import OpenAPI  # type: ignore[attr-defined]
 from openapi_spec_validator import validate
 from openapi_spec_validator.readers import read_from_filename
@@ -20,13 +19,13 @@ LOGGER = logging.getLogger(__name__)
 # --------------------------------------------------------------------------------------
 
 
-def _get_json_schema_specs(fpath: Path) -> dict[str, jsonschema.protocols.Validator]:
+def _get_json_schema_specs(fpath: Path) -> dict[str, dict[str, Any]]:
     with open(fpath) as f:
         dicto = json.load(f)
     for key, entry in dicto.items():
         LOGGER.info(f"validating JSON-schema spec for {key} ({fpath})")
         jsonschema.protocols.Validator.check_schema(entry)
-    return {k: jsonschema.protocols.Validator(v) for k, v in dicto.items()}
+    return dicto
 
 
 DATABASE_JSON_SCHEMA_LOOKUP = _get_json_schema_specs(
