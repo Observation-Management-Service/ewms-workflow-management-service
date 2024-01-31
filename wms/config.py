@@ -95,14 +95,6 @@ KNOWN_CLUSTERS: dict[str, dict[str, Any]] = {
 # --------------------------------------------------------------------------------------
 
 
-def is_testing() -> bool:
-    """Return true if this is the test environment.
-
-    Note: this needs to run on import.
-    """
-    return ENV.CI_TEST
-
-
 def config_logging() -> None:
     """Configure the logging level and format.
 

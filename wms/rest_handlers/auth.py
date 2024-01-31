@@ -6,7 +6,7 @@ import logging
 
 from rest_tools.server import token_attribute_role_mapping_auth
 
-from ..config import is_testing
+from ..config import ENV
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class AuthAccounts(enum.StrEnum):  # attrs are str subclass types! (no `.value` 
 ALL_AUTH_ACCOUNTS = list(AuthAccounts.__members__.values())
 
 
-if is_testing():
+if ENV.CI_TEST:
 
     def service_account_auth(**kwargs):  # type: ignore
         def make_wrapper(method):  # type: ignore[no-untyped-def]
