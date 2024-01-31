@@ -9,7 +9,7 @@ from tornado.web import RequestHandler
 LOGGER = logging.getLogger(__name__)
 
 
-def validate_with_openapi_spec(spec: OpenAPI):  # type: ignore
+def openapi_validate_request(spec: OpenAPI):  # type: ignore
     """Validate request obj against the given OpenAPI spec."""
 
     def make_wrapper(method):  # type: ignore[no-untyped-def]
