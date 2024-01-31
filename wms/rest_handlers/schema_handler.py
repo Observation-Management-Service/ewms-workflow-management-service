@@ -9,6 +9,9 @@ from .base_handlers import BaseWMSHandler
 
 LOGGER = logging.getLogger(__name__)
 
+openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC, config.ENV.CI_TEST)
+
+
 
 class SchemaHandler(BaseWMSHandler):  # pylint: disable=W0223
     """The sole handler for retrieving the OpenAPI schema."""
@@ -16,12 +19,11 @@ class SchemaHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/schema/openapi$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @utils.openapi_validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self) -> None:
         """Handle GET."""
         # get the underlying dict (json)
-        utils.write_and_openapi_validate(
+        openapi_validator.write_and_validate(
             self,
-            config.REST_OPENAPI_SPEC,
             config.REST_OPENAPI_SPEC.spec.contents(),
         )

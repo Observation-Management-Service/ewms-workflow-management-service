@@ -9,6 +9,8 @@ from .base_handlers import BaseWMSHandler
 
 LOGGER = logging.getLogger(__name__)
 
+openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC, config.ENV.CI_TEST)
+
 
 # ----------------------------------------------------------------------------
 
@@ -19,12 +21,11 @@ class TaskforceHandlerUUID(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/tms/taskforce/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @utils.openapi_validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self) -> None:
         """Handle GET."""
-        utils.write_and_openapi_validate(
+        openapi_validator.write_and_validate(
             self,
-            config.REST_OPENAPI_SPEC,
             {},
         )
 
@@ -38,12 +39,11 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/tms/taskforces/find$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @utils.openapi_validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self) -> None:
         """Handle POST."""
-        utils.write_and_openapi_validate(
+        openapi_validator.write_and_validate(
             self,
-            config.REST_OPENAPI_SPEC,
             {},
         )
 
@@ -57,12 +57,11 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/tms/taskforce/pending$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @utils.openapi_validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self) -> None:
         """Handle GET."""
-        utils.write_and_openapi_validate(
+        openapi_validator.write_and_validate(
             self,
-            config.REST_OPENAPI_SPEC,
             {},
         )
 
@@ -76,12 +75,11 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/tms/taskforce/running/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @utils.openapi_validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
-        utils.write_and_openapi_validate(
+        openapi_validator.write_and_validate(
             self,
-            config.REST_OPENAPI_SPEC,
             {},
         )
 
@@ -95,12 +93,11 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/tms/taskforce/stop$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @utils.openapi_validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self) -> None:
         """Handle GET."""
-        utils.write_and_openapi_validate(
+        openapi_validator.write_and_validate(
             self,
-            config.REST_OPENAPI_SPEC,
             {},
         )
 
@@ -114,12 +111,11 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/tms/taskforce/stop/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @utils.openapi_validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def delete(self, taskforce_uuid: str) -> None:
         """Handle DELETE."""
-        utils.write_and_openapi_validate(
+        openapi_validator.write_and_validate(
             self,
-            config.REST_OPENAPI_SPEC,
             {},
         )
 
@@ -133,12 +129,11 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/tms/taskforces/report$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @utils.openapi_validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self) -> None:
         """Handle POST."""
-        utils.write_and_openapi_validate(
+        openapi_validator.write_and_validate(
             self,
-            config.REST_OPENAPI_SPEC,
             {},
         )
 

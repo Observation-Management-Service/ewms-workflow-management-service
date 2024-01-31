@@ -9,6 +9,8 @@ from .base_handlers import BaseWMSHandler
 
 LOGGER = logging.getLogger(__name__)
 
+openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC, config.ENV.CI_TEST)
+
 
 class JobEventLogHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a job event log."""
@@ -16,12 +18,11 @@ class JobEventLogHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/tms/job-event-log/(?P<jel_fpath>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @utils.openapi_validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self, jel_fpath: str) -> None:
         """Handle POST."""
-        utils.write_and_openapi_validate(
+        openapi_validator.write_and_validate(
             self,
-            config.REST_OPENAPI_SPEC,
             {},
         )
 

@@ -9,31 +9,44 @@ from tornado.web import RequestHandler
 LOGGER = logging.getLogger(__name__)
 
 
-def openapi_validate_request(spec: OpenAPI):  # type: ignore
-    """Validate request obj against the given OpenAPI spec."""
+class OpenAPIValidator:
+    """A helper class for validating requests and responses with openapi."""
 
-    def make_wrapper(method):  # type: ignore[no-untyped-def]
-        async def wrapper(self: RequestHandler, *args, **kwargs):  # type: ignore[no-untyped-def]
-            LOGGER.info("validating with openapi spec")
-            # NOTE - don't change data (unmarshal) b/c we are downstream of data separation
-            try:
-                # https://openapi-core.readthedocs.io/en/latest/validation.html
-                spec.validate_request(self.request)  # ->
-            except Exception as e:
-                LOGGER.exception(f"Invalid request: {e}")
-                raise  # TODO - raise client-bound exception
-            return await method(self, *args, **kwargs)
+    def __init__(self, spec: OpenAPI, testing: bool) -> None:
+        self.spec = spec
+        self.testing = testing
 
-        return wrapper
+    def validate_request(self):  # type: ignore
+        """Validate request obj against the given OpenAPI spec."""
 
-    return make_wrapper
+        def make_wrapper(method):  # type: ignore[no-untyped-def]
+            async def wrapper(reqhand: RequestHandler, *args, **kwargs):  # type: ignore[no-untyped-def]
+                LOGGER.info("validating with openapi spec")
+                # NOTE - don't change data (unmarshal) b/c we are downstream of data separation
+                try:
+                    # https://openapi-core.readthedocs.io/en/latest/validation.html
+                    self.spec.validate_request(reqhand.request)  # ->
+                except Exception as e:
+                    LOGGER.exception(f"Invalid request: {e}")
+                    raise  # TODO - raise client-bound exception
+                return await method(reqhand, *args, **kwargs)
 
+            return wrapper
 
-def write_and_openapi_validate(
-    self: RequestHandler,
-    spec: OpenAPI,
-    chunk: str | bytes | dict,
-) -> None:
-    """Validate the response and `write()`."""
-    spec.validate_response(self.request, chunk)
-    self.write(chunk)
+        return make_wrapper
+
+    def write_and_validate(
+        self,
+        reqhand: RequestHandler,
+        chunk: str | bytes | dict,
+    ) -> None:
+        """Validate the response and `write()`."""
+        try:
+            spec.validate_response(reqhand.request, chunk)
+        except Exception as e:
+            LOGGER.exception(
+                f"Response is not valid with openapi (sending anyway): {e}"
+            )
+            if self.testing:
+                raise
+        reqhand.write(chunk)
