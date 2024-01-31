@@ -1,1 +1,99 @@
-// All the JSON-schema objects for REST calls.
+{
+    "paths": {
+        "/users/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "the user identifier, as userId",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "parameters": [
+                    {
+                        "name": "thing",
+                        "in": "query",
+                        "required": true,
+                        "description": "the thing",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "description": "Updated name of the pet",
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "description": "Updated status of the pet",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "status"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "the user being returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "uuid": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "links": {
+                            "address": {
+                                "operationId": "getUserAddress",
+                                "parameters": {
+                                    "userId": "$request.path.id"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userid}/address": {
+            "parameters": [
+                {
+                    "name": "userid",
+                    "in": "path",
+                    "required": true,
+                    "description": "the user identifier, as userId",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getUserAddress",
+                "responses": {
+                    "200": {
+                        "description": "the user's address"
+                    }
+                }
+            }
+        }
+    }
+}
