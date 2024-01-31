@@ -42,7 +42,11 @@ class MainHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.openapi_validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self) -> None:
         """Handle GET."""
-        self.write({})
+        utils.write_and_openapi_validate(
+            self,
+            config.REST_OPENAPI_SPEC,
+            {},
+        )
 
 
 # -----------------------------------------------------------------------------

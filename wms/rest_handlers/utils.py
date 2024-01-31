@@ -29,7 +29,7 @@ def openapi_validate_request(spec: OpenAPI):  # type: ignore
     return make_wrapper
 
 
-def openapi_validate_and_write(
+def write_and_openapi_validate(
     self: RequestHandler,
     spec: OpenAPI,
     chunk: str | bytes | dict,
