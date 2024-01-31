@@ -12,7 +12,6 @@ LOGGER = logging.getLogger(__name__)
 openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC, config.ENV.CI_TEST)
 
 
-
 class SchemaHandler(BaseWMSHandler):  # pylint: disable=W0223
     """The sole handler for retrieving the OpenAPI schema."""
 

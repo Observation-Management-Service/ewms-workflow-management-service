@@ -42,7 +42,7 @@ class OpenAPIValidator:
     ) -> None:
         """Validate the response and `write()`."""
         try:
-            spec.validate_response(reqhand.request, chunk)
+            self.spec.validate_response(reqhand.request, chunk)
         except Exception as e:
             LOGGER.exception(
                 f"Response is not valid with openapi (sending anyway): {e}"
