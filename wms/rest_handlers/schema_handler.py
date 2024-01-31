@@ -19,4 +19,5 @@ class SchemaHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_with_openapi_spec(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self) -> None:
         """Handle GET."""
-        self.write({})
+        # get the underlying dict (json)
+        self.write(config.REST_OPENAPI_SPEC.spec.contents())
