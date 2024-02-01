@@ -6,7 +6,7 @@ import asyncio
 
 async def test_000(startup_services: None) -> None:
     """Regular workflow."""
-    for i in range(100):
+    for i in range(10):
         print("Sleep 1")
         await asyncio.sleep(1)
 
