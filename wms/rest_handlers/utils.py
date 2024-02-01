@@ -1,5 +1,3 @@
-"""utils.py."""
-
 """Utils for REST routes."""
 
 
