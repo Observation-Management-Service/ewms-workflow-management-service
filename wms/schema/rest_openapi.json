@@ -1,4 +1,19 @@
 {
+    "openapi": "3.1.0",
+    "info": {
+        "title": "EWMS - Workflow Management Service",
+        "summary": "The external interface for EWMS",
+        "description": "The external interface for starting, tracking, and retrieving results from tasks within EWMS",
+        "contact": {
+            "name": "WIPAC Developers",
+            "url": "icecube.wisc.edu",
+            "email": "developers@icecube.wisc.edu"
+        },
+        "license": {
+            "name": "MIT License",
+        },
+        "version": "0.0.0"
+    },
     "paths": {
         "/users/{id}": {
             "parameters": [
