@@ -138,11 +138,14 @@ jobs:
           pip install .[tests]
       - run: |
           pytest -vvv tests/integration/
-      - name: dump logs
+      - name: dump mongo logs
         if: always()
         run: |
           cat $CI_MONGO_STDOUT
           cat $CI_MONGO_STDERR
+      - name: dump rest logs
+        if: always()
+        run: |
           cat $CI_REST_STDOUT
           cat $CI_REST_STDERR
 
