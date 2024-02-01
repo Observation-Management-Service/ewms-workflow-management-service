@@ -110,7 +110,7 @@ jobs:
           file: Dockerfile
           tags: ${{ env.DOCKER_IMAGE_NAME }}:local
 
-  unit-test:
+  integration-tests:
     needs: [py-versions]
     runs-on: ubuntu-latest
     strategy:
@@ -124,8 +124,8 @@ jobs:
           python-version: ${{ matrix.py3 }}
       - run: |
           pip install .[tests]
-      # - run: |
-      #     pytest -vvv tests/unit/
+      - run: |
+          pytest -vvv tests/integration/
 
 
   #############################################################################
@@ -136,7 +136,7 @@ jobs:
   release:
     # only run on main/master/default
     if: format('refs/heads/{0}', github.event.repository.default_branch) == github.ref
-    needs: [flake8, mypy, py-setup, py-versions, test-build-docker, unit-test]
+    needs: [flake8, mypy, py-setup, py-versions, test-build-docker, integration-tests]
     runs-on: ubuntu-latest
     concurrency: release
     steps:
