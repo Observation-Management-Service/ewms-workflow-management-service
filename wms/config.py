@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import jsonschema
-from openapi_core import OpenAPI  # type: ignore[attr-defined]
+from openapi_core import Spec as OpenAPI
 from openapi_spec_validator import validate
 from openapi_spec_validator.readers import read_from_filename
 from wipac_dev_tools import from_environment_as_dataclass, logging_tools
