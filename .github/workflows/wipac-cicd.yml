@@ -126,6 +126,13 @@ jobs:
           pip install .[tests]
       - run: |
           pytest -vvv tests/integration/
+      - name: dump logs
+        if: always()
+        run: |
+          cat mongodb.stdout
+          cat mongodb.stderr
+          cat rest.stdout
+          cat rest.stderr
 
 
   #############################################################################
