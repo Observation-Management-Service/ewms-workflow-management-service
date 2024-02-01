@@ -6,6 +6,10 @@ on: [push]
 
 env:
   DOCKER_IMAGE_NAME: oms-test/tms-test
+  CI_MONGO_STDOUT: mongodb.stdout
+  CI_MONGO_STDERR: mongodb.stderr
+  CI_REST_STDOUT: rest.stdout
+  CI_REST_STDERR: rest.stderr
 
 
 jobs:
@@ -122,6 +126,14 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.py3 }}
+      - uses: docker/build-push-action@v3
+        with:
+          context: .
+          cache-from: type=gha
+          # cache-to: type=gha,mode=min
+          file: Dockerfile
+          tags: ${{ env.DOCKER_IMAGE_NAME }}:local
+          load: true
       - run: |
           pip install .[tests]
       - run: |
@@ -129,10 +141,10 @@ jobs:
       - name: dump logs
         if: always()
         run: |
-          cat mongodb.stdout
-          cat mongodb.stderr
-          cat rest.stdout
-          cat rest.stderr
+          cat $CI_MONGO_STDOUT
+          cat $CI_MONGO_STDERR
+          cat $CI_REST_STDOUT
+          cat $CI_REST_STDERR
 
 
   #############################################################################

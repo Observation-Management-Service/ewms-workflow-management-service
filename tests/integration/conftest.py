@@ -3,6 +3,7 @@
 
 import asyncio
 import logging
+import os
 from typing import AsyncIterator
 
 import pytest_asyncio
@@ -14,8 +15,8 @@ LOGGER = logging.getLogger(__name__)
 async def startup_services() -> AsyncIterator[None]:
     """Startup REST server and database."""
 
-    with open("mongodb.stdout", "wb") as stdoutf, open(
-        "mongodb.stderr", "wb"
+    with open(os.environ["CI_MONGO_STDOUT"], "wb") as stdoutf, open(
+        os.environ["CI_MONGO_STDERR"], "wb"
     ) as stderrf:
         mongo_task = asyncio.create_task(
             (
@@ -27,11 +28,13 @@ async def startup_services() -> AsyncIterator[None]:
             ).wait()
         )
 
-    with open("rest.stdout", "wb") as stdoutf, open("rest.stderr", "wb") as stderrf:
+    with open(os.environ["CI_REST_STDOUT"], "wb") as stdoutf, open(
+        os.environ["CI_REST_STDERR"], "wb"
+    ) as stderrf:
         rest_task = asyncio.create_task(
             (
                 await asyncio.create_subprocess_shell(
-                    "docker run --network='host' --rm rest_local",
+                    f"docker run --network='host' --rm {os.environ['DOCKER_IMAGE_NAME']}:local",
                     stdout=stdoutf,
                     stderr=stderrf,
                 )
