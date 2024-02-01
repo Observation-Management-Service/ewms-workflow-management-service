@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 async def make(mongo_client: AsyncIOMotorClient) -> RestServer:  # type: ignore[valid-type]
     """Make a WMS REST service (does not start up automatically)."""
-    rhs_config: dict[str, Any] = {"debug": ENV.CI_TEST}
+    rhs_config: dict[str, Any] = {"debug": ENV.CI}
     if ENV.AUTH_OPENID_URL:
         rhs_config["auth"] = {
             "audience": ENV.AUTH_AUDIENCE,
@@ -28,7 +28,7 @@ async def make(mongo_client: AsyncIOMotorClient) -> RestServer:  # type: ignore[
     args["mongo_client"] = mongo_client
 
     # Configure REST Routes
-    rs = RestServer(debug=ENV.CI_TEST)
+    rs = RestServer(debug=ENV.CI)
 
     for klass in [
         rest_handlers.base_handlers.MainHandler,

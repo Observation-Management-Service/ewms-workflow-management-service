@@ -66,7 +66,7 @@ class EnvConfig:
     MONGODB_AUTH_PASS: str = ""  # empty means no authentication required
     MONGODB_AUTH_USER: str = ""  # None means required to specify
 
-    CI_TEST: bool = False
+    CI: bool = False  # github actions sets this to 'true'
     LOG_LEVEL: str = "DEBUG"
     LOG_LEVEL_THIRD_PARTY: str = "WARNING"
 

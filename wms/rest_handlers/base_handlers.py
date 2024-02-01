@@ -13,7 +13,7 @@ from . import auth, utils
 
 LOGGER = logging.getLogger(__name__)
 
-openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC, config.ENV.CI_TEST)
+openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC, config.ENV.CI)
 
 
 class BaseWMSHandler(RestHandler):  # pylint: disable=W0223

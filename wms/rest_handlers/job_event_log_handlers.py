@@ -9,7 +9,7 @@ from .base_handlers import BaseWMSHandler
 
 LOGGER = logging.getLogger(__name__)
 
-openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC, config.ENV.CI_TEST)
+openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC, config.ENV.CI)
 
 
 class JobEventLogHandler(BaseWMSHandler):  # pylint: disable=W0223

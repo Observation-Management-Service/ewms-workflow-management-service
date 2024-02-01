@@ -21,7 +21,7 @@ class AuthAccounts(enum.StrEnum):  # attrs are str subclass types! (no `.value` 
 ALL_AUTH_ACCOUNTS = list(AuthAccounts.__members__.values())
 
 
-if ENV.CI_TEST:
+if ENV.CI:
 
     def service_account_auth(**kwargs):  # type: ignore
         def make_wrapper(method):  # type: ignore[no-untyped-def]
