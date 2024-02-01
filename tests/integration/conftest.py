@@ -64,10 +64,10 @@ async def startup_services() -> AsyncIterator[None]:
                 LOGGER.critical(f"could not connect to {hostname}")
                 break
             if os.system("ping -c 1 " + hostname) == 0:
+                LOGGER.info(f"reached host: {hostname}")
                 break
             LOGGER.info(f"{hostname}...")
             await asyncio.sleep(1)
-        LOGGER.info(f"reached host: {hostname}")
 
     yield
 
