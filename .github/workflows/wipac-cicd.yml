@@ -139,23 +139,16 @@ jobs:
       - run: |
           pytest -vvv tests/integration/
       #
-      - name: dump mongo stdout
-        if: always()
+      - if: always()
         run: |
           cat $CI_MONGO_STDOUT
-      #
-      - name: dump mongo stderr
-        if: always()
+      - if: always()
         run: |
           cat $CI_MONGO_STDERR
-      #
-      - name: dump rest stdout
-        if: always()
+      - if: always()
         run: |
           cat $CI_REST_STDOUT
-      #
-      - name: dump rest stderr
-        if: always()
+      - if: always()
         run: |
           cat $CI_REST_STDERR
 
