@@ -3,8 +3,7 @@
 
 import logging
 
-from openapi_core import Spec as OpenAPI
-from openapi_core import validate_request, validate_response
+from openapi_core import Spec, validate_request, validate_response
 from tornado.web import RequestHandler
 
 LOGGER = logging.getLogger(__name__)
@@ -13,7 +12,7 @@ LOGGER = logging.getLogger(__name__)
 class OpenAPIValidator:
     """A helper class for validating requests and responses with openapi."""
 
-    def __init__(self, spec: OpenAPI, testing: bool) -> None:
+    def __init__(self, spec: Spec, testing: bool) -> None:
         self.spec = spec
         self.testing = testing
 

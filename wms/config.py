@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import jsonschema
-from openapi_core import Spec as OpenAPI
+from openapi_core import Spec
 from openapi_spec_validator import validate
 from openapi_spec_validator.readers import read_from_filename
 from wipac_dev_tools import from_environment_as_dataclass, logging_tools
@@ -36,11 +36,11 @@ DB_JSONSCHEMA_SPECS = _get_jsonschema_specs(
 # --------------------------------------------------------------------------------------
 
 
-def _get_openapi_spec(fpath: Path) -> OpenAPI:
+def _get_openapi_spec(fpath: Path) -> Spec:
     spec_dict, base_uri = read_from_filename(str(fpath))
     LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
     validate(spec_dict)  # no exception -> spec is valid
-    return OpenAPI.from_file_path(fpath)
+    return Spec.from_file_path(str(fpath))
 
 
 REST_OPENAPI_SPEC = _get_openapi_spec(

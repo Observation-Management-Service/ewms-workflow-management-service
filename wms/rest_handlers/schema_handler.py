@@ -24,5 +24,6 @@ class SchemaHandler(BaseWMSHandler):  # pylint: disable=W0223
         # get the underlying dict (json)
         openapi_validator.write_and_validate(
             self,
-            config.REST_OPENAPI_SPEC.spec.contents(),
+            # NOTE - if this doesn't work then use accessor.open ctx-mgr
+            config.REST_OPENAPI_SPEC.accessor.lookup,  # type: ignore[attr-defined]
         )
