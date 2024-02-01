@@ -5,7 +5,7 @@ on: [push]
 
 
 env:
-  DOCKER_IMAGE_NAME: oms-test/tms-test
+  CI_DOCKER_IMAGE_W_TAG: wms/test:local
   CI_MONGO_STDOUT: mongodb.stdout
   CI_MONGO_STDERR: mongodb.stderr
   CI_REST_STDOUT: rest.stdout
@@ -112,7 +112,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=min
           file: Dockerfile
-          tags: ${{ env.DOCKER_IMAGE_NAME }}:local
+          tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
 
   integration-tests:
     needs: [py-versions]
@@ -132,7 +132,7 @@ jobs:
           cache-from: type=gha
           # cache-to: type=gha,mode=min
           file: Dockerfile
-          tags: ${{ env.DOCKER_IMAGE_NAME }}:local
+          tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
           load: true
       - run: |
           pip install .[tests]

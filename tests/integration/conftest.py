@@ -34,7 +34,7 @@ async def startup_services() -> AsyncIterator[None]:
         rest_task = asyncio.create_task(
             (
                 await asyncio.create_subprocess_shell(
-                    f"docker run --network='host' --rm {os.environ['DOCKER_IMAGE_NAME']}:local",
+                    f"docker run --network='host' --rm {os.environ['CI_DOCKER_IMAGE_W_TAG']}",
                     stdout=stdoutf,
                     stderr=stderrf,
                 )
