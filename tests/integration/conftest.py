@@ -34,7 +34,12 @@ async def startup_services() -> AsyncIterator[None]:
         rest_task = asyncio.create_task(
             (
                 await asyncio.create_subprocess_shell(
-                    f"docker run --network='host' --rm {os.environ['CI_DOCKER_IMAGE_W_TAG']}",
+                    (
+                        f"docker run --network='host' --rm "
+                        f"{os.environ['CI_DOCKER_IMAGE_W_TAG']}"
+                        # forward all env vars
+                        f" {' --env '.join(f'{k}={v}' for k,v in os.environ.items())}"
+                    ),
                     stdout=stdoutf,
                     stderr=stderrf,
                 )
@@ -42,6 +47,17 @@ async def startup_services() -> AsyncIterator[None]:
         )
 
     await asyncio.sleep(0)  # start up tasks
+
+    # ping until all live
+    for hostname in [
+        f'{os.environ["MONGODB_HOST"]}:{os.environ["MONGODB_PORT"]}',
+        f'{os.environ["REST_HOST"]}:{os.environ["REST_PORT"]}',
+    ]:
+        LOGGER.info(f"waiting for host: {hostname}")
+        while os.system("ping -c 1 " + hostname) != 0:
+            LOGGER.info("...")
+            await asyncio.sleep(1)
+        LOGGER.info(f"reached host: {hostname}")
 
     yield
 
