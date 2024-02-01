@@ -2,6 +2,7 @@
 
 
 import asyncio
+import itertools
 import logging
 import os
 from typing import AsyncIterator
@@ -54,8 +55,13 @@ async def startup_services() -> AsyncIterator[None]:
         f'{os.environ["REST_HOST"]}:{os.environ["REST_PORT"]}',
     ]:
         LOGGER.info(f"waiting for host: {hostname}")
-        while os.system("ping -c 1 " + hostname) != 0:
-            LOGGER.info("...")
+        for i in itertools.count():
+            if i > 60:
+                LOGGER.critical(f"could not connect to {hostname}")
+                break
+            if os.system("ping -c 1 " + hostname) == 0:
+                break
+            LOGGER.info(f"{hostname}...")
             await asyncio.sleep(1)
         LOGGER.info(f"reached host: {hostname}")
 
