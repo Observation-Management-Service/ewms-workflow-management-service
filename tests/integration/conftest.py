@@ -19,10 +19,12 @@ async def startup_services() -> AsyncIterator[None]:
     with open(os.environ["CI_MONGO_STDOUT"], "wb") as stdoutf, open(
         os.environ["CI_MONGO_STDERR"], "wb"
     ) as stderrf:
+        cmd = "docker run --network='host' --rm bitnami/mongodb:4"
+        LOGGER.info(f"running: {cmd}")
         mongo_task = asyncio.create_task(
             (
                 await asyncio.create_subprocess_shell(
-                    "docker run --network='host' --rm bitnami/mongodb:4",
+                    cmd,
                     stdout=stdoutf,
                     stderr=stderrf,
                 )
@@ -32,15 +34,17 @@ async def startup_services() -> AsyncIterator[None]:
     with open(os.environ["CI_REST_STDOUT"], "wb") as stdoutf, open(
         os.environ["CI_REST_STDERR"], "wb"
     ) as stderrf:
+        cmd = (
+            f"docker run --network='host' --rm "
+            f"{os.environ['CI_DOCKER_IMAGE_W_TAG']}"
+            # forward all env vars
+            f" {' --env '.join(f'{k}={v}' for k,v in os.environ.items())}"
+        )
+        LOGGER.info(f"running: {cmd}")
         rest_task = asyncio.create_task(
             (
                 await asyncio.create_subprocess_shell(
-                    (
-                        f"docker run --network='host' --rm "
-                        f"{os.environ['CI_DOCKER_IMAGE_W_TAG']}"
-                        # forward all env vars
-                        f" {' --env '.join(f'{k}={v}' for k,v in os.environ.items())}"
-                    ),
+                    cmd,
                     stdout=stdoutf,
                     stderr=stderrf,
                 )
