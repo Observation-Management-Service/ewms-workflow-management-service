@@ -38,7 +38,7 @@ async def startup_services() -> AsyncIterator[None]:
             f"docker run --network='host' --rm "
             f"{os.environ['CI_DOCKER_IMAGE_W_TAG']}"
             # forward all env vars
-            f" {' --env '.join(f'{k}={v}' for k,v in os.environ.items())}"
+            f""" {' --env '.join(f'{k}="{v}"' for k,v in os.environ.items())}"""
         )
         LOGGER.info(f"running: {cmd}")
         rest_task = asyncio.create_task(
