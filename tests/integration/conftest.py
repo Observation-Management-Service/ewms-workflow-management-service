@@ -2,14 +2,21 @@
 
 
 import asyncio
+import dataclasses
 import itertools
 import logging
 import os
 from typing import AsyncIterator
 
 import pytest_asyncio
+import wms  # only use to access constants
 
 LOGGER = logging.getLogger(__name__)
+
+
+FORWARD_ENVVARS = [
+    f.name for f in dataclasses.fields(wms.config.EnvConfig) if f.name in os.environ
+]
 
 
 @pytest_asyncio.fixture
@@ -38,7 +45,7 @@ async def startup_services() -> AsyncIterator[None]:
             f"docker run --network='host' --rm "
             f"{os.environ['CI_DOCKER_IMAGE_W_TAG']}"
             # forward all env vars
-            f""" {' --env '.join(f'{k}="{v}"' for k,v in os.environ.items())}"""
+            f""" {' --env '.join(f'{k}="{os.environ[k]}"' for k in FORWARD_ENVVARS)}"""
         )
         LOGGER.info(f"running: {cmd}")
         rest_task = asyncio.create_task(
