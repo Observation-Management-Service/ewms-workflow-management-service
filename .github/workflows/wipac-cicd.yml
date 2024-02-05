@@ -8,9 +8,9 @@ env:
   CI_DOCKER_IMAGE_W_TAG: wms/test:local
   CI_REST_STDOUT: rest.stdout
   CI_REST_STDERR: rest.stderr
-  MONGODB_HOST: 0.0.0.0
+  MONGODB_HOST: localhost
   MONGODB_PORT: 27017
-  REST_HOST: 0.0.0.0
+  REST_HOST: localhost  # the server should connect to 0.0.0.0
   REST_PORT: 8080
 
 
@@ -148,7 +148,7 @@ jobs:
           docker run --network='host' --rm -d --name rest \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
-            --env REST_HOST="${{ env.REST_HOST }}" \
+            --env REST_HOST="0.0.0.0" \
             --env REST_PORT="${{ env.REST_PORT }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }}
