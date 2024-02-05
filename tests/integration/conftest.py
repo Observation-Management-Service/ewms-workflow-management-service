@@ -31,7 +31,7 @@ async def rc() -> AsyncIterator[RestClient]:
         os.environ["CI_MONGO_STDERR"], "wb"
     ) as stderrf:
         cmd = (
-            f"docker run --network='host' --rm {os.environ['CI_DATABASE_IMAGE_W_TAG']}"
+            f"docker run --network='host' --rm {os.environ['CI_MONGO_IMAGE_W_TAG']}"
         )
         LOGGER.info(f"running: {cmd}")
         mongo_task = asyncio.create_task(

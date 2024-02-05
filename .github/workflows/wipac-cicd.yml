@@ -6,7 +6,7 @@ on: [push]
 
 env:
   CI_DOCKER_IMAGE_W_TAG: wms/test:local
-  CI_DATABASE_IMAGE_W_TAG: bitnami/mongodb:4
+  CI_MONGO_IMAGE_W_TAG: bitnami/mongodb:4
   CI_MONGO_STDOUT: mongodb.stdout
   CI_MONGO_STDERR: mongodb.stderr
   CI_REST_STDOUT: rest.stdout
@@ -142,7 +142,7 @@ jobs:
       - run: |
           pip install .[tests]
       - run: |
-          docker build ${{ env.CI_DATABASE_IMAGE_W_TAG }}
+          docker pull ${{ env.CI_MONGO_IMAGE_W_TAG }}
       - run: |
           pytest -vvv tests/integration/
       #
