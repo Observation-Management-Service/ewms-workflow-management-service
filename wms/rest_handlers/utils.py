@@ -1,11 +1,10 @@
-"""utils.py."""
-
 """Utils for REST routes."""
 
 
 import logging
 
-from openapi_core import Spec, validate_request, validate_response
+import openapi_core  # type: ignore[import-untyped]
+import tornado_openapi3
 from tornado.web import RequestHandler
 
 LOGGER = logging.getLogger(__name__)
@@ -14,7 +13,7 @@ LOGGER = logging.getLogger(__name__)
 class OpenAPIValidator:
     """A helper class for validating requests and responses with openapi."""
 
-    def __init__(self, spec: Spec, testing: bool) -> None:
+    def __init__(self, spec: openapi_core.Spec, testing: bool) -> None:
         self.spec = spec
         self.testing = testing
 
@@ -27,7 +26,10 @@ class OpenAPIValidator:
                 # NOTE - don't change data (unmarshal) b/c we are downstream of data separation
                 try:
                     # https://openapi-core.readthedocs.io/en/latest/validation.html
-                    validate_request(reqhand.request, self.spec)  # type: ignore[arg-type]  # ->
+                    openapi_core.validate_request(
+                        tornado_openapi3.TornadoRequestFactory.create(reqhand.request),
+                        self.spec,
+                    )
                 except Exception as e:
                     LOGGER.exception(f"Invalid request: {e}")
                     raise  # TODO - raise client-bound exception
@@ -44,7 +46,11 @@ class OpenAPIValidator:
     ) -> None:
         """Validate the response and `write()`."""
         try:
-            validate_response(reqhand.request, chunk, self.spec)  # type: ignore[arg-type]
+            openapi_core.validate_response(
+                tornado_openapi3.TornadoRequestFactory.create(reqhand.request),
+                chunk,
+                self.spec,
+            )
         except Exception as e:
             LOGGER.exception(
                 f"Response is not valid with openapi"
