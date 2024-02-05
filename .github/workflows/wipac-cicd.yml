@@ -6,9 +6,6 @@ on: [push]
 
 env:
   CI_DOCKER_IMAGE_W_TAG: wms/test:local
-  CI_MONGO_IMAGE_W_TAG: bitnami/mongodb:4
-  CI_MONGO_STDOUT: mongodb.stdout
-  CI_MONGO_STDERR: mongodb.stderr
   CI_REST_STDOUT: rest.stdout
   CI_REST_STDERR: rest.stderr
   MONGODB_HOST: 0.0.0.0
@@ -126,6 +123,11 @@ jobs:
       fail-fast: false
       matrix:
         py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
+    services:
+      mongo:
+        image: bitnami/mongodb:4
+        ports:
+        - 27017:27017
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -142,16 +144,8 @@ jobs:
       - run: |
           pip install .[tests]
       - run: |
-          docker pull ${{ env.CI_MONGO_IMAGE_W_TAG }}
-      - run: |
           pytest -vvv tests/integration/
       #
-      - if: always()
-        run: |
-          cat $CI_MONGO_STDOUT
-      - if: always()
-        run: |
-          cat $CI_MONGO_STDERR
       - if: always()
         run: |
           cat $CI_REST_STDOUT
