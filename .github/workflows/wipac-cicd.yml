@@ -145,7 +145,7 @@ jobs:
           pip install .[tests]
       - name: start rest server (docker)
         run: |
-          docker run --network='host' --rm -d \
+          docker run --network='host' --rm -d -t rest \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
             --env REST_HOST="${{ env.REST_HOST }}" \
@@ -157,7 +157,7 @@ jobs:
       #
       - if: always()
         run: |
-          docker logs ${{ env.CI_DOCKER_IMAGE_W_TAG }}
+          docker logs rest
 
 
   #############################################################################
