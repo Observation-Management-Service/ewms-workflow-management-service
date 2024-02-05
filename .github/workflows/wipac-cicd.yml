@@ -139,8 +139,9 @@ jobs:
           file: Dockerfile
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
           load: true
-      - name: start rest server (docker)
+      - name: test (run rest server in background)
         run: |
+          # this needs to be in the same step b/c shell exits when step is done
           docker run --network='host' --rm -d --name rest \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
@@ -149,9 +150,8 @@ jobs:
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }}
           sleep 10
-      - run: |
+
           pip install .[tests]
-      - run: |
           pytest -vvv tests/integration/
       #
       - if: always()
