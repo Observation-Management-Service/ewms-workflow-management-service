@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 async def rc() -> AsyncIterator[RestClient]:
     """Yield a RestClient."""
     yield RestClient(
-        f'{os.environ["REST_HOST"]}:{os.environ["REST_PORT"]}',
+        f'http://{os.environ["REST_HOST"]}:{os.environ["REST_PORT"]}',
         timeout=3,
         retries=2,
     )
