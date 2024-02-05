@@ -21,7 +21,7 @@ async def main() -> None:
     LOGGER.info("Mongo client connected.")
 
     # Backlogger
-    LOGGER.info("Starting scan backlog runner...")
+    LOGGER.info("Starting backlogger in background...")
     backlogger_task = asyncio.create_task(backlogger.startup(mongo_client))
     await asyncio.sleep(0)  # start up previous task
 
