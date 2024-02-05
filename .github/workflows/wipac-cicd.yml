@@ -143,15 +143,21 @@ jobs:
           load: true
       - run: |
           pip install .[tests]
+      - name: start rest server (docker)
+        run: |
+          docker run --network='host' --rm \
+            --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
+            --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
+            --env REST_HOST="${{ env.REST_HOST }}" \
+            --env REST_PORT="${{ env.REST_PORT }}" \
+            --env CI="true" \
+            ${{ env.CI_DOCKER_IMAGE_W_TAG }}
       - run: |
           pytest -vvv tests/integration/
       #
       - if: always()
         run: |
-          cat $CI_REST_STDOUT
-      - if: always()
-        run: |
-          cat $CI_REST_STDERR
+          docker logs ${{ env.CI_DOCKER_IMAGE_W_TAG }}
 
 
   #############################################################################
