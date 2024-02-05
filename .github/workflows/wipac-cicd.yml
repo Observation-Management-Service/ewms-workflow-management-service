@@ -147,7 +147,7 @@ jobs:
           docker run --network='host' --rm -d --name rest \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
-            --env REST_HOST="${{ env.REST_HOST }}" \
+            --env REST_HOST="0.0.0.0" \
             --env REST_PORT="${{ env.REST_PORT }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }}
