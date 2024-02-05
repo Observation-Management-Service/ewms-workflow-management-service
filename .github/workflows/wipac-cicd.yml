@@ -139,8 +139,6 @@ jobs:
           file: Dockerfile
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
           load: true
-      - run: |
-          pip install .[tests]
       - name: start rest server (docker)
         run: |
           docker run --network='host' --rm -d --name rest \
@@ -150,6 +148,8 @@ jobs:
             --env REST_PORT="${{ env.REST_PORT }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }}
+      - run: |
+          pip install .[tests]
       - run: |
           pytest -vvv tests/integration/
       #
