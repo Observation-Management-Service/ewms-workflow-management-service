@@ -113,7 +113,7 @@ def config_logging() -> None:
     logging.getLogger().addHandler(hand)
     logging_tools.set_level(
         ENV.LOG_LEVEL,  # type: ignore[arg-type]
-        first_party_loggers=["__main__", __name__.split(".", maxsplit=1)[0]],
+        first_party_loggers=[__name__.split(".", maxsplit=1)[0]],
         third_party_level=ENV.LOG_LEVEL_THIRD_PARTY,  # type: ignore[arg-type]
         future_third_parties=[],
     )
