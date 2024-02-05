@@ -7,7 +7,7 @@ import logging
 from . import backlogger, database, server
 from .config import ENV, config_logging
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__package__)
 
 
 async def main() -> None:
