@@ -148,6 +148,7 @@ jobs:
             --env REST_PORT="${{ env.REST_PORT }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }}
+          sleep 10
       - run: |
           pip install .[tests]
       - run: |
@@ -155,7 +156,7 @@ jobs:
       #
       - if: always()
         run: |
-          docker logs rest
+          docker logs rest || true
 
 
   #############################################################################
