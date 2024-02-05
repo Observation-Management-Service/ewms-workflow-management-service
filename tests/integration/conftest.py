@@ -26,7 +26,9 @@ async def startup_services() -> AsyncIterator[None]:
     with open(os.environ["CI_MONGO_STDOUT"], "wb") as stdoutf, open(
         os.environ["CI_MONGO_STDERR"], "wb"
     ) as stderrf:
-        cmd = f"docker run --network='host' --rm {os.environ['CI_DATABASE_IMAGE_W_TAG']}"
+        cmd = (
+            f"docker run --network='host' --rm {os.environ['CI_DATABASE_IMAGE_W_TAG']}"
+        )
         LOGGER.info(f"running: {cmd}")
         mongo_task = asyncio.create_task(
             (
@@ -67,7 +69,7 @@ async def startup_services() -> AsyncIterator[None]:
     ]:
         LOGGER.info(f"waiting for host: {hostname}")
         for i in itertools.count():
-            if i > 60:
+            if i > 10:
                 LOGGER.critical(f"could not connect to {hostname}")
                 break
             if os.system("ping -c 1 " + hostname) == 0:
