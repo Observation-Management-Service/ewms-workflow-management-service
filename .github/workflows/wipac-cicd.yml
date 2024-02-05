@@ -141,16 +141,16 @@ jobs:
           load: true
       - run: |
           pip install .[tests]
-      - name: test (run rest server in background)
+      - name: test (w/ rest server in background)
         run: |
           # this needs to be in the same step b/c shell exits when step is done
-          docker run --network='host' --rm -d --name rest \
+          docker run --network='host' --rm -i --name rest \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
             --env REST_HOST="0.0.0.0" \
             --env REST_PORT="${{ env.REST_PORT }}" \
             --env CI="true" \
-            ${{ env.CI_DOCKER_IMAGE_W_TAG }}
+            ${{ env.CI_DOCKER_IMAGE_W_TAG }} &
           sleep 10
 
           pytest -vvv tests/integration/
