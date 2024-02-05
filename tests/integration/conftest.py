@@ -26,7 +26,7 @@ async def startup_services() -> AsyncIterator[None]:
     with open(os.environ["CI_MONGO_STDOUT"], "wb") as stdoutf, open(
         os.environ["CI_MONGO_STDERR"], "wb"
     ) as stderrf:
-        cmd = "docker run --network='host' --rm bitnami/mongodb:4"
+        cmd = f"docker run --network='host' --rm {os.environ['CI_DATABASE_IMAGE_W_TAG']}"
         LOGGER.info(f"running: {cmd}")
         mongo_task = asyncio.create_task(
             (
