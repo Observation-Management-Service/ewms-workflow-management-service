@@ -1,3 +1,5 @@
+"""utils.py."""
+
 """Utils for REST routes."""
 
 
@@ -45,7 +47,9 @@ class OpenAPIValidator:
             validate_response(reqhand.request, chunk, self.spec)  # type: ignore[arg-type]
         except Exception as e:
             LOGGER.exception(
-                f"Response is not valid with openapi (sending anyway): {e}"
+                f"Response is not valid with openapi"
+                f"{' (sending anyway)' if self.testing else ''}"
+                f": {e}"
             )
             if self.testing:
                 raise
