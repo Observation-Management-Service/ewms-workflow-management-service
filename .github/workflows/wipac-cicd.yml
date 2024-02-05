@@ -139,6 +139,8 @@ jobs:
           file: Dockerfile
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
           load: true
+      - run: |
+          pip install .[tests]
       - name: test (run rest server in background)
         run: |
           # this needs to be in the same step b/c shell exits when step is done
@@ -151,7 +153,6 @@ jobs:
             ${{ env.CI_DOCKER_IMAGE_W_TAG }}
           sleep 10
 
-          pip install .[tests]
           pytest -vvv tests/integration/
       #
       - if: always()
