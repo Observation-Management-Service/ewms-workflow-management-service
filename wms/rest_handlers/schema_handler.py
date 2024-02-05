@@ -18,7 +18,7 @@ class SchemaHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/schema/openapi$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    # @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self) -> None:
         """Handle GET."""
         # get the underlying dict (json)
