@@ -1,13 +1,12 @@
 """Mimic a TMS workflow, hitting the expected REST endpoints."""
 
 
-import asyncio
+from rest_tools.client import RestClient
 
 
-async def test_000(startup_services: None) -> None:
+async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
-    for i in range(10):
-        print("Sleep 1")
-        await asyncio.sleep(1)
+    resp = await rc.request("GET", "/schema/openapi")
+    print(resp)
 
     assert 0

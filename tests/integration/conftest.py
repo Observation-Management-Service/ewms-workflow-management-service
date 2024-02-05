@@ -9,6 +9,7 @@ import os
 from typing import AsyncIterator
 
 import pytest_asyncio
+from rest_tools.client import RestClient
 from wms import config  # only use to access constants
 
 LOGGER = logging.getLogger(__name__)
@@ -20,8 +21,11 @@ FORWARD_ENVVARS = [
 
 
 @pytest_asyncio.fixture
-async def startup_services() -> AsyncIterator[None]:
-    """Startup REST server and database."""
+async def rc() -> AsyncIterator[RestClient]:
+    """Startup REST server and database, then yield a RestClient.
+
+    Cleanup when iterator resumes.
+    """
 
     with open(os.environ["CI_MONGO_STDOUT"], "wb") as stdoutf, open(
         os.environ["CI_MONGO_STDERR"], "wb"
@@ -78,7 +82,11 @@ async def startup_services() -> AsyncIterator[None]:
             LOGGER.info(f"{hostname}...")
             await asyncio.sleep(1)
 
-    yield
+    yield RestClient(
+        f'{os.environ["REST_HOST"]}:{os.environ["REST_PORT"]}',
+        timeout=3,
+        retries=2,
+    )
 
     mongo_task.cancel()
     rest_task.cancel()
