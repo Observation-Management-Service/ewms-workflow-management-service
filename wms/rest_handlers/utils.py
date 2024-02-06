@@ -3,8 +3,10 @@
 
 import logging
 
-import openapi_core  # type: ignore[import-untyped]
-import tornado_openapi3
+import openapi_core
+import requests
+import tornado
+from openapi_core.contrib.requests import RequestsOpenAPIRequest
 from tornado.web import RequestHandler
 
 LOGGER = logging.getLogger(__name__)
@@ -27,7 +29,7 @@ class OpenAPIValidator:
                 try:
                     # https://openapi-core.readthedocs.io/en/latest/validation.html
                     openapi_core.validate_request(
-                        tornado_openapi3.TornadoRequestFactory.create(reqhand.request),
+                        http_server_request_to_openapi_request(reqhand.request),
                         self.spec,
                     )
                 except Exception as e:
@@ -47,7 +49,7 @@ class OpenAPIValidator:
         """Validate the response and `write()`."""
         try:
             openapi_core.validate_response(
-                tornado_openapi3.TornadoRequestFactory.create(reqhand.request),
+                http_server_request_to_openapi_request(reqhand.request),
                 chunk,
                 self.spec,
             )
@@ -60,3 +62,23 @@ class OpenAPIValidator:
             if self.testing:
                 raise
         reqhand.write(chunk)
+
+
+def http_server_request_to_openapi_request(
+    req: tornado.httputil.HTTPServerRequest,
+) -> RequestsOpenAPIRequest:
+    """Convert a `tornado.httputil.HTTPServerRequest` to openapi's type."""
+    return RequestsOpenAPIRequest(
+        requests.Request(
+            method=req.method.lower() if req.method else "get",
+            url=req.uri,
+            headers=req.headers,
+            files=req.files,
+            data=req.body if not req.body_arguments else None,  # see below
+            params=req.query_arguments,
+            # auth=None,
+            cookies=req.cookies,
+            # hooks=None,
+            json=req.body_arguments if req.body_arguments else None,  # see above
+        )
+    )
