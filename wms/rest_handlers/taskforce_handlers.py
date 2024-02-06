@@ -1,5 +1,3 @@
-"""taskforce_handlers.py."""
-
 """REST handlers for taskforce-related routes."""
 
 
@@ -11,7 +9,7 @@ from .base_handlers import BaseWMSHandler
 
 LOGGER = logging.getLogger(__name__)
 
-openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC, config.ENV.CI)
+openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC)
 
 
 # ----------------------------------------------------------------------------

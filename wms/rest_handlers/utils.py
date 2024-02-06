@@ -14,9 +14,8 @@ LOGGER = logging.getLogger(__name__)
 class OpenAPIValidator:
     """A helper class for validating requests and responses with openapi."""
 
-    def __init__(self, spec: openapi_core.Spec, testing: bool) -> None:
+    def __init__(self, spec: openapi_core.Spec) -> None:
         self.spec = spec
-        self.testing = testing
 
     def validate_request(self):  # type: ignore
         """Validate request obj against the given OpenAPI spec."""
