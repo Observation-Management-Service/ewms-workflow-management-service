@@ -19,7 +19,7 @@ async def test_000(rc: RestClient) -> None:
     # TODO - use openapi to validate response client-side (not done server side)
     print(resp)
     with open(_OPENAPI_JSON, "rb") as f:
-        assert json.load(f) == resp
+        assert json.load(f) == rc._decode(resp.content)
     openapi_core.validate_response(
         openapi_core_requests.RequestsOpenAPIRequest(resp.request),
         openapi_core_requests.RequestsOpenAPIResponse(resp),  # type: ignore[arg-type]
