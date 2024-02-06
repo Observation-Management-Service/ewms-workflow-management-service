@@ -3,6 +3,7 @@
 
 import json
 from pathlib import Path
+from typing import Any
 
 import openapi_core
 import requests
@@ -13,11 +14,18 @@ _OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
 _OPENAPI_SPEC = openapi_core.Spec.from_file_path(str(_OPENAPI_JSON))
 
 
-def validate_response(response: requests.Response) -> None:
+def request_and_validate(
+    rc: RestClient,
+    method: str,
+    path: str,
+    args: dict[str, Any] | None = None,
+) -> Any:
     """Validate using 'requests' types."""
+    url, kwargs = rc._prepare(method, path, args=args)
+    response = requests.request(method, url, **kwargs)
 
     # duck typing magic
-    class _Response(openapi_core.protocols.Response):
+    class _DuckResponse(openapi_core.protocols.Response):
         """AKA 'openapi_core_requests.RequestsOpenAPIResponse' but correct."""
 
         @property
@@ -30,6 +38,8 @@ def validate_response(response: requests.Response) -> None:
 
         @property
         def mimetype(self) -> str:
+            # application/json; charset=UTF-8  ->  application/json
+            # ex: openapi_core.validation.response.exceptions.DataValidationError: DataValidationError: Content for the following mimetype not found: application/json; charset=UTF-8. Valid mimetypes: ['application/json']
             return str(response.headers.get("Content-Type", "")).split(";")[0]
 
         @property
@@ -38,16 +48,16 @@ def validate_response(response: requests.Response) -> None:
 
     openapi_core.validate_response(
         openapi_core_requests.RequestsOpenAPIRequest(response.request),
-        _Response(),
+        _DuckResponse(),
         _OPENAPI_SPEC,
     )
+
+    return rc._decode(response.content)
 
 
 async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
-    resp: requests.Response = requests.get(rc.address + "/schema/openapi")
-    # TODO - use openapi to validate response client-side (not done server side)
+    resp = request_and_validate(rc, "GET", "/schema/openapi")
     print(resp)
     with open(_OPENAPI_JSON, "rb") as f:
-        assert json.load(f) == rc._decode(resp.content)
-    validate_response(resp)
+        assert json.load(f) == resp
