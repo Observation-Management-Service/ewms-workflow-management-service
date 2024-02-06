@@ -20,7 +20,7 @@ def request_and_validate(
     path: str,
     args: dict[str, Any] | None = None,
 ) -> Any:
-    """Validate using 'requests' types."""
+    """Make request and validate the response."""
     url, kwargs = rc._prepare(method, path, args=args)
     response = requests.request(method, url, **kwargs)
 
@@ -41,6 +41,7 @@ def request_and_validate(
             # application/json; charset=UTF-8  ->  application/json
             # ex: openapi_core.validation.response.exceptions.DataValidationError: DataValidationError: Content for the following mimetype not found: application/json; charset=UTF-8. Valid mimetypes: ['application/json']
             return str(response.headers.get("Content-Type", "")).split(";")[0]
+            # alternatively, look at how 'openapi_core_requests.RequestsOpenAPIRequest.mimetype' handles similarly
 
         @property
         def headers(self) -> dict:
@@ -52,12 +53,13 @@ def request_and_validate(
         _OPENAPI_SPEC,
     )
 
-    return rc._decode(response.content)
+    out = rc._decode(response.content)
+    print(out)
+    return out
 
 
 async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
     resp = request_and_validate(rc, "GET", "/schema/openapi")
-    print(resp)
     with open(_OPENAPI_JSON, "rb") as f:
         assert json.load(f) == resp
