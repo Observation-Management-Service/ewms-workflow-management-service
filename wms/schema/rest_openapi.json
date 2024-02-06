@@ -10,12 +10,12 @@
             "email": "developers@icecube.wisc.edu"
         },
         "license": {
-            "name": "MIT License",
+            "name": "MIT License"
         },
         "version": "0.0.0"
     },
     "paths": {
-        "/users/{id}": {
+        "/example/{id}": {
             "parameters": [
                 {
                     "name": "id",
@@ -28,17 +28,6 @@
                 }
             ],
             "get": {
-                "parameters": [
-                    {
-                        "name": "thing",
-                        "in": "query",
-                        "required": true,
-                        "description": "the thing",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -89,23 +78,21 @@
                 }
             }
         },
-        "/users/{userid}/address": {
-            "parameters": [
-                {
-                    "name": "userid",
-                    "in": "path",
-                    "required": true,
-                    "description": "the user identifier, as userId",
-                    "schema": {
-                        "type": "string"
-                    }
-                }
-            ],
+        "/schema/openapi": {
+            "parameters": [],
             "get": {
-                "operationId": "getUserAddress",
+                "requestBody": {},
                 "responses": {
                     "200": {
-                        "description": "the user's address"
+                        "description": "the openapi schema",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {}
+                                }
+                            }
+                        }
                     }
                 }
             }
