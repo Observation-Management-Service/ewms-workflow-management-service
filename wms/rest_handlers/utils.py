@@ -48,7 +48,7 @@ def http_server_request_to_openapi_request(
     return openapi_core_requests.RequestsOpenAPIRequest(
         requests.Request(
             method=req.method.lower() if req.method else "get",
-            url=req.uri,
+            url=f"{req.protocol}://{req.host}{req.uri}",
             headers=req.headers,
             files=req.files,
             data=req.body if not req.body_arguments else None,  # see below
