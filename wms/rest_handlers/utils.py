@@ -6,6 +6,7 @@ import logging
 import openapi_core
 import requests
 import tornado
+from openapi_core.contrib import requests as openapi_core_requests
 from tornado.web import RequestHandler
 
 LOGGER = logging.getLogger(__name__)
@@ -42,9 +43,9 @@ class OpenAPIValidator:
 
 def http_server_request_to_openapi_request(
     req: tornado.httputil.HTTPServerRequest,
-) -> openapi_core.contrib.requests.RequestsOpenAPIRequest:  # type: ignore[name-defined]
+) -> openapi_core_requests.RequestsOpenAPIRequest:
     """Convert a `tornado.httputil.HTTPServerRequest` to openapi's type."""
-    return openapi_core.contrib.requests.RequestsOpenAPIRequest(  # type: ignore[attr-defined]
+    return openapi_core_requests.RequestsOpenAPIRequest(
         requests.Request(
             method=req.method.lower() if req.method else "get",
             url=req.uri,
