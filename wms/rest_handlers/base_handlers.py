@@ -44,10 +44,7 @@ class MainHandler(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self) -> None:
         """Handle GET."""
-        openapi_validator.write_and_validate(
-            self,
-            {},
-        )
+        self.write({})
 
 
 # -----------------------------------------------------------------------------

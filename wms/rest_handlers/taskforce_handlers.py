@@ -1,3 +1,5 @@
+"""taskforce_handlers.py."""
+
 """REST handlers for taskforce-related routes."""
 
 
@@ -24,10 +26,7 @@ class TaskforceHandlerUUID(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self) -> None:
         """Handle GET."""
-        openapi_validator.write_and_validate(
-            self,
-            {},
-        )
+        self.write({})
 
 
 # ----------------------------------------------------------------------------
@@ -42,10 +41,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self) -> None:
         """Handle POST."""
-        openapi_validator.write_and_validate(
-            self,
-            {},
-        )
+        self.write({})
 
 
 # ----------------------------------------------------------------------------
@@ -60,10 +56,7 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self) -> None:
         """Handle GET."""
-        openapi_validator.write_and_validate(
-            self,
-            {},
-        )
+        self.write({})
 
 
 # ----------------------------------------------------------------------------
@@ -78,10 +71,7 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
-        openapi_validator.write_and_validate(
-            self,
-            {},
-        )
+        self.write({})
 
 
 # ----------------------------------------------------------------------------
@@ -96,10 +86,7 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self) -> None:
         """Handle GET."""
-        openapi_validator.write_and_validate(
-            self,
-            {},
-        )
+        self.write({})
 
 
 # ----------------------------------------------------------------------------
@@ -114,10 +101,7 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def delete(self, taskforce_uuid: str) -> None:
         """Handle DELETE."""
-        openapi_validator.write_and_validate(
-            self,
-            {},
-        )
+        self.write({})
 
 
 # ----------------------------------------------------------------------------
@@ -132,10 +116,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self) -> None:
         """Handle POST."""
-        openapi_validator.write_and_validate(
-            self,
-            {},
-        )
+        self.write({})
 
 
 # ----------------------------------------------------------------------------

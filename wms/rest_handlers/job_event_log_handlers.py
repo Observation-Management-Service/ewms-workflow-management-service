@@ -21,10 +21,7 @@ class JobEventLogHandler(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self, jel_fpath: str) -> None:
         """Handle POST."""
-        openapi_validator.write_and_validate(
-            self,
-            {},
-        )
+        self.write({})
 
 
 # ----------------------------------------------------------------------------

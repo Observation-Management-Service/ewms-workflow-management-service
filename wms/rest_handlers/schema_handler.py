@@ -22,8 +22,6 @@ class SchemaHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def get(self) -> None:
         """Handle GET."""
         # get the underlying dict (json)
-        openapi_validator.write_and_validate(
-            self,
-            # NOTE - if this doesn't work then use accessor.open ctx-mgr
+        self.write(  # NOTE - if this doesn't work then use accessor.open ctx-mgr
             config.REST_OPENAPI_SPEC.accessor.lookup,  # type: ignore[attr-defined]
         )

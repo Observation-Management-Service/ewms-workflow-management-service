@@ -6,7 +6,6 @@ import logging
 import openapi_core
 import requests
 import tornado
-from openapi_core.contrib.requests import RequestsOpenAPIRequest
 from tornado.web import RequestHandler
 
 LOGGER = logging.getLogger(__name__)
@@ -41,34 +40,12 @@ class OpenAPIValidator:
 
         return make_wrapper
 
-    def write_and_validate(
-        self,
-        reqhand: RequestHandler,
-        chunk: str | bytes | dict,
-    ) -> None:
-        """Validate the response and `write()`."""
-        try:
-            openapi_core.validate_response(
-                http_server_request_to_openapi_request(reqhand.request),
-                chunk,
-                self.spec,
-            )
-        except Exception as e:
-            LOGGER.exception(
-                f"Response is not valid with openapi"
-                f"{' (sending anyway)' if not self.testing else ''}"
-                f": {e}"
-            )
-            if self.testing:
-                raise
-        reqhand.write(chunk)
-
 
 def http_server_request_to_openapi_request(
     req: tornado.httputil.HTTPServerRequest,
-) -> RequestsOpenAPIRequest:
+) -> openapi_core.contrib.requests.RequestsOpenAPIRequest:  # type: ignore[name-defined]
     """Convert a `tornado.httputil.HTTPServerRequest` to openapi's type."""
-    return RequestsOpenAPIRequest(
+    return openapi_core.contrib.requests.RequestsOpenAPIRequest(  # type: ignore[attr-defined]
         requests.Request(
             method=req.method.lower() if req.method else "get",
             url=req.uri,
