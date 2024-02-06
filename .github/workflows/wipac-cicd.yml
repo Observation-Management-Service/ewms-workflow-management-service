@@ -144,20 +144,27 @@ jobs:
       - name: test (run rest server in background)
         run: |
           # this needs to be in the same step b/c shell exits when step is done
-          docker run --network='host' --rm -d --name rest \
+          docker run --network='host' --rm --name rest \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
             --env REST_HOST="${{ env.REST_HOST }}" \
             --env REST_PORT="${{ env.REST_PORT }}" \
             --env CI="true" \
-            ${{ env.CI_DOCKER_IMAGE_W_TAG }}
+            ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
           sleep 10
+
+          if [ ping -c 1 "${{ env.MONGODB_HOST }}:${{ env.MONGODB_PORT }}" ]; then
+            echo "rest server connected"
+          else
+            echo "ERROR: cannot reach rest server"
+            cat ./rest.out
+          fi
 
           pytest -vvv tests/integration/
       #
       - if: always()
         run: |
-          docker logs rest || true
+          docker logs rest || cat ./rest.out
 
 
   #############################################################################
