@@ -30,7 +30,7 @@ def validate_response(response: requests.Response) -> None:
 
         @property
         def mimetype(self) -> str:
-            return str(response.headers.get("Content-Type", ""))
+            return str(response.headers.get("Content-Type", "")).split(";")[0]
 
         @property
         def headers(self) -> dict:
