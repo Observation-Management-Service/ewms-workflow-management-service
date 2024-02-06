@@ -81,7 +81,6 @@
         "/schema/openapi": {
             "parameters": [],
             "get": {
-                "requestBody": {},
                 "responses": {
                     "200": {
                         "description": "the openapi schema",
