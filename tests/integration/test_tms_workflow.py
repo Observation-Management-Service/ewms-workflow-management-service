@@ -15,4 +15,3 @@ async def test_000(rc: RestClient) -> None:
     with open(Path(__file__).parent / "../../wms/schema/rest_openapi.json", "rb") as f:
         assert json.load(f) == resp
 
-    assert 0
