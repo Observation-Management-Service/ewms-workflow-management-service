@@ -153,7 +153,7 @@ jobs:
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
           sleep 10
 
-          if [ ping -c 1 "${{ env.MONGODB_HOST }}:${{ env.MONGODB_PORT }}" ]; then
+          if [[ $(ping -c 1 "http://${{ env.REST_HOST }}:${{ env.REST_PORT }}") ]]; then
             echo "rest server connected"
           else
             echo "ERROR: cannot reach rest server"
