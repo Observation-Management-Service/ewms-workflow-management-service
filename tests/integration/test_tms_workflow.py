@@ -17,12 +17,28 @@ def validate_response(response: requests.Response) -> None:
     """Validate using 'requests' types."""
 
     # duck typing magic
-    openapi_resp = openapi_core_requests.RequestsOpenAPIResponse(response)
-    setattr(openapi_resp, "headers", dict(openapi_resp.headers))
+    class _Response(openapi_core.protocols.Response):
+        """AKA 'openapi_core_requests.RequestsOpenAPIResponse' but correct."""
+
+        @property
+        def data(self) -> str:
+            return response.content.decode("utf-8")
+
+        @property
+        def status_code(self) -> int:
+            return int(response.status_code)
+
+        @property
+        def mimetype(self) -> str:
+            return str(response.headers.get("Content-Type", ""))
+
+        @property
+        def headers(self) -> dict:
+            return dict(response.headers)
 
     openapi_core.validate_response(
         openapi_core_requests.RequestsOpenAPIRequest(response.request),
-        openapi_resp,  # type: ignore[arg-type]
+        _Response(),
         _OPENAPI_SPEC,
     )
 
