@@ -18,7 +18,7 @@ def validate_response(response: requests.Response) -> None:
 
     # duck typing magic
     openapi_resp = openapi_core_requests.RequestsOpenAPIResponse(response)
-    openapi_resp.headers = dict(openapi_resp.headers)
+    setattr(openapi_resp, "headers", dict(openapi_resp.headers))
 
     openapi_core.validate_response(
         openapi_core_requests.RequestsOpenAPIRequest(response.request),
