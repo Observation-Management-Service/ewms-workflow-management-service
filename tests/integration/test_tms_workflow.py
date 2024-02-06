@@ -4,13 +4,24 @@
 import json
 from pathlib import Path
 
+import openapi_core
+import requests
+from openapi_core.contrib import requests as openapi_core_requests
 from rest_tools.client import RestClient
+
+_OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
+_OPENAPI_SPEC = openapi_core.Spec.from_file_path(str(_OPENAPI_JSON))
 
 
 async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
-    resp = await rc.request("GET", "/schema/openapi")
+    resp: requests.Response = requests.get(rc.address + "/schema/openapi")
     # TODO - use openapi to validate response client-side (not done server side)
     print(resp)
-    with open(Path(__file__).parent / "../../wms/schema/rest_openapi.json", "rb") as f:
+    with open(_OPENAPI_JSON, "rb") as f:
         assert json.load(f) == resp
+    openapi_core.validate_response(
+        openapi_core_requests.RequestsOpenAPIRequest(resp.request),
+        openapi_core_requests.RequestsOpenAPIResponse(resp),  # type: ignore[arg-type]
+        _OPENAPI_SPEC,
+    )
