@@ -12,6 +12,9 @@ LOGGER = logging.getLogger(__name__)
 openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC)
 
 
+# ----------------------------------------------------------------------------
+
+
 class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for adding a task directive (initiating a task)."""
 

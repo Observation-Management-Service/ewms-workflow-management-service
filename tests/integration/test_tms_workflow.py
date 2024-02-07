@@ -2,6 +2,7 @@
 
 
 import json
+import urllib
 from pathlib import Path
 from typing import Any
 
@@ -9,6 +10,12 @@ import openapi_core
 import requests
 from openapi_core.contrib import requests as openapi_core_requests
 from rest_tools.client import RestClient
+
+JOB_EVENT_LOG_FPATH = "./the_job_event_log_fpath"
+
+
+# ----------------------------------------------------------------------------
+
 
 _OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
 _OPENAPI_SPEC = openapi_core.Spec.from_file_path(str(_OPENAPI_JSON))
@@ -58,6 +65,9 @@ def request_and_validate(
     return out
 
 
+# ----------------------------------------------------------------------------
+
+
 async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
     resp = request_and_validate(rc, "GET", "/schema/openapi")
@@ -92,9 +102,184 @@ async def test_000(rc: RestClient) -> None:
     assert resp["task_directives"][0] == task_directive
 
     #
-    # TMS...
+    # TMS(es) starter(s)...
     #
+
+    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+        # get next to start
+        taskforce = request_and_validate(
+            rc,
+            "GET",
+            "/tms/taskforce/pending",
+            {"collector": collector, "schedd": schedd},
+        )
+        # check that it's not deleted
+        resp = request_and_validate(
+            rc,
+            "GET",
+            f"/tms/taskforce/{taskforce['taskforce_uuid']}",
+        )
+        assert not resp["is_deleted"]
+        # confirm it has startedr
+        resp = request_and_validate(
+            rc,
+            "POST",
+            f"/tms/taskforce/running/{taskforce['taskforce_uuid']}",
+            {"ewms_taskforce_attrs": 123},
+        )
 
     #
     # USER...
+    # check directive reflects startup (runtime-assembled list of taskforces)
     #
+
+    #
+    # TMS(es) watcher(s)...
+    # no jobs yet (waiting for condor)
+    #
+
+    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+        resp = request_and_validate(
+            rc,
+            "POST",
+            "/tms/taskforces/find",
+            {
+                "filter": {
+                    "collector": collector,
+                    "schedd": schedd,
+                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
+                },
+                "projection": ["taskforce_uuid", "cluster_id"],
+            },
+        )
+        resp = request_and_validate(
+            rc,
+            "POST",
+            "/tms/taskforces/report",
+            {"patch_body": 345},
+        )
+
+    #
+    # USER...
+    # check above
+    #
+
+    #
+    # TMS(es) watcher(s)...
+    # jobs in action!
+    #
+
+    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+        resp = request_and_validate(
+            rc,
+            "POST",
+            "/tms/taskforces/find",
+            {
+                "filter": {
+                    "collector": collector,
+                    "schedd": schedd,
+                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
+                },
+                "projection": ["taskforce_uuid", "cluster_id"],
+            },
+        )
+        resp = request_and_validate(
+            rc,
+            "POST",
+            "/tms/taskforces/report",
+            {"patch_body": 345},
+        )
+
+    #
+    # USER...
+    # check above
+    #
+
+    #
+    # TMS(es) watcher(s)...
+    # jobs done
+    #
+
+    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+        resp = request_and_validate(
+            rc,
+            "POST",
+            "/tms/taskforces/find",
+            {
+                "filter": {
+                    "collector": collector,
+                    "schedd": schedd,
+                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
+                },
+                "projection": ["taskforce_uuid", "cluster_id"],
+            },
+        )
+        resp = request_and_validate(
+            rc,
+            "POST",
+            "/tms/taskforces/report",
+            {"patch_body": 345},
+        )
+
+    #
+    # USER...
+    # check jobs done & result
+    #
+
+    #
+    # TMS(es) stopper(s)...
+    #
+
+    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+        # get next to stop
+        taskforce = request_and_validate(
+            rc,
+            "GET",
+            "/tms/taskforce/stop",
+            {"collector": collector, "schedd": schedd},
+        )
+        # confirm it has stopped
+        resp = request_and_validate(
+            rc,
+            "DELETE",
+            f"/tms/taskforce/stop/{taskforce['taskforce_uuid']}",
+        )
+
+    #
+    # USER...
+    # check above
+    #
+
+    #
+    # TMS(es) watcher(s)...
+    # jel done
+    #
+
+    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+        resp = request_and_validate(
+            rc,
+            "POST",
+            f"/tms/job-event-log/{urllib.parse.quote(JOB_EVENT_LOG_FPATH, safe='')}",
+            {
+                "collector": collector,
+                "schedd": schedd,
+                "finished": True,
+            },
+        )
+        # check deleted
+        resp = request_and_validate(
+            rc,
+            "POST",
+            "/tms/taskforces/find",
+            {
+                "filter": {
+                    "collector": collector,
+                    "schedd": schedd,
+                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
+                },
+                "projection": ["taskforce_uuid", "cluster_id"],
+            },
+        )
+
+
+# ----------------------------------------------------------------------------
