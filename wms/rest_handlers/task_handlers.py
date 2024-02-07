@@ -12,46 +12,52 @@ LOGGER = logging.getLogger(__name__)
 openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC)
 
 
-class TaskHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions for initiating a task."""
+class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions for adding a task directive (initiating a task)."""
 
-    ROUTE = r"/task$"
+    ROUTE = r"/task/directive$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self) -> None:
         """Handle POST."""
-        self.write({})
+        self.write({"foo": 1, "bar": 2, "task_id": "abcdef123456"})
 
 
 # ----------------------------------------------------------------------------
 
 
-class TaskIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for a task's directive."""
 
-    ROUTE = r"/task/(?P<task_id>\w+)$"
+    ROUTE = r"/task/directive/(?P<task_id>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self, task_id: str) -> None:
         """Handle GET."""
-        self.write({})
+        self.write({"foo": 1, "bar": 2, "task_id": "abcdef123456"})
 
 
 # ----------------------------------------------------------------------------
 
 
-class TasksFindHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for finding task directives."""
 
-    ROUTE = r"/tasks/find$"
+    ROUTE = r"/task/directives/find$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self) -> None:
         """Handle POST."""
-        self.write({})
+        self.write(
+            {
+                "tasks": [
+                    {"foo": 1, "bar": 2, "task_id": "abcdef123456"},
+                ]
+            }
+        )
 
 
 # ----------------------------------------------------------------------------

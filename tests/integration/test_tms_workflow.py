@@ -71,25 +71,25 @@ async def test_000(rc: RestClient) -> None:
     task_directive = request_and_validate(
         rc,
         "POST",
-        "/task",
+        "/task/directive",
         {"foo": 1, "bar": 2},
     )
 
     resp = request_and_validate(
         rc,
         "GET",
-        f"/task/{task_directive['task_id']}",
+        f"/task/directive/{task_directive['task_id']}",
     )
     assert resp == task_directive
 
     resp = request_and_validate(
         rc,
         "POST",
-        "/tasks/find",
+        "/task/directives/find",
         {"foo": 1, "bar": 2},
     )
-    assert len(resp) == 1
-    assert resp[0] == task_directive
+    assert len(resp["tasks"]) == 1
+    assert resp["tasks"][0] == task_directive
 
     #
     # TMS...
