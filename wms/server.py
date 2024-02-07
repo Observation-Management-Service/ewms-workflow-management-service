@@ -33,9 +33,9 @@ async def make(mongo_client: AsyncIOMotorClient) -> RestServer:  # type: ignore[
     for klass in [
         rest_handlers.base_handlers.MainHandler,
         #
-        rest_handlers.schema_handler.SchemaHandler,
+        rest_handlers.schema_handlers.SchemaHandler,
         #
-        rest_handlers.task_handler.TaskHandler,
+        rest_handlers.task_handlers.TaskHandler,
         #
         rest_handlers.job_event_log_handlers.JobEventLogHandler,
         #
