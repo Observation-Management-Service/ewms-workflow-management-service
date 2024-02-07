@@ -88,8 +88,8 @@ async def test_000(rc: RestClient) -> None:
         "/task/directives/find",
         {"foo": 1, "bar": 2},
     )
-    assert len(resp["tasks"]) == 1
-    assert resp["tasks"][0] == task_directive
+    assert len(resp["task_directives"]) == 1
+    assert resp["task_directives"][0] == task_directive
 
     #
     # TMS...

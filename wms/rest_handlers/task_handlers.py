@@ -53,7 +53,7 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         """Handle POST."""
         self.write(
             {
-                "tasks": [
+                "task_directives": [
                     {"foo": 1, "bar": 2, "task_id": "abcdef123456"},
                 ]
             }
