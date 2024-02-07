@@ -63,3 +63,38 @@ async def test_000(rc: RestClient) -> None:
     resp = request_and_validate(rc, "GET", "/schema/openapi")
     with open(_OPENAPI_JSON, "rb") as f:
         assert json.load(f) == resp
+
+    #
+    # USER...
+    #
+
+    task_directive = request_and_validate(
+        rc,
+        "POST",
+        "/task",
+        {"foo": 1, "bar": 2},
+    )
+
+    resp = request_and_validate(
+        rc,
+        "GET",
+        f"/task/{task_directive['task_id']}",
+    )
+    assert resp == task_directive
+
+    resp = request_and_validate(
+        rc,
+        "POST",
+        "/tasks/find",
+        {"foo": 1, "bar": 2},
+    )
+    assert len(resp) == 1
+    assert resp[0] == task_directive
+
+    #
+    # TMS...
+    #
+
+    #
+    # USER...
+    #

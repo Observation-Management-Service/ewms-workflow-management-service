@@ -15,7 +15,7 @@ openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC)
 # ----------------------------------------------------------------------------
 
 
-class TaskforceHandlerUUID(BaseWMSHandler):  # pylint: disable=W0223
+class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for a taskforce."""
 
     ROUTE = r"/tms/taskforce/(?P<taskforce_uuid>\w+)$"

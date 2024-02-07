@@ -25,3 +25,33 @@ class TaskHandler(BaseWMSHandler):  # pylint: disable=W0223
 
 
 # ----------------------------------------------------------------------------
+
+
+class TaskIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions for a task's directive."""
+
+    ROUTE = r"/task/(?P<task_id>\w+)$"
+
+    @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
+    async def get(self, task_id: str) -> None:
+        """Handle GET."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------
+
+
+class TasksFindHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions for finding task directives."""
+
+    ROUTE = r"/tasks/find$"
+
+    @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
+    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
+    async def post(self) -> None:
+        """Handle POST."""
+        self.write({})
+
+
+# ----------------------------------------------------------------------------
