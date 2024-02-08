@@ -32,6 +32,23 @@
                 "required": [
                     "task_id"
                 ]
+            },
+            "taskforce": {
+                "type": "object",
+                "properties": {
+                    "taskforce_uuid": {
+                        "type": "uuid"
+                    },
+                    "foo": {
+                        "type": "int"
+                    },
+                    "bar": {
+                        "type": "int"
+                    }
+                },
+                "required": [
+                    "taskforce_uuid"
+                ]
             }
         }
     },
@@ -44,7 +61,7 @@
                     "required": true,
                     "description": "the user identifier, as userId",
                     "schema": {
-                        "type": "string"
+                        "type": "uuid"
                     }
                 }
             ],
@@ -256,6 +273,33 @@
                                     "required": [
                                         "task_directives"
                                     ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tms/taskforce/{taskforce_uuid}": {
+            "parameters": [
+                {
+                    "name": "taskforce_uuid",
+                    "in": "path",
+                    "required": true,
+                    "description": "the taskforce object's uuid",
+                    "schema": {
+                        "type": "uuid"
+                    }
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "the matching taskforce object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/taskforce"
                                 }
                             }
                         }
