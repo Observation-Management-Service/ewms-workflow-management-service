@@ -13,6 +13,8 @@ from wms import server
 
 LOGGER = logging.getLogger(__name__)
 
+logging.getLogger("parse").setLevel(logging.INFO)
+
 
 _OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
 _OPENAPI_SPEC = openapi_core.Spec.from_file_path(str(_OPENAPI_JSON))
@@ -28,7 +30,7 @@ def test_census_routes() -> None:
             r"{\1}",  # replace w/ braces: {task_id}
             getattr(handler, "ROUTE"),
         ).rstrip("$")
-        LOGGER.info(f"Checking route: {handler} ({route})")
+        LOGGER.info(f"Checking route: {route}")
 
         implemented_rest_methods = [
             name
