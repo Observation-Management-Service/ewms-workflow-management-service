@@ -23,7 +23,13 @@ def test_census_routes() -> None:
     missing: list[tuple[str, str]] = []
 
     for handler in server.HANDLERS:
-        LOGGER.info(f"Checking route: {handler}")
+        route = re.sub(
+            r"\(\?P<([^>]+)>\\w\+\)",  # match named groups: (?P<task_id>\w+)
+            r"{\1}",  # replace w/ braces: {task_id}
+            getattr(handler, "ROUTE"),
+        ).rstrip("$")
+        LOGGER.info(f"Checking route: {handler} ({route})")
+
         implemented_rest_methods = [
             name
             # vars() only gets attrs defined explicitly by child class
@@ -33,12 +39,6 @@ def test_census_routes() -> None:
         ]
         for method in implemented_rest_methods:
             LOGGER.info(f"-> method: {method}")
-
-            route = re.sub(
-                r"\(\?P<([^>]+)>\\w\+\)",  # match named groups: (?P<task_id>\w+)
-                r"{\1}",  # replace w/ braces: {task_id}
-                getattr(handler, "ROUTE"),
-            ).rstrip("$")
 
             try:  # except error so we can see what all is missing w/o multiple test runs
                 APICallPathFinder(_OPENAPI_SPEC, base_url=None).find(
