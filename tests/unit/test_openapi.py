@@ -33,7 +33,7 @@ def test_census_routes() -> None:
         for method in implemented_rest_methods:
             LOGGER.info(f"-> method: {method}")
             route = getattr(handler, "ROUTE")
-            try:
+            try:  # except error so we can see what all is missing w/o multiple test runs
                 APICallPathFinder(_OPENAPI_SPEC, base_url=None).find(
                     method,
                     route,
@@ -41,4 +41,7 @@ def test_census_routes() -> None:
             except openapi_core.templating.paths.exceptions.PathNotFound:
                 missing.append((route, method))
 
+    # log at end so these are easy to find
+    for missed in missing:
+        LOGGER.critical(f"not found in openapi schema: {missed}")
     assert not missing
