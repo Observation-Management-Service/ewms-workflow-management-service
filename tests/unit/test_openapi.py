@@ -30,7 +30,9 @@ def test_census_routes() -> None:
         ]
         for method in implemented_rest_methods:
             LOGGER.info(f"-> method: {method}")
-            APICallPathFinder(_OPENAPI_SPEC, base_url=None).find(
+            res = APICallPathFinder(_OPENAPI_SPEC, base_url=None).find(
                 method,
                 getattr(handler, "ROUTE"),
             )
+            LOGGER.debug(res)
+            assert res
