@@ -49,6 +49,23 @@
                 "required": [
                     "taskforce_uuid"
                 ]
+            },
+            "condor_location": {
+                "type": "object",
+                "properties": {
+                    "collector": {
+                        "description": "name of the condor collector",
+                        "type": "string"
+                    },
+                    "schedd": {
+                        "description": "name of the condor schedd",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "collector",
+                    "schedd"
+                ]
             }
         }
     },
@@ -148,13 +165,8 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "collector": {
-                                        "description": "name of the condor collector",
-                                        "type": "string"
-                                    },
-                                    "schedd": {
-                                        "description": "name of the condor schedd",
-                                        "type": "string"
+                                    "condor_location": {
+                                        "$ref": "#/components/schemas/condor_location"
                                     },
                                     "finished": {
                                         "description": "whether this job event log is finished",
@@ -162,8 +174,7 @@
                                     }
                                 },
                                 "required": [
-                                    "status",
-                                    "schedd",
+                                    "condor_location",
                                     "finished"
                                 ]
                             }
@@ -329,6 +340,32 @@
                                     "required": [
                                         "taskforces"
                                     ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tms/taskforce/pending": {
+            "parameters": [],
+            "get": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/condor_location"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "the next pending taskforce object for the condor location",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/taskforce"
                                 }
                             }
                         }
