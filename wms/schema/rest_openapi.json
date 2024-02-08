@@ -159,6 +159,19 @@
                     }
                 }
             }
+        },
+        "/task/directive": {
+            "parameters": [],
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "an empty response",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
         }
     }
 }
