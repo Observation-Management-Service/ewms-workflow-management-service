@@ -12,6 +12,7 @@ from openapi_core.contrib import requests as openapi_core_requests
 from rest_tools.client import RestClient
 
 JOB_EVENT_LOG_FPATH = "./the_job_event_log_fpath"
+CONDOR_LOCATIONS = [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]
 
 
 # ----------------------------------------------------------------------------
@@ -105,7 +106,7 @@ async def test_000(rc: RestClient) -> None:
     # TMS(es) starter(s)...
     #
 
-    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+    for collector, schedd in CONDOR_LOCATIONS:
         # get next to start
         taskforce = request_and_validate(
             rc,
@@ -120,7 +121,7 @@ async def test_000(rc: RestClient) -> None:
             f"/tms/taskforce/{taskforce['taskforce_uuid']}",
         )
         assert not resp["is_deleted"]
-        # confirm it has startedr
+        # confirm it has started
         resp = request_and_validate(
             rc,
             "POST",
@@ -138,7 +139,7 @@ async def test_000(rc: RestClient) -> None:
     # no jobs yet (waiting for condor)
     #
 
-    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+    for collector, schedd in CONDOR_LOCATIONS:
         resp = request_and_validate(
             rc,
             "POST",
@@ -169,7 +170,7 @@ async def test_000(rc: RestClient) -> None:
     # jobs in action!
     #
 
-    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+    for collector, schedd in CONDOR_LOCATIONS:
         resp = request_and_validate(
             rc,
             "POST",
@@ -200,7 +201,7 @@ async def test_000(rc: RestClient) -> None:
     # jobs done
     #
 
-    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+    for collector, schedd in CONDOR_LOCATIONS:
         resp = request_and_validate(
             rc,
             "POST",
@@ -230,7 +231,7 @@ async def test_000(rc: RestClient) -> None:
     # TMS(es) stopper(s)...
     #
 
-    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+    for collector, schedd in CONDOR_LOCATIONS:
         # get next to stop
         taskforce = request_and_validate(
             rc,
@@ -255,7 +256,7 @@ async def test_000(rc: RestClient) -> None:
     # jel done
     #
 
-    for collector, schedd in [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]:
+    for collector, schedd in CONDOR_LOCATIONS:
         resp = request_and_validate(
             rc,
             "POST",
