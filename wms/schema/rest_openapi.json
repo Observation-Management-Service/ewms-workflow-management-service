@@ -253,7 +253,7 @@
         },
         "/task/directives/find": {
             "parameters": [],
-            "get": {
+            "post": {
                 "responses": {
                     "200": {
                         "description": "TODO",
@@ -300,6 +300,35 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/taskforce"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tms/taskforces/find": {
+            "parameters": [],
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "TODO",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforces": {
+                                            "description": "a list of taskforce objects",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/taskforce"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "taskforces"
+                                    ]
                                 }
                             }
                         }
