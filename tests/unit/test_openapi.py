@@ -3,6 +3,7 @@
 
 import inspect
 import logging
+import re
 from pathlib import Path
 
 import openapi_core
@@ -32,7 +33,13 @@ def test_census_routes() -> None:
         ]
         for method in implemented_rest_methods:
             LOGGER.info(f"-> method: {method}")
-            route = getattr(handler, "ROUTE")
+
+            route = re.sub(
+                r"\(\?P<([^>]+)>\\w\+\)",  # match named groups: (?P<task_id>\w+)
+                r"{\1}",  # replace w/ braces: {task_id}
+                getattr(handler, "ROUTE"),
+            ).rstrip("$")
+
             try:  # except error so we can see what all is missing w/o multiple test runs
                 APICallPathFinder(_OPENAPI_SPEC, base_url=None).find(
                     method,
