@@ -361,7 +361,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "the next pending taskforce object for the condor location",
+                        "description": "the next taskforce to start at the condor location",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -389,6 +389,32 @@
                 "responses": {
                     "200": {
                         "description": "the matching taskforce object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/taskforce"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tms/taskforce/stop": {
+            "parameters": [],
+            "get": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/condor_location"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "the next taskforce to stop at the condor location",
                         "content": {
                             "application/json": {
                                 "schema": {
