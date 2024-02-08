@@ -14,6 +14,27 @@
         },
         "version": "0.0.0"
     },
+    "components": {
+        "schemas": {
+            "task_directive": {
+                "type": "object",
+                "properties": {
+                    "task_id": {
+                        "type": "uuid"
+                    },
+                    "foo": {
+                        "type": "int"
+                    },
+                    "bar": {
+                        "type": "int"
+                    }
+                },
+                "required": [
+                    "task_id"
+                ]
+            }
+        }
+    },
     "paths": {
         "/example/{id}": {
             "parameters": [
@@ -163,11 +184,24 @@
         "/task/directive": {
             "parameters": [],
             "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/task_directive"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "TODO",
+                        "description": "the matching task directive",
                         "content": {
-                            "application/json": {}
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/task_directive"
+                                }
+                            }
                         }
                     }
                 }
@@ -188,9 +222,42 @@
             "get": {
                 "responses": {
                     "200": {
+                        "description": "the matching task directive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/task_directive"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/task/directives/find": {
+            "parameters": [],
+            "get": {
+                "responses": {
+                    "200": {
                         "description": "TODO",
                         "content": {
-                            "application/json": {}
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "task_directives": {
+                                            "description": "a list of task directive objects",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/task_directive"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "task_directives"
+                                    ]
+                                }
+                            }
                         }
                     }
                 }
