@@ -47,6 +47,9 @@ def test_census_routes() -> None:
                 )
             except openapi_core.templating.paths.exceptions.PathNotFound:
                 missing.append((route, method))
+                LOGGER.info("----> not found")
+            else:
+                LOGGER.info("----> found")
 
     # log at end so these are easy to find
     for missed in missing:
