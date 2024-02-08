@@ -17,7 +17,7 @@ _OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
 _OPENAPI_SPEC = openapi_core.Spec.from_file_path(str(_OPENAPI_JSON))
 
 
-def census_check_routes() -> None:
+def test_census_routes() -> None:
     """Check that all the routes have openapi schemas."""
     for handler in server.HANDLERS:
         LOGGER.info(f"Checking route: {handler}")
