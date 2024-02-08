@@ -167,6 +167,25 @@ jobs:
           docker logs rest || cat ./rest.out
 
 
+  unit-tests:
+    needs: [py-versions]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.py3 }}
+      - run: |
+          pip install .[tests]
+      - name: test
+        run: |
+          pytest -vvv tests/unit/
+
+
   #############################################################################
   # GITHUB RELEASE
   #############################################################################
@@ -175,7 +194,7 @@ jobs:
   release:
     # only run on main/master/default
     if: format('refs/heads/{0}', github.event.repository.default_branch) == github.ref
-    needs: [flake8, mypy, py-setup, py-versions, test-build-docker, integration-tests]
+    needs: [flake8, mypy, py-setup, py-versions, test-build-docker, integration-tests, unit-tests]
     runs-on: ubuntu-latest
     concurrency: release
     steps:

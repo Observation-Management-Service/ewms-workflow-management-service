@@ -12,6 +12,26 @@ from .config import ENV
 
 LOGGER = logging.getLogger(__name__)
 
+HANDLERS = [
+    rest_handlers.base_handlers.MainHandler,
+    #
+    rest_handlers.schema_handlers.SchemaHandler,
+    #
+    rest_handlers.task_handlers.TaskDirectiveHandler,
+    rest_handlers.task_handlers.TaskDirectiveIDHandler,
+    rest_handlers.task_handlers.TaskDirectivesFindHandler,
+    #
+    rest_handlers.job_event_log_handlers.JobEventLogHandler,
+    #
+    rest_handlers.taskforce_handlers.TaskforceUUIDHandler,
+    rest_handlers.taskforce_handlers.TaskforcesFindHandler,
+    rest_handlers.taskforce_handlers.TaskforcePendingHandler,
+    rest_handlers.taskforce_handlers.TaskforceRunningUUIDHandler,
+    rest_handlers.taskforce_handlers.TaskforceStopHandler,
+    rest_handlers.taskforce_handlers.TaskforceStopUUIDHandler,
+    rest_handlers.taskforce_handlers.TaskforcesReportHandler,
+]
+
 
 async def make(mongo_client: AsyncIOMotorClient) -> RestServer:  # type: ignore[valid-type]
     """Make a WMS REST service (does not start up automatically)."""
@@ -30,25 +50,7 @@ async def make(mongo_client: AsyncIOMotorClient) -> RestServer:  # type: ignore[
     # Configure REST Routes
     rs = RestServer(debug=ENV.CI)
 
-    for klass in [
-        rest_handlers.base_handlers.MainHandler,
-        #
-        rest_handlers.schema_handlers.SchemaHandler,
-        #
-        rest_handlers.task_handlers.TaskDirectiveHandler,
-        rest_handlers.task_handlers.TaskDirectiveIDHandler,
-        rest_handlers.task_handlers.TaskDirectivesFindHandler,
-        #
-        rest_handlers.job_event_log_handlers.JobEventLogHandler,
-        #
-        rest_handlers.taskforce_handlers.TaskforceUUIDHandler,
-        rest_handlers.taskforce_handlers.TaskforcesFindHandler,
-        rest_handlers.taskforce_handlers.TaskforcePendingHandler,
-        rest_handlers.taskforce_handlers.TaskforceRunningUUIDHandler,
-        rest_handlers.taskforce_handlers.TaskforceStopHandler,
-        rest_handlers.taskforce_handlers.TaskforceStopUUIDHandler,
-        rest_handlers.taskforce_handlers.TaskforcesReportHandler,
-    ]:
+    for klass in HANDLERS:
         # register route handler
         route = getattr(klass, "ROUTE")  # -> AttributeError
         rs.add_route(route, klass, args)
