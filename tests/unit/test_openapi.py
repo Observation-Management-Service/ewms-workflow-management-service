@@ -19,6 +19,8 @@ _OPENAPI_SPEC = openapi_core.Spec.from_file_path(str(_OPENAPI_JSON))
 
 def test_census_routes() -> None:
     """Check that all the routes have openapi schemas."""
+    missing: list[tuple[str, str]] = []
+
     for handler in server.HANDLERS:
         LOGGER.info(f"Checking route: {handler}")
         implemented_rest_methods = [
@@ -30,9 +32,13 @@ def test_census_routes() -> None:
         ]
         for method in implemented_rest_methods:
             LOGGER.info(f"-> method: {method}")
-            res = APICallPathFinder(_OPENAPI_SPEC, base_url=None).find(
-                method,
-                getattr(handler, "ROUTE"),
-            )
-            LOGGER.debug(res)
-            assert res
+            route = getattr(handler, "ROUTE")
+            try:
+                APICallPathFinder(_OPENAPI_SPEC, base_url=None).find(
+                    method,
+                    route,
+                )
+            except openapi_core.templating.paths.exceptions.PathNotFound:
+                missing.append((route, method))
+
+    assert not missing
