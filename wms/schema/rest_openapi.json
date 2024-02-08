@@ -78,6 +78,19 @@
                 }
             }
         },
+        "/": {
+            "parameters": [],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "an empty response",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/schema/openapi": {
             "parameters": [],
             "get": {
