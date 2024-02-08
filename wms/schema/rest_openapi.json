@@ -452,6 +452,78 @@
                     }
                 }
             }
+        },
+        "/tms/taskforces/report": {
+            "parameters": [],
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "top_task_errors_by_taskforce": {
+                                        "description": "the top errors (paired with a count) for each indicated taskforce",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                    "type": "int"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "compound_statuses_by_taskforce": {
+                                        "description": "the compound statuses (status -> state -> count) for the indicated taskforces",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                    "type": "object",
+                                                    "additionalProperties": {
+                                                        "type": "int"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "taskforces"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "the uuids of the updated taskforce objects",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "uuids": {
+                                            "description": "the uuids of the updated taskforce objects",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "uuid"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "uuids"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
