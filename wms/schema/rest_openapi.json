@@ -91,6 +91,57 @@
                 }
             }
         },
+        "/tms/job-event-log/{jel_fpath}": {
+            "parameters": [
+                {
+                    "name": "jel_fpath",
+                    "in": "path",
+                    "required": true,
+                    "description": "the condor job event log filepath on the AP (urllib.parse.quote'd)",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "collector": {
+                                        "description": "name of the condor collector",
+                                        "type": "string"
+                                    },
+                                    "schedd": {
+                                        "description": "name of the condor schedd",
+                                        "type": "string"
+                                    },
+                                    "finished": {
+                                        "description": "whether this job event log is finished",
+                                        "type": "bool"
+                                    }
+                                },
+                                "required": [
+                                    "status",
+                                    "schedd",
+                                    "finished"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "an empty response",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/schema/openapi": {
             "parameters": [],
             "get": {
