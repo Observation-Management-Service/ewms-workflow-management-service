@@ -21,14 +21,12 @@ def test_census_routes() -> None:
     """Check that all the routes have openapi schemas."""
     for handler in server.HANDLERS:
         LOGGER.info(f"Checking route: {handler}")
-        LOGGER.debug(vars(handler))
-        LOGGER.debug(tornado.web.RequestHandler.SUPPORTED_METHODS)
         implemented_rest_methods = [
             name
             # vars() only gets attrs defined explicitly by child class
             for name, attr in vars(handler).items()
             if inspect.isfunction(attr)
-            and name in tornado.web.RequestHandler.SUPPORTED_METHODS
+            and name.upper() in tornado.web.RequestHandler.SUPPORTED_METHODS
         ]
         for method in implemented_rest_methods:
             LOGGER.info(f"-> method: {method}")
