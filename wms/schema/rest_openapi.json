@@ -134,7 +134,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "an empty response",
+                        "description": "TODO",
                         "content": {
                             "application/json": {}
                         }
@@ -165,7 +165,30 @@
             "post": {
                 "responses": {
                     "200": {
-                        "description": "an empty response",
+                        "description": "TODO",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/task/directive/{task_id}": {
+            "parameters": [
+                {
+                    "name": "task_id",
+                    "in": "path",
+                    "required": true,
+                    "description": "the id of the task directive",
+                    "schema": {
+                        "type": "uuid"
+                    }
+                }
+            ],
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "TODO",
                         "content": {
                             "application/json": {}
                         }
