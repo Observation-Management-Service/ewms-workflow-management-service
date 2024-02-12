@@ -23,10 +23,10 @@
                         "type": "uuid"
                     },
                     "foo": {
-                        "type": "int"
+                        "type": "integer"
                     },
                     "bar": {
-                        "type": "int"
+                        "type": "integer"
                     }
                 },
                 "required": [
@@ -40,10 +40,10 @@
                         "type": "uuid"
                     },
                     "foo": {
-                        "type": "int"
+                        "type": "integer"
                     },
                     "bar": {
-                        "type": "int"
+                        "type": "integer"
                     }
                 },
                 "required": [
@@ -470,7 +470,7 @@
                                             "additionalProperties": {
                                                 "type": "object",
                                                 "additionalProperties": {
-                                                    "type": "int"
+                                                    "type": "integer"
                                                 }
                                             }
                                         }
@@ -485,7 +485,7 @@
                                                 "additionalProperties": {
                                                     "type": "object",
                                                     "additionalProperties": {
-                                                        "type": "int"
+                                                        "type": "integer"
                                                     }
                                                 }
                                             }
