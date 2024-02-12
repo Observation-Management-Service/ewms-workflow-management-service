@@ -564,15 +564,17 @@
         "/tms/taskforce/pending": {
             "parameters": [],
             "get": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/condor_location"
-                            }
+                "parameters": [
+                    {
+                        "name": "condor_location",
+                        "in": "query",
+                        "required": true,
+                        "description": "the condor location of the requestor",
+                        "schema": {
+                            "$ref": "#/components/schemas/condor_location"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
                         "description": "the next taskforce to start at the condor location",
@@ -665,15 +667,17 @@
         "/tms/taskforce/stop": {
             "parameters": [],
             "get": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/condor_location"
-                            }
+                "parameters": [
+                    {
+                        "name": "condor_location",
+                        "in": "query",
+                        "required": true,
+                        "description": "the condor location of the requestor",
+                        "schema": {
+                            "$ref": "#/components/schemas/condor_location"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
                         "description": "the next taskforce to stop at the condor location",

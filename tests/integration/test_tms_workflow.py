@@ -117,7 +117,7 @@ async def test_000(rc: RestClient) -> None:
             rc,
             "GET",
             "/tms/taskforce/pending",
-            {"collector": collector, "schedd": schedd},
+            {"condor_location": {"collector": collector, "schedd": schedd}},
         )
         # check that it's not deleted
         resp = request_and_validate(
@@ -242,7 +242,7 @@ async def test_000(rc: RestClient) -> None:
             rc,
             "GET",
             "/tms/taskforce/stop",
-            {"collector": collector, "schedd": schedd},
+            {"condor_location": {"collector": collector, "schedd": schedd}},
         )
         # confirm it has stopped
         resp = request_and_validate(
