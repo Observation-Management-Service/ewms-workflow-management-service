@@ -10,6 +10,7 @@ env:
   MONGODB_PORT: 27017
   REST_HOST: localhost  # the server should connect to 0.0.0.0
   REST_PORT: 8080
+  OPENAPI_FILE: "wms/schema/rest_openapi.json"
 
 
 jobs:
@@ -121,13 +122,13 @@ jobs:
           git config user.email github-actions@github.com
       - run: |
           pip3 install tornado
-      - name: auto-generate additions for 'rest_openapi.json'
+      - name: auto-generate additions for ${{ env.OPENAPI_FILE }}
         run: |
           python -c '
-          import json, tornado, copy
+          import json, tornado, copy, os
 
-          FILE = "wms/schema/rest_openapi.json"
           METHODS = [m.lower() for m in tornado.web.RequestHandler.SUPPORTED_METHODS]
+          FILE = os.environ["OPENAPI_FILE"]
 
           NEW_400 = {
               "description": "invalid request arguments",
@@ -159,8 +160,8 @@ jobs:
           '
       - name: git add, commit, push
         run: |
-          git add . || true
-          git commit -m "<ci> auto-add to 'rest_openapi.json'" || true
+          git add ${{ env.OPENAPI_FILE }} || true
+          git commit -m "<ci> auto-add to '${{ env.OPENAPI_FILE }}'" || true
           (git push && echo "changes pushed") || echo "no changes needed"
 
 
