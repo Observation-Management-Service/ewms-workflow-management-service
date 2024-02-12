@@ -40,7 +40,8 @@ class OpenAPIValidator:
                     ):
                         LOGGER.error(f"-> {e.__context__}")
                         reason = "; ".join(  # to client
-                            str(x).replace("\n", "")  # newlines not http allowed
+                            # vebose details after newline
+                            str(x).split("\n", maxsplit=1)[0]
                             for x in e.__context__.schema_errors
                         )
                         raise web.HTTPError(
