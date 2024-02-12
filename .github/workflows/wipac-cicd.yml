@@ -134,10 +134,9 @@ jobs:
               spec = json.load(f)
           for path in copy.deepcopy(spec)["paths"]:
               for method in METHODS:
-                  print(f"{path} -- {method}")
                   if method not in spec["paths"][path]:
-                      print(f"   -> skip (no method)")
                       continue
+                  print(f"{path} -- {method}")
                   print(f"   -> overriding / adding 400 response")
                   spec["paths"][path][method]["responses"]["400"] = {
                       "description": "invalid request arguments",
