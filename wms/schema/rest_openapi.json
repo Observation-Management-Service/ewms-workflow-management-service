@@ -207,16 +207,6 @@
                         "content": {
                             "application/json": {}
                         }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -232,16 +222,6 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {}
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
                                 }
                             }
                         }
@@ -268,16 +248,6 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/task_directive"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
                                 }
                             }
                         }
@@ -308,16 +278,6 @@
                                 }
                             }
                         }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -344,16 +304,6 @@
                                     "required": [
                                         "task_directives"
                                     ]
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
                                 }
                             }
                         }
@@ -493,16 +443,6 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/taskforce"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
                                 }
                             }
                         }
