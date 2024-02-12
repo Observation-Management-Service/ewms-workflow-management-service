@@ -129,6 +129,17 @@ jobs:
           FILE = "wms/schema/rest_openapi.json"
           METHODS = [m.lower() for m in tornado.web.RequestHandler.SUPPORTED_METHODS]
 
+          NEW_400 = {
+              "description": "invalid request arguments",
+              "content": {
+                  "text/plain": {
+                      "schema": {
+                          "type": "string"
+                      }
+                  }
+              }
+          }
+
           # find 'responses' keys, and override/add 400
           with open(FILE, "rb") as f:
               spec = json.load(f)
@@ -138,21 +149,12 @@ jobs:
                       continue
                   print(f"{path} -- {method}")
                   print(f"   -> overriding / adding 400 response")
-                  spec["paths"][path][method]["responses"]["400"] = {
-                      "description": "invalid request arguments",
-                      "content": {
-                          "text/plain": {
-                              "schema": {
-                                  "type": "string"
-                              }
-                          }
-                      }
-                  }
+                  spec["paths"][path][method]["responses"]["400"] = NEW_400
 
           # format neatly
           with open(FILE, "w") as f:
               json.dump(spec, f, indent=4)
-          with open(FILE, "a") as f:
+          with open(FILE, "a") as f:  # json.dump remove trailing newline
               f.write("\n")
           '
       - name: git add, commit, push
