@@ -27,6 +27,8 @@
             },
             "CondorCollector": {
                 "name": "collector",
+                "in": "query",
+                "required": true,
                 "description": "name of the condor collector",
                 "schema": {
                     "type": "string"
@@ -34,6 +36,8 @@
             },
             "CondorSchedd": {
                 "name": "schedd",
+                "in": "query",
+                "required": true,
                 "description": "name of the condor schedd",
                 "schema": {
                     "type": "string"
