@@ -2,6 +2,7 @@
 
 
 import json
+import logging
 import urllib
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,9 @@ import openapi_core
 import requests
 from openapi_core.contrib import requests as openapi_core_requests
 from rest_tools.client import RestClient
+
+LOGGER = logging.getLogger(__name__)
+
 
 JOB_EVENT_LOG_FPATH = "./the_job_event_log_fpath"
 CONDOR_LOCATIONS = [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]
@@ -62,6 +66,7 @@ def request_and_validate(
     )
 
     out = rc._decode(response.content)
+    response.raise_for_status()
     print(out)
     return out
 
