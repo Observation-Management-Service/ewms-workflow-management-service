@@ -133,9 +133,20 @@ jobs:
           NEW_400 = {
               "description": "invalid request arguments",
               "content": {
-                  "text/plain": {
+                  "application/json": {
                       "schema": {
-                          "type": "string"
+                          "type": "object",
+                          "properties": {
+                              "code": {
+                                  "description": "http error code",
+                                  "type": "integer"
+                              },
+                              "error": {
+                                  "description": "http error reason",
+                                  "type": "string"
+                              }
+                          },
+                          "required": ["code", "error"],
                       }
                   }
               }
