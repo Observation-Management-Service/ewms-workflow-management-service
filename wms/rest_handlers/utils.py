@@ -43,7 +43,8 @@ class OpenAPIValidator:
                             status_code=400,
                             log_message=str(e.__context__),  # to stderr
                             reason="; ".join(  # to client
-                                str(x) for x in e.__context__.schema_errors
+                                str(x).replace("\n", "")  # newlines not http allowed
+                                for x in e.__context__.schema_errors
                             ),
                         )
                     else:
