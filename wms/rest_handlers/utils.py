@@ -39,13 +39,14 @@ class OpenAPIValidator:
                         e.__context__, InvalidSchemaValue
                     ):
                         LOGGER.error(f"-> {e.__context__}")
+                        reason = "; ".join(  # to client
+                            str(x).replace("\n", "")  # newlines not http allowed
+                            for x in e.__context__.schema_errors
+                        )
                         raise web.HTTPError(
                             status_code=400,
-                            log_message=str(e.__context__),  # to stderr
-                            reason="; ".join(  # to client
-                                str(x).replace("\n", "")  # newlines not http allowed
-                                for x in e.__context__.schema_errors
-                            ),
+                            log_message=reason,  # to stderr
+                            reason=reason,  # to client
                         )
                     else:
                         raise web.HTTPError(
