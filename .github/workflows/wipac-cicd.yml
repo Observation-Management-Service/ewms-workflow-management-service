@@ -173,7 +173,7 @@ jobs:
         run: |
           git add ${{ env.OPENAPI_FILE }} || true
           git commit -m "<ci> auto-add to '${{ env.OPENAPI_FILE }}'" || true
-          (git push && echo "changes pushed") || echo "no changes needed"
+          git push || true
 
 
   ############################################################################
