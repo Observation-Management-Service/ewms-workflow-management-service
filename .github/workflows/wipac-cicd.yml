@@ -149,6 +149,8 @@ jobs:
           # format neatly
           with open("wms/schema/rest_openapi.json","w") as f:
               json.dump(spec, f, indent=4)
+          with open("wms/schema/rest_openapi.json","a") as f:
+              write(f, "\n")
           '
       - name: git add, commit, push
         run: |
