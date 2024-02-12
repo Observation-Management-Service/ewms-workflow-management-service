@@ -132,6 +132,8 @@ jobs:
               spec = json.load(f)
           for path in copy.deepcopy(spec)["paths"]:
               for method in METHODS:
+                  if method not in spec["paths"]:
+                      continue
                   if "400" not in spec["paths"][method]["responses"]:
                       spec["paths"][method]["responses"]["400"] = {
                           "description": "invalid request arguments",
