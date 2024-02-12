@@ -132,9 +132,12 @@ jobs:
               spec = json.load(f)
           for path in copy.deepcopy(spec)["paths"]:
               for method in METHODS:
+                  print(f"{path} -- {method}")
                   if method not in spec["paths"]:
+                      print(f" -> skipping (no method)")
                       continue
                   if "400" not in spec["paths"][method]["responses"]:
+                      print(f" -> adding 400")
                       spec["paths"][method]["responses"]["400"] = {
                           "description": "invalid request arguments",
                           "content": {
@@ -145,6 +148,8 @@ jobs:
                               }
                           }
                       }
+                  else:
+                      print(f" -> already has 400")
 
           # format neatly
           with open("wms/schema/rest_openapi.json","w") as f:
