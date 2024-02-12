@@ -7,7 +7,7 @@ import openapi_core
 import requests
 import tornado
 from openapi_core.contrib import requests as openapi_core_requests
-from tornado.web import RequestHandler
+from tornado import web
 
 LOGGER = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ class OpenAPIValidator:
         """Validate request obj against the given OpenAPI spec."""
 
         def make_wrapper(method):  # type: ignore[no-untyped-def]
-            async def wrapper(reqhand: RequestHandler, *args, **kwargs):  # type: ignore[no-untyped-def]
+            async def wrapper(reqhand: web.RequestHandler, *args, **kwargs):  # type: ignore[no-untyped-def]
                 LOGGER.info("validating with openapi spec")
                 # NOTE - don't change data (unmarshal) b/c we are downstream of data separation
                 try:
@@ -33,7 +33,7 @@ class OpenAPIValidator:
                     )
                 except Exception as e:
                     LOGGER.exception(f"Invalid request: {e}")
-                    raise  # TODO - raise client-bound exception
+                    raise web.HTTPError(status_code=400, log_message=str(e))
                 return await method(reqhand, *args, **kwargs)
 
             return wrapper
