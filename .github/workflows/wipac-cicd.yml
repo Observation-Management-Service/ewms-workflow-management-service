@@ -147,7 +147,7 @@ jobs:
                       }
 
           # format neatly
-          with open("wms/schema/rest_openapi.json","wb") as f:
+          with open("wms/schema/rest_openapi.json","w") as f:
               json.dump(spec, f, indent=4)
           '
       - name: git add, commit, push
