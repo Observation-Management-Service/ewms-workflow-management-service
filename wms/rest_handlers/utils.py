@@ -42,7 +42,9 @@ class OpenAPIValidator:
                         raise web.HTTPError(
                             status_code=400,
                             log_message=str(e.__context__),  # to stderr
-                            reason=str(e.__context__),  # to client
+                            reason="; ".join(  # to client
+                                str(x) for x in e.__context__.schema_errors
+                            ),
                         )
                     else:
                         raise web.HTTPError(
