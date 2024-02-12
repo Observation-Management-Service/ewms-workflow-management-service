@@ -24,6 +24,20 @@
                 "schema": {
                     "type": "string"
                 }
+            },
+            "CondorCollector": {
+                "name": "collector",
+                "description": "name of the condor collector",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "CondorSchedd": {
+                "name": "schedd",
+                "description": "name of the condor schedd",
+                "schema": {
+                    "type": "string"
+                }
             }
         },
         "schemas": {
@@ -57,23 +71,6 @@
                 },
                 "required": [
                     "taskforce_uuid"
-                ]
-            },
-            "condor_location": {
-                "type": "object",
-                "properties": {
-                    "collector": {
-                        "description": "name of the condor collector",
-                        "type": "string"
-                    },
-                    "schedd": {
-                        "description": "name of the condor schedd",
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "collector",
-                    "schedd"
                 ]
             }
         }
@@ -222,8 +219,13 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "condor_location": {
-                                        "$ref": "#/components/schemas/condor_location"
+                                    "collector": {
+                                        "description": "name of the condor collector",
+                                        "type": "string"
+                                    },
+                                    "schedd": {
+                                        "description": "name of the condor schedd",
+                                        "type": "string"
                                     },
                                     "finished": {
                                         "description": "whether this job event log is finished",
@@ -231,7 +233,8 @@
                                     }
                                 },
                                 "required": [
-                                    "condor_location",
+                                    "collector",
+                                    "schedd",
                                     "finished"
                                 ]
                             }
@@ -571,13 +574,10 @@
             "get": {
                 "parameters": [
                     {
-                        "name": "condor_location",
-                        "in": "query",
-                        "required": true,
-                        "description": "the condor location of the requestor",
-                        "schema": {
-                            "$ref": "#/components/schemas/condor_location"
-                        }
+                        "$ref": "#/components/parameters/CondorCollector"
+                    },
+                    {
+                        "$ref": "#/components/parameters/CondorSchedd"
                     }
                 ],
                 "responses": {
@@ -668,13 +668,10 @@
             "get": {
                 "parameters": [
                     {
-                        "name": "condor_location",
-                        "in": "query",
-                        "required": true,
-                        "description": "the condor location of the requestor",
-                        "schema": {
-                            "$ref": "#/components/schemas/condor_location"
-                        }
+                        "$ref": "#/components/parameters/CondorCollector"
+                    },
+                    {
+                        "$ref": "#/components/parameters/CondorSchedd"
                     }
                 ],
                 "responses": {
