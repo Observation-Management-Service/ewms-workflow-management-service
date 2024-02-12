@@ -159,12 +159,15 @@ async def test_000(rc: RestClient) -> None:
                 "projection": ["taskforce_uuid", "cluster_id"],
             },
         )
+        assert len(resp["taskforces"]) == 1
+        taskforce_uuid = resp["taskforces"][0]['taskforce_uuid']
         resp = request_and_validate(
             rc,
             "POST",
             "/tms/taskforces/report",
             {"patch_body": 345},
         )
+        assert resp['taskforce_uuid'] == taskforce_uuid
 
     #
     # USER...
@@ -190,12 +193,15 @@ async def test_000(rc: RestClient) -> None:
                 "projection": ["taskforce_uuid", "cluster_id"],
             },
         )
+        assert len(resp["taskforces"]) == 1
+        taskforce_uuid = resp["taskforces"][0]['taskforce_uuid']
         resp = request_and_validate(
             rc,
             "POST",
             "/tms/taskforces/report",
             {"patch_body": 345},
         )
+        assert resp['taskforce_uuid'] == taskforce_uuid
 
     #
     # USER...
@@ -221,12 +227,15 @@ async def test_000(rc: RestClient) -> None:
                 "projection": ["taskforce_uuid", "cluster_id"],
             },
         )
+        assert len(resp["taskforces"]) == 1
+        taskforce_uuid = resp["taskforces"][0]['taskforce_uuid']
         resp = request_and_validate(
             rc,
             "POST",
             "/tms/taskforces/report",
             {"patch_body": 345},
         )
+        assert resp['taskforce_uuid'] == taskforce_uuid
 
     #
     # USER...
@@ -287,6 +296,8 @@ async def test_000(rc: RestClient) -> None:
                 "projection": ["taskforce_uuid", "cluster_id"],
             },
         )
+        assert len(resp["taskforces"]) == 1
+        # TODO - CHECK THAT JEL IS DELETED / FINISHED
 
 
 # ----------------------------------------------------------------------------
