@@ -15,6 +15,17 @@
         "version": "0.0.0"
     },
     "components": {
+        "parameters": {
+            "TaskforceUUIDParam": {
+                "name": "taskforce_uuid",
+                "in": "path",
+                "required": true,
+                "description": "the taskforce object's uuid",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        },
         "schemas": {
             "task_directive": {
                 "type": "object",
@@ -460,13 +471,7 @@
         "/tms/taskforce/{taskforce_uuid}": {
             "parameters": [
                 {
-                    "name": "taskforce_uuid",
-                    "in": "path",
-                    "required": true,
-                    "description": "the taskforce object's uuid",
-                    "schema": {
-                        "type": "string"
-                    }
+                    "$ref": "#/components/parameters/TaskforceUUIDParam"
                 }
             ],
             "get": {
@@ -616,13 +621,7 @@
         "/tms/taskforce/running/{taskforce_uuid}": {
             "parameters": [
                 {
-                    "name": "taskforce_uuid",
-                    "in": "path",
-                    "required": true,
-                    "description": "the taskforce object's uuid",
-                    "schema": {
-                        "type": "string"
-                    }
+                    "$ref": "#/components/parameters/TaskforceUUIDParam"
                 }
             ],
             "post": {
@@ -719,13 +718,7 @@
         "/tms/taskforce/stop/{taskforce_uuid}": {
             "parameters": [
                 {
-                    "name": "taskforce_uuid",
-                    "in": "path",
-                    "required": true,
-                    "description": "the taskforce object's uuid",
-                    "schema": {
-                        "type": "string"
-                    }
+                    "$ref": "#/components/parameters/TaskforceUUIDParam"
                 }
             ],
             "delete": {
