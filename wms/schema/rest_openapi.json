@@ -129,6 +129,16 @@
                                 }
                             }
                         }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -141,6 +151,16 @@
                         "description": "an empty response",
                         "content": {
                             "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 }
@@ -187,6 +207,16 @@
                         "content": {
                             "application/json": {}
                         }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -202,6 +232,16 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {}
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
                                 }
                             }
                         }
