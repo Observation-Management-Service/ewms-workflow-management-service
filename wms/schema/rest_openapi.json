@@ -29,9 +29,7 @@
                         "type": "integer"
                     }
                 },
-                "required": [
-                    "task_id"
-                ]
+                "required": []
             },
             "taskforce": {
                 "type": "object",
