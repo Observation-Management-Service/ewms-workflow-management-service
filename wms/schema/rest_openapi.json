@@ -20,7 +20,7 @@
                 "type": "object",
                 "properties": {
                     "task_id": {
-                        "type": "uuid"
+                        "type": "string"
                     },
                     "foo": {
                         "type": "integer"
@@ -35,7 +35,7 @@
                 "type": "object",
                 "properties": {
                     "taskforce_uuid": {
-                        "type": "uuid"
+                        "type": "string"
                     },
                     "foo": {
                         "type": "integer"
@@ -76,7 +76,7 @@
                     "required": true,
                     "description": "the user identifier, as userId",
                     "schema": {
-                        "type": "uuid"
+                        "type": "string"
                     }
                 }
             ],
@@ -111,9 +111,9 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "uuid": {
+                                        "string": {
                                             "type": "string",
-                                            "format": "uuid"
+                                            "format": "string"
                                         }
                                     }
                                 }
@@ -361,7 +361,7 @@
                     "required": true,
                     "description": "the id of the task directive",
                     "schema": {
-                        "type": "uuid"
+                        "type": "string"
                     }
                 }
             ],
@@ -465,7 +465,7 @@
                     "required": true,
                     "description": "the taskforce object's uuid",
                     "schema": {
-                        "type": "uuid"
+                        "type": "string"
                     }
                 }
             ],
@@ -619,7 +619,7 @@
                     "required": true,
                     "description": "the taskforce object's uuid",
                     "schema": {
-                        "type": "uuid"
+                        "type": "string"
                     }
                 }
             ],
@@ -720,7 +720,7 @@
                     "required": true,
                     "description": "the taskforce object's uuid",
                     "schema": {
-                        "type": "uuid"
+                        "type": "string"
                     }
                 }
             ],
@@ -821,7 +821,7 @@
                                             "description": "the uuids of the updated taskforce objects",
                                             "type": "array",
                                             "items": {
-                                                "type": "uuid"
+                                                "type": "string"
                                             }
                                         }
                                     },
