@@ -125,36 +125,35 @@ jobs:
         run: |
           python -c '
           import json, tornado, copy
+
+          FILE = "wms/schema/rest_openapi.json"
           METHODS = [m.lower() for m in tornado.web.RequestHandler.SUPPORTED_METHODS]
 
-          # find 'responses' keys, and make sure 400 is present
-          with open("wms/schema/rest_openapi.json","rb") as f:
+          # find 'responses' keys, and override/add 400
+          with open(FILE, "rb") as f:
               spec = json.load(f)
           for path in copy.deepcopy(spec)["paths"]:
               for method in METHODS:
                   print(f"{path} -- {method}")
                   if method not in spec["paths"][path]:
-                      print(f"   -> skipping (no method)")
+                      print(f"   -> skip (no method)")
                       continue
-                  if "400" not in spec["paths"][path][method]["responses"]:
-                      print(f"   -> adding 400")
-                      spec["paths"][path][method]["responses"]["400"] = {
-                          "description": "invalid request arguments",
-                          "content": {
-                              "text/plain": {
-                                  "schema": {
-                                      "type": "string"
-                                  }
+                  print(f"   -> overriding / adding 400 response")
+                  spec["paths"][path][method]["responses"]["400"] = {
+                      "description": "invalid request arguments",
+                      "content": {
+                          "text/plain": {
+                              "schema": {
+                                  "type": "string"
                               }
                           }
                       }
-                  else:
-                      print(f"   -> already has 400")
+                  }
 
           # format neatly
-          with open("wms/schema/rest_openapi.json","w") as f:
+          with open(FILE, "w") as f:
               json.dump(spec, f, indent=4)
-          with open("wms/schema/rest_openapi.json","a") as f:
+          with open(FILE, "a") as f:
               f.write("\n")
           '
       - name: git add, commit, push
