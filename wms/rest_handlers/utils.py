@@ -7,6 +7,8 @@ import openapi_core
 import requests
 import tornado
 from openapi_core.contrib import requests as openapi_core_requests
+from openapi_core.validation.request.exceptions import InvalidRequestBody
+from openapi_core.validation.schemas.exceptions import InvalidSchemaValue
 from tornado import web
 
 LOGGER = logging.getLogger(__name__)
@@ -32,8 +34,20 @@ class OpenAPIValidator:
                         self.spec,
                     )
                 except Exception as e:
-                    LOGGER.exception(f"Invalid request: {e}")
-                    raise web.HTTPError(status_code=400, log_message=str(e))
+                    LOGGER.error(f"Invalid request: {e}")
+                    if isinstance(e, InvalidRequestBody) and isinstance(
+                        e.__context__, InvalidSchemaValue
+                    ):
+                        LOGGER.error(f"-> {e.__context__}")
+                        raise web.HTTPError(
+                            status_code=400,
+                            log_message=str(e.__context__),
+                        )
+                    else:
+                        raise web.HTTPError(
+                            status_code=400,
+                            log_message=str(e),
+                        )
                 return await method(reqhand, *args, **kwargs)
 
             return wrapper
