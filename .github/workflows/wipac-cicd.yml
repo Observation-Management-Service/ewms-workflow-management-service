@@ -97,6 +97,63 @@ jobs:
 
 
   ############################################################################
+  # AUTO-GENERATION
+  #############################################################################
+
+
+  schema-additions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - uses: actions/setup-python@v4
+      - name: Is this the most recent commit? It won't be if the action was reran
+        run: |
+          git fetch &> /dev/null
+          if [[ $(git status -sb | grep behind) ]]; then
+            echo "this commit is not the most recent on this branch -- rest of action will be skipped"
+            exit 1
+          fi
+      - name: Git config
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - name: auto-generate additions for 'rest_openapi.json'
+        run: |
+          python -c '
+          import json, tornado, copy
+          METHODS = [m.lower() for m in tornado.web.RequestHandler.SUPPORTED_METHODS]
+
+          # find 'responses' keys, and make sure 400 is present
+          with open("wms/schema/rest_openapi.json","rb") as f:
+              spec = json.load(f)
+          for path in copy.deepcopy(spec)["paths"]:
+              for method in METHODS:
+                  if "400" not in spec["paths"][method]["responses"]:
+                      spec["paths"][method]["responses"]["400"] = {
+                          "description": "invalid request arguments",
+                          "content": {
+                              "text/plain": {
+                                  "schema": {
+                                      "type": "string"
+                                  }
+                              }
+                          }
+                      }
+
+          # format neatly
+          with open("wms/schema/rest_openapi.json","rb") as f:
+              json.dump(f, spec, indent=4)
+          '
+      - name: git add, commit, push
+        run: |
+          git add . || true
+          git commit -m "<ci> auto-add to 'rest_openapi.json'" || true
+          (git push && echo "changes pushed") || echo "no changes needed"
+
+
+  ############################################################################
   # TESTS
   #############################################################################
 
@@ -194,7 +251,7 @@ jobs:
   release:
     # only run on main/master/default
     if: format('refs/heads/{0}', github.event.repository.default_branch) == github.ref
-    needs: [flake8, mypy, py-setup, py-versions, test-build-docker, integration-tests, unit-tests]
+    needs: [flake8, mypy, py-setup, py-versions, schema-additions, test-build-docker, integration-tests, unit-tests]
     runs-on: ubuntu-latest
     concurrency: release
     steps:

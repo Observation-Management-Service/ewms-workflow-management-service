@@ -16,7 +16,7 @@
     },
     "components": {
         "schemas": {
-            "task_directive": {
+            "t ask_directive": {
                 "type": "object",
                 "properties": {
                     "task_id": {

@@ -38,7 +38,7 @@ class OpenAPIValidator:
                     if isinstance(e, InvalidRequestBody) and isinstance(
                         e.__context__, InvalidSchemaValue
                     ):
-                        LOGGER.error(f"-> {e.__context__}")
+                        LOGGER.error(f"-> {e.__context__    }")
                         raise web.HTTPError(
                             status_code=400,
                             log_message=str(e.__context__),
