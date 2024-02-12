@@ -13,6 +13,7 @@ from openapi_core.contrib import requests as openapi_core_requests
 from rest_tools.client import RestClient
 
 LOGGER = logging.getLogger(__name__)
+logging.getLogger("parse").setLevel(logging.INFO)
 
 
 JOB_EVENT_LOG_FPATH = "./the_job_event_log_fpath"
