@@ -35,6 +35,7 @@ class OpenAPIValidator:
                     )
                 except ValidationError as e:
                     LOGGER.error(f"invalid request: {e.__class__.__name__} - {e}")
+                    # ex: openapi_core.validation.request.exceptions.InvalidRequestBody
                     if isinstance(e, InvalidSchemaValue):
                         reason = "; ".join(  # to client
                             # verbose details after newline

@@ -775,29 +775,23 @@
                                 "properties": {
                                     "top_task_errors_by_taskforce": {
                                         "description": "the top errors (paired with a count) for each indicated taskforce",
-                                        "type": "array",
+                                        "type": "object",
+                                        "items": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    },
+                                    "compound_statuses_by_taskforce": {
+                                        "description": "the compound statuses (status -> state -> count) for the indicated taskforces",
+                                        "type": "object",
                                         "items": {
                                             "type": "object",
                                             "additionalProperties": {
                                                 "type": "object",
                                                 "additionalProperties": {
                                                     "type": "integer"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "compound_statuses_by_taskforce": {
-                                        "description": "the compound statuses (status -> state -> count) for the indicated taskforces",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "object",
-                                                "additionalProperties": {
-                                                    "type": "object",
-                                                    "additionalProperties": {
-                                                        "type": "integer"
-                                                    }
                                                 }
                                             }
                                         }
