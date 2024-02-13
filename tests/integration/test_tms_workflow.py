@@ -165,9 +165,15 @@ async def test_000(rc: RestClient) -> None:
             rc,
             "POST",
             "/tms/taskforces/report",
-            {"patch_body": 345},
+            {
+                "compound_statuses_by_taskforce": {
+                    taskforce_uuid: {
+                        "started": {"tasked": 15},
+                    }
+                },
+            },
         )
-        assert resp["taskforce_uuid"] == taskforce_uuid
+        assert resp['uuids'] == [taskforce_uuid]
 
     #
     # USER...
@@ -199,9 +205,17 @@ async def test_000(rc: RestClient) -> None:
             rc,
             "POST",
             "/tms/taskforces/report",
-            {"patch_body": 345},
+            {
+                "top_task_errors_by_taskforce": {taskforce_uuid: {"too_cool": 3}},
+                "compound_statuses_by_taskforce": {
+                    taskforce_uuid: {
+                        "started": {"tasked": 15},
+                        "stopped": {"tasked": 20},
+                    }
+                },
+            },
         )
-        assert resp["taskforce_uuid"] == taskforce_uuid
+        assert resp['uuids'] == [taskforce_uuid]
 
     #
     # USER...
@@ -245,7 +259,7 @@ async def test_000(rc: RestClient) -> None:
                 },
             },
         )
-        assert resp["uuids"][0] == taskforce_uuid
+        assert resp['uuids'] == [taskforce_uuid]
 
     #
     # USER...
