@@ -8,7 +8,6 @@ import requests
 import tornado
 from openapi_core.contrib import requests as openapi_core_requests
 from openapi_core.validation.exceptions import ValidationError
-from openapi_core.validation.request.exceptions import InvalidRequestBody
 from openapi_core.validation.schemas.exceptions import InvalidSchemaValue
 from tornado import web
 
