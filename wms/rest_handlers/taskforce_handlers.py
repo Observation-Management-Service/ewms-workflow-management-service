@@ -29,6 +29,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 "taskforce_uuid": "99999cccccc",
                 "foo": 123,
                 "bar": 456,
+                "is_deleted": False,
             }
         )
 
@@ -52,6 +53,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
                         "taskforce_uuid": "99999cccccc",
                         "foo": 123,
                         "bar": 456,
+                        "is_deleted": False,
                     }
                 ]
             }
@@ -75,6 +77,7 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
                 "taskforce_uuid": "99999cccccc",
                 "foo": 123,
                 "bar": 456,
+                "is_deleted": False,
             }
         )
 
@@ -96,6 +99,7 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                 "taskforce_uuid": "99999cccccc",
                 "foo": 123,
                 "bar": 456,
+                "is_deleted": False,
             }
         )
 
@@ -117,6 +121,7 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
                 "taskforce_uuid": "99999cccccc",
                 "foo": 123,
                 "bar": 456,
+                "is_deleted": False,
             }
         )
 
@@ -138,6 +143,7 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                 "taskforce_uuid": taskforce_uuid,
                 "foo": 123,
                 "bar": 456,
+                "is_deleted": False,
             }
         )
 
@@ -159,6 +165,7 @@ class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                 "taskforce_uuid": taskforce_uuid,
                 "foo": 123,
                 "bar": 456,
+                "is_deleted": False,
             }
         )
 

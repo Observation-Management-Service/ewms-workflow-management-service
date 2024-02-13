@@ -45,7 +45,7 @@
             }
         },
         "schemas": {
-            "task_directive": {
+            "TaskDirectiveObject": {
                 "type": "object",
                 "properties": {
                     "task_id": {
@@ -60,11 +60,14 @@
                 },
                 "required": []
             },
-            "taskforce": {
+            "TaskforceObject": {
                 "type": "object",
                 "properties": {
                     "taskforce_uuid": {
                         "type": "string"
+                    },
+                    "is_deleted": {
+                        "type": "boolean"
                     },
                     "foo": {
                         "type": "integer"
@@ -328,7 +331,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/task_directive"
+                                "$ref": "#/components/schemas/TaskDirectiveObject"
                             }
                         }
                     }
@@ -339,7 +342,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/task_directive"
+                                    "$ref": "#/components/schemas/TaskDirectiveObject"
                                 }
                             }
                         }
@@ -390,7 +393,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/task_directive"
+                                    "$ref": "#/components/schemas/TaskDirectiveObject"
                                 }
                             }
                         }
@@ -433,16 +436,16 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "task_directives": {
+                                        "TaskDirectiveObjects": {
                                             "description": "a list of task directive objects",
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/task_directive"
+                                                "$ref": "#/components/schemas/TaskDirectiveObject"
                                             }
                                         }
                                     },
                                     "required": [
-                                        "task_directives"
+                                        "TaskDirectiveObjects"
                                     ]
                                 }
                             }
@@ -488,7 +491,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/taskforce"
+                                    "$ref": "#/components/schemas/TaskforceObject"
                                 }
                             }
                         }
@@ -535,7 +538,7 @@
                                             "description": "a list of taskforce objects",
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/taskforce"
+                                                "$ref": "#/components/schemas/TaskforceObject"
                                             }
                                         }
                                     },
@@ -590,7 +593,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/taskforce"
+                                    "$ref": "#/components/schemas/TaskforceObject"
                                 }
                             }
                         }
@@ -635,7 +638,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/taskforce"
+                                    "$ref": "#/components/schemas/TaskforceObject"
                                 }
                             }
                         }
@@ -684,7 +687,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/taskforce"
+                                    "$ref": "#/components/schemas/TaskforceObject"
                                 }
                             }
                         }
@@ -729,7 +732,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/taskforce"
+                                    "$ref": "#/components/schemas/TaskforceObject"
                                 }
                             }
                         }
