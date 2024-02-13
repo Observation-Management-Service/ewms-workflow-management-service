@@ -25,13 +25,13 @@ class OpenAPIValidator:
         """Validate request obj against the given OpenAPI spec."""
 
         def make_wrapper(method):  # type: ignore[no-untyped-def]
-            async def wrapper(reqhand: web.RequestHandler, *args, **kwargs):  # type: ignore[no-untyped-def]
+            async def wrapper(zelf: web.RequestHandler, *args, **kwargs):  # type: ignore[no-untyped-def]
                 LOGGER.info("validating with openapi spec")
                 # NOTE - don't change data (unmarshal) b/c we are downstream of data separation
                 try:
                     # https://openapi-core.readthedocs.io/en/latest/validation.html
                     openapi_core.validate_request(
-                        http_server_request_to_openapi_request(reqhand.request),
+                        http_server_request_to_openapi_request(zelf.request),
                         self.spec,
                     )
                 except ValidationError as e:
@@ -60,7 +60,7 @@ class OpenAPIValidator:
                         reason=None,  # to client (don't send possibly sensitive info)
                     )
 
-                return await method(reqhand, *args, **kwargs)
+                return await method(zelf, *args, **kwargs)
 
             return wrapper
 
