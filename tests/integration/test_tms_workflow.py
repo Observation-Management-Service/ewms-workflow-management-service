@@ -16,7 +16,7 @@ LOGGER = logging.getLogger(__name__)
 logging.getLogger("parse").setLevel(logging.INFO)
 
 
-JOB_EVENT_LOG_FPATH = "./the_job_event_log_fpath"
+JOB_EVENT_LOG_FPATH = "/home/the_job_event_log_fpath"
 CONDOR_LOCATIONS = [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]
 
 
@@ -173,7 +173,7 @@ async def test_000(rc: RestClient) -> None:
                 },
             },
         )
-        assert resp['uuids'] == [taskforce_uuid]
+        assert resp["uuids"] == [taskforce_uuid]
 
     #
     # USER...
@@ -215,7 +215,7 @@ async def test_000(rc: RestClient) -> None:
                 },
             },
         )
-        assert resp['uuids'] == [taskforce_uuid]
+        assert resp["uuids"] == [taskforce_uuid]
 
     #
     # USER...
@@ -259,7 +259,7 @@ async def test_000(rc: RestClient) -> None:
                 },
             },
         )
-        assert resp['uuids'] == [taskforce_uuid]
+        assert resp["uuids"] == [taskforce_uuid]
 
     #
     # USER...
