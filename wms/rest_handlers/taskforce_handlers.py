@@ -34,8 +34,8 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
             {
                 "uuids": list(
                     set(
-                        top_task_errors_by_taskforce.keys()
-                        + compound_statuses_by_taskforce.keys()
+                        list(top_task_errors_by_taskforce.keys())
+                        + list(compound_statuses_by_taskforce.keys())
                     )
                 )
             }
