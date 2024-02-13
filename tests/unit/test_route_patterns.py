@@ -13,14 +13,15 @@ def test_route_patterns() -> None:
     """Check that all the routes have non-conflicting patterns.
 
     Route patterns are matched by the server in the order they were
-    added. So, check these in that order.
+    added. So, check if "later" patterns would be matched to "earlier"
+    patterns.
     """
-    for pattern in [getattr(h, "ROUTE") for h in server.HANDLERS]:
-        LOGGER.info(f"looking at route pattern: '{pattern}'")
+    routes = [getattr(h, "ROUTE") for h in server.HANDLERS]
 
-        for this in [getattr(h, "ROUTE") for h in server.HANDLERS]:
-            if this == pattern:
-                break
-            LOGGER.info(f"   -> comparing '{pattern}' to '{this}'")
+    for i, pattern in enumerate(routes):
+        for j, this in enumerate(routes):
+            if i >= j:  # not yet
+                continue
+            LOGGER.info(f"comparing '{pattern}' to '{this}'")
             assert not re.match(pattern, this.rstrip("$"))
             LOGGER.info("   -> ok")
