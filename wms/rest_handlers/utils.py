@@ -7,6 +7,7 @@ import openapi_core
 import requests
 import tornado
 from openapi_core.contrib import requests as openapi_core_requests
+from openapi_core.validation.exceptions import ValidationError
 from openapi_core.validation.request.exceptions import InvalidRequestBody
 from openapi_core.validation.schemas.exceptions import InvalidSchemaValue
 from tornado import web
@@ -33,24 +34,32 @@ class OpenAPIValidator:
                         http_server_request_to_openapi_request(reqhand.request),
                         self.spec,
                     )
-                except Exception as e:
+                except ValidationError as e:
                     LOGGER.error(f"invalid request: {e.__class__.__name__} - {e}")
                     if isinstance(e, InvalidRequestBody) and isinstance(
                         e.__context__, InvalidSchemaValue
                     ):
                         LOGGER.error(f"-> {e.__context__}")
                         reason = "; ".join(  # to client
-                            # vebose details after newline
+                            # verbose details after newline
                             str(x).split("\n", maxsplit=1)[0]
                             for x in e.__context__.schema_errors
                         )
                     else:
-                        reason = str(e)
+                        reason = str(e)  # to client
                     raise web.HTTPError(
                         status_code=400,
-                        log_message=reason,  # to stderr
+                        log_message=str(e),  # to stderr
                         reason=reason,  # to client
                     )
+                except Exception as e:
+                    LOGGER.error(f"unexpected exception: {e.__class__.__name__} - {e}")
+                    raise web.HTTPError(
+                        status_code=400,
+                        log_message=str(e),  # to stderr
+                        reason=None,  # to client (don't send possibly sensitive info)
+                    )
+
                 return await method(reqhand, *args, **kwargs)
 
             return wrapper
