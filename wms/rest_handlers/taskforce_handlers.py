@@ -143,7 +143,7 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                 "taskforce_uuid": taskforce_uuid,
                 "foo": 123,
                 "bar": 456,
-                "is_deleted": False,
+                "is_deleted": True,
             }
         )
 
