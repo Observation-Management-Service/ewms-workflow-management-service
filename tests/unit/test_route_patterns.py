@@ -22,6 +22,6 @@ def test_route_patterns() -> None:
         for j, this in enumerate(routes):
             if i >= j:  # not yet
                 continue
-            LOGGER.info(f"comparing '{pattern}' to '{this}'")
+            LOGGER.info(f"applying '{pattern=}' to '{this}'")
             assert not re.match(pattern, this.rstrip("$"))
             LOGGER.info("   -> ok")
