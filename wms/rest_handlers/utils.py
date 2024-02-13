@@ -49,14 +49,14 @@ class OpenAPIValidator:
                         reason = str(e)  # to client
                     raise web.HTTPError(
                         status_code=400,
-                        log_message=str(e),  # to stderr
+                        log_message=f"{e.__class__.__name__}: {e}",  # to stderr
                         reason=reason,  # to client
                     )
                 except Exception as e:
                     LOGGER.error(f"unexpected exception: {e.__class__.__name__} - {e}")
                     raise web.HTTPError(
                         status_code=400,
-                        log_message=str(e),  # to stderr
+                        log_message=f"{e.__class__.__name__}: {e}",  # to stderr
                         reason=None,  # to client (don't send possibly sensitive info)
                     )
 
