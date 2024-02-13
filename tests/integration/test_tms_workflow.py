@@ -160,14 +160,14 @@ async def test_000(rc: RestClient) -> None:
             },
         )
         assert len(resp["taskforces"]) == 1
-        taskforce_uuid = resp["taskforces"][0]['taskforce_uuid']
+        taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
         resp = request_and_validate(
             rc,
             "POST",
             "/tms/taskforces/report",
             {"patch_body": 345},
         )
-        assert resp['taskforce_uuid'] == taskforce_uuid
+        assert resp["taskforce_uuid"] == taskforce_uuid
 
     #
     # USER...
@@ -194,14 +194,14 @@ async def test_000(rc: RestClient) -> None:
             },
         )
         assert len(resp["taskforces"]) == 1
-        taskforce_uuid = resp["taskforces"][0]['taskforce_uuid']
+        taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
         resp = request_and_validate(
             rc,
             "POST",
             "/tms/taskforces/report",
             {"patch_body": 345},
         )
-        assert resp['taskforce_uuid'] == taskforce_uuid
+        assert resp["taskforce_uuid"] == taskforce_uuid
 
     #
     # USER...
@@ -228,14 +228,24 @@ async def test_000(rc: RestClient) -> None:
             },
         )
         assert len(resp["taskforces"]) == 1
-        taskforce_uuid = resp["taskforces"][0]['taskforce_uuid']
+        taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
         resp = request_and_validate(
             rc,
             "POST",
             "/tms/taskforces/report",
-            {"patch_body": 345},
+            {
+                "top_task_errors_by_taskforce": {
+                    taskforce_uuid: {"too_cool": 5, "empty": 1}
+                },
+                "compound_statuses_by_taskforce": {
+                    taskforce_uuid: {
+                        "started": {"tasked": 11, "done": 1},
+                        "stopped": {"tasked": 50},
+                    }
+                },
+            },
         )
-        assert resp['taskforce_uuid'] == taskforce_uuid
+        assert resp["uuids"][0] == taskforce_uuid
 
     #
     # USER...

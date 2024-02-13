@@ -39,7 +39,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def get(self, task_id: str) -> None:
         """Handle GET."""
-        self.write({"foo": 1, "bar": 2, "task_id": "abcdef123456"})
+        self.write({"foo": 1, "bar": 2, "task_id": task_id})
 
 
 # ----------------------------------------------------------------------------

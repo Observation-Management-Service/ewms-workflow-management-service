@@ -803,9 +803,7 @@
                                         }
                                     }
                                 },
-                                "required": [
-                                    "taskforces"
-                                ]
+                                "required": []
                             }
                         }
                     }
