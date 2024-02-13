@@ -24,4 +24,4 @@ def test_route_patterns() -> None:
                 continue
             LOGGER.info(f"applying '{pattern=}' to '{this}'")
             assert not re.match(pattern, this.rstrip("$"))
-            LOGGER.info("   -> ok")
+            LOGGER.info("   -> ok (no match)")
