@@ -68,7 +68,7 @@ class EnvConfig:
 
     CI: bool = False  # github actions sets this to 'true'
     LOG_LEVEL: str = "DEBUG"
-    LOG_LEVEL_THIRD_PARTY: str = "WARNING"
+    LOG_LEVEL_THIRD_PARTY: str = "DEBUG"
 
     BACKLOG_MIN_PRIORITY_TO_START_NOW: int = 10
     BACKLOG_MAX_ATTEMPTS: int = 3
