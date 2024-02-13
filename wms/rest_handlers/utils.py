@@ -34,7 +34,7 @@ class OpenAPIValidator:
                         self.spec,
                     )
                 except Exception as e:
-                    LOGGER.error(f"Invalid request: {e}")
+                    LOGGER.error(f"invalid request: {e.__class__.__name__} - {e}")
                     if isinstance(e, InvalidRequestBody) and isinstance(
                         e.__context__, InvalidSchemaValue
                     ):
@@ -44,16 +44,13 @@ class OpenAPIValidator:
                             str(x).split("\n", maxsplit=1)[0]
                             for x in e.__context__.schema_errors
                         )
-                        raise web.HTTPError(
-                            status_code=400,
-                            log_message=reason,  # to stderr
-                            reason=reason,  # to client
-                        )
                     else:
-                        raise web.HTTPError(
-                            status_code=400,
-                            log_message=str(e),
-                        )
+                        reason = str(e)
+                    raise web.HTTPError(
+                        status_code=400,
+                        log_message=reason,  # to stderr
+                        reason=reason,  # to client
+                    )
                 return await method(reqhand, *args, **kwargs)
 
             return wrapper
