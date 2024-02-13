@@ -15,18 +15,18 @@ openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC)
 # ----------------------------------------------------------------------------
 
 
-class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions for a taskforce."""
+class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with reports for taskforce(s)."""
 
-    ROUTE = r"/tms/taskforce/(?P<taskforce_uuid>\w+)$"
+    ROUTE = r"/tms/taskforces/report$"
 
-    @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
+    @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
-    async def get(self, taskforce_uuid: str) -> None:
-        """Handle GET."""
+    async def post(self) -> None:
+        """Handle POST."""
         self.write(
             {
-                "taskforce_uuid": taskforce_uuid,
+                "taskforce_uuid": "99999cccccc",
                 "foo": 123,
                 "bar": 456,
             }
@@ -145,18 +145,18 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions with reports for taskforce(s)."""
+class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions for a taskforce."""
 
-    ROUTE = r"/tms/taskforces/report$"
+    ROUTE = r"/tms/taskforce/(?P<taskforce_uuid>\w+)$"
 
-    @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
+    @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
-    async def post(self) -> None:
-        """Handle POST."""
+    async def get(self, taskforce_uuid: str) -> None:
+        """Handle GET."""
         self.write(
             {
-                "taskforce_uuid": "99999cccccc",
+                "taskforce_uuid": taskforce_uuid,
                 "foo": 123,
                 "bar": 456,
             }

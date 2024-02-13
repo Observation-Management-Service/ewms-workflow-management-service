@@ -23,13 +23,14 @@ HANDLERS = [
     #
     rest_handlers.job_event_log_handlers.JobEventLogHandler,
     #
-    rest_handlers.taskforce_handlers.TaskforceUUIDHandler,
+    rest_handlers.taskforce_handlers.TaskforcesReportHandler,
     rest_handlers.taskforce_handlers.TaskforcesFindHandler,
+    #
     rest_handlers.taskforce_handlers.TaskforcePendingHandler,
     rest_handlers.taskforce_handlers.TaskforceRunningUUIDHandler,
     rest_handlers.taskforce_handlers.TaskforceStopHandler,
     rest_handlers.taskforce_handlers.TaskforceStopUUIDHandler,
-    rest_handlers.taskforce_handlers.TaskforcesReportHandler,
+    rest_handlers.taskforce_handlers.TaskforceUUIDHandler,
 ]
 
 
