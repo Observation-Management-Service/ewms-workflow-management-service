@@ -36,14 +36,11 @@ class OpenAPIValidator:
                     )
                 except ValidationError as e:
                     LOGGER.error(f"invalid request: {e.__class__.__name__} - {e}")
-                    if isinstance(e, InvalidRequestBody) and isinstance(
-                        e.__context__, InvalidSchemaValue
-                    ):
-                        LOGGER.error(f"-> {e.__context__}")
+                    if isinstance(e, InvalidSchemaValue):
                         reason = "; ".join(  # to client
                             # verbose details after newline
                             str(x).split("\n", maxsplit=1)[0]
-                            for x in e.__context__.schema_errors
+                            for x in e.schema_errors
                         )
                     else:
                         reason = str(e)  # to client
