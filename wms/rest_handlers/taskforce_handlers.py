@@ -24,9 +24,11 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
     async def post(self) -> None:
         """Handle POST."""
-        top_task_errors_by_taskforce = self.get_argument("top_task_errors_by_taskforce")
+        top_task_errors_by_taskforce = self.get_argument(
+            "top_task_errors_by_taskforce", default={}
+        )
         compound_statuses_by_taskforce = self.get_argument(
-            "compound_statuses_by_taskforce"
+            "compound_statuses_by_taskforce", default={}
         )
         self.write(
             {
