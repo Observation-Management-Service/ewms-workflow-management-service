@@ -96,7 +96,7 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         """Handle POST."""
         self.write(
             {
-                "taskforce_uuid": "99999cccccc",
+                "taskforce_uuid": taskforce_uuid,
                 "foo": 123,
                 "bar": 456,
                 "is_deleted": False,

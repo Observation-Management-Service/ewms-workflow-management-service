@@ -436,7 +436,7 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "TaskDirectiveObjects": {
+                                        "task_directives": {
                                             "description": "a list of task directive objects",
                                             "type": "array",
                                             "items": {
@@ -445,7 +445,7 @@
                                         }
                                     },
                                     "required": [
-                                        "TaskDirectiveObjects"
+                                        "task_directives"
                                     ]
                                 }
                             }
