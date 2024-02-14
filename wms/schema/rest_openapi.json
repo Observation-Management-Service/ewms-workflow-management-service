@@ -147,31 +147,7 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         },
@@ -185,31 +161,7 @@
                             "application/json": {}
                         }
                     },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         },
@@ -257,31 +209,7 @@
                             "application/json": {}
                         }
                     },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         },
@@ -301,31 +229,7 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         },
@@ -352,31 +256,7 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         },
@@ -404,31 +284,7 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         },
@@ -505,31 +361,7 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         },
@@ -560,31 +392,7 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         },
@@ -610,31 +418,7 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         },
@@ -843,31 +627,7 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         }

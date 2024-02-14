@@ -153,16 +153,8 @@ jobs:
               }
           }
 
-          # find 'responses' keys, and override/add 400
           with open(FILE, "rb") as f:
               spec = json.load(f)
-          for path in copy.deepcopy(spec)["paths"]:  # copy to change in-place
-              for method in METHODS:
-                  if method not in spec["paths"][path]:
-                      continue
-                  print(f"{path} -- {method}")
-                  print(f"   -> overriding / adding 400 response")
-                  spec["paths"][path][method]["responses"]["400"] = NEW_400
 
           def settle_keyval_one_at_a_time(d, set_this, to_this, if_this):
               """Calling repeatedly will complete the settling.
@@ -172,7 +164,7 @@ jobs:
               for k, v in d.items():
                   if if_this(d,k):
                       d[set_this] = to_this
-                      raise Exception("dict changed")
+                      raise Exception("dict may have changed (did not check prev value)")
                   elif isinstance(v, dict):
                       settle_keyval_one_at_a_time(v, set_this, to_this, if_this)
 
@@ -184,6 +176,19 @@ jobs:
                       "additionalProperties",
                       False,
                       lambda d,k: k == "properties" and "additionalProperties" not in d
+                  )
+              except:
+                  continue
+              break
+
+          # find "responses" keys, then set "400" keys
+          while True:
+              try:
+                  settle_keyval_one_at_a_time(
+                      spec,
+                      "400",
+                      NEW_400,
+                      lambda d,k: k == "responses" and d["responses"].get("400") != NEW_400
                   )
               except:
                   continue
