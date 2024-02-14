@@ -3,7 +3,6 @@
 
 import json
 import logging
-import urllib
 from pathlib import Path
 from typing import Any
 
