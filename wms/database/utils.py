@@ -47,14 +47,15 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
 def log_in_out(logger: logging.Logger):  # type: ignore
     """Log the inputs and output(s) of the function."""
 
-    def make_wrapper(func):  # type: ignore[no-untyped-def]
-        async def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
+    def _make(func):  # type: ignore[no-untyped-def]
+        async def logger_wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
             argsvals = list(
                 zip(
                     func.__code__.co_varnames[: func.__code__.co_argcount],
                     args[: func.__code__.co_argcount],
                 )
             )
+            argsvals = [(a, v) for a, v in argsvals if a != "self"]  # pop!
             logger.debug(f"{func.__qualname__}: args={argsvals} {kwargs=}")
 
             ret = await func(*args, **kwargs)
@@ -62,6 +63,6 @@ def log_in_out(logger: logging.Logger):  # type: ignore
             logger.debug(f"{func.__qualname__}: {ret=}")
             return ret
 
-        return wrapper
+        return logger_wrapper
 
-    return make_wrapper
+    return _make
