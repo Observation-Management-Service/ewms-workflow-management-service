@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import jsonschema
+import openapi_core
 from jsonschema_path import SchemaPath
 from openapi_spec_validator import validate
 from openapi_spec_validator.readers import read_from_filename
@@ -36,14 +37,14 @@ DB_JSONSCHEMA_SPECS = _get_jsonschema_specs(
 # --------------------------------------------------------------------------------------
 
 
-def _get_openapi_spec(fpath: Path) -> SchemaPath:
+def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
     spec_dict, base_uri = read_from_filename(str(fpath))
     LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
     validate(spec_dict)  # no exception -> spec is valid
-    return SchemaPath.from_file_path(str(fpath))
+    return openapi_core.OpenAPI(SchemaPath.from_file_path(str(fpath)))
 
 
-REST_OPENAPI_SPEC: SchemaPath = _get_openapi_spec(
+REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(
     Path(__file__).parent / "schema/rest_openapi.json"
 )
 

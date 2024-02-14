@@ -13,8 +13,6 @@ from . import auth, utils
 
 LOGGER = logging.getLogger(__name__)
 
-openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC)
-
 
 class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
     """BaseWMSHandler is a RestHandler for all WMS routes."""
@@ -41,7 +39,7 @@ class MainHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
+    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc, no-untyped-call]
     async def get(self) -> None:
         """Handle GET."""
         self.write({})

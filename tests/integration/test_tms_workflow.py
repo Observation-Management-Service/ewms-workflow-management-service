@@ -28,7 +28,7 @@ _OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
 
 def request_and_validate(
     rc: RestClient,
-    openapi_spec: SchemaPath,
+    openapi_spec: openapi_core.OpenAPI,
     method: str,
     path: str,
     args: dict[str, Any] | None = None,
@@ -50,7 +50,7 @@ def request_and_validate(
             return int(response.status_code)
 
         @property
-        def mimetype(self) -> str:
+        def content_type(self) -> str:
             # application/json; charset=UTF-8  ->  application/json
             # ex: openapi_core.validation.response.exceptions.DataValidationError: DataValidationError: Content for the following mimetype not found: application/json; charset=UTF-8. Valid mimetypes: ['application/json']
             return str(response.headers.get("Content-Type", "")).split(";")[0]
@@ -60,10 +60,9 @@ def request_and_validate(
         def headers(self) -> dict:
             return dict(response.headers)
 
-    openapi_core.validate_response(
+    openapi_spec.validate_response(
         openapi_core_requests.RequestsOpenAPIRequest(response.request),
-        _DuckResponse(),  # type: ignore[abstract]
-        openapi_spec,
+        _DuckResponse(),
     )
 
     out = rc._decode(response.content)
@@ -80,13 +79,13 @@ async def test_000(rc: RestClient) -> None:
     resp = request_and_validate(
         rc,
         # only read json file for this request
-        SchemaPath.from_file_path(str(_OPENAPI_JSON)),
+        openapi_core.OpenAPI(SchemaPath.from_file_path(str(_OPENAPI_JSON))),
         "GET",
         "/schema/openapi",
     )
     with open(_OPENAPI_JSON, "rb") as f:
         assert json.load(f) == resp
-    openapi_spec = SchemaPath.from_dict(resp)
+    openapi_spec = openapi_core.OpenAPI(SchemaPath.from_dict(resp))
 
     #
     # USER...
