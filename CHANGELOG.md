@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.2 (2024-02-14)
+
+### Other
+
+* REST Server & Schema ([#2](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/2)) ([`c07d6cd`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/c07d6cd7452a3060be4ffa2815c56ae859ce9b32))
+
 ## v0.0.1 (2024-01-26)
 
 ### Other
