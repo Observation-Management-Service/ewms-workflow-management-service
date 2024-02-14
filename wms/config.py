@@ -28,7 +28,7 @@ def _get_jsonschema_specs(fpath: Path) -> dict[str, Any]:
     return spec  # type: ignore[no-any-return]
 
 
-DB_TASK_DIRECTIVE_SPEC = _get_jsonschema_specs(
+DB_TASK_DIRECTIVE_SCHEMA = _get_jsonschema_specs(
     Path(__file__).parent / "schema/db/task_directive.schema.json"
 )
 # TODO - add more specs

@@ -3,11 +3,15 @@
 
 import logging
 
-import jsonschema
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
-from ..config import DB_TASK_DIRECTIVE_SPEC
-from .utils import _DB_NAME, _TASK_DIRECTIVES_COLL_NAME, log_in_out
+from ..config import DB_TASK_DIRECTIVE_SCHEMA
+from .utils import (
+    _DB_NAME,
+    _TASK_DIRECTIVES_COLL_NAME,
+    log_in_out,
+    web_jsonschema_validate,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -19,12 +23,12 @@ class TaskDirectiveMongoClient:
         self.collection = AsyncIOMotorCollection(
             mongo_client[_DB_NAME], _TASK_DIRECTIVES_COLL_NAME  # type: ignore[index]
         )
-        self.validator = DB_TASK_DIRECTIVE_SPEC
+        self.schema = DB_TASK_DIRECTIVE_SCHEMA
 
     @log_in_out(LOGGER)  # type: ignore[misc]
     async def insert(self, task_directive: dict) -> dict:
         """Insert the task_directive dict."""
-        jsonschema.validate(task_directive, self.validator)
+        web_jsonschema_validate(task_directive, self.schema)
         await self.collection.insert_one(task_directive)
         # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
         task_directive.pop("_id")
