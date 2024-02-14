@@ -19,7 +19,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/task/directive$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc, no-untyped-call]
+    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
         """Handle POST."""
         self.write({"foo": 1, "bar": 2, "task_id": "abcdef123456"})
@@ -34,7 +34,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/task/directive/(?P<task_id>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc, no-untyped-call]
+    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, task_id: str) -> None:
         """Handle GET."""
         self.write({"foo": 1, "bar": 2, "task_id": task_id})
@@ -49,7 +49,7 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/task/directives/find$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc, no-untyped-call]
+    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
         """Handle POST."""
         self.write(

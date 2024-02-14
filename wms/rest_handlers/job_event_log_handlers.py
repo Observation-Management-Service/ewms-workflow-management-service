@@ -16,7 +16,7 @@ class JobEventLogHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/tms/job-event-log$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc, no-untyped-call]
+    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
         """Handle POST."""
         self.write({})
