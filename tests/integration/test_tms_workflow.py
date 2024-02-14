@@ -96,7 +96,7 @@ async def test_000(rc: RestClient) -> None:
         openapi_spec,
         "POST",
         "/task/directive",
-        {"foo": 1, "bar": 2},
+        {"task_image": "icecube/earthpilot", "task_args": "aaa bbb --ccc 123"},
     )
 
     resp = request_and_validate(
@@ -112,7 +112,7 @@ async def test_000(rc: RestClient) -> None:
         openapi_spec,
         "POST",
         "/task/directives/find",
-        {"foo": 1, "bar": 2},
+        {"task_image": "icecube/earthpilot", "task_args": "aaa bbb --ccc 123"},
     )
     assert len(resp["task_directives"]) == 1
     assert resp["task_directives"][0] == task_directive

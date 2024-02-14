@@ -20,18 +20,18 @@ LOGGER = logging.getLogger(__name__)
 # --------------------------------------------------------------------------------------
 
 
-def _get_jsonschema_specs(fpath: Path) -> dict[str, dict[str, Any]]:
+def _get_jsonschema_specs(fpath: Path) -> dict[str, Any]:
     with open(fpath) as f:
-        specs = json.load(f)  # validates keys
-    for key, entry in specs.items():
-        LOGGER.info(f"validating JSON-schema spec for {key} ({fpath})")
-        jsonschema.protocols.Validator.check_schema(entry)  # validates entry
-    return specs  # type: ignore[no-any-return]
+        spec = json.load(f)  # validates keys
+    LOGGER.info(f"validating JSON-schema spec for {fpath}")
+    jsonschema.protocols.Validator.check_schema(spec)  # validates entry
+    return spec  # type: ignore[no-any-return]
 
 
-DB_JSONSCHEMA_SPECS = _get_jsonschema_specs(
-    Path(__file__).parent / "schema/db_jsonschema_specs.json"
+DB_TASK_DIRECTIVE_SPEC = _get_jsonschema_specs(
+    Path(__file__).parent / "schema/db/task_directive.schema.json"
 )
+# TODO - add more specs
 
 
 # --------------------------------------------------------------------------------------

@@ -2,15 +2,66 @@
 
 
 import logging
+from urllib.parse import quote_plus
 
 from motor.motor_asyncio import AsyncIOMotorClient
+
+from ..config import ENV
 
 LOGGER = logging.getLogger(__name__)
 
 
+_DB_NAME = "WMS_DB"
+_TASK_DIRECTIVES_COLL_NAME = "TaskDirectives"
+_TASKFORCES_COLL_NAME = "Taskforces"
+
+
 async def create_mongodb_client() -> AsyncIOMotorClient:  # type: ignore[valid-type]
-    """explain."""
+    """Construct the MongoDB client."""
+    auth_user = quote_plus(ENV.MONGODB_AUTH_USER)
+    auth_pass = quote_plus(ENV.MONGODB_AUTH_PASS)
+
+    if auth_user and auth_pass:
+        url = f"mongodb://{auth_user}:{auth_pass}@{ENV.MONGODB_HOST}:{ENV.MONGODB_PORT}"
+    else:
+        url = f"mongodb://{ENV.MONGODB_HOST}:{ENV.MONGODB_PORT}"
+
+    mongo_client = AsyncIOMotorClient(url)  # type: ignore[var-annotated]
+    return mongo_client
 
 
 async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
-    """explain."""
+    """Create indexes in collections.
+
+    Call on server startup.
+    """
+
+    for coll in [_TASK_DIRECTIVES_COLL_NAME, _TASKFORCES_COLL_NAME]:
+        await mongo_client[_DB_NAME][coll].create_index(  # type: ignore[index]
+            "task_id",
+            name="task_id_index",
+            unique=True,
+        )
+
+
+def log_in_out(logger: logging.Logger):  # type: ignore
+    """Log the inputs and output(s) of the function."""
+
+    def make_wrapper(func):  # type: ignore[no-untyped-def]
+        async def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
+            argsvals = list(
+                zip(
+                    func.__code__.co_varnames[: func.__code__.co_argcount],
+                    args[: func.__code__.co_argcount],
+                )
+            )
+            logger.debug(f"{func.__qualname__}: args={argsvals} {kwargs=}")
+
+            ret = await func(*args, **kwargs)
+
+            logger.debug(f"{func.__qualname__}: {ret=}")
+            return ret
+
+        return wrapper
+
+    return make_wrapper

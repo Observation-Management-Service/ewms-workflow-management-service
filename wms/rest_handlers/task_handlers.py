@@ -2,6 +2,7 @@
 
 
 import logging
+import uuid
 
 from .. import config
 from . import auth, utils
@@ -22,7 +23,16 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
         """Handle POST."""
-        self.write({"foo": 1, "bar": 2, "task_id": "abcdef123456"})
+        task_directive = dict(
+            task_id=uuid.uuid4().hex,
+            cluster_locations=[],
+            task_image=self.get_argument("task_image"),
+            task_args=self.get_argument("task_args", ""),
+        )
+
+        await self.task_directive_db.insert(task_directive)
+
+        self.write(task_directive)
 
 
 # ----------------------------------------------------------------------------
@@ -37,7 +47,13 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, task_id: str) -> None:
         """Handle GET."""
-        self.write({"foo": 1, "bar": 2, "task_id": task_id})
+        self.write(
+            {
+                "task_image": "icecube/earthpilot",
+                "task_args": "aaa bbb --ccc 123",
+                "task_id": task_id,
+            }
+        )
 
 
 # ----------------------------------------------------------------------------
@@ -55,7 +71,11 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         self.write(
             {
                 "task_directives": [
-                    {"foo": 1, "bar": 2, "task_id": "abcdef123456"},
+                    {
+                        "task_image": "icecube/earthpilot",
+                        "task_args": "aaa bbb --ccc 123",
+                        "task_id": "abcdef123456",
+                    },
                 ]
             }
         )
