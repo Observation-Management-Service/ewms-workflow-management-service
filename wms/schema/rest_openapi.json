@@ -207,18 +207,8 @@
                 }
             }
         },
-        "/tms/job-event-log/{jel_fpath}": {
-            "parameters": [
-                {
-                    "name": "jel_fpath",
-                    "in": "path",
-                    "required": true,
-                    "description": "the condor job event log filepath on the AP (urllib.parse.quote'd)",
-                    "schema": {
-                        "type": "string"
-                    }
-                }
-            ],
+        "/tms/job-event-log": {
+            "parameters": [],
             "post": {
                 "requestBody": {
                     "content": {
@@ -226,6 +216,10 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
+                                    "job_event_log_fpath": {
+                                        "description": "the condor job event log filepath on the AP",
+                                        "type": "string"
+                                    },
                                     "collector": {
                                         "description": "name of the condor collector",
                                         "type": "string"
@@ -240,6 +234,7 @@
                                     }
                                 },
                                 "required": [
+                                    "job_event_log_fpath",
                                     "collector",
                                     "schedd",
                                     "finished"

@@ -299,8 +299,9 @@ async def test_000(rc: RestClient) -> None:
         resp = request_and_validate(
             rc,
             "POST",
-            f"/tms/job-event-log/{urllib.parse.quote(JOB_EVENT_LOG_FPATH, safe='')}",
+            "/tms/job-event-log",
             {
+                "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
                 "collector": collector,
                 "schedd": schedd,
                 "finished": True,

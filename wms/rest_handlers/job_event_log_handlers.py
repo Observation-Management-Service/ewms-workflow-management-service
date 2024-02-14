@@ -15,11 +15,11 @@ openapi_validator = utils.OpenAPIValidator(config.REST_OPENAPI_SPEC)
 class JobEventLogHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a job event log."""
 
-    ROUTE = r"/tms/job-event-log/(?P<jel_fpath>[^/]+)$"
+    ROUTE = r"/tms/job-event-log$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @openapi_validator.validate_request()  # type: ignore[misc, no-untyped-call]
-    async def post(self, jel_fpath: str) -> None:
+    async def post(self) -> None:
         """Handle POST."""
         self.write({})
 
