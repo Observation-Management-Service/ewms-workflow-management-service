@@ -164,6 +164,31 @@ jobs:
                   print(f"   -> overriding / adding 400 response")
                   spec["paths"][path][method]["responses"]["400"] = NEW_400
 
+          def settle_keyval_one_at_a_time(d, set_this, to_this, if_this):
+              """Calling repeatedly will complete the settling.
+
+              Will return without error if nothing was changed.
+              """
+              for k, v in d.items():
+                  if if_this(d,k):
+                      d[set_this] = to_this
+                      raise Exception("dict changed")
+                  elif isinstance(v, dict):
+                      settle_keyval_one_at_a_time(v, set_this, to_this, if_this)
+
+          # set "additionalProperties" keys
+          while True:
+              try:
+                  settle_keyval_one_at_a_time(
+                      spec,
+                      "additionalProperties",
+                      False,
+                      lambda d,k: k == "properties" and "additionalProperties" not in d
+                  )
+              except:
+                  continue
+              break
+
           # format neatly
           with open(FILE, "w") as f:
               json.dump(spec, f, indent=4)
