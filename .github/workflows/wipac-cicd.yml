@@ -5,7 +5,12 @@ on: [push]
 
 
 env:
-  DOCKER_IMAGE_NAME: oms-test/tms-test
+  CI_DOCKER_IMAGE_W_TAG: wms/test:local
+  MONGODB_HOST: localhost
+  MONGODB_PORT: 27017
+  REST_HOST: localhost  # the server should connect to 0.0.0.0
+  REST_PORT: 8080
+  OPENAPI_FILE: "wms/schema/rest_openapi.json"
 
 
 jobs:
@@ -50,20 +55,125 @@ jobs:
     steps:
       # dependabot can't access normal secrets
       #   & don't run non-branch triggers (like tags)
+      #   & we don't want to trigger an update on PR's merge to main/master/default (which is a branch)
+      # IOW: only for non-dependabot branches
       - if: |
           github.actor != 'dependabot[bot]' &&
-          github.ref_type == 'branch'
+          github.ref_type == 'branch' &&
+          format('refs/heads/{0}', github.event.repository.default_branch) != github.ref
         name: checkout (only for non-dependabot non-default branches)
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       - if: |
           github.actor != 'dependabot[bot]' &&
-          github.ref_type == 'branch'
+          github.ref_type == 'branch' &&
+          format('refs/heads/{0}', github.event.repository.default_branch) != github.ref
         name: wipac-dev-py-setup-action (only for non-dependabot non-default branches)
-        uses: WIPACrepo/wipac-dev-py-setup-action@v2.10
+        uses: WIPACrepo/wipac-dev-py-setup-action@v3.0
         with:
           base-keywords: WIPAC IceCube "Observation Management Service" "Event Workflow Management Service"
+
+  py-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      # dependabot can't access normal secrets
+      #   & don't run non-branch triggers (like tags)
+      #   & we don't want to trigger an update on PR's merge to main/master/default (which is a branch)
+      # IOW: only for non-dependabot branches
+      - if: |
+          github.actor != 'dependabot[bot]' &&
+          github.ref_type == 'branch' &&
+          format('refs/heads/{0}', github.event.repository.default_branch) != github.ref
+        name: checkout (only for non-dependabot non-default branches)
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - if: |
+          github.actor != 'dependabot[bot]' &&
+          github.ref_type == 'branch' &&
+          format('refs/heads/{0}', github.event.repository.default_branch) != github.ref
+        name: wipac-dev-py-setup-action (only for non-dependabot non-default branches)
+        uses: WIPACrepo/wipac-dev-py-dependencies-action@v1.0
+
+
+  ############################################################################
+  # AUTO-GENERATION
+  #############################################################################
+
+
+  schema-additions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - uses: actions/setup-python@v4
+      - name: Is this the most recent commit? It won't be if the action was reran
+        run: |
+          git fetch &> /dev/null
+          if [[ $(git status -sb | grep behind) ]]; then
+            echo "this commit is not the most recent on this branch -- rest of action will be skipped"
+            exit 1
+          fi
+      - name: Git config
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - run: |
+          pip3 install tornado
+      - name: auto-generate additions for ${{ env.OPENAPI_FILE }}
+        run: |
+          python -c '
+          import json, tornado, copy, os
+
+          METHODS = [m.lower() for m in tornado.web.RequestHandler.SUPPORTED_METHODS]
+          FILE = os.environ["OPENAPI_FILE"]
+
+          NEW_400 = {
+              "description": "invalid request arguments",
+              "content": {
+                  "application/json": {
+                      "schema": {
+                          "type": "object",
+                          "properties": {
+                              "code": {
+                                  "description": "http error code",
+                                  "type": "integer"
+                              },
+                              "error": {
+                                  "description": "http error reason",
+                                  "type": "string"
+                              }
+                          },
+                          "required": ["code", "error"],
+                      }
+                  }
+              }
+          }
+
+          # find 'responses' keys, and override/add 400
+          with open(FILE, "rb") as f:
+              spec = json.load(f)
+          for path in copy.deepcopy(spec)["paths"]:
+              for method in METHODS:
+                  if method not in spec["paths"][path]:
+                      continue
+                  print(f"{path} -- {method}")
+                  print(f"   -> overriding / adding 400 response")
+                  spec["paths"][path][method]["responses"]["400"] = NEW_400
+
+          # format neatly
+          with open(FILE, "w") as f:
+              json.dump(spec, f, indent=4)
+          with open(FILE, "a") as f:  # json.dump remove trailing newline
+              f.write("\n")
+          '
+      - name: git add, commit, push
+        run: |
+          git add ${{ env.OPENAPI_FILE }} || true
+          git commit -m "<ci> auto-add to '${{ env.OPENAPI_FILE }}'" || true
+          git push || true
 
 
   ############################################################################
@@ -82,9 +192,62 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=min
           file: Dockerfile
-          tags: ${{ env.DOCKER_IMAGE_NAME }}:local
+          tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
 
-  unit-test:
+  integration-tests:
+    needs: [py-versions]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
+    services:
+      mongo:
+        image: bitnami/mongodb:4
+        ports:
+        - 27017:27017
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.py3 }}
+      - uses: docker/build-push-action@v3
+        with:
+          context: .
+          cache-from: type=gha
+          # cache-to: type=gha,mode=min
+          file: Dockerfile
+          tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
+          load: true
+      - run: |
+          pip install .[tests]
+      - name: test (run rest server in background)
+        run: |
+          # this needs to be in the same step b/c shell exits when step is done
+          docker run --network='host' --rm --name rest \
+            --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
+            --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
+            --env REST_HOST="${{ env.REST_HOST }}" \
+            --env REST_PORT="${{ env.REST_PORT }}" \
+            --env CI="true" \
+            ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
+          sleep 10
+
+          if [[ $(ping -c 1 "http://${{ env.REST_HOST }}:${{ env.REST_PORT }}") ]]; then
+            echo "rest server connected"
+          else
+            echo "ERROR: cannot reach rest server"
+            cat ./rest.out
+          fi
+
+          pytest -vvv tests/integration/
+      #
+      - if: always()
+        run: |
+          docker logs rest || cat ./rest.out
+
+
+  unit-tests:
     needs: [py-versions]
     runs-on: ubuntu-latest
     strategy:
@@ -98,8 +261,9 @@ jobs:
           python-version: ${{ matrix.py3 }}
       - run: |
           pip install .[tests]
-      # - run: |
-      #     pytest -vvv tests/unit/
+      - name: test
+        run: |
+          pytest -vvv tests/unit/
 
 
   #############################################################################
@@ -110,7 +274,7 @@ jobs:
   release:
     # only run on main/master/default
     if: format('refs/heads/{0}', github.event.repository.default_branch) == github.ref
-    needs: [flake8, mypy, py-setup, py-versions, test-build-docker, unit-test]
+    needs: [flake8, mypy, py-setup, py-versions, schema-additions, test-build-docker, integration-tests, unit-tests]
     runs-on: ubuntu-latest
     concurrency: release
     steps:
