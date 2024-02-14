@@ -41,8 +41,8 @@ def request_and_validate(
         """AKA 'openapi_core_requests.RequestsOpenAPIResponse' but correct."""
 
         @property
-        def data(self) -> str:
-            return response.content.decode("utf-8")
+        def data(self) -> bytes | None:
+            return response.content
 
         @property
         def status_code(self) -> int:
@@ -61,7 +61,7 @@ def request_and_validate(
 
     openapi_core.validate_response(
         openapi_core_requests.RequestsOpenAPIRequest(response.request),
-        _DuckResponse(),
+        _DuckResponse(),  # type: ignore[abstract]
         openapi_spec,
     )
 
