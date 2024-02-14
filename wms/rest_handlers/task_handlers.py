@@ -30,8 +30,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             task_args=self.get_argument("task_args", ""),
         )
 
-        await self.task_directive_db.insert(task_directive)
-        LOGGER.critical(f"{task_directive=}")
+        task_directive = await self.task_directive_db.insert(task_directive)
 
         self.write(task_directive)
 

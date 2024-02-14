@@ -22,8 +22,10 @@ class TaskDirectiveMongoClient:
         self.validator = DB_TASK_DIRECTIVE_SPEC
 
     @log_in_out(LOGGER)  # type: ignore[misc]
-    async def insert(self, task_directive: dict) -> str:
+    async def insert(self, task_directive: dict) -> dict:
         """Insert the task_directive dict."""
         jsonschema.validate(task_directive, self.validator)
-        res = await self.collection.insert_one(task_directive)
-        return repr(res)
+        await self.collection.insert_one(task_directive)
+        # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
+        task_directive.pop("_id")
+        return task_directive
