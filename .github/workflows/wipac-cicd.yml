@@ -181,7 +181,7 @@ jobs:
               with open(fpath, "rb") as f:
                   spec = json.load(f)
               spec["required"] = list(spec["properties"].keys())
-              spec["additionalProperties"] = "False"
+              spec["additionalProperties"] = False
 
               # format neatly
               with open(fpath, "w") as f:

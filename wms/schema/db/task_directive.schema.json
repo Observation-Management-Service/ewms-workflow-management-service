@@ -20,5 +20,5 @@
         "task_image",
         "task_args"
     ],
-    "additionalProperties": "False"
+    "additionalProperties": false
 }
