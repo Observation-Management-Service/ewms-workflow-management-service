@@ -23,11 +23,11 @@ CONDOR_LOCATIONS = [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]
 
 
 _OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
-_OPENAPI_SPEC = openapi_core.Spec.from_file_path(str(_OPENAPI_JSON))
 
 
 def request_and_validate(
     rc: RestClient,
+    openapi_spec: openapi_core.Spec,
     method: str,
     path: str,
     args: dict[str, Any] | None = None,
@@ -62,7 +62,7 @@ def request_and_validate(
     openapi_core.validate_response(
         openapi_core_requests.RequestsOpenAPIRequest(response.request),
         _DuckResponse(),
-        _OPENAPI_SPEC,
+        openapi_spec,
     )
 
     out = rc._decode(response.content)
@@ -76,9 +76,16 @@ def request_and_validate(
 
 async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
-    resp = request_and_validate(rc, "GET", "/schema/openapi")
+    resp = request_and_validate(
+        rc,
+        # only read json file for this request
+        openapi_core.Spec.from_file_path(str(_OPENAPI_JSON)),
+        "GET",
+        "/schema/openapi",
+    )
     with open(_OPENAPI_JSON, "rb") as f:
         assert json.load(f) == resp
+    openapi_spec = openapi_core.Spec.from_dict(resp)
 
     #
     # USER...
@@ -86,6 +93,7 @@ async def test_000(rc: RestClient) -> None:
 
     task_directive = request_and_validate(
         rc,
+        openapi_spec,
         "POST",
         "/task/directive",
         {"foo": 1, "bar": 2},
@@ -93,6 +101,7 @@ async def test_000(rc: RestClient) -> None:
 
     resp = request_and_validate(
         rc,
+        openapi_spec,
         "GET",
         f"/task/directive/{task_directive['task_id']}",
     )
@@ -100,6 +109,7 @@ async def test_000(rc: RestClient) -> None:
 
     resp = request_and_validate(
         rc,
+        openapi_spec,
         "POST",
         "/task/directives/find",
         {"foo": 1, "bar": 2},
@@ -115,6 +125,7 @@ async def test_000(rc: RestClient) -> None:
         # get next to start
         taskforce = request_and_validate(
             rc,
+            openapi_spec,
             "GET",
             "/tms/taskforce/pending",
             {"collector": collector, "schedd": schedd},
@@ -122,6 +133,7 @@ async def test_000(rc: RestClient) -> None:
         # check that it's not deleted
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "GET",
             f"/tms/taskforce/{taskforce['taskforce_uuid']}",
         )
@@ -129,6 +141,7 @@ async def test_000(rc: RestClient) -> None:
         # confirm it has started
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "POST",
             f"/tms/taskforce/running/{taskforce['taskforce_uuid']}",
             {"ewms_taskforce_attrs": 123},
@@ -147,6 +160,7 @@ async def test_000(rc: RestClient) -> None:
     for collector, schedd in CONDOR_LOCATIONS:
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "POST",
             "/tms/taskforces/find",
             {
@@ -162,6 +176,7 @@ async def test_000(rc: RestClient) -> None:
         taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "POST",
             "/tms/taskforces/report",
             {
@@ -187,6 +202,7 @@ async def test_000(rc: RestClient) -> None:
     for collector, schedd in CONDOR_LOCATIONS:
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "POST",
             "/tms/taskforces/find",
             {
@@ -202,6 +218,7 @@ async def test_000(rc: RestClient) -> None:
         taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "POST",
             "/tms/taskforces/report",
             {
@@ -229,6 +246,7 @@ async def test_000(rc: RestClient) -> None:
     for collector, schedd in CONDOR_LOCATIONS:
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "POST",
             "/tms/taskforces/find",
             {
@@ -244,6 +262,7 @@ async def test_000(rc: RestClient) -> None:
         taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "POST",
             "/tms/taskforces/report",
             {
@@ -273,6 +292,7 @@ async def test_000(rc: RestClient) -> None:
         # get next to stop
         taskforce = request_and_validate(
             rc,
+            openapi_spec,
             "GET",
             "/tms/taskforce/stop",
             {"collector": collector, "schedd": schedd},
@@ -280,6 +300,7 @@ async def test_000(rc: RestClient) -> None:
         # confirm it has stopped
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "DELETE",
             f"/tms/taskforce/stop/{taskforce['taskforce_uuid']}",
         )
@@ -297,6 +318,7 @@ async def test_000(rc: RestClient) -> None:
     for collector, schedd in CONDOR_LOCATIONS:
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "POST",
             "/tms/job-event-log",
             {
@@ -309,6 +331,7 @@ async def test_000(rc: RestClient) -> None:
         # check deleted
         resp = request_and_validate(
             rc,
+            openapi_spec,
             "POST",
             "/tms/taskforces/find",
             {
