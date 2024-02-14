@@ -230,7 +230,7 @@
                                     },
                                     "finished": {
                                         "description": "whether this job event log is finished",
-                                        "type": "bool"
+                                        "type": "boolean"
                                     }
                                 },
                                 "required": [
