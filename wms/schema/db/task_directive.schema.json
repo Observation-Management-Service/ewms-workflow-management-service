@@ -13,5 +13,12 @@
         "task_args": {
             "type": "string"
         }
-    }
+    },
+    "required": [
+        "task_id",
+        "cluster_locations",
+        "task_image",
+        "task_args"
+    ],
+    "additionalProperties": "False"
 }
