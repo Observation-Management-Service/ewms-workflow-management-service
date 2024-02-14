@@ -5,7 +5,10 @@
             "type": "string"
         },
         "cluster_locations": {
-            "type": "number"
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         },
         "task_image": {
             "type": "string"
