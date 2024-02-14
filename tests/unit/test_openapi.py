@@ -8,6 +8,7 @@ from pathlib import Path
 
 import openapi_core
 import tornado
+from jsonschema_path import SchemaPath
 from openapi_core.templating.paths.finders import APICallPathFinder
 from wms import server
 
@@ -17,7 +18,7 @@ logging.getLogger("parse").setLevel(logging.INFO)
 
 
 _OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
-_OPENAPI_SPEC = openapi_core.Spec.from_file_path(str(_OPENAPI_JSON))
+_OPENAPI_SPEC = SchemaPath.from_file_path(str(_OPENAPI_JSON))
 
 
 def test_census_routes() -> None:

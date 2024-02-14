@@ -8,6 +8,7 @@ from typing import Any
 
 import openapi_core
 import requests
+from jsonschema_path import SchemaPath
 from openapi_core.contrib import requests as openapi_core_requests
 from rest_tools.client import RestClient
 
@@ -27,7 +28,7 @@ _OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
 
 def request_and_validate(
     rc: RestClient,
-    openapi_spec: openapi_core.Spec,
+    openapi_spec: SchemaPath,
     method: str,
     path: str,
     args: dict[str, Any] | None = None,
@@ -79,13 +80,13 @@ async def test_000(rc: RestClient) -> None:
     resp = request_and_validate(
         rc,
         # only read json file for this request
-        openapi_core.Spec.from_file_path(str(_OPENAPI_JSON)),
+        SchemaPath.from_file_path(str(_OPENAPI_JSON)),
         "GET",
         "/schema/openapi",
     )
     with open(_OPENAPI_JSON, "rb") as f:
         assert json.load(f) == resp
-    openapi_spec = openapi_core.Spec.from_dict(resp)
+    openapi_spec = SchemaPath.from_dict(resp)
 
     #
     # USER...

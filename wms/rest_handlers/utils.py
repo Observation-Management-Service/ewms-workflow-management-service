@@ -6,6 +6,7 @@ import logging
 import openapi_core
 import requests
 import tornado
+from jsonschema_path import SchemaPath
 from openapi_core.contrib import requests as openapi_core_requests
 from openapi_core.validation.exceptions import ValidationError
 from openapi_core.validation.schemas.exceptions import InvalidSchemaValue
@@ -17,7 +18,7 @@ LOGGER = logging.getLogger(__name__)
 class OpenAPIValidator:
     """A helper class for validating requests and responses with openapi."""
 
-    def __init__(self, spec: openapi_core.Spec) -> None:
+    def __init__(self, spec: SchemaPath) -> None:
         self.spec = spec
 
     def validate_request(self):  # type: ignore
