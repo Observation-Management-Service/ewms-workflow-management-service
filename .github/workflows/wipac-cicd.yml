@@ -130,7 +130,7 @@ jobs:
           import json, os, pathlib
 
           with open("wms/" + os.environ["REST_OPENAPI_BASE_FPATH"]) as f:
-              spec = json.loads(f)
+              spec = json.load(f)
 
           for fpath in pathlib.Path("wms/" + os.environ["REST_OPENAPI_PATHS_DIR"]).iterdir():
               with open(fpath) as f:
@@ -138,7 +138,7 @@ jobs:
                       path_pattern = "/"
                   else:
                       path_pattern = "/" + fpath.stem.replace(".","/")
-                  spec["paths"][path_pattern] = json.loads(f)
+                  spec["paths"][path_pattern] = json.load(f)
 
           with open("wms/" + os.environ["REST_OPENAPI_SPEC_FPATH"], "w") as f:
               json.dump(spec, f, indent=4)
