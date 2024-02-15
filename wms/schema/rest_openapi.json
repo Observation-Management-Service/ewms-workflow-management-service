@@ -58,8 +58,7 @@
                         "type": "integer"
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "TaskforceObject": {
                 "type": "object",
@@ -379,8 +378,7 @@
                                     },
                                     "required": [
                                         "taskforces"
-                                    ],
-                                    "additionalProperties": false
+                                    ]
                                 }
                             }
                         }
@@ -450,8 +448,7 @@
                                     "required": [
                                         "code",
                                         "error"
-                                    ],
-                                    "additionalProperties": false
+                                    ]
                                 }
                             }
                         }
@@ -500,8 +497,7 @@
                                     "required": [
                                         "code",
                                         "error"
-                                    ],
-                                    "additionalProperties": false
+                                    ]
                                 }
                             }
                         }
@@ -546,8 +542,7 @@
                                     "required": [
                                         "code",
                                         "error"
-                                    ],
-                                    "additionalProperties": false
+                                    ]
                                 }
                             }
                         }
@@ -588,8 +583,7 @@
                                         }
                                     }
                                 },
-                                "required": [],
-                                "additionalProperties": false
+                                "required": []
                             }
                         }
                     }
@@ -612,8 +606,7 @@
                                     },
                                     "required": [
                                         "uuids"
-                                    ],
-                                    "additionalProperties": false
+                                    ]
                                 }
                             }
                         }

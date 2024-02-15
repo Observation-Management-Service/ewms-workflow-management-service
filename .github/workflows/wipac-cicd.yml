@@ -156,39 +156,37 @@ jobs:
           with open(FILE, "rb") as f:
               spec = json.load(f)
 
-          def settle_keyval_one_at_a_time(d, set_this, to_this, if_this):
+          def settle_nested_dictkeyval_one_at_a_time(d, set_it, if_this):
               """Calling repeatedly will complete the settling.
 
               Will return without error if nothing was changed.
               """
               for k, v in d.items():
                   if if_this(d,k):
-                      d[set_this] = to_this
+                      set_it(d,k)
                       raise Exception("dict may have changed (did not check prev value)")
                   elif isinstance(v, dict):
-                      settle_keyval_one_at_a_time(v, set_this, to_this, if_this)
+                      settle_nested_dictkeyval_one_at_a_time(v, set_it, if_this)
 
           # set "additionalProperties" keys
           while True:
               try:
-                  settle_keyval_one_at_a_time(
+                  settle_nested_dictkeyval_one_at_a_time(
                       spec,
-                      "additionalProperties",
-                      False,
-                      lambda d,k: k == "properties" and "additionalProperties" not in d
+                      lambda d,k: d["additionalProperties"] = False,
+                      lambda d,k: k == "properties" and "additionalProperties" not in d,
                   )
               except:
                   continue
               break
 
-          # find "responses" keys, then set "400" keys
+          # find "responses" keys, then set their "400" keys
           while True:
               try:
-                  settle_keyval_one_at_a_time(
+                  settle_nested_dictkeyval_one_at_a_time(
                       spec,
-                      "400",
-                      NEW_400,
-                      lambda d,k: k == "responses" and d["responses"].get("400") != NEW_400
+                      lambda d,k: d["responses"].update({"400": NEW_400}),
+                      lambda d,k: k == "responses" and d["responses"].get("400") != NEW_400,
                   )
               except:
                   continue
