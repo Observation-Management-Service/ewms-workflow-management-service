@@ -130,7 +130,7 @@ jobs:
           import json, tornado, copy, os
 
           METHODS = [m.lower() for m in tornado.web.RequestHandler.SUPPORTED_METHODS]
-          FILE = os.environ["REST_OPENAPI_SPEC_FPATH"]
+          FILE = "wms/" + os.environ["REST_OPENAPI_SPEC_FPATH"]
 
           NEW_400 = {
               "description": "invalid request arguments",
@@ -208,7 +208,7 @@ jobs:
           python -c '
           import json, os, pathlib
 
-          for fpath in pathlib.Path(os.environ["DB_JSONSCHEMA_DIR"]).iterdir():
+          for fpath in pathlib.Path("wms/" + os.environ["DB_JSONSCHEMA_DIR"]).iterdir():
 
               # find 'responses' keys, and override/add 400
               with open(fpath, "rb") as f:

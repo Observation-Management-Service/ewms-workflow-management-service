@@ -30,7 +30,7 @@ class EnvConfig:
     REST_HOST: str  # "localhost"
     REST_PORT: int  # 8080
 
-    DB_TASK_DIRECTIVE_SCHEMA_FPATH: Path  # absolute or relative to pkg root dir
+    DB_JSONSCHEMA_DIR: Path  # absolute or relative to pkg root dir
     REST_OPENAPI_SPEC_FPATH: Path  # absolute or relative to pkg root dir
 
     AUTH_AUDIENCE: str = "skydriver"
@@ -55,16 +55,17 @@ ENV = from_environment_as_dataclass(EnvConfig)
 # --------------------------------------------------------------------------------------
 
 
-def _get_jsonschema_spec(fpath: Path) -> dict[str, Any]:
-    with open(fpath) as f:
-        spec = json.load(f)  # validates keys
-    LOGGER.info(f"validating JSON-schema spec for {fpath}")
-    jsonschema.protocols.Validator.check_schema(spec)  # validates entry
-    return spec  # type: ignore[no-any-return]
+def _get_jsonschema_specs(dpath: Path) -> dict[str, Any]:
+    specs: dict[str, dict[str, Any]] = {}
+    for fpath in dpath.iterdir():
+        with open(dpath) as f:
+            specs[fpath.stem] = json.load(f)  # validates keys
+        LOGGER.info(f"validating JSON-schema spec for {fpath}")
+        jsonschema.protocols.Validator.check_schema(specs[fpath.stem])
+    return specs
 
 
-DB_TASK_DIRECTIVE_SCHEMA = _get_jsonschema_spec(ENV.DB_TASK_DIRECTIVE_SCHEMA_FPATH)
-# TODO - add more specs
+DB_JSONSCHEMA_SPECS = _get_jsonschema_specs(ENV.DB_JSONSCHEMA_DIR)
 
 
 # --------------------------------------------------------------------------------------

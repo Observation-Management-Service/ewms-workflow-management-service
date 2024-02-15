@@ -5,7 +5,7 @@ import logging
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
-from ..config import DB_TASK_DIRECTIVE_SCHEMA
+from ..config import DB_JSONSCHEMA_SPECS
 from .utils import (
     _DB_NAME,
     _TASK_DIRECTIVES_COLL_NAME,
@@ -23,7 +23,7 @@ class TaskDirectiveMongoClient:
         self.collection = AsyncIOMotorCollection(
             mongo_client[_DB_NAME], _TASK_DIRECTIVES_COLL_NAME  # type: ignore[index]
         )
-        self.schema = DB_TASK_DIRECTIVE_SCHEMA
+        self.schema = DB_JSONSCHEMA_SPECS["TaskDirective"]
 
     @log_in_out(LOGGER)  # type: ignore[misc]
     async def insert(self, task_directive: dict) -> dict:
