@@ -619,6 +619,32 @@
         "/task/directives/find": {
             "parameters": [],
             "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "description": "the search criteria (MongoDB-filter syntax)",
+                                        "type": "object"
+                                    },
+                                    "projection": {
+                                        "description": "the fields to include in the response",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "query"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "TODO",
