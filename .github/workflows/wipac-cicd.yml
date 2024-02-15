@@ -269,7 +269,7 @@ jobs:
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
 
   integration-tests:
-    needs: [py-versions]
+    needs: [py-versions, schema-modifications]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -322,7 +322,7 @@ jobs:
 
 
   unit-tests:
-    needs: [py-versions]
+    needs: [py-versions, schema-modifications]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
