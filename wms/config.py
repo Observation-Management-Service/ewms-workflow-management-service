@@ -49,17 +49,17 @@ class EnvConfig:
     BACKLOG_PENDING_ENTRY_TTL_REVIVE: int = 5 * 60  # entry is revived after N secs
 
     def __post_init__(self) -> None:
-        if not ENV.DB_JSONSCHEMA_DIR.is_absolute():
+        if not self.DB_JSONSCHEMA_DIR.is_absolute():
             setattr(
                 self,
                 "DB_JSONSCHEMA_DIR",
-                Path(__file__).parent / "wms" / ENV.DB_JSONSCHEMA_DIR,
+                Path(__file__).parent / "wms" / self.DB_JSONSCHEMA_DIR,
             )
-        if not ENV.REST_OPENAPI_SPEC_FPATH.is_absolute():
+        if not self.REST_OPENAPI_SPEC_FPATH.is_absolute():
             setattr(
                 self,
                 "REST_OPENAPI_SPEC_FPATH",
-                Path(__file__).parent / "wms" / ENV.REST_OPENAPI_SPEC_FPATH,
+                Path(__file__).parent / "wms" / self.REST_OPENAPI_SPEC_FPATH,
             )
 
 
