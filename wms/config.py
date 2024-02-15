@@ -20,38 +20,6 @@ LOGGER = logging.getLogger(__name__)
 # --------------------------------------------------------------------------------------
 
 
-def _get_jsonschema_specs(fpath: Path) -> dict[str, Any]:
-    with open(fpath) as f:
-        spec = json.load(f)  # validates keys
-    LOGGER.info(f"validating JSON-schema spec for {fpath}")
-    jsonschema.protocols.Validator.check_schema(spec)  # validates entry
-    return spec  # type: ignore[no-any-return]
-
-
-DB_TASK_DIRECTIVE_SCHEMA = _get_jsonschema_specs(
-    Path(__file__).parent / "schema/db/task_directive.schema.json"
-)
-# TODO - add more specs
-
-
-# --------------------------------------------------------------------------------------
-
-
-def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
-    spec_dict, base_uri = read_from_filename(str(fpath))
-    LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
-    validate(spec_dict)  # no exception -> spec is valid
-    return openapi_core.OpenAPI(SchemaPath.from_file_path(str(fpath)))
-
-
-REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(
-    Path(__file__).parent / "schema/rest_openapi.json"
-)
-
-
-# --------------------------------------------------------------------------------------
-
-
 @dc.dataclass(frozen=True)
 class EnvConfig:
     """Environment variables."""
@@ -61,6 +29,9 @@ class EnvConfig:
     MONGODB_PORT: int  # 27017
     REST_HOST: str  # "localhost"
     REST_PORT: int  # 8080
+
+    DB_TASK_DIRECTIVE_SCHEMA_FPATH: Path  # absolute or relative to pkg root dir
+    REST_OPENAPI_SPEC_FPATH: Path  # absolute or relative to pkg root dir
 
     AUTH_AUDIENCE: str = "skydriver"
     AUTH_OPENID_URL: str = ""
@@ -79,6 +50,34 @@ class EnvConfig:
 
 
 ENV = from_environment_as_dataclass(EnvConfig)
+
+
+# --------------------------------------------------------------------------------------
+
+
+def _get_jsonschema_spec(fpath: Path) -> dict[str, Any]:
+    with open(fpath) as f:
+        spec = json.load(f)  # validates keys
+    LOGGER.info(f"validating JSON-schema spec for {fpath}")
+    jsonschema.protocols.Validator.check_schema(spec)  # validates entry
+    return spec  # type: ignore[no-any-return]
+
+
+DB_TASK_DIRECTIVE_SCHEMA = _get_jsonschema_spec(ENV.DB_TASK_DIRECTIVE_SCHEMA_FPATH)
+# TODO - add more specs
+
+
+# --------------------------------------------------------------------------------------
+
+
+def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
+    spec_dict, base_uri = read_from_filename(str(fpath))
+    LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
+    validate(spec_dict)  # no exception -> spec is valid
+    return openapi_core.OpenAPI(SchemaPath.from_file_path(str(fpath)))
+
+
+REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(ENV.REST_OPENAPI_SPEC_FPATH)
 
 
 # --------------------------------------------------------------------------------------

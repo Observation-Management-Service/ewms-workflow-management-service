@@ -3,6 +3,7 @@
 
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
@@ -23,7 +24,7 @@ CONDOR_LOCATIONS = [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]
 # ----------------------------------------------------------------------------
 
 
-_OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
+_OPENAPI_JSON = Path(os.environ["REST_OPENAPI_SPEC_FPATH"])
 
 
 def request_and_validate(

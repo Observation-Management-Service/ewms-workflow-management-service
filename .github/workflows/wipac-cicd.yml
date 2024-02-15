@@ -10,8 +10,9 @@ env:
   MONGODB_PORT: 27017
   REST_HOST: localhost  # the server should connect to 0.0.0.0
   REST_PORT: 8080
-  OPENAPI_FILE: "wms/schema/rest_openapi.json"
-  DB_JSONSCHEMA_DIR: "wms/schema/db"
+  #
+  REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_autobuild.json"
+  DB_JSONSCHEMA_DIR: "schema/db"
 
 
 jobs:
@@ -123,13 +124,13 @@ jobs:
           git config user.email github-actions@github.com
       - run: |
           pip3 install tornado
-      - name: ${{ env.OPENAPI_FILE }}
+      - name: ${{ env.REST_OPENAPI_SPEC_FPATH }}
         run: |
           python -c '
           import json, tornado, copy, os
 
           METHODS = [m.lower() for m in tornado.web.RequestHandler.SUPPORTED_METHODS]
-          FILE = os.environ["OPENAPI_FILE"]
+          FILE = os.environ["REST_OPENAPI_SPEC_FPATH"]
 
           NEW_400 = {
               "description": "invalid request arguments",
