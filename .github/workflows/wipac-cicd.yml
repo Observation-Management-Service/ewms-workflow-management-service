@@ -128,7 +128,7 @@ jobs:
       - name: modify schemas - ${{ env.REST_OPENAPI_PATHS_DIR }}
         run: |
           python -c '
-          import json, os
+          import json, os, pathlib
 
           NEW_400 = {
               "description": "invalid request arguments",
