@@ -72,7 +72,7 @@ ENV = from_environment_as_dataclass(EnvConfig)
 def _get_jsonschema_specs(dpath: Path) -> dict[str, dict[str, Any]]:
     specs: dict[str, dict[str, Any]] = {}
     for fpath in dpath.iterdir():
-        with open(dpath) as f:
+        with open(fpath) as f:
             specs[fpath.stem] = json.load(f)  # validates keys
         LOGGER.info(f"validating JSON-schema spec for {fpath}")
         jsonschema.protocols.Validator.check_schema(specs[fpath.stem])
