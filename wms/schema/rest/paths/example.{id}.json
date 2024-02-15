@@ -1,0 +1,89 @@
+{
+    "parameters": [
+        {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "the user identifier, as userId",
+            "schema": {
+                "type": "string"
+            }
+        }
+    ],
+    "get": {
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "description": "Updated name of the pet",
+                                "type": "string"
+                            },
+                            "status": {
+                                "description": "Updated status of the pet",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "status"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "the user being returned",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "string": {
+                                    "type": "string",
+                                    "format": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    }
+                },
+                "links": {
+                    "address": {
+                        "operationId": "getUserAddress",
+                        "parameters": {
+                            "userId": "$request.path.id"
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

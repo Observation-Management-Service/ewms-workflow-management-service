@@ -1,0 +1,90 @@
+{
+    "parameters": [],
+    "post": {
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "top_task_errors_by_taskforce": {
+                                "description": "the top errors (paired with a count) for each indicated taskforce",
+                                "type": "object",
+                                "items": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "integer"
+                                    }
+                                }
+                            },
+                            "compound_statuses_by_taskforce": {
+                                "description": "the compound statuses (status -> state -> count) for the indicated taskforces",
+                                "type": "object",
+                                "items": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "required": [],
+                        "additionalProperties": false
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "the uuids of the updated taskforce objects",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "uuids": {
+                                    "description": "the uuids of the updated taskforce objects",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "required": [
+                                "uuids"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
