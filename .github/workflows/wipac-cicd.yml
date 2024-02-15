@@ -167,7 +167,7 @@ jobs:
 
 
           # GO!
-          for fpath in pathlib.Path("wms/" + os.environ["DB_JSONSCHEMA_DIR"]).iterdir():
+          for fpath in pathlib.Path("wms/" + os.environ["REST_OPENAPI_PATHS_DIR"]).iterdir():
               with open(fpath) as f:
                   spec = json.load(f)
 
