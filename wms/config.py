@@ -48,6 +48,20 @@ class EnvConfig:
     BACKLOG_RUNNER_DELAY: int = 5 * 60
     BACKLOG_PENDING_ENTRY_TTL_REVIVE: int = 5 * 60  # entry is revived after N secs
 
+    def __post_init__(self) -> None:
+        if not ENV.DB_JSONSCHEMA_DIR.is_absolute():
+            setattr(
+                self,
+                "DB_JSONSCHEMA_DIR",
+                Path(__file__).parent / "wms" / ENV.DB_JSONSCHEMA_DIR,
+            )
+        if not ENV.REST_OPENAPI_SPEC_FPATH.is_absolute():
+            setattr(
+                self,
+                "REST_OPENAPI_SPEC_FPATH",
+                Path(__file__).parent / "wms" / ENV.REST_OPENAPI_SPEC_FPATH,
+            )
+
 
 ENV = from_environment_as_dataclass(EnvConfig)
 
@@ -55,7 +69,7 @@ ENV = from_environment_as_dataclass(EnvConfig)
 # --------------------------------------------------------------------------------------
 
 
-def _get_jsonschema_specs(dpath: Path) -> dict[str, Any]:
+def _get_jsonschema_specs(dpath: Path) -> dict[str, dict[str, Any]]:
     specs: dict[str, dict[str, Any]] = {}
     for fpath in dpath.iterdir():
         with open(dpath) as f:

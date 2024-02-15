@@ -214,7 +214,7 @@ jobs:
           for fpath in pathlib.Path("wms/" + os.environ["DB_JSONSCHEMA_DIR"]).iterdir():
 
               # find 'responses' keys, and override/add 400
-              with open(fpath, "rb") as f:
+              with open(fpath) as f:
                   spec = json.load(f)
               spec["required"] = list(spec["properties"].keys())
               spec["additionalProperties"] = False
