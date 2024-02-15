@@ -5,6 +5,7 @@ import inspect
 import logging
 import os
 import re
+from pathlib import Path
 
 import openapi_core
 import tornado
@@ -17,7 +18,9 @@ LOGGER = logging.getLogger(__name__)
 logging.getLogger("parse").setLevel(logging.INFO)
 
 
-_OPENAPI_SPEC = SchemaPath.from_file_path(os.environ["REST_OPENAPI_SPEC_FPATH"])
+_OPENAPI_SPEC = SchemaPath.from_file_path(
+    Path(__file__).parent / "../../wms/" / os.environ["REST_OPENAPI_SPEC_FPATH"]
+)
 
 
 def test_census_routes() -> None:

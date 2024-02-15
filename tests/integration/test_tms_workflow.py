@@ -24,7 +24,9 @@ CONDOR_LOCATIONS = [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]
 # ----------------------------------------------------------------------------
 
 
-_OPENAPI_JSON = Path(os.environ["REST_OPENAPI_SPEC_FPATH"])
+_OPENAPI_JSON = (
+    Path(__file__).parent / "../../wms/" / os.environ["REST_OPENAPI_SPEC_FPATH"]
+)
 
 
 def request_and_validate(
