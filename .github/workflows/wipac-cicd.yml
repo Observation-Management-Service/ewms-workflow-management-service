@@ -11,6 +11,8 @@ env:
   REST_HOST: localhost  # the server should connect to 0.0.0.0
   REST_PORT: 8080
   #
+  REST_OPENAPI_PATHS_DIR: "schema/rest/paths"
+  REST_OPENAPI_BASE_FPATH: "schema/rest/openapi_no_paths.json"
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_autobuild.json"
   DB_JSONSCHEMA_DIR: "schema/db"
 
@@ -122,6 +124,25 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
+      - name: auto-build ${{ env.REST_OPENAPI_SPEC_FPATH }}
+        run: |
+          python -c '
+          import json, os, pathlib
+
+          with open("wms/" + os.environ["REST_OPENAPI_BASE_FPATH"]) as f:
+              spec = json.loads(f)
+
+          for fpath in pathlib.Path("wms/" + os.environ["REST_OPENAPI_PATHS_DIR"]).iterdir():
+              with open(fpath) as f:
+                  if fpath.stem == "root":
+                      path_pattern = "/"
+                  else:
+                      path_pattern = "/" + fpath.stem.replace(".","/")
+                  spec["paths"][path_pattern] = json.loads(f)
+
+          with open("wms/" + os.environ["REST_OPENAPI_SPEC_FPATH"], "w") as f:
+              json.dump(spec, f, indent=4)
+          '
       - run: |
           pip3 install tornado
       - name: ${{ env.REST_OPENAPI_SPEC_FPATH }}
