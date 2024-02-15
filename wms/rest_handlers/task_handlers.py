@@ -49,8 +49,8 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         """Handle GET."""
         self.write(
             {
-                "task_image": "icecube/earthpilot",
-                "task_args": "aaa bbb --ccc 123",
+                "task_image": "blah",
+                "task_args": "idk",
                 "task_id": task_id,
             }
         )
@@ -72,8 +72,8 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
             {
                 "task_directives": [
                     {
-                        "task_image": "icecube/earthpilot",
-                        "task_args": "aaa bbb --ccc 123",
+                        "task_image": "blah",
+                        "task_args": "idk",
                         "task_id": "abcdef123456",
                     },
                 ]
