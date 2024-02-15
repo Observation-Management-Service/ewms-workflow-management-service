@@ -9,6 +9,7 @@ from ..config import DB_JSONSCHEMA_SPECS
 from .utils import (
     _DB_NAME,
     _TASK_DIRECTIVES_COLL_NAME,
+    DocumentNotFoundException,
     log_in_out,
     web_jsonschema_validate,
 )
@@ -33,3 +34,13 @@ class TaskDirectiveMongoClient:
         # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
         task_directive.pop("_id")
         return task_directive
+
+    @log_in_out(LOGGER)  # type: ignore[misc]
+    async def find_one(self, query: dict) -> dict:
+        """Find one task_directive dict."""
+        doc = await self.collection.find_one(query)
+        if not doc:
+            raise DocumentNotFoundException()
+        # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
+        doc.pop("_id")
+        return doc  # type: ignore[no-any-return]

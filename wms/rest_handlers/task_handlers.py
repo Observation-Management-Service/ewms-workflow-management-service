@@ -47,13 +47,9 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, task_id: str) -> None:
         """Handle GET."""
-        self.write(
-            {
-                "task_image": "blah",
-                "task_args": "idk",
-                "task_id": task_id,
-            }
-        )
+        task_directive = await self.task_directive_db.find_one({"task_id": task_id})
+
+        self.write(task_directive)
 
 
 # ----------------------------------------------------------------------------

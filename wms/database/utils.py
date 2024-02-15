@@ -82,3 +82,7 @@ def web_jsonschema_validate(instance: Any, schema: dict) -> None:
             log_message=f"{e.__class__.__name__}: {e}",  # to stderr
             reason="Attempted to insert invalid data into database",  # to client
         )
+
+
+class DocumentNotFoundException(Exception):
+    """Raised when document is not found for a particular query."""
