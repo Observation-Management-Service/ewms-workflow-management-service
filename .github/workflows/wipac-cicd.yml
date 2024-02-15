@@ -124,34 +124,11 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-      - name: auto-build ${{ env.REST_OPENAPI_SPEC_FPATH }}
+
+      - name: modify schemas - ${{ env.REST_OPENAPI_PATHS_DIR }}
         run: |
           python -c '
-          import json, os, pathlib
-
-          with open("wms/" + os.environ["REST_OPENAPI_BASE_FPATH"]) as f:
-              spec = json.load(f)
-
-          for fpath in pathlib.Path("wms/" + os.environ["REST_OPENAPI_PATHS_DIR"]).iterdir():
-              with open(fpath) as f:
-                  if fpath.stem == "root":
-                      path_pattern = "/"
-                  else:
-                      path_pattern = "/" + fpath.stem.replace(".","/")
-                  spec["paths"][path_pattern] = json.load(f)
-
-          with open("wms/" + os.environ["REST_OPENAPI_SPEC_FPATH"], "w") as f:
-              json.dump(spec, f, indent=4)
-          '
-      - run: |
-          pip3 install tornado
-      - name: ${{ env.REST_OPENAPI_SPEC_FPATH }}
-        run: |
-          python -c '
-          import json, tornado, copy, os
-
-          METHODS = [m.lower() for m in tornado.web.RequestHandler.SUPPORTED_METHODS]
-          FILE = "wms/" + os.environ["REST_OPENAPI_SPEC_FPATH"]
+          import json, os
 
           NEW_400 = {
               "description": "invalid request arguments",
@@ -175,8 +152,6 @@ jobs:
               }
           }
 
-          with open(FILE, "rb") as f:
-              spec = json.load(f)
 
           def settle_nested_dictkeyval_one_at_a_time(d, setter, if_this):
               """Calling repeatedly will complete the settling.
@@ -190,41 +165,48 @@ jobs:
                   elif isinstance(v, dict):
                       settle_nested_dictkeyval_one_at_a_time(v, setter, if_this)
 
-          # set "additionalProperties" keys
-          def set_additionalProperties(d,k):
-              d["additionalProperties"] = False
-          while True:
-              try:
-                  settle_nested_dictkeyval_one_at_a_time(
-                      spec,
-                      set_additionalProperties,
-                      lambda d,k: k == "properties" and "additionalProperties" not in d,
-                  )
-              except:
-                  continue
-              break
 
-          # find "responses" keys, then set their "400" keys
-          def set_responses_400(d,k):
-              d["responses"].update({"400": NEW_400})
-          while True:
-              try:
-                  settle_nested_dictkeyval_one_at_a_time(
-                      spec,
-                      set_responses_400,
-                      lambda d,k: k == "responses" and d["responses"].get("400") != NEW_400,
-                  )
-              except:
-                  continue
-              break
+          # GO!
+          for fpath in pathlib.Path("wms/" + os.environ["DB_JSONSCHEMA_DIR"]).iterdir():
+              with open(fpath) as f:
+                  spec = json.load(f)
 
-          # format neatly
-          with open(FILE, "w") as f:
-              json.dump(spec, f, indent=4)
-          with open(FILE, "a") as f:  # json.dump removes trailing newline
-              f.write("\n")
+              # set "additionalProperties" keys
+              def set_additionalProperties(d,k):
+                  d["additionalProperties"] = False
+              while True:
+                  try:
+                      settle_nested_dictkeyval_one_at_a_time(
+                          spec,
+                          set_additionalProperties,
+                          lambda d,k: k == "properties" and "additionalProperties" not in d,
+                      )
+                  except:
+                      continue
+                  break
+
+              # find "responses" keys, then set their "400" keys
+              def set_responses_400(d,k):
+                  d["responses"].update({"400": NEW_400})
+              while True:
+                  try:
+                      settle_nested_dictkeyval_one_at_a_time(
+                          spec,
+                          set_responses_400,
+                          lambda d,k: k == "responses" and d["responses"].get("400") != NEW_400,
+                      )
+                  except:
+                      continue
+                  break
+
+              # format neatly
+              with open(fpath, "w") as f:
+                  json.dump(spec, f, indent=4)
+              with open(fpath, "a") as f:  # else json.dump removes trailing newline
+                  f.write("\n")
           '
-      - name: ${{ env.DB_JSONSCHEMA_DIR }}
+
+      - name: modify schemas - ${{ env.DB_JSONSCHEMA_DIR }}
         run: |
           python -c '
           import json, os, pathlib
@@ -240,9 +222,37 @@ jobs:
               # format neatly
               with open(fpath, "w") as f:
                   json.dump(spec, f, indent=4)
-              with open(fpath, "a") as f:  # json.dump removes trailing newline
+              with open(fpath, "a") as f:  # else json.dump removes trailing newline
                   f.write("\n")
           '
+
+      - name: auto-build ${{ env.REST_OPENAPI_SPEC_FPATH }}
+        run: |
+          # NOTE: DO NOT CHANGE THE CONTENTS OF THE SCHEMA, ONLY ASSEMBLE.
+          #
+          # ANY MODIFICATIONS SHOULD BE MADE TO **ORIGINAL FILES**
+          # (NOT THE AUTO-GENERATED FILE) AND COMMITTED.
+
+          python -c '
+          import json, os, pathlib
+
+          with open("wms/" + os.environ["REST_OPENAPI_BASE_FPATH"]) as f:
+              spec = json.load(f)
+
+          spec["paths"] = {}  # override anything that was here
+
+          for fpath in pathlib.Path("wms/" + os.environ["REST_OPENAPI_PATHS_DIR"]).iterdir():
+              with open(fpath) as f:
+                  if fpath.stem == "root":
+                      path_pattern = "/"
+                  else:
+                      path_pattern = "/" + fpath.stem.replace(".","/")
+                  spec["paths"][path_pattern] = json.load(f)
+
+          with open("wms/" + os.environ["REST_OPENAPI_SPEC_FPATH"], "w") as f:
+              json.dump(spec, f, indent=4)
+          '
+
       - name: git add, commit, push
         run: |
           git add . || true
