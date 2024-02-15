@@ -53,13 +53,13 @@ class EnvConfig:
             setattr(
                 self,
                 "DB_JSONSCHEMA_DIR",
-                Path(__file__).parent / "wms" / self.DB_JSONSCHEMA_DIR,
+                Path(__file__).parent / self.DB_JSONSCHEMA_DIR,
             )
         if not self.REST_OPENAPI_SPEC_FPATH.is_absolute():
             setattr(
                 self,
                 "REST_OPENAPI_SPEC_FPATH",
-                Path(__file__).parent / "wms" / self.REST_OPENAPI_SPEC_FPATH,
+                Path(__file__).parent / self.REST_OPENAPI_SPEC_FPATH,
             )
 
 
