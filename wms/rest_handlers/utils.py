@@ -29,7 +29,7 @@ def validate_request(openapi_spec: openapi_core.OpenAPI):  # type: ignore
                 )
             except ValidationError as e:
                 LOGGER.error(f"invalid request: {e.__class__.__name__} - {e}")
-                if isinstance(  # look at the exception that caused this error
+                if isinstance(  # look at the ORIGINAL exception that caused this error
                     e.__context__,
                     openapi_core.validation.schemas.exceptions.InvalidSchemaValue,
                 ):
