@@ -313,6 +313,8 @@ jobs:
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
             --env REST_HOST="${{ env.REST_HOST }}" \
             --env REST_PORT="${{ env.REST_PORT }}" \
+            --env REST_OPENAPI_SPEC_FPATH="${{ env.REST_OPENAPI_SPEC_FPATH }}" \
+            --env DB_JSONSCHEMA_DIR="${{ env.DB_JSONSCHEMA_DIR }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
           sleep 10

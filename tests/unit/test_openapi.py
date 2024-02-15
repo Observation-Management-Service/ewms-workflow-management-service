@@ -19,7 +19,7 @@ logging.getLogger("parse").setLevel(logging.INFO)
 
 
 _OPENAPI_SPEC = SchemaPath.from_file_path(
-    Path(__file__).parent / "../../wms/" / os.environ["REST_OPENAPI_SPEC_FPATH"]
+    str(Path(__file__).parent / "../../wms/" / os.environ["REST_OPENAPI_SPEC_FPATH"])
 )
 
 
