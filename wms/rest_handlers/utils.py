@@ -11,6 +11,8 @@ from openapi_core.validation.exceptions import ValidationError
 from openapi_core.validation.schemas.exceptions import InvalidSchemaValue
 from tornado import web
 
+from ..config import ENV
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -28,7 +30,6 @@ def validate_request(openapi_spec: openapi_core.OpenAPI):  # type: ignore
                 )
             except ValidationError as e:
                 LOGGER.error(f"invalid request: {e.__class__.__name__} - {e}")
-                # ex: openapi_core.validation.request.exceptions.InvalidRequestBody
                 if isinstance(e, InvalidSchemaValue):
                     reason = "; ".join(  # to client
                         # verbose details after newline
@@ -37,6 +38,8 @@ def validate_request(openapi_spec: openapi_core.OpenAPI):  # type: ignore
                     )
                 else:
                     reason = str(e)  # to client
+                if ENV.CI:  # in prod, don't fill up logs w/ traces from invalid data
+                    LOGGER.exception(e)
                 raise web.HTTPError(
                     status_code=400,
                     log_message=f"{e.__class__.__name__}: {e}",  # to stderr
@@ -44,6 +47,7 @@ def validate_request(openapi_spec: openapi_core.OpenAPI):  # type: ignore
                 )
             except Exception as e:
                 LOGGER.error(f"unexpected exception: {e.__class__.__name__} - {e}")
+                LOGGER.exception(e)
                 raise web.HTTPError(
                     status_code=400,
                     log_message=f"{e.__class__.__name__}: {e}",  # to stderr
