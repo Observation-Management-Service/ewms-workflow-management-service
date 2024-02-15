@@ -50,13 +50,13 @@ class EnvConfig:
 
     def __post_init__(self) -> None:
         if not self.DB_JSONSCHEMA_DIR.is_absolute():
-            setattr(
+            object.__setattr__(
                 self,
                 "DB_JSONSCHEMA_DIR",
                 Path(__file__).parent / self.DB_JSONSCHEMA_DIR,
             )
         if not self.REST_OPENAPI_SPEC_FPATH.is_absolute():
-            setattr(
+            object.__setattr__(
                 self,
                 "REST_OPENAPI_SPEC_FPATH",
                 Path(__file__).parent / self.REST_OPENAPI_SPEC_FPATH,
