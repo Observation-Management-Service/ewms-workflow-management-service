@@ -2,6 +2,7 @@
 
 
 import logging
+from typing import AsyncIterator
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
@@ -10,7 +11,6 @@ from .utils import (
     _DB_NAME,
     _TASK_DIRECTIVES_COLL_NAME,
     DocumentNotFoundException,
-    log_in_out,
     web_jsonschema_validate,
 )
 
@@ -26,21 +26,41 @@ class TaskDirectiveMongoClient:
         )
         self.schema = DB_JSONSCHEMA_SPECS["TaskDirective"]
 
-    @log_in_out(LOGGER)  # type: ignore[misc]
     async def insert(self, task_directive: dict) -> dict:
         """Insert the task_directive dict."""
+        LOGGER.debug(f"inserting task_directive: {task_directive}")
+
         web_jsonschema_validate(task_directive, self.schema)
         await self.collection.insert_one(task_directive)
         # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
         task_directive.pop("_id")
+
+        LOGGER.debug(f"inserted task_directive: {task_directive}")
         return task_directive
 
-    @log_in_out(LOGGER)  # type: ignore[misc]
     async def find_one(self, query: dict) -> dict:
         """Find one task_directive dict."""
+        LOGGER.debug(f"finding one with query: {query}")
+
         doc = await self.collection.find_one(query)
         if not doc:
             raise DocumentNotFoundException()
         # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
         doc.pop("_id")
+
+        LOGGER.debug(f"found {doc}")
         return doc  # type: ignore[no-any-return]
+
+    async def find(self, query: dict, projection: dict) -> AsyncIterator[dict]:
+        """Find all matching task_directive dict."""
+        LOGGER.debug(f"finding with query: {query}")
+
+        doc = {}
+        async for doc in self.collection.find(query, projection):
+            # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
+            doc.pop("_id")
+            LOGGER.debug(f"found {doc}")
+            yield doc
+
+        if not doc:
+            LOGGER.debug(f"found nothing matching query: {query}")

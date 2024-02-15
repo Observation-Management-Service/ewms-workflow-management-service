@@ -64,17 +64,15 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
         """Handle POST."""
-        self.write(
-            {
-                "task_directives": [
-                    {
-                        "task_image": "blah",
-                        "task_args": "idk",
-                        "task_id": "abcdef123456",
-                    },
-                ]
-            }
-        )
+
+        matches = []
+        async for m in self.task_directive_db.find(
+            self.get_argument("query"),
+            self.get_argument("projection", {}),
+        ):
+            matches.append(m)
+
+        self.write({"task_directives": matches})
 
 
 # ----------------------------------------------------------------------------
