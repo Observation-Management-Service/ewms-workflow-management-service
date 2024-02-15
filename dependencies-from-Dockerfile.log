@@ -75,7 +75,7 @@ cryptography==42.0.2
 └── cffi [required: >=1.12, installed: 1.16.0]
     └── pycparser [required: Any, installed: 2.21]
 pip==24.0
-pipdeptree==2.13.2
+pipdeptree==2.14.0
 setuptools==69.1.0
 wheel==0.42.0
 wipac-telemetry==0.3.0
