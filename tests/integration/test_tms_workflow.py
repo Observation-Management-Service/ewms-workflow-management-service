@@ -70,7 +70,8 @@ def request_and_validate(
 
     out = rc._decode(response.content)
     response.raise_for_status()
-    print(out)
+    if path != "/schema/openapi":
+        print(out)
     return out
 
 
@@ -115,7 +116,12 @@ async def test_000(rc: RestClient) -> None:
         openapi_spec,
         "POST",
         "/task/directives/find",
-        {"task_image": "icecube/earthpilot", "task_args": "aaa bbb --ccc 123"},
+        {
+            "query": {
+                "task_image": "icecube/earthpilot",
+                "task_args": "aaa bbb --ccc 123",
+            }
+        },
     )
     assert len(resp["task_directives"]) == 1
     assert resp["task_directives"][0] == task_directive
