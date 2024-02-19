@@ -32,7 +32,7 @@ class TaskforcesMongoClient:
         self._schema_partial["required"] = []
 
     async def insert(self, taskforce: dict) -> dict:
-        """Insert the taskforce dict."""
+        """Insert the taskforce obj."""
         LOGGER.debug(f"inserting taskforce: {taskforce}")
 
         web_jsonschema_validate(taskforce, self.schema)
@@ -54,7 +54,7 @@ class TaskforcesMongoClient:
         return vars(res)
 
     async def find_one(self, query: dict) -> dict:
-        """Find one taskforce dict."""
+        """Find one taskforce obj."""
         LOGGER.debug(f"finding one with query: {query}")
 
         doc = await self.collection.find_one(query)
@@ -67,7 +67,7 @@ class TaskforcesMongoClient:
         return doc  # type: ignore[no-any-return]
 
     async def find(self, query: dict, projection: dict) -> AsyncIterator[dict]:
-        """Find all matching taskforce dict."""
+        """Find all matching taskforce obj."""
         LOGGER.debug(f"finding with query: {query}")
 
         doc = {}

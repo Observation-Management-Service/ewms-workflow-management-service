@@ -47,7 +47,9 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, task_id: str) -> None:
         """Handle GET."""
-        task_directive = await self.task_directives_client.find_one({"task_id": task_id})
+        task_directive = await self.task_directives_client.find_one(
+            {"task_id": task_id}
+        )
 
         self.write(task_directive)
 
@@ -64,7 +66,6 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
         """Handle POST."""
-
         matches = []
         async for m in self.task_directives_client.find(
             self.get_argument("query"),
