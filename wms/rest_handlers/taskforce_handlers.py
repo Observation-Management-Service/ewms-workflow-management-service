@@ -29,19 +29,26 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
             "compound_statuses_by_taskforce", default={}
         )
 
-        # put in db
-
-
-        self.write(
-            {
-                "uuids": list(
-                    set(
-                        list(top_task_errors_by_taskforce.keys())
-                        + list(compound_statuses_by_taskforce.keys())
-                    )
-                )
-            }
+        all_uuids = list(
+            set(
+                list(top_task_errors_by_taskforce.keys())
+                + list(compound_statuses_by_taskforce.keys())
+            )
         )
+
+        # put in db
+        for uuid in all_uuids:
+            update = {}
+            if uuid in top_task_errors_by_taskforce:
+                # value could be falsy -- that's ok
+                update["top_task_errors"] = top_task_errors_by_taskforce[uuid]
+            if uuid in compound_statuses_by_taskforce:
+                # value could be falsy -- that's ok
+                update["compound_statuses"] = compound_statuses_by_taskforce[uuid]
+
+            await self.taskforces_client.update_set_one({"taskforce_uuid": uuid}, update)
+
+        self.write({"uuids": all_uuids})
 
 
 # ----------------------------------------------------------------------------
