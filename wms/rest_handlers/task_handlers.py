@@ -5,9 +5,9 @@ import logging
 import uuid
 
 from tornado import web
-from ..database.client import DocumentNotFoundException
 
 from .. import config
+from ..database.client import DocumentNotFoundException
 from . import auth, utils
 from .base_handlers import BaseWMSHandler
 
@@ -57,11 +57,11 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     "task_id": task_id,
                 }
             )
-        except DocumentNotFoundException:
+        except DocumentNotFoundException as e:
             raise web.HTTPError(
                 status_code=404,
                 reason=f"no task found with id: {task_id}",  # to client
-            )
+            ) from e
 
         self.write(task_directive)
 

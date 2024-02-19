@@ -219,11 +219,11 @@ class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     "taskforce_uuid": taskforce_uuid,
                 }
             )
-        except DocumentNotFoundException:
+        except DocumentNotFoundException as e:
             raise web.HTTPError(
                 status_code=404,
                 reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
-            )
+            ) from e
 
         self.write(taskforce)
 
