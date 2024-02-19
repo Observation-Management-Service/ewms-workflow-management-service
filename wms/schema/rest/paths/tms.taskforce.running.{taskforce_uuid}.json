@@ -17,7 +17,8 @@
                                     "description": "the taskforce uuid",
                                     "type": "string"
                                 }
-                            }
+                            },
+                            "additionalProperties": false
                         }
                     }
                 }

@@ -47,9 +47,11 @@
     "required": [
         "taskforce_uuid",
         "task_id",
+        "timestamp",
         "collector",
         "schedd",
         "job_event_log_fpath",
+        "tms_status",
         "compound_statuses",
         "top_task_errors"
     ],
