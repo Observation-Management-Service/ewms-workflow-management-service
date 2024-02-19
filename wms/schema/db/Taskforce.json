@@ -19,11 +19,14 @@
         "job_event_log_fpath": {
             "type": "string"
         },
-        "pending_start": {
-            "type": "boolean"
-        },
-        "pending_stop": {
-            "type": "boolean"
+        "tms_status": {
+            "type": "string",
+            "enum": [
+                "pending-start",
+                "running",
+                "pending-stop",
+                "done"
+            ]
         },
         "compound_statuses": {
             "type": "object",

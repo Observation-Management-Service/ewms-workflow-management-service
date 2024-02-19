@@ -98,7 +98,7 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
                 {
                     "collector": self.get_argument("collector"),
                     "schedd": self.get_argument("schedd"),
-                    "pending_start": True,
+                    "tms_status": "pending-start",
                 },
                 sort=[
                     ("timestamp", ASCENDING),  # oldest first
@@ -128,7 +128,7 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                 "taskforce_uuid": taskforce_uuid,
             },
             {
-                "pending": False,
+                "tms_status": "running",
             },
         )
 
@@ -158,7 +158,7 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
                 {
                     "collector": self.get_argument("collector"),
                     "schedd": self.get_argument("schedd"),
-                    "pending_stop": True,
+                    "tms_status": "pending-stop",
                 },
                 sort=[
                     ("timestamp", ASCENDING),  # oldest first
@@ -182,7 +182,21 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def delete(self, taskforce_uuid: str) -> None:
         """Handle DELETE."""
-        self.write({})
+
+        await self.task_directives_client.update_set_one(
+            {
+                "taskforce_uuid": taskforce_uuid,
+            },
+            {
+                "tms_status": "done",
+            },
+        )
+
+        self.write(
+            {
+                "taskforce_uuid": taskforce_uuid,
+            }
+        )
 
 
 # ----------------------------------------------------------------------------
