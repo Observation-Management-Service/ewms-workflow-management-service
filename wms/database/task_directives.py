@@ -17,7 +17,7 @@ from .utils import (
 LOGGER = logging.getLogger(__name__)
 
 
-class TaskDirectiveMongoClient:
+class TaskDirectivesMongoClient:
     """A client for interacting with task directives."""
 
     def __init__(self, mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
