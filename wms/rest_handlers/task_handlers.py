@@ -5,6 +5,7 @@ import logging
 import uuid
 
 from tornado import web
+from ..database.client import DocumentNotFoundException
 
 from .. import config
 from . import auth, utils
