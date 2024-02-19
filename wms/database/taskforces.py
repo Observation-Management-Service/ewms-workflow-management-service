@@ -1,6 +1,7 @@
 """Interface to the taskforces collection in the mongo database."""
 
 
+import copy
 import logging
 from typing import AsyncIterator
 
@@ -26,6 +27,10 @@ class TaskforcesMongoClient:
         )
         self.schema = DB_JSONSCHEMA_SPECS["Taskforce"]
 
+        # like schema, but for partial updates
+        self._schema_partial = copy.deepcopy(self.schema)
+        self._schema_partial["required"] = []
+
     async def insert(self, taskforce: dict) -> dict:
         """Insert the taskforce dict."""
         LOGGER.debug(f"inserting taskforce: {taskforce}")
@@ -42,6 +47,7 @@ class TaskforcesMongoClient:
         """Update the taskforce obj."""
         LOGGER.debug(f"update one with query: {query}")
 
+        web_jsonschema_validate(set_update, self._schema_partial)
         res = await self.collection.update_one(query, {"$set": set_update})
 
         LOGGER.debug(f"updated: {query}")

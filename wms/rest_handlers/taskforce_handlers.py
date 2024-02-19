@@ -46,7 +46,10 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 # value could be falsy -- that's ok
                 update["compound_statuses"] = compound_statuses_by_taskforce[uuid]
 
-            await self.taskforces_client.update_set_one({"taskforce_uuid": uuid}, update)
+            await self.taskforces_client.update_set_one(
+                {"taskforce_uuid": uuid},
+                update,
+            )
 
         self.write({"uuids": all_uuids})
 
