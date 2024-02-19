@@ -28,6 +28,10 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
         compound_statuses_by_taskforce = self.get_argument(
             "compound_statuses_by_taskforce", default={}
         )
+
+        # put in db
+
+
         self.write(
             {
                 "uuids": list(

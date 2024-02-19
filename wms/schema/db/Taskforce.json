@@ -1,0 +1,35 @@
+{
+    "type": "object",
+    "properties": {
+        "taskforce_uuid": {
+            "type": "string"
+        },
+        "task_id": {
+            "type": "string"
+        },
+        "collector": {
+            "type": "string"
+        },
+        "schedd": {
+            "type": "string"
+        },
+        "job_event_log_fpath": {
+            "type": "string"
+        },
+        "compound_statuses": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "integer"
+                }
+            }
+        },
+        "top_task_errors": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "integer"
+            }
+        }
+    }
+}
