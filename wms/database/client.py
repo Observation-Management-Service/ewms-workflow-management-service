@@ -8,7 +8,7 @@ from typing import Any, AsyncIterator
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
 from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
-from .utils import _DB_NAME, get_collection_name, web_jsonschema_validate
+from .utils import _DB_NAME, get_jsonschema_spec_name, web_jsonschema_validate
 
 
 class DocumentNotFoundException(Exception):
@@ -28,7 +28,7 @@ class WMSMongoClient:
             collection_name,
         )
         self._schema = MONGO_COLLECTION_JSONSCHEMA_SPECS[
-            get_collection_name(collection_name)
+            get_jsonschema_spec_name(collection_name)
         ]
 
         # like schema, but for partial updates

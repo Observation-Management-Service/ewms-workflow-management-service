@@ -19,9 +19,9 @@ TASK_DIRECTIVES_COLL_NAME = "TaskDirectiveColl"
 TASKFORCES_COLL_NAME = "TaskforceColl"
 
 
-def get_collection_name(jsonschema_name: str) -> str:
+def get_jsonschema_spec_name(collection_name: str) -> str:
     """Map between the two naming schemes."""
-    return jsonschema_name + "Coll"
+    return collection_name.removesuffix("Coll")
 
 
 async def create_mongodb_client() -> AsyncIOMotorClient:  # type: ignore[valid-type]
