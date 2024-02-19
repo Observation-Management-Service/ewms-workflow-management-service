@@ -7,11 +7,17 @@
     "post": {
         "responses": {
             "200": {
-                "description": "the matching taskforce object",
+                "description": "the updated taskforce's uuid",
                 "content": {
                     "application/json": {
                         "schema": {
-                            "$ref": "#/components/schemas/TaskforceObject"
+                            "type": "object",
+                            "properties": {
+                                "taskforce_uuid": {
+                                    "description": "the taskforce uuid",
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 }

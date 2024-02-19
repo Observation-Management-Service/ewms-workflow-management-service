@@ -118,7 +118,21 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
-        self.write({})
+
+        await self.task_directives_client.update_set_one(
+            {
+                "taskforce_uuid": taskforce_uuid,
+            },
+            {
+                "pending": False,
+            },
+        )
+
+        self.write(
+            {
+                "taskforce_uuid": taskforce_uuid,
+            }
+        )
 
 
 # ----------------------------------------------------------------------------
