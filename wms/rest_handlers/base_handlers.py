@@ -29,12 +29,10 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
         self.task_directives_client = db.client.WMSMongoClient(
             mongo_client,
             db.utils.TASK_DIRECTIVES_COLL_NAME,
-            "TaskDirective",
         )
         self.taskforces_client = db.client.WMSMongoClient(
             mongo_client,
             db.utils.TASKFORCES_COLL_NAME,
-            "Taskforces",
         )
         self.backlog_client = db.backlog.BacklogMongoClient(mongo_client)
 
