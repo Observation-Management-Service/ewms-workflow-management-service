@@ -67,7 +67,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def post(self) -> None:
         """Handle POST."""
         matches = []
-        async for m in self.task_directives_client.find(
+        async for m in self.task_directives_client.find_all(
             self.get_argument("query"),
             self.get_argument("projection", {}),
         ):

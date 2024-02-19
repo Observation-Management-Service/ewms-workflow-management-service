@@ -80,7 +80,7 @@ class WMSMongoClient:
         self.logger.debug(f"found {doc}")
         return doc  # type: ignore[no-any-return]
 
-    async def find(self, query: dict, projection: dict) -> AsyncIterator[dict]:
+    async def find_all(self, query: dict, projection: dict) -> AsyncIterator[dict]:
         """Find all matching the query."""
         self.logger.debug(f"finding with query: {query}")
 
