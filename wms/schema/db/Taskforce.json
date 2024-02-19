@@ -19,7 +19,10 @@
         "job_event_log_fpath": {
             "type": "string"
         },
-        "pending": {
+        "pending_start": {
+            "type": "boolean"
+        },
+        "pending_stop": {
             "type": "boolean"
         },
         "compound_statuses": {
