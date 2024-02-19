@@ -15,8 +15,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 _DB_NAME = "WMS_DB"
-_TASK_DIRECTIVES_COLL_NAME = "TaskDirectives"
-_TASKFORCES_COLL_NAME = "Taskforces"
+TASK_DIRECTIVES_COLL_NAME = "TaskDirectives"
+TASKFORCES_COLL_NAME = "Taskforces"
 
 
 async def create_mongodb_client() -> AsyncIOMotorClient:  # type: ignore[valid-type]
@@ -39,14 +39,14 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     Call on server startup.
     """
 
-    for coll in [_TASK_DIRECTIVES_COLL_NAME, _TASKFORCES_COLL_NAME]:
+    for coll in [TASK_DIRECTIVES_COLL_NAME, TASKFORCES_COLL_NAME]:
         await mongo_client[_DB_NAME][coll].create_index(  # type: ignore[index]
             "task_id",
             name="task_id_index",
             unique=True,
         )
 
-    await mongo_client[_DB_NAME][_TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
+    await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
         "taskforce_uuid",
         name="taskforce_uuid_index",
         unique=True,
@@ -64,7 +64,3 @@ def web_jsonschema_validate(instance: Any, schema: dict) -> None:
             log_message=f"{e.__class__.__name__}: {e}",  # to stderr
             reason="Attempted to insert invalid data into database",  # to client
         )
-
-
-class DocumentNotFoundException(Exception):
-    """Raised when document is not found for a particular query."""
