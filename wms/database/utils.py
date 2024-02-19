@@ -46,6 +46,12 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
             unique=True,
         )
 
+    await mongo_client[_DB_NAME][_TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
+        "taskforce_uuid",
+        name="taskforce_uuid_index",
+        unique=True,
+    )
+
 
 def web_jsonschema_validate(instance: Any, schema: dict) -> None:
     """Wrap `jsonschema.validate` with `web.HTTPError` (500)."""
