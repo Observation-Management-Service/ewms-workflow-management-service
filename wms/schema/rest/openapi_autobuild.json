@@ -108,7 +108,15 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TaskforceObject"
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/TaskforceObject"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "additionalProperties": false
+                                        }
+                                    ]
                                 }
                             }
                         }
