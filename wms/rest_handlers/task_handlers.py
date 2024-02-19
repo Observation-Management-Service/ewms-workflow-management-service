@@ -4,6 +4,8 @@
 import logging
 import uuid
 
+from tornado import web
+
 from .. import config
 from . import auth, utils
 from .base_handlers import BaseWMSHandler
@@ -47,9 +49,18 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, task_id: str) -> None:
         """Handle GET."""
-        task_directive = await self.task_directives_client.find_one(
-            {"task_id": task_id}
-        )
+
+        try:
+            task_directive = await self.task_directives_client.find_one(
+                {
+                    "task_id": task_id,
+                }
+            )
+        except DocumentNotFoundException:
+            raise web.HTTPError(
+                status_code=404,
+                reason=f"no task found with id: {task_id}",  # to client
+            )
 
         self.write(task_directive)
 

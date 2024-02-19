@@ -4,6 +4,7 @@
 import logging
 
 from pymongo import ASCENDING
+from tornado import web
 
 from .. import config
 from ..database.client import DocumentNotFoundException
@@ -70,7 +71,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def post(self) -> None:
         """Handle POST."""
         matches = []
-        async for m in self.task_directives_client.find_all(
+        async for m in self.taskforces_client.find_all(
             self.get_argument("query"),
             self.get_argument("projection", {}),
         ):
@@ -94,7 +95,7 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         # get the next taskforce to START, for the given cluster
         try:
-            taskforce = await self.task_directives_client.find_one(
+            taskforce = await self.taskforces_client.find_one(
                 {
                     "collector": self.get_argument("collector"),
                     "schedd": self.get_argument("schedd"),
@@ -123,7 +124,7 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
 
-        await self.task_directives_client.update_set_one(
+        await self.taskforces_client.update_set_one(
             {
                 "taskforce_uuid": taskforce_uuid,
             },
@@ -154,7 +155,7 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         # get the next taskforce to STOP, for the given cluster
         try:
-            taskforce = await self.task_directives_client.find_one(
+            taskforce = await self.taskforces_client.find_one(
                 {
                     "collector": self.get_argument("collector"),
                     "schedd": self.get_argument("schedd"),
@@ -183,7 +184,7 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def delete(self, taskforce_uuid: str) -> None:
         """Handle DELETE."""
 
-        await self.task_directives_client.update_set_one(
+        await self.taskforces_client.update_set_one(
             {
                 "taskforce_uuid": taskforce_uuid,
             },
@@ -211,7 +212,20 @@ class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, taskforce_uuid: str) -> None:
         """Handle GET."""
-        self.write({})
+
+        try:
+            taskforce = await self.taskforces_client.find_one(
+                {
+                    "taskforce_uuid": taskforce_uuid,
+                }
+            )
+        except DocumentNotFoundException:
+            raise web.HTTPError(
+                status_code=404,
+                reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
+            )
+
+        self.write(taskforce)
 
 
 # ----------------------------------------------------------------------------
