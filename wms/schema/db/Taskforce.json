@@ -31,5 +31,15 @@
                 "type": "integer"
             }
         }
-    }
+    },
+    "required": [
+        "taskforce_uuid",
+        "task_id",
+        "collector",
+        "schedd",
+        "job_event_log_fpath",
+        "compound_statuses",
+        "top_task_errors"
+    ],
+    "additionalProperties": false
 }
