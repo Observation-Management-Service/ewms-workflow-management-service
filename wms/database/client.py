@@ -3,7 +3,7 @@
 
 import copy
 import logging
-from typing import AsyncIterator
+from typing import Any, AsyncIterator
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
@@ -67,11 +67,16 @@ class WMSMongoClient:
     # READS
     ####################################################################
 
-    async def find_one(self, query: dict) -> dict:
+    async def find_one(
+        self,
+        query: dict,
+        *args: Any,
+        **kwargs: Any,
+    ) -> dict:
         """Find one matching the query."""
         self.logger.debug(f"finding one with query: {query}")
 
-        doc = await self._collection.find_one(query)
+        doc = await self._collection.find_one(query, *args, **kwargs)
         if not doc:
             raise DocumentNotFoundException()
         # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids

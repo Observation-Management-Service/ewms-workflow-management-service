@@ -3,6 +3,8 @@
 
 import logging
 
+from pymongo import ASCENDING
+
 from .. import config
 from . import auth, utils
 from .base_handlers import BaseWMSHandler
@@ -88,7 +90,20 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self) -> None:
         """Handle GET."""
-        self.write({})
+
+        # get the next taskforce to start, for the cluster
+        taskforce = await self.task_directives_client.find_one(
+            {
+                "collector": self.get_argument("collector"),
+                "schedd": self.get_argument("schedd"),
+                "pending": True,
+            },
+            sort=[
+                ("timestamp", ASCENDING),  # oldest first
+            ],
+        )
+
+        self.write(taskforce)
 
 
 # ----------------------------------------------------------------------------
