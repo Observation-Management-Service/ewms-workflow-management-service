@@ -30,7 +30,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             task_args=self.get_argument("task_args", ""),
         )
 
-        task_directive = await self.task_directive_db.insert(task_directive)
+        task_directive = await self.task_directives_client.insert(task_directive)
 
         self.write(task_directive)
 
@@ -47,7 +47,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, task_id: str) -> None:
         """Handle GET."""
-        task_directive = await self.task_directive_db.find_one({"task_id": task_id})
+        task_directive = await self.task_directives_client.find_one({"task_id": task_id})
 
         self.write(task_directive)
 
@@ -66,7 +66,7 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         """Handle POST."""
 
         matches = []
-        async for m in self.task_directive_db.find(
+        async for m in self.task_directives_client.find(
             self.get_argument("query"),
             self.get_argument("projection", {}),
         ):
