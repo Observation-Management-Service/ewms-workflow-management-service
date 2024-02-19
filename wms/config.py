@@ -79,7 +79,8 @@ def _get_jsonschema_specs(dpath: Path) -> dict[str, dict[str, Any]]:
     return specs
 
 
-DB_JSONSCHEMA_SPECS = _get_jsonschema_specs(ENV.DB_JSONSCHEMA_DIR)
+# keyed by the mongo collection name
+MONGO_COLLECTION_JSONSCHEMA_SPECS = _get_jsonschema_specs(ENV.DB_JSONSCHEMA_DIR)
 
 
 # --------------------------------------------------------------------------------------

@@ -15,8 +15,13 @@ LOGGER = logging.getLogger(__name__)
 
 
 _DB_NAME = "WMS_DB"
-TASK_DIRECTIVES_COLL_NAME = "TaskDirectives"
-TASKFORCES_COLL_NAME = "Taskforces"
+TASK_DIRECTIVES_COLL_NAME = "TaskDirectiveColl"
+TASKFORCES_COLL_NAME = "TaskforceColl"
+
+
+def get_collection_name(jsonschema_name: str) -> str:
+    """Map between the two naming schemes."""
+    return jsonschema_name + "Coll"
 
 
 async def create_mongodb_client() -> AsyncIOMotorClient:  # type: ignore[valid-type]

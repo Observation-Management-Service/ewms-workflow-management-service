@@ -7,8 +7,8 @@ from typing import AsyncIterator
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
-from ..config import DB_JSONSCHEMA_SPECS
-from .utils import _DB_NAME, web_jsonschema_validate
+from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
+from .utils import _DB_NAME, get_collection_name, web_jsonschema_validate
 
 
 class DocumentNotFoundException(Exception):
@@ -22,12 +22,14 @@ class WMSMongoClient:
         self,
         mongo_client: AsyncIOMotorClient,  # type: ignore[valid-type]
         collection_name: str,
-        jsonschema_name: str,
     ) -> None:
         self._collection = AsyncIOMotorCollection(
-            mongo_client[_DB_NAME], collection_name  # type: ignore[index]
+            mongo_client[_DB_NAME],  # type: ignore[index]
+            collection_name,
         )
-        self._schema = DB_JSONSCHEMA_SPECS[jsonschema_name]
+        self._schema = MONGO_COLLECTION_JSONSCHEMA_SPECS[
+            get_collection_name(collection_name)
+        ]
 
         # like schema, but for partial updates
         self._schema_partial = copy.deepcopy(self._schema)
