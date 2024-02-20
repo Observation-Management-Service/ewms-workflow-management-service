@@ -46,7 +46,28 @@
         },
         "schemas": {
             "TaskDirectiveObject": "../db/TaskDirective.json",
-            "TaskforceObject": "../db/Taskforce.json"
+            "TaskforceObject": "../db/Taskforce.json",
+            "FindObject": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "description": "the search criteria (MongoDB-filter syntax)",
+                        "type": "object"
+                    },
+                    "projection": {
+                        "description": "the fields to include in the response",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "query"
+                ],
+                "additionalProperties": false
+            }
         }
     },
     "paths": "./paths/"
