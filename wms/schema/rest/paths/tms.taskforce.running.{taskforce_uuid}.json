@@ -51,7 +51,8 @@
                             "required": [
                                 "code",
                                 "error"
-                            ]
+                            ],
+                            "additionalProperties": false
                         }
                     }
                 }
@@ -75,7 +76,8 @@
                             "required": [
                                 "code",
                                 "error"
-                            ]
+                            ],
+                            "additionalProperties": false
                         }
                     }
                 }

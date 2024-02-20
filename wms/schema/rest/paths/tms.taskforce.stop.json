@@ -47,7 +47,8 @@
                             "required": [
                                 "code",
                                 "error"
-                            ]
+                            ],
+                            "additionalProperties": false
                         }
                     }
                 }
