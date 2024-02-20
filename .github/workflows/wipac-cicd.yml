@@ -118,17 +118,23 @@ jobs:
           git fetch &> /dev/null
           if [[ $(git status -sb | grep behind) ]]; then
             echo "this commit is not the most recent on this branch -- rest of action will be skipped"
-            exit 1
+            echo "IS_GIT_BEHIND=true" >> $GITHUB_ENV
+          else
+            echo "IS_GIT_BEHIND=false" >> $GITHUB_ENV
           fi
       - name: Git config
+        if: env.IS_GIT_BEHIND != 'true'
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-      - name: modify REST schemas - ${{ env.REST_OPENAPI_PATHS_DIR }}
+      - name: modify REST path schemas - ${{ env.REST_OPENAPI_PATHS_DIR }}
+        if: env.IS_GIT_BEHIND != 'true'
         run: |
+          cd wms/$REST_OPENAPI_PATHS_DIR
+
           python -c '
-          import json, os, pathlib
+          import json, pathlib
 
           NEW_400 = {
               "description": "invalid request arguments",
@@ -167,7 +173,7 @@ jobs:
 
 
           # GO!
-          for fpath in pathlib.Path("wms/" + os.environ["REST_OPENAPI_PATHS_DIR"]).iterdir():
+          for fpath in pathlib.Path(".").iterdir():
               with open(fpath) as f:
                   spec = json.load(f)
 
@@ -207,11 +213,14 @@ jobs:
           '
 
       - name: modify DB schemas - ${{ env.DB_JSONSCHEMA_DIR }}
+        if: env.IS_GIT_BEHIND != 'true'
         run: |
-          python -c '
-          import json, os, pathlib
+          cd wms/$DB_JSONSCHEMA_DIR
 
-          for fpath in pathlib.Path("wms/" + os.environ["DB_JSONSCHEMA_DIR"]).iterdir():
+          python -c '
+          import json, pathlib
+
+          for fpath in pathlib.Path(".").iterdir():
 
               # find 'responses' keys, and override/add 400
               with open(fpath) as f:
@@ -227,33 +236,49 @@ jobs:
           '
 
       - name: auto-build ${{ env.REST_OPENAPI_SPEC_FPATH }}
+        if: env.IS_GIT_BEHIND != 'true'
         run: |
           # NOTE: DO NOT CHANGE THE CONTENTS OF THE SCHEMA, ONLY ASSEMBLE.
           #
           # ANY MODIFICATIONS SHOULD BE MADE TO **ORIGINAL FILES**
           # (NOT THE AUTO-GENERATED FILE) AND COMMITTED.
 
-          python -c '
-          import json, os, pathlib
+          cd wms/$( dirname $REST_OPENAPI_PREBUILD_FPATH )
 
-          with open("wms/" + os.environ["REST_OPENAPI_PREBUILD_FPATH"]) as f:
+          python -c '
+          import json, os, pathlib, copy
+
+          with open(pathlib.Path(os.environ["REST_OPENAPI_PREBUILD_FPATH"]).name) as f:
               spec = json.load(f)
 
-          spec["paths"] = {}  # override anything that was here
+          # build paths entries
+          if isinstance(spec["paths"], str):
+              paths_dir = pathlib.Path(spec["paths"].removeprefix("${{").removesuffix("}}"))
+              spec["paths"] = {}  # override anything that was here
 
-          for fpath in pathlib.Path("wms/" + os.environ["REST_OPENAPI_PATHS_DIR"]).iterdir():
-              with open(fpath) as f:
-                  if fpath.stem == "root":
-                      path_pattern = "/"
-                  else:
-                      path_pattern = "/" + fpath.stem.replace(".","/")
-                  spec["paths"][path_pattern] = json.load(f)
+              # assemble
+              for fpath in paths_dir.iterdir():
+                  with open(fpath) as f:
+                      if fpath.stem == "root":
+                          path_pattern = "/"
+                      else:
+                          path_pattern = "/" + fpath.stem.replace(".","/")
+                      spec["paths"][path_pattern] = json.load(f)
 
-          with open("wms/" + os.environ["REST_OPENAPI_SPEC_FPATH"], "w") as f:
+          # build components.schemas entries
+          for key,val in copy.deepcopy(spec["components"]["schemas"]):
+              if isinstance(val, str):
+                  fpath = pathlib.Path(val.removeprefix("${{").removesuffix("}}"))
+                  with open(fpath) as f:
+                      spec["components"]["schemas"][key] = f.read()
+
+          # format neatly
+          with open(os.environ["REST_OPENAPI_SPEC_FPATH"], "w") as f:
               json.dump(spec, f, indent=4)
           '
 
       - name: git add, commit, push
+        if: env.IS_GIT_BEHIND != 'true'
         run: |
           git add . || true
           git commit -m "<ci> modify openapi/jsonschema file(s)" || true
