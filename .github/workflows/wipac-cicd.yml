@@ -274,7 +274,7 @@ jobs:
                   fpath = pathlib.Path(val)
                   with open(fpath) as f:
                       print(fpath)
-                      spec["components"]["schemas"][key] = f.read()
+                      spec["components"]["schemas"][key] = json.load(f)
 
           # format neatly
           with open(os.environ["dst"], "w") as f:
