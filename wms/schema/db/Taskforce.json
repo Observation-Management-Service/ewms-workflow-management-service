@@ -19,6 +19,9 @@
         "cluster_id": {
             "anyOf": [
                 {
+                    "type": "integer"
+                },
+                {
                     "type": "string"
                 },
                 {
