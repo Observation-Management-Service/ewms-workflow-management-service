@@ -18,7 +18,16 @@ logging.getLogger("parse").setLevel(logging.INFO)
 
 
 JOB_EVENT_LOG_FPATH = "/home/the_job_event_log_fpath"
-CONDOR_LOCATIONS = [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]
+CONDOR_LOCATIONS = {
+    "test-alpha": {
+        "collector": "COLLECTOR1",
+        "schedd": "SCHEDD1",
+    },
+    "test-beta": {
+        "collector": "COLLECTOR2",
+        "schedd": "SCHEDD2",
+    },
+}
 
 
 # ----------------------------------------------------------------------------
@@ -103,7 +112,7 @@ async def test_000(rc: RestClient) -> None:
         {
             "task_image": "icecube/earthpilot",
             "task_args": "aaa bbb --ccc 123",
-            "cluster_locations": [],
+            "cluster_locations": list(CONDOR_LOCATIONS.values()),
         },
     )
 
@@ -134,14 +143,14 @@ async def test_000(rc: RestClient) -> None:
     # TMS(es) starter(s)...
     #
 
-    for collector, schedd in CONDOR_LOCATIONS:
+    for loc in CONDOR_LOCATIONS.values():
         # get next to start
         taskforce = request_and_validate(
             rc,
             openapi_spec,
             "GET",
             "/tms/taskforce/pending",
-            {"collector": collector, "schedd": schedd},
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
         # check that it's not deleted
@@ -171,7 +180,7 @@ async def test_000(rc: RestClient) -> None:
     # no jobs yet (waiting for condor)
     #
 
-    for collector, schedd in CONDOR_LOCATIONS:
+    for loc in CONDOR_LOCATIONS.values():
         resp = request_and_validate(
             rc,
             openapi_spec,
@@ -179,8 +188,8 @@ async def test_000(rc: RestClient) -> None:
             "/tms/taskforces/find",
             {
                 "filter": {
-                    "collector": collector,
-                    "schedd": schedd,
+                    "collector": loc["collector"],
+                    "schedd": loc["schedd"],
                     "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
                 },
                 "projection": ["taskforce_uuid", "cluster_id"],
@@ -213,7 +222,7 @@ async def test_000(rc: RestClient) -> None:
     # jobs in action!
     #
 
-    for collector, schedd in CONDOR_LOCATIONS:
+    for loc in CONDOR_LOCATIONS.values():
         resp = request_and_validate(
             rc,
             openapi_spec,
@@ -221,8 +230,8 @@ async def test_000(rc: RestClient) -> None:
             "/tms/taskforces/find",
             {
                 "filter": {
-                    "collector": collector,
-                    "schedd": schedd,
+                    "collector": loc["collector"],
+                    "schedd": loc["schedd"],
                     "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
                 },
                 "projection": ["taskforce_uuid", "cluster_id"],
@@ -257,7 +266,7 @@ async def test_000(rc: RestClient) -> None:
     # jobs done
     #
 
-    for collector, schedd in CONDOR_LOCATIONS:
+    for loc in CONDOR_LOCATIONS.values():
         resp = request_and_validate(
             rc,
             openapi_spec,
@@ -265,8 +274,8 @@ async def test_000(rc: RestClient) -> None:
             "/tms/taskforces/find",
             {
                 "filter": {
-                    "collector": collector,
-                    "schedd": schedd,
+                    "collector": loc["collector"],
+                    "schedd": loc["schedd"],
                     "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
                 },
                 "projection": ["taskforce_uuid", "cluster_id"],
@@ -302,14 +311,14 @@ async def test_000(rc: RestClient) -> None:
     # TMS(es) stopper(s)...
     #
 
-    for collector, schedd in CONDOR_LOCATIONS:
+    for loc in CONDOR_LOCATIONS.values():
         # get next to stop
         taskforce = request_and_validate(
             rc,
             openapi_spec,
             "GET",
             "/tms/taskforce/stop",
-            {"collector": collector, "schedd": schedd},
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
         # confirm it has stopped
@@ -330,7 +339,7 @@ async def test_000(rc: RestClient) -> None:
     # jel done
     #
 
-    for collector, schedd in CONDOR_LOCATIONS:
+    for loc in CONDOR_LOCATIONS.values():
         resp = request_and_validate(
             rc,
             openapi_spec,
@@ -338,8 +347,8 @@ async def test_000(rc: RestClient) -> None:
             "/tms/job-event-log",
             {
                 "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
-                "collector": collector,
-                "schedd": schedd,
+                "collector": loc["collector"],
+                "schedd": loc["schedd"],
                 "finished": True,
             },
         )
@@ -351,8 +360,8 @@ async def test_000(rc: RestClient) -> None:
             "/tms/taskforces/find",
             {
                 "filter": {
-                    "collector": collector,
-                    "schedd": schedd,
+                    "collector": loc["collector"],
+                    "schedd": loc["schedd"],
                     "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
                 },
                 "projection": ["taskforce_uuid", "cluster_id"],

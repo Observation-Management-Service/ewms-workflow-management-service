@@ -106,6 +106,19 @@ KNOWN_CLUSTERS: dict[str, dict[str, str]] = {
         "schedd": "sub-2.icecube.wisc.edu",
     },
 }
+if ENV.CI:  # just for testing -- can remove when we have 2+ clusters
+    KNOWN_CLUSTERS.update(
+        {
+            "test-alpha": {
+                "collector": "COLLECTOR1",
+                "schedd": "SCHEDD1",
+            },
+            "test-beta": {
+                "collector": "COLLECTOR2",
+                "schedd": "SCHEDD2",
+            },
+        }
+    )
 
 
 # --------------------------------------------------------------------------------------
