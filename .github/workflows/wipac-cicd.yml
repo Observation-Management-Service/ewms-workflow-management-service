@@ -266,7 +266,7 @@ jobs:
                       spec["paths"][path_pattern] = json.load(f)
 
           # build components.schemas entries
-          for key,val in copy.deepcopy(spec["components"]["schemas"]):
+          for key,val in copy.deepcopy(spec["components"]["schemas"]).items():
               if isinstance(val, str):
                   fpath = pathlib.Path(val)
                   with open(fpath) as f:
