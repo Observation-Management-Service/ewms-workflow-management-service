@@ -51,16 +51,6 @@ def main() -> None:
         with open(fpath) as f:
             spec = json.load(f)
 
-        # set "additionalProperties" keys
-        def set_additionalProperties(d, k):
-            d["additionalProperties"] = False
-
-        set_all_nested(
-            spec,
-            set_additionalProperties,
-            lambda d, k: k == "properties" and "additionalProperties" not in d,
-        )
-
         # find "responses" keys, then set their "400" keys
         def set_responses_400(d, k):
             d["responses"].update({"400": NEW_400})
@@ -92,6 +82,17 @@ def main() -> None:
             spec,
             set_array_minimum,
             lambda d, k: k == "type" and d[k] == "array" and "minItems" not in d,
+        )
+
+        # set "additionalProperties" keys
+        # NOTE: do this last since it affects above modifications
+        def set_additionalProperties(d, k):
+            d["additionalProperties"] = False
+
+        set_all_nested(
+            spec,
+            set_additionalProperties,
+            lambda d, k: k == "properties" and "additionalProperties" not in d,
         )
 
         # format neatly
