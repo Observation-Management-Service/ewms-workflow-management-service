@@ -189,7 +189,7 @@ async def test_000(rc: RestClient) -> None:
         "POST",
         "/tms/taskforces/find",
         {
-            "filter": {"task_id": task_id},
+            "query": {"task_id": task_id},
             "projection": ["collector", "schedd"],
         },
     )
@@ -211,7 +211,7 @@ async def test_000(rc: RestClient) -> None:
             "POST",
             "/tms/taskforces/find",
             {
-                "filter": {
+                "query": {
                     "collector": loc["collector"],
                     "schedd": loc["schedd"],
                     "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
@@ -249,7 +249,7 @@ async def test_000(rc: RestClient) -> None:
             "POST",
             "/tms/taskforces/find",
             {
-                "filter": {
+                "query": {
                     "collector": loc["collector"],
                     "schedd": loc["schedd"],
                     "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
@@ -293,7 +293,7 @@ async def test_000(rc: RestClient) -> None:
             "POST",
             "/tms/taskforces/find",
             {
-                "filter": {
+                "query": {
                     "collector": loc["collector"],
                     "schedd": loc["schedd"],
                     "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
@@ -379,7 +379,7 @@ async def test_000(rc: RestClient) -> None:
             "POST",
             "/tms/taskforces/find",
             {
-                "filter": {
+                "query": {
                     "collector": loc["collector"],
                     "schedd": loc["schedd"],
                     "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
