@@ -16,6 +16,25 @@
         "schedd": {
             "type": "string"
         },
+        "cluster_id": {
+            "type": "string"
+        },
+        "n_workers": {
+            "type": "integer"
+        },
+        "submit_dict": {
+            "type": "object",
+            "additionalProperties": {
+                "anyOf": [
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "integer"
+                    }
+                ]
+            }
+        },
         "job_event_log_fpath": {
             "type": "string"
         },

@@ -5,6 +5,15 @@
         }
     ],
     "post": {
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/FindObject"
+                    }
+                }
+            }
+        },
         "responses": {
             "200": {
                 "description": "the updated taskforce's uuid",
