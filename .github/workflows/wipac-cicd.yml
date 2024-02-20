@@ -244,11 +244,13 @@ jobs:
           # (NOT THE AUTO-GENERATED FILE) AND COMMITTED.
 
           cd wms/$( dirname $REST_OPENAPI_PREBUILD_FPATH )
+          export src=$( basename $REST_OPENAPI_PREBUILD_FPATH )
+          export dst=$( basename $REST_OPENAPI_SPEC_FPATH )
 
           python -c '
           import json, os, pathlib, copy
 
-          with open(pathlib.Path(os.environ["REST_OPENAPI_PREBUILD_FPATH"]).name) as f:
+          with open(os.environ["src"]) as f:
               spec = json.load(f)
 
           # build paths entries
@@ -263,6 +265,7 @@ jobs:
                           path_pattern = "/"
                       else:
                           path_pattern = "/" + fpath.stem.replace(".","/")
+                      print(fpath, path_pattern)
                       spec["paths"][path_pattern] = json.load(f)
 
           # build components.schemas entries
@@ -270,10 +273,11 @@ jobs:
               if isinstance(val, str):
                   fpath = pathlib.Path(val)
                   with open(fpath) as f:
+                      print(fpath)
                       spec["components"]["schemas"][key] = f.read()
 
           # format neatly
-          with open(os.environ["REST_OPENAPI_SPEC_FPATH"], "w") as f:
+          with open(os.environ["dst"], "w") as f:
               json.dump(spec, f, indent=4)
           '
 
