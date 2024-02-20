@@ -45,8 +45,92 @@
             }
         },
         "schemas": {
-            "TaskDirectiveObject": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"task_id\": {\n            \"type\": \"string\"\n        },\n        \"cluster_locations\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"string\"\n            }\n        },\n        \"task_image\": {\n            \"type\": \"string\"\n        },\n        \"task_args\": {\n            \"type\": \"string\"\n        }\n    },\n    \"required\": [\n        \"task_id\",\n        \"cluster_locations\",\n        \"task_image\",\n        \"task_args\"\n    ],\n    \"additionalProperties\": false\n}\n",
-            "TaskforceObject": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"taskforce_uuid\": {\n            \"type\": \"string\"\n        },\n        \"task_id\": {\n            \"type\": \"string\"\n        },\n        \"timestamp\": {\n            \"type\": \"integer\"\n        },\n        \"collector\": {\n            \"type\": \"string\"\n        },\n        \"schedd\": {\n            \"type\": \"string\"\n        },\n        \"job_event_log_fpath\": {\n            \"type\": \"string\"\n        },\n        \"tms_status\": {\n            \"type\": \"string\",\n            \"enum\": [\n                \"pending-start\",\n                \"running\",\n                \"pending-stop\",\n                \"done\"\n            ]\n        },\n        \"compound_statuses\": {\n            \"type\": \"object\",\n            \"additionalProperties\": {\n                \"type\": \"object\",\n                \"additionalProperties\": {\n                    \"type\": \"integer\"\n                }\n            }\n        },\n        \"top_task_errors\": {\n            \"type\": \"object\",\n            \"additionalProperties\": {\n                \"type\": \"integer\"\n            }\n        }\n    },\n    \"required\": [\n        \"taskforce_uuid\",\n        \"task_id\",\n        \"timestamp\",\n        \"collector\",\n        \"schedd\",\n        \"job_event_log_fpath\",\n        \"tms_status\",\n        \"compound_statuses\",\n        \"top_task_errors\"\n    ],\n    \"additionalProperties\": false\n}\n"
+            "TaskDirectiveObject": {
+                "type": "object",
+                "properties": {
+                    "task_id": {
+                        "type": "string"
+                    },
+                    "cluster_locations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "task_image": {
+                        "type": "string"
+                    },
+                    "task_args": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "task_id",
+                    "cluster_locations",
+                    "task_image",
+                    "task_args"
+                ],
+                "additionalProperties": false
+            },
+            "TaskforceObject": {
+                "type": "object",
+                "properties": {
+                    "taskforce_uuid": {
+                        "type": "string"
+                    },
+                    "task_id": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "integer"
+                    },
+                    "collector": {
+                        "type": "string"
+                    },
+                    "schedd": {
+                        "type": "string"
+                    },
+                    "job_event_log_fpath": {
+                        "type": "string"
+                    },
+                    "tms_status": {
+                        "type": "string",
+                        "enum": [
+                            "pending-start",
+                            "running",
+                            "pending-stop",
+                            "done"
+                        ]
+                    },
+                    "compound_statuses": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "top_task_errors": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "required": [
+                    "taskforce_uuid",
+                    "task_id",
+                    "timestamp",
+                    "collector",
+                    "schedd",
+                    "job_event_log_fpath",
+                    "tms_status",
+                    "compound_statuses",
+                    "top_task_errors"
+                ],
+                "additionalProperties": false
+            }
         }
     },
     "paths": {
