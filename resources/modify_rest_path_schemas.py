@@ -4,6 +4,7 @@
 import json
 import logging
 import pathlib
+import re
 
 from set_all_nested import set_all_nested
 
@@ -11,6 +12,22 @@ LOGGER = logging.getLogger(__name__)
 
 NEW_400 = {
     "description": "invalid request arguments",
+    "content": {
+        "application/json": {
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "code": {"description": "http error code", "type": "integer"},
+                    "error": {"description": "http error reason", "type": "string"},
+                },
+                "required": ["code", "error"],
+            }
+        }
+    },
+}
+
+NEW_404 = {
+    "description": "not found",
     "content": {
         "application/json": {
             "schema": {
@@ -53,6 +70,19 @@ def main() -> None:
             set_responses_400,
             lambda d, k: k == "responses" and d["responses"].get("400") != NEW_400,
         )
+
+        # find "responses" keys, then set their "404" keys
+        def set_responses_404(d, k):
+            d["responses"].update({"404": NEW_404})
+
+        # Using re.findall() to extract strings inside {}
+        # ex: example.{id}.json
+        if re.findall(r"\{([^/{}]+)\}", str(fpath)):
+            set_all_nested(
+                spec,
+                set_responses_404,
+                lambda d, k: k == "responses" and d["responses"].get("404") != NEW_404,
+            )
 
         # set 'minItems' for all arrays (that don't already have it)
         def set_array_minimum(d, k):
