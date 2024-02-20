@@ -12,8 +12,8 @@ env:
   REST_PORT: 8080
   #
   REST_OPENAPI_PATHS_DIR: "schema/rest/paths"
-  REST_OPENAPI_BASE_FPATH: "schema/rest/openapi_no_paths.json"
-  REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_autobuild.json"
+  REST_OPENAPI_PREBUILD_FPATH: "schema/rest/openapi_prebuild.json"
+  REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
 
 
@@ -236,7 +236,7 @@ jobs:
           python -c '
           import json, os, pathlib
 
-          with open("wms/" + os.environ["REST_OPENAPI_BASE_FPATH"]) as f:
+          with open("wms/" + os.environ["REST_OPENAPI_PREBUILD_FPATH"]) as f:
               spec = json.load(f)
 
           spec["paths"] = {}  # override anything that was here
