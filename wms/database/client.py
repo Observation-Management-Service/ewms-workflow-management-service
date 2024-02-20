@@ -53,7 +53,7 @@ class WMSMongoClient:
         self.logger.debug(f"inserted: {doc}")
         return doc
 
-    async def update_set_one(self, query: dict, set_update: dict) -> dict:
+    async def update_set_one(self, query: dict, set_update: dict) -> int:
         """Update the doc."""
         self.logger.debug(f"update one with query: {query}")
 
@@ -61,7 +61,7 @@ class WMSMongoClient:
         res = await self._collection.update_one(query, {"$set": set_update})
 
         self.logger.debug(f"updated: {query}")
-        return vars(res)
+        return res.modified_count
 
     ####################################################################
     # READS
