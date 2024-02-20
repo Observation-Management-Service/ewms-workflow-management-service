@@ -42,7 +42,7 @@ class WMSMongoClient:
     ####################################################################
 
     async def insert(self, doc: dict) -> dict:
-        """Insert the task_directive dict."""
+        """Insert the doc (dict)."""
         self.logger.debug(f"inserting: {doc}")
 
         web_jsonschema_validate(doc, self._schema)
@@ -54,7 +54,7 @@ class WMSMongoClient:
         return doc
 
     async def update_set_one(self, query: dict, set_update: dict) -> dict:
-        """Update the taskforce obj."""
+        """Update the doc."""
         self.logger.debug(f"update one with query: {query}")
 
         web_jsonschema_validate(set_update, self._schema_partial)

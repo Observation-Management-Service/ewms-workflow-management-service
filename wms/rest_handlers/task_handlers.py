@@ -2,6 +2,7 @@
 
 
 import logging
+import time
 import uuid
 
 from tornado import web
@@ -28,12 +29,38 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
         """Handle POST."""
         task_directive = dict(
             task_id=uuid.uuid4().hex,
-            cluster_locations=[],
+            cluster_locations=self.get_argument("cluster_locations", []),
             task_image=self.get_argument("task_image"),
             task_args=self.get_argument("task_args", ""),
         )
 
+        # first, check that locations are legit
+        for location in task_directive["cluster_locations"]:
+            if location not in config.KNOWN_CLUSTERS:
+                raise web.HTTPError(
+                    status_code=400,
+                    reason=f"condor location not found: {location}",  # to client
+                )
+
+        # next, insert
         task_directive = await self.task_directives_client.insert(task_directive)
+
+        # now, create Taskforce entries
+        # TODO - move this to backlog
+        for location in task_directive["cluster_locations"]:
+            await self.taskforces_client.insert(
+                dict(
+                    taskforce_uuid=uuid.uuid4().hex,
+                    task_id=task_directive["task_id"],
+                    timestamp=int(time.time()),
+                    collector=config.KNOWN_CLUSTERS[location]["collector"],
+                    schedd=config.KNOWN_CLUSTERS[location]["collector"],
+                    job_event_log_fpath="",
+                    tms_status="pending-start",
+                    compound_statuses={},
+                    top_task_errors={},
+                )
+            )
 
         self.write(task_directive)
 

@@ -100,12 +100,10 @@ REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(ENV.REST_OPENAPI_SPE
 
 
 # known cluster locations
-KNOWN_CLUSTERS: dict[str, dict[str, Any]] = {
+KNOWN_CLUSTERS: dict[str, dict[str, str]] = {
     "sub-2": {
-        "location": {
-            "collector": "glidein-cm.icecube.wisc.edu",
-            "schedd": "sub-2.icecube.wisc.edu",
-        },
+        "collector": "glidein-cm.icecube.wisc.edu",
+        "schedd": "sub-2.icecube.wisc.edu",
     },
 }
 
