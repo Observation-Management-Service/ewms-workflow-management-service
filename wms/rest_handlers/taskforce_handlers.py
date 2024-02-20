@@ -96,11 +96,11 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
         # get the next taskforce to START, for the given cluster
         try:
             taskforce = await self.taskforces_client.find_one(
-                {
-                    "collector": self.get_argument("collector"),
-                    "schedd": self.get_argument("schedd"),
-                    "tms_status": "pending-start",
-                },
+                dict(
+                    collector=self.get_argument("collector"),
+                    schedd=self.get_argument("schedd"),
+                    tms_status="pending-start",
+                ),
                 sort=[
                     ("timestamp", ASCENDING),  # oldest first
                 ],
@@ -123,14 +123,17 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
-
         await self.taskforces_client.update_set_one(
             {
                 "taskforce_uuid": taskforce_uuid,
             },
-            {
-                "tms_status": "running",
-            },
+            dict(
+                cluster_id=self.get_argument("cluster_id"),
+                n_workers=self.get_argument("n_workers"),
+                submit_dict=self.get_argument("submit_dict"),
+                job_event_log_fpath=self.get_argument("job_event_log_fpath"),
+                tms_status="running",
+            ),
         )
 
         self.write(
@@ -156,11 +159,11 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
         # get the next taskforce to STOP, for the given cluster
         try:
             taskforce = await self.taskforces_client.find_one(
-                {
-                    "collector": self.get_argument("collector"),
-                    "schedd": self.get_argument("schedd"),
-                    "tms_status": "pending-stop",
-                },
+                dict(
+                    collector=self.get_argument("collector"),
+                    schedd=self.get_argument("schedd"),
+                    tms_status="pending-stop",
+                ),
                 sort=[
                     ("timestamp", ASCENDING),  # oldest first
                 ],

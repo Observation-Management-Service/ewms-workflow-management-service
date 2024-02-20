@@ -168,7 +168,12 @@ async def test_000(rc: RestClient) -> None:
             openapi_spec,
             "POST",
             f"/tms/taskforce/running/{taskforce['taskforce_uuid']}",
-            {"ewms_taskforce_attrs": 123},
+            {
+                "cluster_id": 123456,
+                "n_workers": 5600,
+                "submit_dict": {"foo": 123, "bar": "abc"},
+                "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
+            },
         )
         # check that it's running
         resp = request_and_validate(
