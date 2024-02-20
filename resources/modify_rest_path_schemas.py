@@ -25,21 +25,33 @@ NEW_400 = {
 }
 
 
-def settle_nested_dictkeyval_one_at_a_time(
-    d: dict,
-    setter: Callable,
-    if_this: Callable,
-):
-    """Calling repeatedly will complete the settling.
+def set_all_nested(
+    spec: dict,
+    setter: Callable[[dict, str], None],
+    if_this: Callable[[dict, str], bool],
+) -> dict:
+    """Call 'setter' for every key where 'if_this' is True."""
 
-    Will return without error if nothing was changed.
-    """
-    for k, v in d.items():
-        if if_this(d, k):
-            setter(d, k)
-            raise Exception("dict may have changed (did not check prev value)")
-        elif isinstance(v, dict):
-            settle_nested_dictkeyval_one_at_a_time(v, setter, if_this)
+    def settle_nested_subdict_one_at_a_time(subdict: dict):
+        """Calling repeatedly will complete the settling.
+
+        Will return without error if nothing was changed.
+        """
+        for key, val in subdict.items():
+            if if_this(subdict, key):
+                setter(subdict, key)
+                raise Exception("dict may have changed (did not check prev value)")
+            elif isinstance(val, dict):
+                settle_nested_subdict_one_at_a_time(val)
+
+    while True:
+        try:
+            settle_nested_subdict_one_at_a_time(spec)
+        except:  # noqa: E722
+            continue
+        break
+
+    return spec
 
 
 def main() -> None:
@@ -54,32 +66,21 @@ def main() -> None:
         def set_additionalProperties(d, k):
             d["additionalProperties"] = False
 
-        while True:
-            try:
-                settle_nested_dictkeyval_one_at_a_time(
-                    spec,
-                    set_additionalProperties,
-                    lambda d, k: k == "properties" and "additionalProperties" not in d,
-                )
-            except:
-                continue
-            break
+        set_all_nested(
+            spec,
+            set_additionalProperties,
+            lambda d, k: k == "properties" and "additionalProperties" not in d,
+        )
 
         # find "responses" keys, then set their "400" keys
         def set_responses_400(d, k):
             d["responses"].update({"400": NEW_400})
 
-        while True:
-            try:
-                settle_nested_dictkeyval_one_at_a_time(
-                    spec,
-                    set_responses_400,
-                    lambda d, k: k == "responses"
-                    and d["responses"].get("400") != NEW_400,
-                )
-            except:  # noqa: E722
-                continue
-            break
+        set_all_nested(
+            spec,
+            set_responses_400,
+            lambda d, k: k == "responses" and d["responses"].get("400") != NEW_400,
+        )
 
         # format neatly
         with open(fpath, "w") as f:
