@@ -112,7 +112,7 @@ async def test_000(rc: RestClient) -> None:
         {
             "task_image": "icecube/earthpilot",
             "task_args": "aaa bbb --ccc 123",
-            "cluster_locations": list(CONDOR_LOCATIONS.values()),
+            "cluster_locations": list(CONDOR_LOCATIONS.keys()),
         },
     )
 
