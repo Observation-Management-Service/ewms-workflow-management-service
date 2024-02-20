@@ -892,7 +892,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/FindObject"
+                                "$ref": "#/components/schemas/TaskforceObject"
                             }
                         }
                     }
