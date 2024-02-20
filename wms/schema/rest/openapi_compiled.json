@@ -365,6 +365,30 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -480,6 +504,30 @@
                     },
                     "400": {
                         "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -673,6 +721,30 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -722,8 +794,7 @@
                                     "required": [
                                         "code",
                                         "error"
-                                    ],
-                                    "additionalProperties": false
+                                    ]
                                 }
                             }
                         }
@@ -897,6 +968,30 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1001,6 +1096,30 @@
                     },
                     "400": {
                         "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
                         "content": {
                             "application/json": {
                                 "schema": {

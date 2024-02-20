@@ -55,6 +55,30 @@
                         }
                     }
                 }
+            },
+            "404": {
+                "description": "not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ]
+                        }
+                    }
+                }
             }
         }
     }
