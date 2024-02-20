@@ -50,7 +50,8 @@
                                     "type": "array",
                                     "items": {
                                         "type": "string"
-                                    }
+                                    },
+                                    "minItems": 0
                                 }
                             },
                             "required": [

@@ -16,7 +16,8 @@
                                 "type": "array",
                                 "items": {
                                     "type": "string"
-                                }
+                                },
+                                "minItems": 0
                             }
                         },
                         "required": [
@@ -40,7 +41,8 @@
                                     "type": "array",
                                     "items": {
                                         "$ref": "#/components/schemas/TaskDirectiveObject"
-                                    }
+                                    },
+                                    "minItems": 0
                                 }
                             },
                             "required": [
