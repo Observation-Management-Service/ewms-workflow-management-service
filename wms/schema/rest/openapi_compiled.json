@@ -86,6 +86,39 @@
                     "schedd": {
                         "type": "string"
                     },
+                    "cluster_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "n_workers": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "submit_dict": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        }
+                    },
                     "job_event_log_fpath": {
                         "type": "string"
                     },
@@ -855,6 +888,15 @@
                 }
             ],
             "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FindObject"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "the updated taskforce's uuid",
