@@ -55,7 +55,14 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     timestamp=int(time.time()),
                     collector=config.KNOWN_CLUSTERS[location]["collector"],
                     schedd=config.KNOWN_CLUSTERS[location]["schedd"],
-                    job_event_log_fpath="",  # set by tms via /tms/taskforce/running/<id>
+                    #
+                    # set by tms via /tms/taskforce/running/<id>
+                    cluster_id=None,
+                    n_workers=None,
+                    submit_dict={},
+                    job_event_log_fpath="",
+                    #
+                    # updated by tms several times
                     tms_status="pending-start",
                     compound_statuses={},
                     top_task_errors={},

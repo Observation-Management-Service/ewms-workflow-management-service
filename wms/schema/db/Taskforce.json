@@ -17,10 +17,24 @@
             "type": "string"
         },
         "cluster_id": {
-            "type": "string"
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "null"
+                }
+            ]
         },
         "n_workers": {
-            "type": "integer"
+            "anyOf": [
+                {
+                    "type": "integer"
+                },
+                {
+                    "type": "null"
+                }
+            ]
         },
         "submit_dict": {
             "type": "object",
