@@ -115,12 +115,13 @@ async def test_000(rc: RestClient) -> None:
             "cluster_locations": list(CONDOR_LOCATIONS.keys()),
         },
     )
+    task_id = task_directive["task_id"]
 
     resp = request_and_validate(
         rc,
         openapi_spec,
         "GET",
-        f"/task/directive/{task_directive['task_id']}",
+        f"/task/directive/{task_id}",
     )
     assert resp == task_directive
 
@@ -153,14 +154,14 @@ async def test_000(rc: RestClient) -> None:
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
-        # check that it's not deleted
+        # check that it's still pending
         resp = request_and_validate(
             rc,
             openapi_spec,
             "GET",
             f"/tms/taskforce/{taskforce['taskforce_uuid']}",
         )
-        assert not resp["is_deleted"]
+        assert resp["tms_status"] == "pending-start"
         # confirm it has started
         resp = request_and_validate(
             rc,
@@ -169,11 +170,34 @@ async def test_000(rc: RestClient) -> None:
             f"/tms/taskforce/running/{taskforce['taskforce_uuid']}",
             {"ewms_taskforce_attrs": 123},
         )
+        # check that it's running
+        resp = request_and_validate(
+            rc,
+            openapi_spec,
+            "GET",
+            f"/tms/taskforce/{taskforce['taskforce_uuid']}",
+        )
+        assert resp["tms_status"] == "running"
 
     #
     # USER...
     # check directive reflects startup (runtime-assembled list of taskforces)
     #
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {
+            "filter": {"task_id": task_id},
+            "projection": ["collector", "schedd"],
+        },
+    )
+    assert len(resp["taskforces"]) == len(CONDOR_LOCATIONS)
+    for loc in CONDOR_LOCATIONS.values():
+        assert {"collector": loc["collector"], "schedd": loc["schedd"]} in resp[
+            "taskforces"
+        ]
 
     #
     # TMS(es) watcher(s)...
@@ -203,11 +227,7 @@ async def test_000(rc: RestClient) -> None:
             "POST",
             "/tms/taskforces/report",
             {
-                "compound_statuses_by_taskforce": {
-                    taskforce_uuid: {
-                        "started": {"tasked": 15},
-                    }
-                },
+                "compound_statuses_by_taskforce": {},
             },
         )
         assert resp["uuids"] == [taskforce_uuid]
@@ -352,7 +372,7 @@ async def test_000(rc: RestClient) -> None:
                 "finished": True,
             },
         )
-        # check deleted
+        # check done
         resp = request_and_validate(
             rc,
             openapi_spec,
@@ -364,10 +384,11 @@ async def test_000(rc: RestClient) -> None:
                     "schedd": loc["schedd"],
                     "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
                 },
-                "projection": ["taskforce_uuid", "cluster_id"],
+                "projection": ["taskforce_uuid", "cluster_id", "tms_status"],
             },
         )
         assert len(resp["taskforces"]) == 1
+        assert resp["taskforces"][0]["tms_status"] == "done"
         # TODO - CHECK THAT JEL IS DELETED / FINISHED
 
 
