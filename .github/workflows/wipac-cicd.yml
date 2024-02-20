@@ -253,7 +253,7 @@ jobs:
 
           # build paths entries
           if isinstance(spec["paths"], str):
-              paths_dir = pathlib.Path(spec["paths"].removeprefix("${{").removesuffix("}}"))
+              paths_dir = pathlib.Path(spec["paths"])
               spec["paths"] = {}  # override anything that was here
 
               # assemble
@@ -268,7 +268,7 @@ jobs:
           # build components.schemas entries
           for key,val in copy.deepcopy(spec["components"]["schemas"]):
               if isinstance(val, str):
-                  fpath = pathlib.Path(val.removeprefix("${{").removesuffix("}}"))
+                  fpath = pathlib.Path(val)
                   with open(fpath) as f:
                       spec["components"]["schemas"][key] = f.read()
 

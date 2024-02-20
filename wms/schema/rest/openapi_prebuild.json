@@ -45,9 +45,9 @@
             }
         },
         "schemas": {
-            "TaskDirectiveObject": "${{../db/TaskDirective.json}}",
-            "TaskforceObject": "${{../db/Taskforce.json}}"
+            "TaskDirectiveObject": "../db/TaskDirective.json",
+            "TaskforceObject": "../db/Taskforce.json"
         }
     },
-    "paths": "${{./paths/}}"
+    "paths": "./paths/"
 }
