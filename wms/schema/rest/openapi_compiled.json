@@ -64,12 +64,7 @@
                         "type": "string"
                     }
                 },
-                "required": [
-                    "task_id",
-                    "cluster_locations",
-                    "task_image",
-                    "task_args"
-                ],
+                "required": [],
                 "additionalProperties": false
             },
             "TaskforceObject": {
@@ -118,17 +113,7 @@
                         }
                     }
                 },
-                "required": [
-                    "taskforce_uuid",
-                    "task_id",
-                    "timestamp",
-                    "collector",
-                    "schedd",
-                    "job_event_log_fpath",
-                    "tms_status",
-                    "compound_statuses",
-                    "top_task_errors"
-                ],
+                "required": [],
                 "additionalProperties": false
             }
         }
