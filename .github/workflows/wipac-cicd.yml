@@ -132,108 +132,13 @@ jobs:
         if: env.IS_GIT_BEHIND != 'true'
         run: |
           cd wms/$REST_OPENAPI_PATHS_DIR
-
-          python -c '
-          import json, pathlib
-
-          NEW_400 = {
-              "description": "invalid request arguments",
-              "content": {
-                  "application/json": {
-                      "schema": {
-                          "type": "object",
-                          "properties": {
-                              "code": {
-                                  "description": "http error code",
-                                  "type": "integer"
-                              },
-                              "error": {
-                                  "description": "http error reason",
-                                  "type": "string"
-                              }
-                          },
-                          "required": ["code", "error"],
-                      }
-                  }
-              }
-          }
-
-
-          def settle_nested_dictkeyval_one_at_a_time(d, setter, if_this):
-              """Calling repeatedly will complete the settling.
-
-              Will return without error if nothing was changed.
-              """
-              for k, v in d.items():
-                  if if_this(d,k):
-                      setter(d,k)
-                      raise Exception("dict may have changed (did not check prev value)")
-                  elif isinstance(v, dict):
-                      settle_nested_dictkeyval_one_at_a_time(v, setter, if_this)
-
-
-          # GO!
-          for fpath in pathlib.Path(".").iterdir():
-              with open(fpath) as f:
-                  spec = json.load(f)
-
-              # set "additionalProperties" keys
-              def set_additionalProperties(d,k):
-                  d["additionalProperties"] = False
-              while True:
-                  try:
-                      settle_nested_dictkeyval_one_at_a_time(
-                          spec,
-                          set_additionalProperties,
-                          lambda d,k: k == "properties" and "additionalProperties" not in d,
-                      )
-                  except:
-                      continue
-                  break
-
-              # find "responses" keys, then set their "400" keys
-              def set_responses_400(d,k):
-                  d["responses"].update({"400": NEW_400})
-              while True:
-                  try:
-                      settle_nested_dictkeyval_one_at_a_time(
-                          spec,
-                          set_responses_400,
-                          lambda d,k: k == "responses" and d["responses"].get("400") != NEW_400,
-                      )
-                  except:
-                      continue
-                  break
-
-              # format neatly
-              with open(fpath, "w") as f:
-                  json.dump(spec, f, indent=4)
-              with open(fpath, "a") as f:  # else json.dump removes trailing newline
-                  f.write("\n")
-          '
+          python resources/modify_rest_path_schemas.py
 
       - name: modify DB schemas - ${{ env.DB_JSONSCHEMA_DIR }}
         if: env.IS_GIT_BEHIND != 'true'
         run: |
           cd wms/$DB_JSONSCHEMA_DIR
-
-          python -c '
-          import json, pathlib
-
-          for fpath in pathlib.Path(".").iterdir():
-
-              # find 'responses' keys, and override/add 400
-              with open(fpath) as f:
-                  spec = json.load(f)
-              spec["required"] = list(spec["properties"].keys())
-              spec["additionalProperties"] = False
-
-              # format neatly
-              with open(fpath, "w") as f:
-                  json.dump(spec, f, indent=4)
-              with open(fpath, "a") as f:  # else json.dump removes trailing newline
-                  f.write("\n")
-          '
+          python resources/modify_db_schemas.py
 
       - name: auto-build ${{ env.REST_OPENAPI_SPEC_FPATH }}
         if: env.IS_GIT_BEHIND != 'true'
@@ -244,44 +149,9 @@ jobs:
           # (NOT THE AUTO-GENERATED FILE) AND COMMITTED.
 
           cd wms/$( dirname $REST_OPENAPI_PREBUILD_FPATH )
-          export src=$( basename $REST_OPENAPI_PREBUILD_FPATH )
-          export dst=$( basename $REST_OPENAPI_SPEC_FPATH )
-
-          python -c '
-          import json, os, pathlib, copy
-
-          with open(os.environ["src"]) as f:
-              spec = json.load(f)
-
-          # build paths entries
-          if isinstance(spec["paths"], str):
-              paths_dir = pathlib.Path(spec["paths"])
-              spec["paths"] = {}  # *** OVERRIDE ANYTHING THAT WAS HERE ***
-
-              # assemble
-              for fpath in paths_dir.iterdir():
-                  with open(fpath) as f:
-                      if fpath.stem == "root":
-                          path_pattern = "/"
-                      else:
-                          path_pattern = "/" + fpath.stem.replace(".","/")
-                      print(fpath, path_pattern)
-                      spec["paths"][path_pattern] = json.load(f)
-
-          # build components.schemas entries
-          for key,val in copy.deepcopy(spec["components"]["schemas"]).items():
-              if isinstance(val, str):
-                  fpath = pathlib.Path(val)
-                  with open(fpath) as f:
-                      print(fpath)
-                      spec["components"]["schemas"][key] = json.load(f)
-                      # *** OVERRIDE 'required' VALUE ***
-                      spec["components"]["schemas"][key]["required"] = []
-
-          # format neatly
-          with open(os.environ["dst"], "w") as f:
-              json.dump(spec, f, indent=4)
-          '
+          python resources/build_openapi_schema.py \
+              $( basename $REST_OPENAPI_PREBUILD_FPATH ) \
+              $( basename $REST_OPENAPI_SPEC_FPATH )
 
       - name: git add, commit, push
         if: env.IS_GIT_BEHIND != 'true'
