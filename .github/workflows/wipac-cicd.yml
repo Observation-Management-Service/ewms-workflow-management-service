@@ -132,13 +132,13 @@ jobs:
         if: env.IS_GIT_BEHIND != 'true'
         run: |
           cd wms/$REST_OPENAPI_PATHS_DIR
-          python resources/modify_rest_path_schemas.py
+          python ${{ github.workspace }}/resources/modify_rest_path_schemas.py
 
       - name: modify DB schemas - ${{ env.DB_JSONSCHEMA_DIR }}
         if: env.IS_GIT_BEHIND != 'true'
         run: |
           cd wms/$DB_JSONSCHEMA_DIR
-          python resources/modify_db_schemas.py
+          python ${{ github.workspace }}/resources/modify_db_schemas.py
 
       - name: auto-build ${{ env.REST_OPENAPI_SPEC_FPATH }}
         if: env.IS_GIT_BEHIND != 'true'
@@ -149,7 +149,7 @@ jobs:
           # (NOT THE AUTO-GENERATED FILE) AND COMMITTED.
 
           cd wms/$( dirname $REST_OPENAPI_PREBUILD_FPATH )
-          python resources/build_openapi_schema.py \
+          python ${{ github.workspace }}/resources/build_openapi_schema.py \
               $( basename $REST_OPENAPI_PREBUILD_FPATH ) \
               $( basename $REST_OPENAPI_SPEC_FPATH )
 
