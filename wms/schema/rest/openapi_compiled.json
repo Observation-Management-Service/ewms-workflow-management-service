@@ -63,6 +63,12 @@
                     },
                     "task_args": {
                         "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "integer"
+                    },
+                    "terminated": {
+                        "type": "boolean"
                     }
                 },
                 "required": [],
@@ -640,6 +646,84 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/TaskDirectiveObject"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "the matching task directive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "task_id": {
+                                            "description": "the task id",
+                                            "type": "string"
+                                        },
+                                        "n_taskforces": {
+                                            "description": "number of updated taskforces",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "required": [
+                                        "task_id",
+                                        "n_taskforces"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
                                 }
                             }
                         }
