@@ -56,6 +56,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     collector=config.KNOWN_CLUSTERS[location]["collector"],
                     schedd=config.KNOWN_CLUSTERS[location]["schedd"],
                     job_event_log_fpath="",
+                    is_deleted=False,
                     tms_status="pending-start",
                     compound_statuses={},
                     top_task_errors={},

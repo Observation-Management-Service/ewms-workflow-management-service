@@ -44,9 +44,17 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     Call on server startup.
     """
 
+    # TASK_DIRECTIVES
     await mongo_client[_DB_NAME][TASK_DIRECTIVES_COLL_NAME].create_index(  # type: ignore[index]
         "task_id",
         name="task_id_index",
+        unique=True,
+    )
+
+    # TASKFORCES
+    await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
+        "taskforce_uuid",
+        name="taskforce_uuid_index",
         unique=True,
     )
     await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
@@ -54,11 +62,15 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
         name="task_id_index",
         unique=False,  # foreign key
     )
-
     await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
-        "taskforce_uuid",
-        name="taskforce_uuid_index",
-        unique=True,
+        "tms_status",
+        name="tms_status_index",
+        unique=False,
+    )
+    await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
+        "timestamp",
+        name="timestamp_index",
+        unique=False,
     )
 
 
