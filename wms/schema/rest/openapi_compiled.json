@@ -116,6 +116,27 @@
                 },
                 "required": [],
                 "additionalProperties": false
+            },
+            "FindObject": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "description": "the search criteria (MongoDB-filter syntax)",
+                        "type": "object"
+                    },
+                    "projection": {
+                        "description": "the fields to include in the response",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "query"
+                ],
+                "additionalProperties": false
             }
         }
     },
@@ -661,25 +682,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "query": {
-                                        "description": "the search criteria (MongoDB-filter syntax)",
-                                        "type": "object"
-                                    },
-                                    "projection": {
-                                        "description": "the fields to include in the response",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        },
-                                        "minItems": 0
-                                    }
-                                },
-                                "required": [
-                                    "query"
-                                ],
-                                "additionalProperties": false
+                                "$ref": "#/components/schemas/FindObject"
                             }
                         }
                     }
@@ -788,25 +791,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "query": {
-                                        "description": "the search criteria (MongoDB-filter syntax)",
-                                        "type": "object"
-                                    },
-                                    "projection": {
-                                        "description": "the fields to include in the response",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        },
-                                        "minItems": 0
-                                    }
-                                },
-                                "required": [
-                                    "query"
-                                ],
-                                "additionalProperties": false
+                                "$ref": "#/components/schemas/FindObject"
                             }
                         }
                     }
