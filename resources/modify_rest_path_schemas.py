@@ -82,6 +82,16 @@ def main() -> None:
             lambda d, k: k == "responses" and d["responses"].get("400") != NEW_400,
         )
 
+        # set 'minItems' for all arrays (that don't already have it)
+        def set_array_minimum(d, k):
+            d.update({"minItems": 0})
+
+        set_all_nested(
+            spec,
+            set_array_minimum,
+            lambda d, k: k == "type" and d[k] == "array" and "minItems" not in d,
+        )
+
         # format neatly
         with open(fpath, "w") as f:
             json.dump(spec, f, indent=4)
