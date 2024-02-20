@@ -100,7 +100,11 @@ async def test_000(rc: RestClient) -> None:
         openapi_spec,
         "POST",
         "/task/directive",
-        {"task_image": "icecube/earthpilot", "task_args": "aaa bbb --ccc 123"},
+        {
+            "task_image": "icecube/earthpilot",
+            "task_args": "aaa bbb --ccc 123",
+            "cluster_locations": [],
+        },
     )
 
     resp = request_and_validate(

@@ -29,7 +29,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
         """Handle POST."""
         task_directive = dict(
             task_id=uuid.uuid4().hex,
-            cluster_locations=self.get_argument("cluster_locations", []),
+            cluster_locations=self.get_argument("cluster_locations"),
             task_image=self.get_argument("task_image"),
             task_args=self.get_argument("task_args", ""),
         )
