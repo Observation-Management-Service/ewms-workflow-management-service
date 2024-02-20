@@ -55,7 +55,8 @@
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "minItems": 1
                     },
                     "task_image": {
                         "type": "string"
