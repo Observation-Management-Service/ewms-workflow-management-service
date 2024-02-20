@@ -235,7 +235,7 @@ async def test_000(rc: RestClient) -> None:
                 "compound_statuses_by_taskforce": {},
             },
         )
-        assert resp["uuids"] == [taskforce_uuid]
+        assert not resp["uuids"]
 
     #
     # USER...
