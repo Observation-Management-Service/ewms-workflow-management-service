@@ -55,7 +55,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 update,
             )
 
-        self.write({"uuids": all_uuids})
+        self.write({"taskforce_uuids": all_uuids})
 
 
 # ----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         matches = []
         async for m in self.taskforces_client.find_all(
             self.get_argument("query"),
-            self.get_argument("projection", {}),
+            self.get_argument("projection", []),
         ):
             matches.append(m)
 

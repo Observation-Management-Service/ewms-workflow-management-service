@@ -41,16 +41,16 @@ class WMSMongoClient:
     # WRITES
     ####################################################################
 
-    async def insert(self, doc: dict) -> dict:
+    async def insert_one(self, doc: dict) -> dict:
         """Insert the doc (dict)."""
-        self.logger.debug(f"inserting: {doc}")
+        self.logger.debug(f"inserting one: {doc}")
 
         web_jsonschema_validate(doc, self._schema)
         await self._collection.insert_one(doc)
         # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
         doc.pop("_id")
 
-        self.logger.debug(f"inserted: {doc}")
+        self.logger.debug(f"inserted one: {doc}")
         return doc
 
     async def update_set_one(self, query: dict, set_update: dict) -> int:
@@ -60,7 +60,17 @@ class WMSMongoClient:
         web_jsonschema_validate(set_update, self._schema_partial)
         res = await self._collection.update_one(query, {"$set": set_update})
 
-        self.logger.debug(f"updated: {query}")
+        self.logger.debug(f"updated one: {query}")
+        return res.modified_count
+
+    async def update_set_many(self, query: dict, set_update: dict) -> int:
+        """Update all matching docs."""
+        self.logger.debug(f"update many with query: {query}")
+
+        web_jsonschema_validate(set_update, self._schema_partial)
+        res = await self._collection.update_many(query, {"$set": set_update})
+
+        self.logger.debug(f"updated many: {query}")
         return res.modified_count
 
     ####################################################################
@@ -82,10 +92,10 @@ class WMSMongoClient:
         # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
         doc.pop("_id")
 
-        self.logger.debug(f"found {doc}")
+        self.logger.debug(f"found one: {doc}")
         return doc  # type: ignore[no-any-return]
 
-    async def find_all(self, query: dict, projection: dict) -> AsyncIterator[dict]:
+    async def find_all(self, query: dict, projection: list) -> AsyncIterator[dict]:
         """Find all matching the query."""
         self.logger.debug(f"finding with query: {query}")
 

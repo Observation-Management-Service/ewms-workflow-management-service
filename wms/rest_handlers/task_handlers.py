@@ -32,6 +32,8 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             cluster_locations=self.get_argument("cluster_locations"),
             task_image=self.get_argument("task_image"),
             task_args=self.get_argument("task_args", ""),
+            timestamp=int(time.time()),
+            terminated=False,
         )
 
         # first, check that locations are legit
@@ -43,12 +45,12 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                 )
 
         # next, insert
-        task_directive = await self.task_directives_client.insert(task_directive)
+        task_directive = await self.task_directives_client.insert_one(task_directive)
 
-        # now, create Taskforce entries
-        # TODO - move this to backlog
+        # now, create Taskforce entries (important to do now so removals are handled easily--think dangling pointers)
+        # TODO - set tms_status to 'backlog', then backlogger changes to 'pending-start'
         for location in task_directive["cluster_locations"]:
-            await self.taskforces_client.insert(
+            await self.taskforces_client.insert_one(
                 dict(
                     taskforce_uuid=uuid.uuid4().hex,
                     task_id=task_directive["task_id"],
@@ -84,7 +86,6 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, task_id: str) -> None:
         """Handle GET."""
-
         try:
             task_directive = await self.task_directives_client.find_one(
                 {
@@ -98,6 +99,40 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
             ) from e
 
         self.write(task_directive)
+
+    @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
+    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    async def delete(self, task_id: str) -> None:
+        """Handle DELETE."""
+
+        # NOTE: it may be useful to add a 'reason' enum to distinguish normal vs forced terminations
+
+        try:
+            await self.task_directives_client.update_set_one(
+                {
+                    "task_id": task_id,
+                },
+                {
+                    "terminated": True,
+                },
+            )
+        except DocumentNotFoundException as e:
+            raise web.HTTPError(
+                status_code=404,
+                reason=f"no task found with id: {task_id}",  # to client
+            ) from e
+
+        # set all corresponding taskforces to pending-stop
+        n_updated = await self.taskforces_client.update_set_many(
+            {
+                "task_id": task_id,
+            },
+            {
+                "tms_status": "pending-stop",
+            },
+        )
+
+        self.write({"task_id": task_id, "n_taskforces": n_updated})
 
 
 # ----------------------------------------------------------------------------
@@ -115,7 +150,7 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         matches = []
         async for m in self.task_directives_client.find_all(
             self.get_argument("query"),
-            self.get_argument("projection", {}),
+            self.get_argument("projection", []),
         ):
             matches.append(m)
 

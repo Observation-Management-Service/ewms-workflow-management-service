@@ -235,7 +235,7 @@ async def test_000(rc: RestClient) -> None:
                 "compound_statuses_by_taskforce": {},
             },
         )
-        assert not resp["uuids"]
+        assert not resp["taskforce_uuids"]
 
     #
     # USER...
@@ -279,7 +279,7 @@ async def test_000(rc: RestClient) -> None:
                 },
             },
         )
-        assert resp["uuids"] == [taskforce_uuid]
+        assert resp["taskforce_uuids"] == [taskforce_uuid]
 
     #
     # USER...
@@ -325,12 +325,19 @@ async def test_000(rc: RestClient) -> None:
                 },
             },
         )
-        assert resp["uuids"] == [taskforce_uuid]
+        assert resp["taskforce_uuids"] == [taskforce_uuid]
 
     #
     # USER...
     # check jobs done & result
     #
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "DELETE",
+        f"/task/directive/{task_id}",
+    )
+    assert resp == {"task_id": task_id, "n_taskforces": len(CONDOR_LOCATIONS)}
 
     #
     # TMS(es) stopper(s)...

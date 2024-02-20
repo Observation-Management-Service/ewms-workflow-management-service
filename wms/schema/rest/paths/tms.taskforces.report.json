@@ -45,7 +45,7 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "uuids": {
+                                "taskforce_uuids": {
                                     "description": "the uuids of the updated taskforce objects",
                                     "type": "array",
                                     "items": {
@@ -55,7 +55,7 @@
                                 }
                             },
                             "required": [
-                                "uuids"
+                                "taskforce_uuids"
                             ],
                             "additionalProperties": false
                         }
