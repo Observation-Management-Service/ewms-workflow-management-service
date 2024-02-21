@@ -19,9 +19,11 @@ async def rc() -> AsyncIterator[RestClient]:
         f"mongodb://{os.environ['MONGODB_HOST']}:{os.environ['MONGODB_PORT']}"
     )
 
-    # make sure db is empty
+    # make sure custom db's collections are empty
     for db in mongo_client.list_database_names():
-        mongo_client.drop_database(db)
+        if db not in ["admin", "config", "local"]:
+            for coll in mongo_client[db].list_collection_names():
+                mongo_client[db][coll].delete_many({})
 
     # connect rc
     yield RestClient(
