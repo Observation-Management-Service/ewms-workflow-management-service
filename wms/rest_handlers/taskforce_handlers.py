@@ -53,13 +53,14 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
 
             try:
                 await self.taskforces_client.update_set_one(
-                    {"taskforce_uuid": uuid},
+                    {
+                        "taskforce_uuid": uuid,
+                        "tms_status": {"$in": ["running"]},
+                    },
                     update,
                 )
-            except DocumentNotFoundException as e:
-                LOGGER.warning(
-                    f"attempted to update taskforce with an unknown uuid: {uuid}"
-                )
+            except DocumentNotFoundException:
+                LOGGER.warning(f"no running taskforce found with uuid: {uuid}")
                 not_found.append(uuid)
 
         self.write({"taskforce_uuids": [u for u in all_uuids if u not in not_found]})
@@ -130,18 +131,25 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
-        await self.taskforces_client.update_set_one(
-            {
-                "taskforce_uuid": taskforce_uuid,
-            },
-            dict(
-                cluster_id=self.get_argument("cluster_id"),
-                n_workers=self.get_argument("n_workers"),
-                submit_dict=self.get_argument("submit_dict"),
-                job_event_log_fpath=self.get_argument("job_event_log_fpath"),
-                tms_status="running",
-            ),
-        )
+        try:
+            await self.taskforces_client.update_set_one(
+                {
+                    "taskforce_uuid": taskforce_uuid,
+                    "tms_status": {"$in": ["pending-start"]},
+                },
+                dict(
+                    cluster_id=self.get_argument("cluster_id"),
+                    n_workers=self.get_argument("n_workers"),
+                    submit_dict=self.get_argument("submit_dict"),
+                    job_event_log_fpath=self.get_argument("job_event_log_fpath"),
+                    tms_status="running",
+                ),
+            )
+        except DocumentNotFoundException as e:
+            raise web.HTTPError(
+                status_code=404,
+                reason=f"no 'pending-start' taskforce found with uuid: {taskforce_uuid}",  # to client
+            ) from e
 
         self.write(
             {
@@ -193,14 +201,21 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def delete(self, taskforce_uuid: str) -> None:
         """Handle DELETE."""
-        await self.taskforces_client.update_set_one(
-            {
-                "taskforce_uuid": taskforce_uuid,
-            },
-            {
-                "tms_status": "condor-rm",
-            },
-        )
+        try:
+            await self.taskforces_client.update_set_one(
+                {
+                    "taskforce_uuid": taskforce_uuid,
+                    # NOTE: any taskforce can be marked as 'condor-rm' regardless of state
+                },
+                {
+                    "tms_status": "condor-rm",
+                },
+            )
+        except DocumentNotFoundException as e:
+            raise web.HTTPError(
+                status_code=404,
+                reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
+            ) from e
 
         self.write(
             {
