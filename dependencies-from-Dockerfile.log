@@ -13,7 +13,7 @@ certifi==2024.2.2
 cffi==1.16.0
 charset-normalizer==3.3.2
 coloredlogs==15.0.1
-cryptography==42.0.3
+cryptography==42.0.4
 Deprecated==1.2.14
 dnspython==2.6.1
 googleapis-common-protos==1.59.1
@@ -71,7 +71,7 @@ zipp==3.17.0
 ########################################################################
 #  pipdeptree
 ########################################################################
-cryptography==42.0.3
+cryptography==42.0.4
 └── cffi [required: >=1.12, installed: 1.16.0]
     └── pycparser [required: Any, installed: 2.21]
 pip==24.0
