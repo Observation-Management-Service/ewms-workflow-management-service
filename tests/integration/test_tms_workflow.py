@@ -320,8 +320,8 @@ async def test_000(rc: RestClient) -> None:
         {
             "query": {"task_id": task_id},
             "projection": [
-                "compound_statuses_by_taskforce",
-                "top_task_errors_by_taskforce",
+                "compound_statuses",
+                "top_task_errors",
                 "collector",
                 "schedd",
             ],
@@ -382,8 +382,8 @@ async def test_000(rc: RestClient) -> None:
         {
             "query": {"task_id": task_id},
             "projection": [
-                "compound_statuses_by_taskforce",
-                "top_task_errors_by_taskforce",
+                "compound_statuses",
+                "top_task_errors",
                 "collector",
                 "schedd",
             ],
@@ -444,8 +444,8 @@ async def test_000(rc: RestClient) -> None:
         {
             "query": {"task_id": task_id},
             "projection": [
-                "compound_statuses_by_taskforce",
-                "top_task_errors_by_taskforce",
+                "compound_statuses",
+                "top_task_errors",
                 "collector",
                 "schedd",
             ],
