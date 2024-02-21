@@ -25,7 +25,10 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
-        """Handle POST."""
+        """Handle POST.
+
+        Update taskforces' ongoing statuses of its workers.
+        """
         top_task_errors_by_taskforce = self.get_argument(
             "top_task_errors_by_taskforce", default={}
         )
@@ -77,7 +80,10 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
-        """Handle POST."""
+        """Handle POST.
+
+        Search for taskforces matching given query.
+        """
         matches = []
         async for m in self.taskforces_client.find_all(
             self.get_argument("query"),
@@ -99,9 +105,10 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self) -> None:
-        """Handle GET."""
+        """Handle GET.
 
-        # get the next taskforce to START, for the given cluster
+        Get the next taskforce to START, for the given condor location.
+        """
         try:
             taskforce = await self.taskforces_client.find_one(
                 dict(
@@ -130,7 +137,11 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
-        """Handle POST."""
+        """Handle POST.
+
+        Confirm that the taskforce is running and supply condor runtime
+        info.
+        """
         try:
             await self.taskforces_client.update_set_one(
                 {
@@ -169,9 +180,10 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self) -> None:
-        """Handle GET."""
+        """Handle GET.
 
-        # get the next taskforce to STOP, for the given cluster
+        Get the next taskforce to STOP, for the given condor location.
+        """
         try:
             taskforce = await self.taskforces_client.find_one(
                 dict(
@@ -200,7 +212,11 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def delete(self, taskforce_uuid: str) -> None:
-        """Handle DELETE."""
+        """Handle DELETE.
+
+        Confirm that the taskforce has been stopped (condor_rm has been
+        invoked).
+        """
         try:
             await self.taskforces_client.update_set_one(
                 {
@@ -235,7 +251,11 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
-        """Handle POST."""
+        """Handle POST.
+
+        Supply the timestamp for when the taskforce's condor cluster
+        finished, regardless if it ended in success or failure.
+        """
         try:
             await self.taskforces_client.update_set_one(
                 {
@@ -270,7 +290,10 @@ class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, taskforce_uuid: str) -> None:
-        """Handle GET."""
+        """Handle GET.
+
+        Get an existing taskforce object.
+        """
         try:
             taskforce = await self.taskforces_client.find_one(
                 {

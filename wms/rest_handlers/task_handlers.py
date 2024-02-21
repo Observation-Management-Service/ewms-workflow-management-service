@@ -26,7 +26,10 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
-        """Handle POST."""
+        """Handle POST.
+
+        Create a new task directive.
+        """
         task_directive = dict(
             task_id=uuid.uuid4().hex,
             cluster_locations=self.get_argument("cluster_locations"),
@@ -88,7 +91,10 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, task_id: str) -> None:
-        """Handle GET."""
+        """Handle GET.
+
+        Get an existing task directive.
+        """
         try:
             task_directive = await self.task_directives_client.find_one(
                 {
@@ -106,7 +112,10 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def delete(self, task_id: str) -> None:
-        """Handle DELETE."""
+        """Handle DELETE.
+
+        Abort a task.
+        """
         try:
             await self.task_directives_client.update_set_one(
                 {
@@ -161,7 +170,10 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
-        """Handle POST."""
+        """Handle POST.
+
+        Search for task directives matching given query.
+        """
         matches = []
         async for m in self.task_directives_client.find_all(
             self.get_argument("query"),
