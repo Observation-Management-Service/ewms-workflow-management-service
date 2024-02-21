@@ -137,21 +137,25 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
             n_updated = await self.taskforces_client.update_set_many(
                 {
                     "task_id": task_id,
-                    "$and": {
+                    "$and": [
                         # not already aborted
-                        "tms_status": {
-                            "$nin": ["pending-stop", "condor-rm"]
-                        },  # "not in"
+                        {
+                            "tms_status": {
+                                "$nin": ["pending-stop", "condor-rm"]
+                            },  # "not in"
+                        },
                         # AND
                         # not condor-completed
-                        "condor_complete_ts": None,  # int -> condor-completed
-                    },
+                        {
+                            "condor_complete_ts": None,  # int -> condor-completed
+                        },
+                    ],
                 },
                 {
                     "tms_status": "pending-stop",
                 },
             )
-        except DocumentNotFoundException as e:
+        except DocumentNotFoundException:
             LOGGER.info(
                 "okay scenario: task aborted but no taskforces needed to be stopped"
             )
