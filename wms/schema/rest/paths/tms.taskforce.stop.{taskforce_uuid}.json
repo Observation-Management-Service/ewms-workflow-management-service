@@ -7,11 +7,11 @@
     "delete": {
         "responses": {
             "200": {
-                "description": "the matching taskforce object",
+                "description": "the uuid of the updated taskforce objects",
                 "content": {
                     "application/json": {
                         "schema": {
-                            "$ref": "#/components/schemas/TaskforceObject"
+                            "$ref": "#/components/schemas/TaskforceUUIDObject"
                         }
                     }
                 }

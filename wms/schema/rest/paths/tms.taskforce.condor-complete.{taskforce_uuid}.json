@@ -1,5 +1,9 @@
 {
-    "parameters": [],
+    "parameters": [
+        {
+            "$ref": "#/components/parameters/TaskforceUUIDParam"
+        }
+    ],
     "post": {
         "requestBody": {
             "content": {
@@ -7,28 +11,13 @@
                     "schema": {
                         "type": "object",
                         "properties": {
-                            "job_event_log_fpath": {
-                                "description": "the condor job event log filepath on the AP",
-                                "type": "string"
-                            },
-                            "collector": {
-                                "description": "name of the condor collector",
-                                "type": "string"
-                            },
-                            "schedd": {
-                                "description": "name of the condor schedd",
-                                "type": "string"
-                            },
-                            "finished": {
-                                "description": "whether this job event log is finished",
-                                "type": "boolean"
+                            "timestamp": {
+                                "description": "the time that the taskforce's condor cluster was ended/terminated/aborted",
+                                "type": "integer"
                             }
                         },
                         "required": [
-                            "job_event_log_fpath",
-                            "collector",
-                            "schedd",
-                            "finished"
+                            "timestamp"
                         ],
                         "additionalProperties": false
                     }
@@ -37,9 +26,13 @@
         },
         "responses": {
             "200": {
-                "description": "TODO",
+                "description": "the uuid of the updated taskforce objects",
                 "content": {
-                    "application/json": {}
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/TaskforceUUIDObject"
+                        }
+                    }
                 }
             },
             "400": {

@@ -16,18 +16,11 @@
         },
         "responses": {
             "200": {
-                "description": "the updated taskforce's uuid",
+                "description": "the uuid of the updated taskforce objects",
                 "content": {
                     "application/json": {
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "taskforce_uuid": {
-                                    "description": "the taskforce uuid",
-                                    "type": "string"
-                                }
-                            },
-                            "additionalProperties": false
+                            "$ref": "#/components/schemas/TaskforceUUIDObject"
                         }
                     }
                 }

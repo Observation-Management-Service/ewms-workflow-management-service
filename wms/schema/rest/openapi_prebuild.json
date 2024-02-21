@@ -67,6 +67,19 @@
                     "query"
                 ],
                 "additionalProperties": false
+            },
+            "TaskforceUUIDObject": {
+                "type": "object",
+                "properties": {
+                    "taskforce_uuid": {
+                        "description": "the uuid of the updated taskforce object",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "taskforce_uuid"
+                ],
+                "additionalProperties": false
             }
         }
     },

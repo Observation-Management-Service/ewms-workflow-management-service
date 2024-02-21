@@ -186,13 +186,40 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def delete(self, taskforce_uuid: str) -> None:
         """Handle DELETE."""
-
         await self.taskforces_client.update_set_one(
             {
                 "taskforce_uuid": taskforce_uuid,
             },
             {
                 "tms_status": "condor-rm",
+            },
+        )
+
+        self.write(
+            {
+                "taskforce_uuid": taskforce_uuid,
+            }
+        )
+
+
+# ----------------------------------------------------------------------------
+
+
+class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a condor-completed taskforce."""
+
+    ROUTE = r"/tms/taskforce/condor-complete/(?P<taskforce_uuid>\w+)$"
+
+    @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
+    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    async def post(self, taskforce_uuid: str) -> None:
+        """Handle POST."""
+        await self.taskforces_client.update_set_one(
+            {
+                "taskforce_uuid": taskforce_uuid,
+            },
+            {
+                "condor_complete_ts": int(self.get_argument("timestamp")),
             },
         )
 
@@ -215,7 +242,6 @@ class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, taskforce_uuid: str) -> None:
         """Handle GET."""
-
         try:
             taskforce = await self.taskforces_client.find_one(
                 {
