@@ -39,6 +39,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 + list(compound_statuses_by_taskforce.keys())
             )
         )
+        not_found = []
 
         # put in db
         for uuid in all_uuids:
@@ -50,12 +51,18 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 # value could be falsy -- that's ok
                 update["compound_statuses"] = compound_statuses_by_taskforce[uuid]
 
-            await self.taskforces_client.update_set_one(
-                {"taskforce_uuid": uuid},
-                update,
-            )
+            try:
+                await self.taskforces_client.update_set_one(
+                    {"taskforce_uuid": uuid},
+                    update,
+                )
+            except DocumentNotFoundException as e:
+                LOGGER.warning(
+                    f"attempted to update taskforce with an unknown uuid: {uuid}"
+                )
+                not_found.append(uuid)
 
-        self.write({"taskforce_uuids": all_uuids})
+        self.write({"taskforce_uuids": [u for u in all_uuids if u not in not_found]})
 
 
 # ----------------------------------------------------------------------------
@@ -214,14 +221,20 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
-        await self.taskforces_client.update_set_one(
-            {
-                "taskforce_uuid": taskforce_uuid,
-            },
-            {
-                "condor_complete_ts": int(self.get_argument("condor_complete_ts")),
-            },
-        )
+        try:
+            await self.taskforces_client.update_set_one(
+                {
+                    "taskforce_uuid": taskforce_uuid,
+                },
+                {
+                    "condor_complete_ts": int(self.get_argument("condor_complete_ts")),
+                },
+            )
+        except DocumentNotFoundException as e:
+            raise web.HTTPError(
+                status_code=404,
+                reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
+            ) from e
 
         self.write(
             {

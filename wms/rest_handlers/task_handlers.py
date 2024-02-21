@@ -107,13 +107,11 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def delete(self, task_id: str) -> None:
         """Handle DELETE."""
-
-        # NOTE: it may be useful to add a 'reason' enum to distinguish normal vs forced terminations
-
         try:
             await self.task_directives_client.update_set_one(
                 {
                     "task_id": task_id,
+                    "aborted": {"$nin": [True]},  # "not in"
                 },
                 {
                     "aborted": True,
@@ -122,18 +120,32 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         except DocumentNotFoundException as e:
             raise web.HTTPError(
                 status_code=404,
-                reason=f"no task found with id: {task_id}",  # to client
+                reason=f"no non-aborted task found with id: {task_id}",  # to client
             ) from e
 
         # set all corresponding taskforces to pending-stop
-        n_updated = await self.taskforces_client.update_set_many(
-            {
-                "task_id": task_id,
-            },
-            {
-                "tms_status": "pending-stop",
-            },
-        )
+        try:
+            n_updated = await self.taskforces_client.update_set_many(
+                {
+                    "task_id": task_id,
+                    "$and": {
+                        # not already aborted
+                        "tms_status": {
+                            "$nin": ["pending-stop", "condor-rm"]
+                        },  # "not in"
+                        # AND
+                        # not condor-completed
+                        "condor_complete_ts": None,  # int -> condor-completed
+                    },
+                },
+                {
+                    "tms_status": "pending-stop",
+                },
+            )
+        except DocumentNotFoundException as e:
+            LOGGER.info(
+                "okay scenario: task aborted but no taskforces needed to be stopped"
+            )
 
         self.write({"task_id": task_id, "n_taskforces": n_updated})
 

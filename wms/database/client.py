@@ -59,6 +59,8 @@ class WMSMongoClient:
 
         web_jsonschema_validate(set_update, self._schema_partial)
         res = await self._collection.update_one(query, {"$set": set_update})
+        if not res.matched_count:
+            raise DocumentNotFoundException()
 
         self.logger.debug(f"updated one: {query}")
         return res.modified_count
@@ -69,6 +71,8 @@ class WMSMongoClient:
 
         web_jsonschema_validate(set_update, self._schema_partial)
         res = await self._collection.update_many(query, {"$set": set_update})
+        if not res.matched_count:
+            raise DocumentNotFoundException()
 
         self.logger.debug(f"updated many: {query}")
         return res.modified_count
