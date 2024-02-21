@@ -33,7 +33,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             task_image=self.get_argument("task_image"),
             task_args=self.get_argument("task_args", ""),
             timestamp=int(time.time()),
-            terminated=False,
+            aborted=False,
         )
 
         # first, check that locations are legit
@@ -116,7 +116,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     "task_id": task_id,
                 },
                 {
-                    "terminated": True,
+                    "aborted": True,
                 },
             )
         except DocumentNotFoundException as e:

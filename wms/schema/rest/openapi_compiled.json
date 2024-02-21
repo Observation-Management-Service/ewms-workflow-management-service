@@ -67,7 +67,7 @@
                     "timestamp": {
                         "type": "integer"
                     },
-                    "terminated": {
+                    "aborted": {
                         "type": "boolean"
                     }
                 },

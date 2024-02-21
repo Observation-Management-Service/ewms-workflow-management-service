@@ -4,7 +4,6 @@
 import json
 import logging
 import os
-import time
 from pathlib import Path
 from typing import Any
 
@@ -475,7 +474,7 @@ async def test_000(rc: RestClient) -> None:
         "GET",
         f"/task/directive/{task_id}",
     )
-    assert resp["terminated"] is True
+    assert resp["aborted"] is True
     resp = request_and_validate(
         rc,
         openapi_spec,

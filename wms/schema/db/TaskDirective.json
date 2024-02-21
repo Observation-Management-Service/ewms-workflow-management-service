@@ -20,7 +20,7 @@
         "timestamp": {
             "type": "integer"
         },
-        "terminated": {
+        "aborted": {
             "type": "boolean"
         }
     },
@@ -30,7 +30,7 @@
         "task_image",
         "task_args",
         "timestamp",
-        "terminated"
+        "aborted"
     ],
     "additionalProperties": false
 }
