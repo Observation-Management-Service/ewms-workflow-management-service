@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 @pytest_asyncio.fixture
 async def rc() -> AsyncIterator[RestClient]:
     """Yield a RestClient."""
-    mongo_client = MongoClient(
+    mongo_client = MongoClient(  # type: ignore[var-annotated]
         f"mongodb://{os.environ['MONGODB_HOST']}:{os.environ['MONGODB_PORT']}"
     )
 
