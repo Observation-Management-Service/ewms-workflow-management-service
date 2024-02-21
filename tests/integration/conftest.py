@@ -20,7 +20,8 @@ async def rc() -> AsyncIterator[RestClient]:
     )
 
     # make sure db is empty
-    assert not mongo_client.list_database_names()
+    for db in mongo_client.list_database_names():
+        mongo_client.drop_database(db)
 
     # connect rc
     yield RestClient(
@@ -28,7 +29,3 @@ async def rc() -> AsyncIterator[RestClient]:
         timeout=3,
         retries=2,
     )
-
-    # clean up database
-    for db in mongo_client.list_database_names():
-        mongo_client.drop_database(db)
