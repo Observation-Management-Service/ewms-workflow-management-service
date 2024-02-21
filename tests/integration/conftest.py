@@ -19,7 +19,7 @@ async def rc() -> AsyncIterator[RestClient]:
         f"mongodb://{os.environ['MONGODB_HOST']}:{os.environ['MONGODB_PORT']}"
     )
 
-    # make sure custom db's collections are empty
+    # make sure custom dbs' collections are empty
     for db in mongo_client.list_database_names():
         if db not in ["admin", "config", "local"]:
             for coll in mongo_client[db].list_collection_names():

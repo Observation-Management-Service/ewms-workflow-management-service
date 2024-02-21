@@ -30,6 +30,13 @@ CONDOR_LOCATIONS = {
 }
 
 
+def _collector_schedd_to_location(collector: str, schedd: str) -> str:
+    for lname, loc in CONDOR_LOCATIONS.items():
+        if loc["collector"] == collector and loc["schedd"] == schedd:
+            return lname
+    raise ValueError(f"Location not found: {collector=} {schedd=}")
+
+
 # ----------------------------------------------------------------------------
 
 
@@ -86,6 +93,54 @@ def request_and_validate(
 
 # ----------------------------------------------------------------------------
 
+COMPOUND_STATUSES__1 = {  # type: ignore[var-annotated]
+    "test-alpha": {},
+    "test-beta": {},
+}
+TOP_TASK_ERRORS__1 = {  # type: ignore[var-annotated]
+    "test-alpha": {},
+    "test-beta": {},
+}
+#
+COMPOUND_STATUSES__2 = {
+    "test-alpha": {
+        "started": {"tasked": 256},
+    },
+    "test-beta": {
+        "started": {"tasked": 150},
+        "stopped": {"tasked": 2000},
+    },
+}
+TOP_TASK_ERRORS__2 = {
+    "test-alpha": {
+        "too_cool": 326,
+    },
+    "test-beta": {
+        "too_warm": 453,
+    },
+}
+#
+COMPOUND_STATUSES__3 = {
+    "test-alpha": {
+        "started": {"tasked": 1126, "done": 1265},
+        "stopped": {"tasked": 502},
+    },
+    "test-beta": {
+        "started": {"pre-tasked": 811, "done": 135},
+        "stopped": {"tasked": 560},
+    },
+}
+TOP_TASK_ERRORS__3 = {
+    "test-alpha": {
+        "too_cool": 5156,
+        "full": 123,
+    },
+    "test-beta": {
+        "too_cool": 1565,
+        "empty": 861,
+    },
+}
+
 
 async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
@@ -102,8 +157,8 @@ async def test_000(rc: RestClient) -> None:
 
     #
     # USER...
+    # requests new task
     #
-
     task_directive = request_and_validate(
         rc,
         openapi_spec,
@@ -116,7 +171,6 @@ async def test_000(rc: RestClient) -> None:
         },
     )
     task_id = task_directive["task_id"]
-
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -124,7 +178,6 @@ async def test_000(rc: RestClient) -> None:
         f"/task/directive/{task_id}",
     )
     assert resp == task_directive
-
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -143,7 +196,6 @@ async def test_000(rc: RestClient) -> None:
     #
     # TMS(es) starter(s)...
     #
-
     for loc in CONDOR_LOCATIONS.values():
         # get next to start
         taskforce = request_and_validate(
@@ -208,8 +260,7 @@ async def test_000(rc: RestClient) -> None:
     # TMS(es) watcher(s)...
     # no jobs yet (waiting for condor)
     #
-
-    for loc in CONDOR_LOCATIONS.values():
+    for lname, loc in CONDOR_LOCATIONS.items():
         resp = request_and_validate(
             rc,
             openapi_spec,
@@ -232,7 +283,7 @@ async def test_000(rc: RestClient) -> None:
             "POST",
             "/tms/taskforces/report",
             {
-                "compound_statuses_by_taskforce": {},
+                "compound_statuses_by_taskforce": COMPOUND_STATUSES__1[lname],
             },
         )
         assert not resp["taskforce_uuids"]
@@ -241,57 +292,32 @@ async def test_000(rc: RestClient) -> None:
     # USER...
     # check above
     #
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": [
+                "compound_statuses_by_taskforce",
+                "top_task_errors_by_taskforce",
+                "collector",
+                "schedd",
+            ],
+        },
+    )
+    assert len(resp["taskforces"]) == len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        lname = _collector_schedd_to_location(tf["collector"], tf["schedd"])
+        assert tf["compound_statuses"] == COMPOUND_STATUSES__1[lname]
+        assert tf["top_task_errors"] == TOP_TASK_ERRORS__1[lname]
 
     #
     # TMS(es) watcher(s)...
     # jobs in action!
     #
-
-    for loc in CONDOR_LOCATIONS.values():
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/tms/taskforces/find",
-            {
-                "query": {
-                    "collector": loc["collector"],
-                    "schedd": loc["schedd"],
-                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
-                },
-                "projection": ["taskforce_uuid", "cluster_id"],
-            },
-        )
-        assert len(resp["taskforces"]) == 1
-        taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/tms/taskforces/report",
-            {
-                "top_task_errors_by_taskforce": {taskforce_uuid: {"too_cool": 3}},
-                "compound_statuses_by_taskforce": {
-                    taskforce_uuid: {
-                        "started": {"tasked": 15},
-                        "stopped": {"tasked": 20},
-                    }
-                },
-            },
-        )
-        assert resp["taskforce_uuids"] == [taskforce_uuid]
-
-    #
-    # USER...
-    # check above
-    #
-
-    #
-    # TMS(es) watcher(s)...
-    # jobs done
-    #
-
-    for loc in CONDOR_LOCATIONS.values():
+    for lname, loc in CONDOR_LOCATIONS.items():
         resp = request_and_validate(
             rc,
             openapi_spec,
@@ -315,13 +341,10 @@ async def test_000(rc: RestClient) -> None:
             "/tms/taskforces/report",
             {
                 "top_task_errors_by_taskforce": {
-                    taskforce_uuid: {"too_cool": 5, "empty": 1}
+                    taskforce_uuid: TOP_TASK_ERRORS__2[lname],
                 },
                 "compound_statuses_by_taskforce": {
-                    taskforce_uuid: {
-                        "started": {"tasked": 11, "done": 1},
-                        "stopped": {"tasked": 50},
-                    }
+                    taskforce_uuid: COMPOUND_STATUSES__2[lname]
                 },
             },
         )
@@ -329,7 +352,94 @@ async def test_000(rc: RestClient) -> None:
 
     #
     # USER...
-    # check jobs done & result
+    # check above
+    #
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": [
+                "compound_statuses_by_taskforce",
+                "top_task_errors_by_taskforce",
+                "collector",
+                "schedd",
+            ],
+        },
+    )
+    assert len(resp["taskforces"]) == len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        lname = _collector_schedd_to_location(tf["collector"], tf["schedd"])
+        assert tf["compound_statuses"] == COMPOUND_STATUSES__2[lname]
+        assert tf["top_task_errors"] == TOP_TASK_ERRORS__2[lname]
+
+    #
+    # TMS(es) watcher(s)...
+    # jobs done
+    #
+    for lname, loc in CONDOR_LOCATIONS.items():
+        resp = request_and_validate(
+            rc,
+            openapi_spec,
+            "POST",
+            "/tms/taskforces/find",
+            {
+                "query": {
+                    "collector": loc["collector"],
+                    "schedd": loc["schedd"],
+                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
+                },
+                "projection": ["taskforce_uuid", "cluster_id"],
+            },
+        )
+        assert len(resp["taskforces"]) == 1
+        taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
+        resp = request_and_validate(
+            rc,
+            openapi_spec,
+            "POST",
+            "/tms/taskforces/report",
+            {
+                "top_task_errors_by_taskforce": {
+                    taskforce_uuid: TOP_TASK_ERRORS__3[lname],
+                },
+                "compound_statuses_by_taskforce": {
+                    taskforce_uuid: COMPOUND_STATUSES__3[lname]
+                },
+            },
+        )
+        assert resp["taskforce_uuids"] == [taskforce_uuid]
+
+    #
+    # USER...
+    # check above
+    #
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": [
+                "compound_statuses_by_taskforce",
+                "top_task_errors_by_taskforce",
+                "collector",
+                "schedd",
+            ],
+        },
+    )
+    assert len(resp["taskforces"]) == len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        lname = _collector_schedd_to_location(tf["collector"], tf["schedd"])
+        assert tf["compound_statuses"] == COMPOUND_STATUSES__3[lname]
+        assert tf["top_task_errors"] == TOP_TASK_ERRORS__3[lname]
+
+    #
+    # USER...
+    # stop task
     #
     resp = request_and_validate(
         rc,
@@ -342,7 +452,6 @@ async def test_000(rc: RestClient) -> None:
     #
     # TMS(es) stopper(s)...
     #
-
     for loc in CONDOR_LOCATIONS.values():
         # get next to stop
         taskforce = request_and_validate(
@@ -370,7 +479,6 @@ async def test_000(rc: RestClient) -> None:
     # TMS(es) watcher(s)...
     # jel done
     #
-
     for loc in CONDOR_LOCATIONS.values():
         # TODO -- rethink intention of /tms/job-event-log
         # should instead the tms ask wms if there are anymore pending tasks for this jel?
