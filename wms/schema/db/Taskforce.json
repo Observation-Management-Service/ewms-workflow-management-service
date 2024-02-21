@@ -98,6 +98,7 @@
         "n_workers",
         "submit_dict",
         "job_event_log_fpath",
+        "condor_complete_ts",
         "tms_status",
         "compound_statuses",
         "top_task_errors"
