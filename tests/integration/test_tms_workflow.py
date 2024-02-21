@@ -372,6 +372,12 @@ async def test_000(rc: RestClient) -> None:
     #
 
     for loc in CONDOR_LOCATIONS.values():
+        # TODO -- rethink intention of /tms/job-event-log
+        # should instead the tms ask wms if there are anymore pending tasks for this jel?
+        # where is the SOT? condor, backlogger, wms?
+        # relatedly, are all tasks 'terminated'? if so, then wms is SOT.
+        # if not, then there can be lingering jobs (so condor is SOT...?)
+
         resp = request_and_validate(
             rc,
             openapi_spec,
