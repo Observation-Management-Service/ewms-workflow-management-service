@@ -192,7 +192,7 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                 "taskforce_uuid": taskforce_uuid,
             },
             {
-                "tms_status": "done",
+                "tms_status": "condor-rm",
             },
         )
 

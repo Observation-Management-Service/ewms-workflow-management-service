@@ -527,7 +527,7 @@ async def test_000(rc: RestClient) -> None:
         },
     )
     assert len(resp["taskforces"]) == len(CONDOR_LOCATIONS)
-    assert all(tf["tms_status"] == "done" for tf in resp["taskforces"])
+    assert all(tf["tms_status"] == "condor-rm" for tf in resp["taskforces"])
 
     #
     # TMS(es) watcher(s)...

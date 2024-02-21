@@ -52,13 +52,24 @@
         "job_event_log_fpath": {
             "type": "string"
         },
+        "condor_complete_ts": {
+            "anyOf": [
+                {
+                    "type": "integer"
+                },
+                {
+                    "type": "null"
+                }
+            ]
+        },
         "tms_status": {
             "type": "string",
             "enum": [
+                "pre-tms",
                 "pending-start",
                 "running",
                 "pending-stop",
-                "done"
+                "condor-rm"
             ]
         },
         "compound_statuses": {

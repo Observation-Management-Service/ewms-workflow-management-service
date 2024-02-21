@@ -48,23 +48,26 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
         task_directive = await self.task_directives_client.insert_one(task_directive)
 
         # now, create Taskforce entries (important to do now so removals are handled easily--think dangling pointers)
-        # TODO - set tms_status to 'backlog', then backlogger changes to 'pending-start'
         for location in task_directive["cluster_locations"]:
             await self.taskforces_client.insert_one(
                 dict(
+                    # STATIC
                     taskforce_uuid=uuid.uuid4().hex,
                     task_id=task_directive["task_id"],
                     timestamp=int(time.time()),
                     collector=config.KNOWN_CLUSTERS[location]["collector"],
                     schedd=config.KNOWN_CLUSTERS[location]["schedd"],
                     #
-                    # set by tms via /tms/taskforce/running/<id>
+                    # set ONCE by tms via /tms/taskforce/running/<id>
                     cluster_id=None,
                     n_workers=None,
                     submit_dict={},
                     job_event_log_fpath="",
+                    # set ONCE by tms's watcher
+                    condor_complete_ts=None,
                     #
-                    # updated by tms several times
+                    # updated by tms SEVERAL times
+                    # TODO - set to 'pre-tms', then backlogger changes to 'pending-start'
                     tms_status="pending-start",
                     compound_statuses={},
                     top_task_errors={},

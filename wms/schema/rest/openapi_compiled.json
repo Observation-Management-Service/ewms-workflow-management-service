@@ -134,7 +134,7 @@
                             "pending-start",
                             "running",
                             "pending-stop",
-                            "done"
+                            "condor-rm"
                         ]
                     },
                     "compound_statuses": {
