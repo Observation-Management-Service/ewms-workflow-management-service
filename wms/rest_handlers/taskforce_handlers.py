@@ -225,6 +225,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
             await self.taskforces_client.update_set_one(
                 {
                     "taskforce_uuid": taskforce_uuid,
+                    "condor_complete_ts": None,
                 },
                 {
                     "condor_complete_ts": int(self.get_argument("condor_complete_ts")),
@@ -233,7 +234,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         except DocumentNotFoundException as e:
             raise web.HTTPError(
                 status_code=404,
-                reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
+                reason=f"no non-condor-completed taskforce found with uuid: {taskforce_uuid}",  # to client
             ) from e
 
         self.write(
