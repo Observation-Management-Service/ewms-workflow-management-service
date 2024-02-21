@@ -4,6 +4,7 @@
 import json
 import logging
 import os
+import time
 from pathlib import Path
 from typing import Any
 
@@ -514,6 +515,7 @@ async def test_000(rc: RestClient) -> None:
     #
     # USER...
     # check above
+    #
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -531,28 +533,62 @@ async def test_000(rc: RestClient) -> None:
 
     #
     # TMS(es) watcher(s)...
-    # jel done
+    # taskforces' condor clusters are done
     #
     for loc in CONDOR_LOCATIONS.values():
-        # TODO -- rethink intention of /tms/job-event-log
-        # should instead the tms ask wms if there are anymore pending tasks for this jel?
-        # where is the SOT? condor, backlogger, wms?
-        # relatedly, are all tasks 'terminated'? if so, then wms is SOT.
-        # if not, then there can be lingering jobs (so condor is SOT...?)
-
         resp = request_and_validate(
             rc,
             openapi_spec,
             "POST",
-            "/tms/job-event-log",
+            "/tms/taskforces/find",
             {
-                "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
-                "collector": loc["collector"],
-                "schedd": loc["schedd"],
-                "finished": True,
+                "query": {
+                    "collector": loc["collector"],
+                    "schedd": loc["schedd"],
+                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
+                },
+                "projection": ["taskforce_uuid"],
             },
         )
-        # TODO - CHECK THAT JEL IS DELETED / FINISHED
+        assert len(resp["taskforces"]) == 1
+        resp = request_and_validate(
+            rc,
+            openapi_spec,
+            "POST",
+            f"/tms/taskforce/condor-complete/{resp['taskforces'][0]['taskforce_uuid']}",
+            {
+                "condor_complete_ts": (
+                    # NOTE: need a unique timestamp that we don't need to rely on the timing of this test
+                    hash(resp["taskforces"][0]["taskforce_uuid"])
+                    % 1700000000
+                ),
+            },
+        )
+
+    #
+    # USER...
+    # check above
+    #
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {
+            "query": {
+                "task_id": task_id,
+            },
+            "projection": ["taskforce_uuid", "tms_status", "condor_complete_ts"],
+        },
+    )
+    assert len(resp["taskforces"]) == len(CONDOR_LOCATIONS)
+    assert all(
+        (
+            tf["tms_status"] == "condor-rm"
+            and tf["condor_complete_ts"] == hash(tf["taskforce_uuid"]) % 1700000000
+        )
+        for tf in resp["taskforces"]
+    )
 
 
 # ----------------------------------------------------------------------------

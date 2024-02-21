@@ -219,7 +219,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
                 "taskforce_uuid": taskforce_uuid,
             },
             {
-                "condor_complete_ts": int(self.get_argument("timestamp")),
+                "condor_complete_ts": int(self.get_argument("condor_complete_ts")),
             },
         )
 

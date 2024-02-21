@@ -11,13 +11,13 @@
                     "schema": {
                         "type": "object",
                         "properties": {
-                            "timestamp": {
+                            "condor_complete_ts": {
                                 "description": "the time that the taskforce's condor cluster was ended/terminated/aborted",
                                 "type": "integer"
                             }
                         },
                         "required": [
-                            "timestamp"
+                            "condor_complete_ts"
                         ],
                         "additionalProperties": false
                     }
