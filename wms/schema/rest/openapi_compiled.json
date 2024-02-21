@@ -187,6 +187,19 @@
                     "query"
                 ],
                 "additionalProperties": false
+            },
+            "TaskforceUUIDObject": {
+                "type": "object",
+                "properties": {
+                    "taskforce_uuid": {
+                        "description": "the uuid of the updated taskforce object",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "taskforce_uuid"
+                ],
+                "additionalProperties": false
             }
         }
     },
@@ -267,6 +280,96 @@
                     },
                     "400": {
                         "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tms/taskforce/condor-complete/{taskforce_uuid}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/TaskforceUUIDParam"
+                }
+            ],
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "condor_complete_ts": {
+                                        "description": "the time that the taskforce's condor cluster was ended/terminated/aborted",
+                                        "type": "integer"
+                                    }
+                                },
+                                "required": [
+                                    "condor_complete_ts"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "the uuid of the updated taskforce objects",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -545,78 +648,6 @@
                     },
                     "404": {
                         "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/tms/job-event-log": {
-            "parameters": [],
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "job_event_log_fpath": {
-                                        "description": "the condor job event log filepath on the AP",
-                                        "type": "string"
-                                    },
-                                    "collector": {
-                                        "description": "name of the condor collector",
-                                        "type": "string"
-                                    },
-                                    "schedd": {
-                                        "description": "name of the condor schedd",
-                                        "type": "string"
-                                    },
-                                    "finished": {
-                                        "description": "whether this job event log is finished",
-                                        "type": "boolean"
-                                    }
-                                },
-                                "required": [
-                                    "job_event_log_fpath",
-                                    "collector",
-                                    "schedd",
-                                    "finished"
-                                ],
-                                "additionalProperties": false
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "TODO",
-                        "content": {
-                            "application/json": {}
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -962,11 +993,11 @@
             "delete": {
                 "responses": {
                     "200": {
-                        "description": "the matching taskforce object",
+                        "description": "the uuid of the updated taskforce objects",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TaskforceObject"
+                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
                                 }
                             }
                         }
@@ -1107,18 +1138,11 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "the updated taskforce's uuid",
+                        "description": "the uuid of the updated taskforce objects",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "taskforce_uuid": {
-                                            "description": "the taskforce uuid",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "additionalProperties": false
+                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
                                 }
                             }
                         }
