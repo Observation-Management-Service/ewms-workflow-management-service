@@ -230,6 +230,9 @@ def tms_watcher__with_jobs(
             )
             if v
         ]
+        print(top_task_errors_by_locshortname)
+        print(compound_statuses_by_locshortname)
+        print(resp["taskforce_uuids"])
         print(with_data)
         assert len(resp["taskforce_uuids"]) == len(set(with_data))
         assert resp["taskforce_uuids"] == [taskforce_uuid]
