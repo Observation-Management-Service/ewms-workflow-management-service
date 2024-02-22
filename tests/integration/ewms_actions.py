@@ -221,17 +221,17 @@ def tms_watcher__with_jobs(
                 },
             },
         )
-        assert len(resp["taskforce_uuids"]) == len(
-            set(
-                # should have only uuids from tfs that actually had data
-                k
-                for k, v in (
-                    list(top_task_errors_by_locshortname.items())
-                    + list(compound_statuses_by_locshortname.items())
-                )
-                if v
+        with_data = [
+            # should have only uuids from tfs that actually had data
+            k
+            for k, v in (
+                list(top_task_errors_by_locshortname.items())
+                + list(compound_statuses_by_locshortname.items())
             )
-        )
+            if v
+        ]
+        print(with_data)
+        assert len(resp["taskforce_uuids"]) == len(set(with_data))
         assert resp["taskforce_uuids"] == [taskforce_uuid]
 
     #
