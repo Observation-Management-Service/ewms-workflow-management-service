@@ -1,6 +1,7 @@
 """REST handlers for task-related routes."""
 
 
+
 import logging
 import time
 import uuid
@@ -36,6 +37,8 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             task_image=self.get_argument("task_image"),
             task_args=self.get_argument("task_args", ""),
             timestamp=int(time.time()),
+                ...
+            ],  # TODO - updated by backlogger? do we backlog the taskdirective?
             aborted=False,
         )
 
@@ -69,9 +72,10 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     # set ONCE by tms's watcher
                     condor_complete_ts=None,
                     #
-                    # updated by tms SEVERAL times
                     # TODO - set to 'pre-tms', then backlogger changes to 'pending-start'
-                    tms_status="pending-start",
+                    tms_status="pending-start",  # updated by backlogger, tms
+                    #
+                    # updated by tms SEVERAL times
                     compound_statuses={},
                     top_task_errors={},
                 )

@@ -10,6 +10,7 @@ from pymongo import MongoClient
 from rest_tools.client import RestClient
 
 LOGGER = logging.getLogger(__name__)
+logging.getLogger("parse").setLevel(logging.INFO)
 
 
 @pytest_asyncio.fixture
