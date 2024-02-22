@@ -248,7 +248,7 @@ def tms_watcher_sends_report_update(
     for tf in resp["taskforces"]:
         print(tf["taskforce_uuid"])
         for shortname, loc in condor_locs_w_jel.items():
-            if loc["collector"] == tf["collector"] and loc["schedd"] == tf["collector"]:
+            if loc["collector"] == tf["collector"] and loc["schedd"] == tf["schedd"]:
                 break
         assert shortname  # if issue -> did not find it
         print(shortname)
