@@ -249,9 +249,11 @@ def tms_watcher_sends_report_update(
                 break
         assert shortname  # if issue -> did not find it
         print(shortname)
+        print(tf["compound_statuses"])
         print(compound_statuses_by_locshortname)
         assert tf["compound_statuses"] == compound_statuses_by_locshortname[shortname]
         print(shortname)
+        print(tf["top_task_errors"])
         print(top_task_errors_by_locshortname)
         assert tf["top_task_errors"] == top_task_errors_by_locshortname[shortname]
 
