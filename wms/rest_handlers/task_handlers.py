@@ -37,8 +37,6 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             task_image=self.get_argument("task_image"),
             task_args=self.get_argument("task_args", ""),
             timestamp=int(time.time()),
-                ...
-            ],  # TODO - updated by backlogger? do we backlog the taskdirective?
             aborted=False,
         )
 
