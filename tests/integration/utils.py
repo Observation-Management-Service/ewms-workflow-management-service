@@ -1,15 +1,11 @@
 """utils.py."""
 
 
-import json
 import logging
-import os
-from pathlib import Path
 from typing import Any
 
 import openapi_core
 import requests
-from jsonschema_path import SchemaPath
 from openapi_core.contrib import requests as openapi_core_requests
 from rest_tools.client import RestClient
 
@@ -60,5 +56,3 @@ def request_and_validate(
     if path != "/schema/openapi":
         print(out)
     return out
-
-

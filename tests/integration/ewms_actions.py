@@ -11,7 +11,7 @@ import openapi_core
 from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
 
-from utils import _collector_schedd_to_shortname, request_and_validate
+from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
 
@@ -362,7 +362,7 @@ def tms_condor_clusters_done(
                 "query": {
                     "collector": loc["collector"],
                     "schedd": loc["schedd"],
-                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
+                    "job_event_log_fpath": loc["jel"],
                 },
                 "projection": ["taskforce_uuid"],
             },
