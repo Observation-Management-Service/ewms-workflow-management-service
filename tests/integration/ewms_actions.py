@@ -242,6 +242,7 @@ def tms_watcher_sends_report_update(
             ],
         },
     )
+    print(json.dumps(resp))
     assert len(resp["taskforces"]) == len(condor_locs_w_jel)
     for tf in resp["taskforces"]:
         for shortname, loc in condor_locs_w_jel.items():
