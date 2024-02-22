@@ -91,7 +91,7 @@ async def test_000(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
-    ewms_actions.tms_watcher__with_jobs(
+    ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
         task_id,
@@ -100,7 +100,7 @@ async def test_000(rc: RestClient) -> None:
         COMPOUND_STATUSES__1,
     )
 
-    ewms_actions.tms_watcher__with_jobs(
+    ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
         task_id,
@@ -109,7 +109,7 @@ async def test_000(rc: RestClient) -> None:
         COMPOUND_STATUSES__2,
     )
 
-    ewms_actions.tms_watcher__with_jobs(
+    ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
         task_id,

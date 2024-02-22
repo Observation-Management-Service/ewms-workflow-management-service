@@ -178,7 +178,7 @@ def tms_starter(
     return condor_locs_w_jel
 
 
-def tms_watcher__with_jobs(
+def tms_watcher_sends_report_update(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
@@ -248,7 +248,11 @@ def tms_watcher__with_jobs(
             if loc["collector"] == tf["collector"] and loc["schedd"] == tf["collector"]:
                 break
         assert shortname  # if issue -> did not find it
+        print(shortname)
+        print(compound_statuses_by_locshortname)
         assert tf["compound_statuses"] == compound_statuses_by_locshortname[shortname]
+        print(shortname)
+        print(top_task_errors_by_locshortname)
         assert tf["top_task_errors"] == top_task_errors_by_locshortname[shortname]
 
 
