@@ -250,7 +250,8 @@ def tms_watcher_sends_report_update(
         for shortname, loc in condor_locs_w_jel.items():
             if loc["collector"] == tf["collector"] and loc["schedd"] == tf["schedd"]:
                 break
-        assert shortname  # if issue -> did not find it
+        else:
+            assert 0  # -> did not find it
         print(shortname)
         print(tf["compound_statuses"])
         print(compound_statuses_by_locshortname)
