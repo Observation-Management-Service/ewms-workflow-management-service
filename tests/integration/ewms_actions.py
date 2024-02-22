@@ -235,6 +235,7 @@ def tms_watcher_sends_report_update(
         {
             "query": {"task_id": task_id},
             "projection": [
+                "taskforce_uuid",
                 "compound_statuses",
                 "top_task_errors",
                 "collector",
@@ -242,9 +243,10 @@ def tms_watcher_sends_report_update(
             ],
         },
     )
-    print(json.dumps(resp))
+    print(json.dumps(resp, indent=4))
     assert len(resp["taskforces"]) == len(condor_locs_w_jel)
     for tf in resp["taskforces"]:
+        print(tf["taskforce_uuid"])
         for shortname, loc in condor_locs_w_jel.items():
             if loc["collector"] == tf["collector"] and loc["schedd"] == tf["collector"]:
                 break
