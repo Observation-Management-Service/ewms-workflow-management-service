@@ -183,8 +183,8 @@ def tms_watcher__with_jobs(
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
     condor_locs_w_jel: dict,
-    top_task_errors_by_tf: dict,
-    compound_statuses_by_tf: dict,
+    top_task_errors_by_locshortname: dict,
+    compound_statuses_by_locshortname: dict,
 ) -> None:
     #
     # TMS(es) watcher(s)...
@@ -214,22 +214,22 @@ def tms_watcher__with_jobs(
             "/tms/taskforces/report",
             {
                 "top_task_errors_by_taskforce": {
-                    taskforce_uuid: top_task_errors_by_tf[shortname],
+                    taskforce_uuid: top_task_errors_by_locshortname[shortname],
                 },
                 "compound_statuses_by_taskforce": {
-                    taskforce_uuid: compound_statuses_by_tf[shortname]
+                    taskforce_uuid: compound_statuses_by_locshortname[shortname]
                 },
             },
         )
-        assert resp["taskforce_uuids"] == list(
-            set(  # should have only uuids from tfs that actually had data
+        assert len(resp["taskforce_uuids"]) == len(
+            [  # should have only uuids from tfs that actually had data
                 k
                 for k, v in (
-                    list(top_task_errors_by_tf.items())
-                    + list(compound_statuses_by_tf.items())
+                    list(top_task_errors_by_locshortname.items())
+                    + list(compound_statuses_by_locshortname.items())
                 )
                 if v
-            )
+            ]
         )
         assert resp["taskforce_uuids"] == [taskforce_uuid]
 
@@ -258,8 +258,8 @@ def tms_watcher__with_jobs(
             if loc["collector"] == tf["collector"] and loc["schedd"] == tf["collector"]:
                 break
         assert shortname  # if issue -> did not find it
-        assert tf["compound_statuses"] == compound_statuses_by_tf[shortname]
-        assert tf["top_task_errors"] == top_task_errors_by_tf[shortname]
+        assert tf["compound_statuses"] == compound_statuses_by_locshortname[shortname]
+        assert tf["top_task_errors"] == top_task_errors_by_locshortname[shortname]
 
 
 def user_aborts_task(
