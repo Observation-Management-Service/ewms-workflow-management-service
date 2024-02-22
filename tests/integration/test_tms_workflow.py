@@ -6,6 +6,7 @@ import logging
 from rest_tools.client import RestClient
 
 import ewms_actions
+from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
 
@@ -74,6 +75,9 @@ TOP_TASK_ERRORS__3 = {
 }
 
 
+# ----------------------------------------------------------------------------
+
+
 async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
     openapi_spec = ewms_actions.query_for_schema(rc)
@@ -118,6 +122,190 @@ async def test_000(rc: RestClient) -> None:
         COMPOUND_STATUSES__3,
     )
 
+    ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
+
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "GET",
+        f"/task/directive/{task_id}",
+    )
+    assert resp["aborted"] is False
+
+
+# ----------------------------------------------------------------------------
+
+
+async def test_100__aborted_before_condor(rc: RestClient) -> None:
+    """Aborted workflow."""
+    openapi_spec = ewms_actions.query_for_schema(rc)
+
+    task_id = ewms_actions.user_requests_new_task(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS.keys()),
+    )
+
+    # ABORT!
+    ewms_actions.user_aborts_task(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
+
+    condor_locs_w_jel = ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
+
+
+async def test_110__aborted_during_condor(rc: RestClient) -> None:
+    """Aborted workflow."""
+    openapi_spec = ewms_actions.query_for_schema(rc)
+
+    task_id = ewms_actions.user_requests_new_task(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS.keys()),
+    )
+
+    condor_locs_w_jel = ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+
+    # ABORT!
+    ewms_actions.user_aborts_task(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
+
+
+async def test_111__aborted_during_condor(rc: RestClient) -> None:
+    """Aborted workflow."""
+    openapi_spec = ewms_actions.query_for_schema(rc)
+
+    task_id = ewms_actions.user_requests_new_task(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS.keys()),
+    )
+
+    condor_locs_w_jel = ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    # ABORT!
     ewms_actions.user_aborts_task(
         rc,
         openapi_spec,
@@ -133,4 +321,61 @@ async def test_000(rc: RestClient) -> None:
     )
 
 
-# ----------------------------------------------------------------------------
+async def test_120__aborted_after_condor(rc: RestClient) -> None:
+    """Aborted workflow."""
+    openapi_spec = ewms_actions.query_for_schema(rc)
+
+    task_id = ewms_actions.user_requests_new_task(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS.keys()),
+    )
+
+    condor_locs_w_jel = ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
+
+    # ABORT!
+    ewms_actions.user_aborts_task(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
