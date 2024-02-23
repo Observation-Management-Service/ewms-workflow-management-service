@@ -209,11 +209,12 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
         """
         try:
             taskforce = await self.taskforces_client.find_one(
-                dict(
-                    collector=self.get_argument("collector"),
-                    schedd=self.get_argument("schedd"),
-                    tms_most_recent_action="pending-stopper",
-                ),
+                {
+                    "collector": self.get_argument("collector"),
+                    "schedd": self.get_argument("schedd"),
+                    "tms_most_recent_action": "pending-stopper",
+                    "cluster_id": {"$ne": None},  # there has to be something to stop
+                },
                 sort=[
                     ("timestamp", ASCENDING),  # oldest first
                 ],
