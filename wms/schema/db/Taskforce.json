@@ -62,7 +62,7 @@
                 }
             ]
         },
-        "tms_status": {
+        "tms_most_recent_action": {
             "type": "string",
             "enum": [
                 "pre-tms",
@@ -99,7 +99,7 @@
         "submit_dict",
         "job_event_log_fpath",
         "condor_complete_ts",
-        "tms_status",
+        "tms_most_recent_action",
         "compound_statuses",
         "top_task_errors"
     ],

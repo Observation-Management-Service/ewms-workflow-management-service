@@ -59,7 +59,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 await self.taskforces_client.update_set_one(
                     {
                         "taskforce_uuid": uuid,
-                        "tms_status": {"$in": ["condor-submit"]},
+                        "tms_most_recent_action": {"$in": ["condor-submit"]},
                     },
                     update,
                 )
@@ -137,7 +137,7 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
                 dict(
                     collector=self.get_argument("collector"),
                     schedd=self.get_argument("schedd"),
-                    tms_status="pending-start",
+                    tms_most_recent_action="pending-start",
                 ),
                 sort=[
                     ("timestamp", ASCENDING),  # oldest first
@@ -169,14 +169,14 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
             await self.taskforces_client.update_set_one(
                 {
                     "taskforce_uuid": taskforce_uuid,
-                    "tms_status": {"$in": ["pending-start"]},
+                    "tms_most_recent_action": {"$in": ["pending-start"]},
                 },
                 dict(
                     cluster_id=self.get_argument("cluster_id"),
                     n_workers=self.get_argument("n_workers"),
                     submit_dict=self.get_argument("submit_dict"),
                     job_event_log_fpath=self.get_argument("job_event_log_fpath"),
-                    tms_status="condor-submit",
+                    tms_most_recent_action="condor-submit",
                 ),
             )
         except DocumentNotFoundException as e:
@@ -212,7 +212,7 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
                 dict(
                     collector=self.get_argument("collector"),
                     schedd=self.get_argument("schedd"),
-                    tms_status="pending-stop",
+                    tms_most_recent_action="pending-stop",
                 ),
                 sort=[
                     ("timestamp", ASCENDING),  # oldest first
@@ -247,7 +247,7 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     # NOTE: any taskforce can be marked as 'condor-rm' regardless of state
                 },
                 {
-                    "tms_status": "condor-rm",
+                    "tms_most_recent_action": "condor-rm",
                 },
             )
         except DocumentNotFoundException as e:

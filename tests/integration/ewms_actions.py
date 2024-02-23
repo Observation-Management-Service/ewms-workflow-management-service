@@ -87,11 +87,11 @@ def user_requests_new_task(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["tms_status"],
+            "projection": ["tms_most_recent_action"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_lnames)
-    assert all(tf["tms_status"] == "pending-start" for tf in resp["taskforces"])
+    assert all(tf["tms_most_recent_action"] == "pending-start" for tf in resp["taskforces"])
 
     return task_id  # type: ignore[no-any-return]
 
@@ -125,7 +125,7 @@ def tms_starter(
             "GET",
             f"/tms/taskforce/{taskforce_uuid}",
         )
-        assert resp["tms_status"] == "pending-start"
+        assert resp["tms_most_recent_action"] == "pending-start"
         # confirm it has started
         condor_locs_w_jel[shortname]["jel"] = "/home/the_job_event_log_fpath"
         resp = request_and_validate(
@@ -153,11 +153,11 @@ def tms_starter(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["tms_status"],
+            "projection": ["tms_most_recent_action"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(tf["tms_status"] == "condor-submit" for tf in resp["taskforces"])
+    assert all(tf["tms_most_recent_action"] == "condor-submit" for tf in resp["taskforces"])
     # check directive reflects startup (runtime-assembled list of taskforces)
     resp = request_and_validate(
         rc,
@@ -344,11 +344,11 @@ def tms_stopper(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["tms_status"],
+            "projection": ["tms_most_recent_action"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(tf["tms_status"] == "condor-rm" for tf in resp["taskforces"])
+    assert all(tf["tms_most_recent_action"] == "condor-rm" for tf in resp["taskforces"])
 
 
 def tms_condor_clusters_done(

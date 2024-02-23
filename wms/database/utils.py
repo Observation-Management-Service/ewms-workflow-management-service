@@ -63,8 +63,8 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
         unique=False,  # foreign key
     )
     await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
-        "tms_status",
-        name="tms_status_index",
+        "tms_most_recent_action",
+        name="tms_most_recent_action_index",
         unique=False,
     )
     await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]

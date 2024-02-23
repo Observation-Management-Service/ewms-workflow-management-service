@@ -70,7 +70,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     condor_complete_ts=None,
                     #
                     # TODO - set to 'pre-tms', then backlogger changes to 'pending-start'
-                    tms_status="pending-start",  # updated by backlogger, tms
+                    tms_most_recent_action="pending-start",  # updated by backlogger, tms
                     #
                     # updated by tms SEVERAL times
                     compound_statuses={},
@@ -142,7 +142,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     "$and": [
                         # not already aborted
                         {
-                            "tms_status": {
+                            "tms_most_recent_action": {
                                 "$nin": ["pending-stop", "condor-rm"]
                             },  # "not in"
                         },
@@ -154,7 +154,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     ],
                 },
                 {
-                    "tms_status": "pending-stop",
+                    "tms_most_recent_action": "pending-stop",
                 },
             )
         except DocumentNotFoundException:
