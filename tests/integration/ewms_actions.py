@@ -273,16 +273,13 @@ def tms_watcher_sends_report_update(
         # fmt: on
 
 
-def user_aborts_task__and__tms_responds(
+def user_aborts_task(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
     condor_locations: dict,
-    aborted_before_condor: bool = False,
     aborted_after_condor: bool = False,
 ) -> None:
-    assert not (aborted_before_condor and aborted_after_condor)  # pick a lane
-
     #
     # USER...
     # stop task
@@ -304,30 +301,17 @@ def user_aborts_task__and__tms_responds(
         f"/task/directive/{task_id}",
     )
     assert resp["aborted"] is True
-    resp = request_and_validate(
-        rc,
-        openapi_spec,
-        "POST",
-        "/tms/taskforces/find",
-        {
-            "query": {
-                "task_id": task_id,
-            },
-            "projection": ["tms_status"],
-        },
-    )
-    if aborted_before_condor:
-        assert not resp["taskforces"]
-    elif aborted_after_condor:
-        assert len(resp["taskforces"]) == len(condor_locations)
-        assert all(tf["tms_status"] == "condor-rm" for tf in resp["taskforces"])
-    else:
-        assert len(resp["taskforces"]) == len(condor_locations)
-        assert all(tf["tms_status"] == "pending-stop" for tf in resp["taskforces"])
 
+
+def tms_stopper(
+    rc: RestClient,
+    openapi_spec: openapi_core.OpenAPI,
+    task_id: str,
+    condor_locations: dict,
+) -> None:
     #
     # TMS(es) stopper(s)...
-    # this happens even if aborted_before_condor=True
+    # this happens even if task aborted before condor
     #
     for loc in condor_locations.values():
         # get next to stop
