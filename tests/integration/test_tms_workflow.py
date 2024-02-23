@@ -176,7 +176,9 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         "/tms/taskforces/find",
         {"query": {"task_id": task_id}, "projection": ["tms_status"]},
     )
-    assert not resp["taskforces"]
+    # fmt: off
+    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["pending-stop"] * len(CONDOR_LOCATIONS)
+    # fmt: on
     ewms_actions.tms_stopper(
         rc,
         openapi_spec,
