@@ -88,6 +88,7 @@ async def test_000(rc: RestClient) -> None:
         list(CONDOR_LOCATIONS.keys()),
     )
 
+    # TMS STARTS TASKFORCES!
     condor_locs_w_jel = ewms_actions.tms_starter(
         rc,
         openapi_spec,
@@ -95,6 +96,7 @@ async def test_000(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
+    # SEND UPDATES FROM TMS (JEL)!
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -103,7 +105,6 @@ async def test_000(rc: RestClient) -> None:
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
-
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -112,7 +113,6 @@ async def test_000(rc: RestClient) -> None:
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
-
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -122,6 +122,7 @@ async def test_000(rc: RestClient) -> None:
         COMPOUND_STATUSES__3,
     )
 
+    # CONDOR CLUSTERS FINISH UP!
     ewms_actions.tms_condor_clusters_done(
         rc,
         openapi_spec,
@@ -129,6 +130,7 @@ async def test_000(rc: RestClient) -> None:
         condor_locs_w_jel,
     )
 
+    # CHECK FINAL STATES...
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -139,7 +141,6 @@ async def test_000(rc: RestClient) -> None:
     # fmt: off
     assert [tf["tms_status"] for tf in resp["taskforces"]] == ["running"] * len(CONDOR_LOCATIONS)
     # fmt: on
-
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -205,6 +206,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     #     CONDOR_LOCATIONS,
     # )
 
+    # # SEND UPDATES FROM TMS (JEL)!
     # ewms_actions.tms_watcher_sends_report_update(
     #     rc,
     #     openapi_spec,
@@ -213,7 +215,6 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     #     TOP_TASK_ERRORS__1,
     #     COMPOUND_STATUSES__1,
     # )
-
     # ewms_actions.tms_watcher_sends_report_update(
     #     rc,
     #     openapi_spec,
@@ -222,7 +223,6 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     #     TOP_TASK_ERRORS__2,
     #     COMPOUND_STATUSES__2,
     # )
-
     # ewms_actions.tms_watcher_sends_report_update(
     #     rc,
     #     openapi_spec,
@@ -239,6 +239,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     #     condor_locs_w_jel,
     # )
 
+    # CHECK FINAL STATES...
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -261,6 +262,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         list(CONDOR_LOCATIONS.keys()),
     )
 
+    # TMS STARTS TASKFORCES!
     condor_locs_w_jel = ewms_actions.tms_starter(
         rc,
         openapi_spec,
@@ -268,6 +270,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
+    # SEND UPDATES FROM TMS (JEL)!
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -301,6 +304,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
+    # continue, SEND UPDATES FROM TMS (JEL)
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -310,7 +314,6 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         COMPOUND_STATUSES__2,
         aborted_during_condor=True,
     )
-
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -321,6 +324,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         aborted_during_condor=True,
     )
 
+    # CONDOR CLUSTERS FINISH UP!
     ewms_actions.tms_condor_clusters_done(
         rc,
         openapi_spec,
@@ -328,6 +332,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         condor_locs_w_jel,
     )
 
+    # CHECK FINAL STATES...
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -350,6 +355,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         list(CONDOR_LOCATIONS.keys()),
     )
 
+    # TMS STARTS TASKFORCES!
     condor_locs_w_jel = ewms_actions.tms_starter(
         rc,
         openapi_spec,
@@ -357,6 +363,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
+    # SEND UPDATES FROM TMS (JEL)!
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -365,7 +372,6 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
-
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -374,7 +380,6 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
-
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -408,6 +413,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
+    # CONDOR CLUSTERS FINISH UP!
     ewms_actions.tms_condor_clusters_done(
         rc,
         openapi_spec,
@@ -415,6 +421,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         condor_locs_w_jel,
     )
 
+    # CHECK FINAL STATES...
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -437,6 +444,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         list(CONDOR_LOCATIONS.keys()),
     )
 
+    # TMS STARTS TASKFORCES!
     condor_locs_w_jel = ewms_actions.tms_starter(
         rc,
         openapi_spec,
@@ -444,6 +452,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
+    # SEND UPDATES FROM TMS (JEL)!
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -452,7 +461,6 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
-
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -461,7 +469,6 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
-
     ewms_actions.tms_watcher_sends_report_update(
         rc,
         openapi_spec,
@@ -471,6 +478,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         COMPOUND_STATUSES__3,
     )
 
+    # CONDOR CLUSTERS FINISH UP!
     ewms_actions.tms_condor_clusters_done(
         rc,
         openapi_spec,
@@ -497,6 +505,8 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
         aborted_after_condor=True,
     )
+
+    # CHECK FINAL STATES...
     resp = request_and_validate(
         rc,
         openapi_spec,
