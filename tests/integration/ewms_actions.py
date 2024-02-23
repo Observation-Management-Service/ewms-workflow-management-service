@@ -262,11 +262,12 @@ def tms_watcher_sends_report_update(
         assert tf["top_task_errors"] == top_task_errors_by_locshortname[shortname]
 
 
-def user_aborts_task(
+def user_aborts_task__and__tms_responds(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
-    condor_locs_w_jel: dict,
+    condor_locations: dict,
+    aborted_before_condor: bool = False,
 ) -> None:
     #
     # USER...
@@ -278,7 +279,7 @@ def user_aborts_task(
         "DELETE",
         f"/task/directive/{task_id}",
     )
-    assert resp == {"task_id": task_id, "n_taskforces": len(condor_locs_w_jel)}
+    assert resp == {"task_id": task_id, "n_taskforces": len(condor_locations)}
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -298,13 +299,17 @@ def user_aborts_task(
             "projection": ["tms_status"],
         },
     )
-    assert len(resp["taskforces"]) == len(condor_locs_w_jel)
+    if aborted_before_condor:
+        assert not resp["taskforces"]
+    else:
+        assert len(resp["taskforces"]) == len(condor_locations)
     assert all(tf["tms_status"] == "pending-stop" for tf in resp["taskforces"])
 
     #
     # TMS(es) stopper(s)...
+    # this happens even if aborted_before_condor=True
     #
-    for loc in condor_locs_w_jel.values():
+    for loc in condor_locations.values():
         # get next to stop
         taskforce = request_and_validate(
             rc,
@@ -338,7 +343,7 @@ def user_aborts_task(
             "projection": ["tms_status"],
         },
     )
-    assert len(resp["taskforces"]) == len(condor_locs_w_jel)
+    assert len(resp["taskforces"]) == len(condor_locations)
     assert all(tf["tms_status"] == "condor-rm" for tf in resp["taskforces"])
 
 

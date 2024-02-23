@@ -152,11 +152,11 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     )
 
     # ABORT!
-    ewms_actions.user_aborts_task(
+    ewms_actions.user_aborts_task__and__tms_responds(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        CONDOR_LOCATIONS,
     )
 
     condor_locs_w_jel = ewms_actions.tms_starter(
@@ -228,11 +228,11 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # ABORT!
-    ewms_actions.user_aborts_task(
+    ewms_actions.user_aborts_task__and__tms_responds(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        CONDOR_LOCATIONS,
     )
 
     ewms_actions.tms_watcher_sends_report_update(
@@ -306,11 +306,11 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # ABORT!
-    ewms_actions.user_aborts_task(
+    ewms_actions.user_aborts_task__and__tms_responds(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        CONDOR_LOCATIONS,
     )
 
     ewms_actions.tms_condor_clusters_done(
@@ -373,9 +373,9 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
     )
 
     # ABORT!
-    ewms_actions.user_aborts_task(
+    ewms_actions.user_aborts_task__and__tms_responds(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        CONDOR_LOCATIONS,
     )
