@@ -3,8 +3,9 @@
 
 import logging
 
-import ewms_actions
 from rest_tools.client import RestClient
+
+import ewms_actions
 from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
@@ -192,12 +193,15 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             "/tms/taskforce/pending",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
-    ewms_actions.tms_stopper(
-        rc,
-        openapi_spec,
-        task_id,
-        CONDOR_LOCATIONS,
-    )
+    for loc in CONDOR_LOCATIONS.values():
+        # check that there is NOTHING to stop
+        assert not request_and_validate(
+            rc,
+            openapi_spec,
+            "GET",
+            "/tms/taskforce/stop",
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
+        )
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to start
         assert not request_and_validate(
@@ -262,7 +266,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         },
     )
     # fmt: off
-    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
     assert all(tf["condor_complete_ts"] is None for tf in resp["taskforces"])
     # fmt: on
 
