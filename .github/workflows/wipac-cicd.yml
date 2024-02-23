@@ -227,7 +227,7 @@ jobs:
             cat ./rest.out
           fi
 
-          pytest -vvv tests/integration/
+          pytest -vvv --exitfirst tests/integration/
       #
       - if: always()
         run: |
@@ -250,7 +250,7 @@ jobs:
           pip install .[tests]
       - name: test
         run: |
-          pytest -vvv --exitfirst tests/unit/
+          pytest -vvv tests/unit/
 
 
   #############################################################################
