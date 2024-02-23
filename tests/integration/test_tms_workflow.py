@@ -3,9 +3,8 @@
 
 import logging
 
-from rest_tools.client import RestClient
-
 import ewms_actions
+from rest_tools.client import RestClient
 from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
@@ -139,7 +138,7 @@ async def test_000(rc: RestClient) -> None:
         {"query": {"task_id": task_id}, "projection": ["tms_status"]},
     )
     # fmt: off
-    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["running"] * len(CONDOR_LOCATIONS)
+    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
     # fmt: on
     resp = request_and_validate(
         rc,
@@ -492,7 +491,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         {"query": {"task_id": task_id}, "projection": ["tms_status"]},
     )
     # fmt: off
-    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["running"] * len(CONDOR_LOCATIONS)
+    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
     # fmt: on
 
     # ABORT!
@@ -511,7 +510,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         {"query": {"task_id": task_id}, "projection": ["tms_status"]},
     )
     # fmt: off
-    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["running"] * len(CONDOR_LOCATIONS)
+    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
     # fmt: on
     ewms_actions.tms_stopper(
         rc,

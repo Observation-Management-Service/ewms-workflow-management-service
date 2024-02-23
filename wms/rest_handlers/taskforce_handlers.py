@@ -59,7 +59,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 await self.taskforces_client.update_set_one(
                     {
                         "taskforce_uuid": uuid,
-                        "tms_status": {"$in": ["running"]},
+                        "tms_status": {"$in": ["condor-submit"]},
                     },
                     update,
                 )
@@ -176,7 +176,7 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     n_workers=self.get_argument("n_workers"),
                     submit_dict=self.get_argument("submit_dict"),
                     job_event_log_fpath=self.get_argument("job_event_log_fpath"),
-                    tms_status="running",
+                    tms_status="condor-submit",
                 ),
             )
         except DocumentNotFoundException as e:

@@ -157,7 +157,7 @@ def tms_starter(
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(tf["tms_status"] == "running" for tf in resp["taskforces"])
+    assert all(tf["tms_status"] == "condor-submit" for tf in resp["taskforces"])
     # check directive reflects startup (runtime-assembled list of taskforces)
     resp = request_and_validate(
         rc,

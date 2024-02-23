@@ -67,7 +67,7 @@
             "enum": [
                 "pre-tms",
                 "pending-start",
-                "running",
+                "condor-submit",
                 "pending-stop",
                 "condor-rm"
             ]
