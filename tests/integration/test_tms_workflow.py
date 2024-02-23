@@ -160,12 +160,22 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
-    condor_locs_w_jel = ewms_actions.tms_starter(
-        rc,
-        openapi_spec,
-        task_id,
-        CONDOR_LOCATIONS,
-    )
+    for shortname, loc in CONDOR_LOCATIONS.items():
+        # get next to start
+        assert not request_and_validate(
+            rc,
+            openapi_spec,
+            "GET",
+            "/tms/taskforce/pending",
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
+        )
+
+    # condor_locs_w_jel = ewms_actions.tms_starter(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     CONDOR_LOCATIONS,
+    # )
 
     ewms_actions.tms_watcher_sends_report_update(
         rc,
