@@ -134,6 +134,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
             ) from e
 
         # set all corresponding taskforces to pending-stop
+        n_updated = 0  # in case of exception
         try:
             n_updated = await self.taskforces_client.update_set_many(
                 {
