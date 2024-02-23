@@ -138,7 +138,7 @@
                             }
                         ]
                     },
-                    "tms_status": {
+                    "tms_most_recent_action": {
                         "type": "string",
                         "enum": [
                             "pre-tms",
