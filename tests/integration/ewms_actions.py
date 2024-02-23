@@ -185,6 +185,7 @@ def tms_watcher_sends_report_update(
     condor_locs_w_jel: dict,
     top_task_errors_by_locshortname: dict,
     compound_statuses_by_locshortname: dict,
+    aborted_during_condor: bool = False,
 ) -> None:
     #
     # TMS(es) watcher(s)...
@@ -221,7 +222,16 @@ def tms_watcher_sends_report_update(
                 },
             },
         )
-        assert resp["results"] == [{"uuid": taskforce_uuid, "status": "updated"}]
+        if aborted_during_condor:
+            assert resp["results"] == [
+                {
+                    "uuid": taskforce_uuid,
+                    "status": "failed",
+                    "error": "no running taskforce found with uuid",
+                }
+            ]
+        else:
+            assert resp["results"] == [{"uuid": taskforce_uuid, "status": "updated"}]
 
     #
     # USER...
@@ -246,20 +256,21 @@ def tms_watcher_sends_report_update(
     print(json.dumps(resp, indent=4))
     assert len(resp["taskforces"]) == len(condor_locs_w_jel)
     for tf in resp["taskforces"]:
-        print(tf["taskforce_uuid"])
         for shortname, loc in condor_locs_w_jel.items():
             if loc["collector"] == tf["collector"] and loc["schedd"] == tf["schedd"]:
                 break
         else:
             assert 0  # -> did not find it
-        print(shortname)
-        print(tf["compound_statuses"])
-        print(compound_statuses_by_locshortname)
-        assert tf["compound_statuses"] == compound_statuses_by_locshortname[shortname]
-        print(shortname)
-        print(tf["top_task_errors"])
-        print(top_task_errors_by_locshortname)
-        assert tf["top_task_errors"] == top_task_errors_by_locshortname[shortname]
+        # fmt: off
+        if aborted_during_condor:
+            # has old vals
+            assert tf["compound_statuses"] != compound_statuses_by_locshortname[shortname]
+            assert tf["top_task_errors"] != top_task_errors_by_locshortname[shortname]
+        else:
+            # has new vals
+            assert tf["compound_statuses"] == compound_statuses_by_locshortname[shortname]
+            assert tf["top_task_errors"] == top_task_errors_by_locshortname[shortname]
+        # fmt: on
 
 
 def user_aborts_task__and__tms_responds(

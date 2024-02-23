@@ -276,6 +276,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         condor_locs_w_jel,
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
+        aborted_during_condor=True,
     )
 
     ewms_actions.tms_watcher_sends_report_update(
@@ -285,6 +286,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         condor_locs_w_jel,
         TOP_TASK_ERRORS__3,
         COMPOUND_STATUSES__3,
+        aborted_during_condor=True,
     )
 
     ewms_actions.tms_condor_clusters_done(
