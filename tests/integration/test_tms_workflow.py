@@ -177,40 +177,40 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     #     CONDOR_LOCATIONS,
     # )
 
-    ewms_actions.tms_watcher_sends_report_update(
-        rc,
-        openapi_spec,
-        task_id,
-        condor_locs_w_jel,
-        TOP_TASK_ERRORS__1,
-        COMPOUND_STATUSES__1,
-    )
+    # ewms_actions.tms_watcher_sends_report_update(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    #     TOP_TASK_ERRORS__1,
+    #     COMPOUND_STATUSES__1,
+    # )
 
-    ewms_actions.tms_watcher_sends_report_update(
-        rc,
-        openapi_spec,
-        task_id,
-        condor_locs_w_jel,
-        TOP_TASK_ERRORS__2,
-        COMPOUND_STATUSES__2,
-    )
+    # ewms_actions.tms_watcher_sends_report_update(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    #     TOP_TASK_ERRORS__2,
+    #     COMPOUND_STATUSES__2,
+    # )
 
-    ewms_actions.tms_watcher_sends_report_update(
-        rc,
-        openapi_spec,
-        task_id,
-        condor_locs_w_jel,
-        TOP_TASK_ERRORS__3,
-        COMPOUND_STATUSES__3,
-    )
+    # ewms_actions.tms_watcher_sends_report_update(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    #     TOP_TASK_ERRORS__3,
+    #     COMPOUND_STATUSES__3,
+    # )
 
-    ewms_actions.tms_condor_clusters_done(
-        rc,
-        openapi_spec,
-        task_id,
-        condor_locs_w_jel,
-        "condor-rm",
-    )
+    # ewms_actions.tms_condor_clusters_done(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    #     "condor-rm",
+    # )
 
 
 async def test_110__aborted_during_condor(rc: RestClient) -> None:
