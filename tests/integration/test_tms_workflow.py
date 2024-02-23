@@ -127,8 +127,18 @@ async def test_000(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         condor_locs_w_jel,
-        "running",
     )
+
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_status"]},
+    )
+    # fmt: off
+    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["running"] * len(CONDOR_LOCATIONS)
+    # fmt: on
 
     resp = request_and_validate(
         rc,
@@ -211,8 +221,18 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     #     openapi_spec,
     #     task_id,
     #     condor_locs_w_jel,
-    #     "condor-rm",
     # )
+
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_status"]},
+    )
+    # fmt: off
+    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
+    # fmt: on
 
 
 async def test_110__aborted_during_condor(rc: RestClient) -> None:
@@ -272,8 +292,18 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         condor_locs_w_jel,
-        "condor-rm",
     )
+
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_status"]},
+    )
+    # fmt: off
+    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
+    # fmt: on
 
 
 async def test_111__aborted_during_condor(rc: RestClient) -> None:
@@ -333,8 +363,18 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         condor_locs_w_jel,
-        "condor-rm",
     )
+
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_status"]},
+    )
+    # fmt: off
+    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
+    # fmt: on
 
 
 async def test_120__aborted_after_condor(rc: RestClient) -> None:
@@ -386,8 +426,18 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         condor_locs_w_jel,
-        "running",
     )
+
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_status"]},
+    )
+    # fmt: off
+    assert [tf["tms_status"] for tf in resp["taskforces"]] == ["running"] * len(CONDOR_LOCATIONS)
+    # fmt: on
 
     # ABORT!
     ewms_actions.user_aborts_task__and__tms_responds(
