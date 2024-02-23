@@ -250,7 +250,7 @@ jobs:
           pip install .[tests]
       - name: test
         run: |
-          pytest -vvv tests/unit/
+          pytest -vvv --exitfirst tests/unit/
 
 
   #############################################################################
