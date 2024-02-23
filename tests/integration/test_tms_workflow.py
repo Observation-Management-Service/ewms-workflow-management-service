@@ -160,7 +160,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
-    for shortname, loc in CONDOR_LOCATIONS.items():
+    for loc in CONDOR_LOCATIONS.values():
         # get next to start
         assert not request_and_validate(
             rc,
@@ -169,6 +169,8 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             "/tms/taskforce/pending",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
+
+    # NOTE - since the taskforce(s) aren't started, there are no updates from a JEL
 
     # condor_locs_w_jel = ewms_actions.tms_starter(
     #     rc,

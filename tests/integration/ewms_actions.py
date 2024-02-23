@@ -221,7 +221,7 @@ def tms_watcher_sends_report_update(
                 },
             },
         )
-        assert resp["taskforce_uuids"] == [taskforce_uuid]
+        assert resp["results"] == [{"uuid": taskforce_uuid, "status": "updated"}]
 
     #
     # USER...

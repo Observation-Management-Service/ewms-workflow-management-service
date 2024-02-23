@@ -42,7 +42,8 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 + list(compound_statuses_by_taskforce.keys())
             )
         )
-        not_found = []
+
+        not_founds = []
 
         # put in db
         for uuid in all_uuids:
@@ -64,9 +65,31 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 )
             except DocumentNotFoundException:
                 LOGGER.warning(f"no running taskforce found with uuid: {uuid}")
-                not_found.append(uuid)
+                not_founds.append(uuid)
 
-        self.write({"taskforce_uuids": [u for u in all_uuids if u not in not_found]})
+        # respond
+        if not_founds:
+            self.set_status(207)  # Multi-Status -- not quite a full error
+        self.write(
+            {
+                "results": [  # failures
+                    {
+                        "uuid": u,
+                        "status": "failed",
+                        "error": "no running taskforce found with uuid",
+                    }
+                    for u in not_founds
+                ]
+                + [  # successes
+                    {
+                        "uuid": u,
+                        "status": "updated",
+                    }
+                    for u in all_uuids
+                    if u not in not_founds
+                ]
+            }
+        )
 
 
 # ----------------------------------------------------------------------------

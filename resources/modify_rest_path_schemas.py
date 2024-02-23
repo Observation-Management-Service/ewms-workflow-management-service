@@ -95,6 +95,23 @@ def main() -> None:
             lambda d, k: k == "properties" and "additionalProperties" not in d,
         )
 
+        # set 'minProperties' for all arrays (that don't already have it)
+        def set_properties_minimum(d, k):
+            d.update({"minProperties": 0})
+
+        set_all_nested(
+            spec,
+            set_properties_minimum,
+            lambda d, k: (
+                k == "type"
+                and d[k] == "object"
+                and "minProperties" not in d  # don't override
+                #
+                and "properties" not in d  # AKA it's completely open object
+                and d.get("additionalProperties") is not False  # just in case
+            ),
+        )
+
         # format neatly
         with open(fpath, "w") as f:
             json.dump(spec, f, indent=4)
