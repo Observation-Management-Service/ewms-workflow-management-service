@@ -569,10 +569,10 @@
                                                 "type": "object",
                                                 "properties": {
                                                     "uuid": {
-                                                        "type": "string"
+                                                        "type": "str"
                                                     },
                                                     "status": {
-                                                        "type": "string"
+                                                        "type": "str"
                                                     }
                                                 },
                                                 "required": [
@@ -605,13 +605,13 @@
                                                 "type": "object",
                                                 "properties": {
                                                     "uuid": {
-                                                        "type": "string"
+                                                        "type": "str"
                                                     },
                                                     "status": {
-                                                        "type": "string"
+                                                        "type": "str"
                                                     },
                                                     "error": {
-                                                        "type": "string"
+                                                        "type": "str"
                                                     }
                                                 },
                                                 "required": [
