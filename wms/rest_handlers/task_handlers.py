@@ -69,8 +69,8 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     # set ONCE by tms's watcher
                     condor_complete_ts=None,
                     #
-                    # TODO - set to 'pre-tms', then backlogger changes to 'pending-start'
-                    tms_most_recent_action="pending-start",  # updated by backlogger, tms
+                    # TODO - set to 'pre-tms', then backlogger changes to 'pending-starter'
+                    tms_most_recent_action="pending-starter",  # updated by backlogger, tms
                     #
                     # updated by tms SEVERAL times
                     compound_statuses={},
@@ -133,7 +133,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                 reason=f"no non-aborted task found with id: {task_id}",  # to client
             ) from e
 
-        # set all corresponding taskforces to pending-stop
+        # set all corresponding taskforces to pending-stopper
         n_updated = 0  # in case of exception
         try:
             n_updated = await self.taskforces_client.update_set_many(
@@ -143,7 +143,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                         # not already aborted
                         {
                             "tms_most_recent_action": {
-                                "$nin": ["pending-stop", "condor-rm"]
+                                "$nin": ["pending-stopper", "condor-rm"]
                             },  # "not in"
                         },
                         # AND
@@ -154,7 +154,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     ],
                 },
                 {
-                    "tms_most_recent_action": "pending-stop",
+                    "tms_most_recent_action": "pending-stopper",
                 },
             )
         except DocumentNotFoundException:

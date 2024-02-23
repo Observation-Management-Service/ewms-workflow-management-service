@@ -142,9 +142,9 @@
                         "type": "string",
                         "enum": [
                             "pre-tms",
-                            "pending-start",
+                            "pending-starter",
                             "condor-submit",
-                            "pending-stop",
+                            "pending-stopper",
                             "condor-rm"
                         ]
                     },

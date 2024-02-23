@@ -137,7 +137,7 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
                 dict(
                     collector=self.get_argument("collector"),
                     schedd=self.get_argument("schedd"),
-                    tms_most_recent_action="pending-start",
+                    tms_most_recent_action="pending-starter",
                 ),
                 sort=[
                     ("timestamp", ASCENDING),  # oldest first
@@ -169,7 +169,7 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
             await self.taskforces_client.update_set_one(
                 {
                     "taskforce_uuid": taskforce_uuid,
-                    "tms_most_recent_action": {"$in": ["pending-start"]},
+                    "tms_most_recent_action": {"$in": ["pending-starter"]},
                 },
                 dict(
                     cluster_id=self.get_argument("cluster_id"),
@@ -182,7 +182,7 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         except DocumentNotFoundException as e:
             raise web.HTTPError(
                 status_code=404,
-                reason=f"no 'pending-start' taskforce found with uuid: {taskforce_uuid}",  # to client
+                reason=f"no 'pending-starter' taskforce found with uuid: {taskforce_uuid}",  # to client
             ) from e
 
         self.write(
@@ -212,7 +212,7 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
                 dict(
                     collector=self.get_argument("collector"),
                     schedd=self.get_argument("schedd"),
-                    tms_most_recent_action="pending-stop",
+                    tms_most_recent_action="pending-stopper",
                 ),
                 sort=[
                     ("timestamp", ASCENDING),  # oldest first

@@ -181,7 +181,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
     )
     # fmt: off
-    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stop"] * len(CONDOR_LOCATIONS)
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
     # fmt: on
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to start
@@ -310,7 +310,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
     )
     # fmt: off
-    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stop"] * len(CONDOR_LOCATIONS)
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
     # fmt: on
     ewms_actions.tms_stopper(
         rc,
@@ -423,7 +423,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
     )
     # fmt: off
-    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stop"] * len(CONDOR_LOCATIONS)
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
     # fmt: on
     ewms_actions.tms_stopper(
         rc,
@@ -538,7 +538,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
     assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
     # fmt: on
     for loc in CONDOR_LOCATIONS.values():
-        # make sure there is NOTHING to stop (taskforces are 'condor-submit' not 'pending-stop')
+        # make sure there is NOTHING to stop (taskforces are 'condor-submit' not 'pending-stopper')
         taskforce = request_and_validate(
             rc,
             openapi_spec,

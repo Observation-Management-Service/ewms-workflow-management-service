@@ -91,7 +91,7 @@ def user_requests_new_task(
         },
     )
     assert len(resp["taskforces"]) == len(condor_lnames)
-    assert all(tf["tms_most_recent_action"] == "pending-start" for tf in resp["taskforces"])
+    assert all(tf["tms_most_recent_action"] == "pending-starter" for tf in resp["taskforces"])
 
     return task_id  # type: ignore[no-any-return]
 
@@ -125,7 +125,7 @@ def tms_starter(
             "GET",
             f"/tms/taskforce/{taskforce_uuid}",
         )
-        assert resp["tms_most_recent_action"] == "pending-start"
+        assert resp["tms_most_recent_action"] == "pending-starter"
         # confirm it has started
         condor_locs_w_jel[shortname]["jel"] = "/home/the_job_event_log_fpath"
         resp = request_and_validate(
