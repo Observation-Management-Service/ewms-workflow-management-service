@@ -279,7 +279,10 @@ def user_aborts_task__and__tms_responds(
     task_id: str,
     condor_locations: dict,
     aborted_before_condor: bool = False,
+    aborted_after_condor: bool = False,
 ) -> None:
+    assert not (aborted_before_condor and aborted_after_condor)  # pick a lane
+
     #
     # USER...
     # stop task
@@ -290,7 +293,10 @@ def user_aborts_task__and__tms_responds(
         "DELETE",
         f"/task/directive/{task_id}",
     )
-    assert resp == {"task_id": task_id, "n_taskforces": len(condor_locations)}
+    assert resp == {
+        "task_id": task_id,
+        "n_taskforces": len(condor_locations) if not aborted_after_condor else 0,
+    }
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -312,9 +318,12 @@ def user_aborts_task__and__tms_responds(
     )
     if aborted_before_condor:
         assert not resp["taskforces"]
+    elif aborted_after_condor:
+        assert len(resp["taskforces"]) == len(condor_locations)
+        assert all(tf["tms_status"] == "condor-rm" for tf in resp["taskforces"])
     else:
         assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(tf["tms_status"] == "pending-stop" for tf in resp["taskforces"])
+        assert all(tf["tms_status"] == "pending-stop" for tf in resp["taskforces"])
 
     #
     # TMS(es) stopper(s)...
