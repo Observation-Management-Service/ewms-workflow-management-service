@@ -447,4 +447,5 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         CONDOR_LOCATIONS,
+        aborted_after_condor=True,
     )
