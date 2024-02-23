@@ -127,6 +127,7 @@ async def test_000(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         condor_locs_w_jel,
+        "running",
     )
 
     resp = request_and_validate(
@@ -198,6 +199,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         condor_locs_w_jel,
+        "condor-rm",
     )
 
 
@@ -258,6 +260,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         condor_locs_w_jel,
+        "condor-rm",
     )
 
 
@@ -318,6 +321,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         condor_locs_w_jel,
+        "condor-rm",
     )
 
 
@@ -370,6 +374,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         condor_locs_w_jel,
+        "running",
     )
 
     # ABORT!

@@ -352,6 +352,7 @@ def tms_condor_clusters_done(
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
     condor_locs_w_jel: dict,
+    expected_final_tms_status: str,
 ) -> None:
     #
     # TMS(es) watcher(s)...
@@ -406,7 +407,7 @@ def tms_condor_clusters_done(
     assert len(resp["taskforces"]) == len(condor_locs_w_jel)
     assert all(
         (
-            tf["tms_status"] == "condor-rm"
+            tf["tms_status"] == expected_final_tms_status
             and tf["condor_complete_ts"] == hash(tf["taskforce_uuid"]) % 1700000000
         )
         for tf in resp["taskforces"]
