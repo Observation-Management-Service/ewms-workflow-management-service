@@ -156,6 +156,8 @@ jobs:
       - name: generate README
         if: env.IS_GIT_BEHIND != 'true'
         run: |
+          set -ex
+
           cd wms/$( dirname $REST_OPENAPI_SPEC_FPATH )
           TMPDIR=$(mktemp -d -p .)  # temp dir here (covered by .gitignore)
           echo $TMPDIR
@@ -166,17 +168,14 @@ jobs:
               openapitools/openapi-generator-cli generate \
               --skip-validate-spec \
               -i /local/$( basename $REST_OPENAPI_SPEC_FPATH ) \
-              -g asciidoc \
+              -g markdown \
               -o /local/$TMPDIR
-          cat ./$TMPDIR/index.adoc
+          ls -l $TMPDIR
 
-          # now transform to md
-          npm i --prefix $TMPDIR downdoc
-          npx downdoc -o ${{ github.workspace }}/README.md ./$TMPDIR/index.adoc
-
-          cat ${{ github.workspace }}/README.md
-
-          exit 1
+          # move
+          mv README.md ${{ github.workspace }}/README.md
+          mv Apis ${{ github.workspace }}
+          mv Models ${{ github.workspace }}
 
       - name: git add, commit, push
         if: env.IS_GIT_BEHIND != 'true'
