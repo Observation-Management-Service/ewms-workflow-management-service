@@ -156,10 +156,11 @@ jobs:
       - name: generate README
         if: env.IS_GIT_BEHIND != 'true'
         run: |
-          # generate first as asciidoc (compiles to one file, their md generator produces a dir)
           cd wms/$( dirname $REST_OPENAPI_SPEC_FPATH )
           TMPDIR=$(mktemp -d -p .)  # temp dir here (covered by .gitignore)
           echo $TMPDIR
+
+          # generate first as asciidoc (compiles to one file, their md generator produces a dir)
           docker run --rm \
               -v $PWD:/local \
               openapitools/openapi-generator-cli generate \
@@ -168,9 +169,12 @@ jobs:
               -g asciidoc \
               -o /local/$TMPDIR
           cat ./$TMPDIR/index.adoc
+
           # now transform to md
           npm i --prefix $TMPDIR downdoc
           npx downdoc -o ${{ github.workspace }}/README.md ./$TMPDIR/index.adoc
+
+          cat ${{ github.workspace }}/README.md
 
           exit 1
 
