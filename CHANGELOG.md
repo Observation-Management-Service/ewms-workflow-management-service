@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.3 (2024-02-26)
+
+### Other
+
+* Add Database and Functional Logic ([#4](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/4)) ([`27dc69b`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/27dc69b59e045e260a672500b86bb688b3223ba7))
+
 ## v0.0.2 (2024-02-14)
 
 ### Other
