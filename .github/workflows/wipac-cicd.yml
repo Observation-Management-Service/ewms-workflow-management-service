@@ -227,7 +227,7 @@ jobs:
 
           # dump
           with open(os.environ["README"], "w") as f:
-              f.writeLines([ln+"\n" for ln in out])
+              f.writelines([ln+"\n" for ln in out])
           '
 
       - name: git add, commit, push
