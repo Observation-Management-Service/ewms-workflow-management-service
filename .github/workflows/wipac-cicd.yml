@@ -202,7 +202,7 @@ jobs:
 
           out = []
           found_topdelim = False
-          skip_line = True
+          skip_line = False
 
           # replace delimited contents
           with open(os.environ["README"]) as f:
