@@ -1,0 +1,90 @@
+{
+    "parameters": [
+        {
+            "$ref": "#/components/parameters/TaskforceUUIDParam"
+        }
+    ],
+    "post": {
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "condor_complete_ts": {
+                                "description": "the time that the taskforce's condor cluster was ended/terminated/aborted",
+                                "type": "integer"
+                            }
+                        },
+                        "required": [
+                            "condor_complete_ts"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "the uuid of the updated taskforce objects",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/TaskforceUUIDObject"
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

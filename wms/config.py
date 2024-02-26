@@ -20,38 +20,6 @@ LOGGER = logging.getLogger(__name__)
 # --------------------------------------------------------------------------------------
 
 
-def _get_jsonschema_specs(fpath: Path) -> dict[str, dict[str, Any]]:
-    with open(fpath) as f:
-        specs = json.load(f)  # validates keys
-    for key, entry in specs.items():
-        LOGGER.info(f"validating JSON-schema spec for {key} ({fpath})")
-        jsonschema.protocols.Validator.check_schema(entry)  # validates entry
-    return specs  # type: ignore[no-any-return]
-
-
-DB_JSONSCHEMA_SPECS = _get_jsonschema_specs(
-    Path(__file__).parent / "schema/db_jsonschema_specs.json"
-)
-
-
-# --------------------------------------------------------------------------------------
-
-
-def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
-    spec_dict, base_uri = read_from_filename(str(fpath))
-    LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
-    validate(spec_dict)  # no exception -> spec is valid
-    return openapi_core.OpenAPI(SchemaPath.from_file_path(str(fpath)))
-
-
-REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(
-    Path(__file__).parent / "schema/rest_openapi.json"
-)
-
-
-# --------------------------------------------------------------------------------------
-
-
 @dc.dataclass(frozen=True)
 class EnvConfig:
     """Environment variables."""
@@ -61,6 +29,9 @@ class EnvConfig:
     MONGODB_PORT: int  # 27017
     REST_HOST: str  # "localhost"
     REST_PORT: int  # 8080
+
+    DB_JSONSCHEMA_DIR: Path  # absolute or relative to pkg root dir
+    REST_OPENAPI_SPEC_FPATH: Path  # absolute or relative to pkg root dir
 
     AUTH_AUDIENCE: str = "skydriver"
     AUTH_OPENID_URL: str = ""
@@ -77,6 +48,20 @@ class EnvConfig:
     BACKLOG_RUNNER_DELAY: int = 5 * 60
     BACKLOG_PENDING_ENTRY_TTL_REVIVE: int = 5 * 60  # entry is revived after N secs
 
+    def __post_init__(self) -> None:
+        if not self.DB_JSONSCHEMA_DIR.is_absolute():
+            object.__setattr__(
+                self,
+                "DB_JSONSCHEMA_DIR",
+                Path(__file__).parent / self.DB_JSONSCHEMA_DIR,
+            )
+        if not self.REST_OPENAPI_SPEC_FPATH.is_absolute():
+            object.__setattr__(
+                self,
+                "REST_OPENAPI_SPEC_FPATH",
+                Path(__file__).parent / self.REST_OPENAPI_SPEC_FPATH,
+            )
+
 
 ENV = from_environment_as_dataclass(EnvConfig)
 
@@ -84,15 +69,56 @@ ENV = from_environment_as_dataclass(EnvConfig)
 # --------------------------------------------------------------------------------------
 
 
+def _get_jsonschema_specs(dpath: Path) -> dict[str, dict[str, Any]]:
+    specs: dict[str, dict[str, Any]] = {}
+    for fpath in dpath.iterdir():
+        with open(fpath) as f:
+            specs[fpath.stem] = json.load(f)  # validates keys
+        LOGGER.info(f"validating JSON-schema spec for {fpath}")
+        jsonschema.protocols.Validator.check_schema(specs[fpath.stem])
+    return specs
+
+
+# keyed by the mongo collection name
+MONGO_COLLECTION_JSONSCHEMA_SPECS = _get_jsonschema_specs(ENV.DB_JSONSCHEMA_DIR)
+
+
+# --------------------------------------------------------------------------------------
+
+
+def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
+    spec_dict, base_uri = read_from_filename(str(fpath))
+    LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
+    validate(spec_dict)  # no exception -> spec is valid
+    return openapi_core.OpenAPI(SchemaPath.from_file_path(str(fpath)))
+
+
+REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(ENV.REST_OPENAPI_SPEC_FPATH)
+
+
+# --------------------------------------------------------------------------------------
+
+
 # known cluster locations
-KNOWN_CLUSTERS: dict[str, dict[str, Any]] = {
+KNOWN_CLUSTERS: dict[str, dict[str, str]] = {
     "sub-2": {
-        "location": {
-            "collector": "glidein-cm.icecube.wisc.edu",
-            "schedd": "sub-2.icecube.wisc.edu",
-        },
+        "collector": "glidein-cm.icecube.wisc.edu",
+        "schedd": "sub-2.icecube.wisc.edu",
     },
 }
+if ENV.CI:  # just for testing -- can remove when we have 2+ clusters
+    KNOWN_CLUSTERS.update(
+        {
+            "test-alpha": {
+                "collector": "COLLECTOR1",
+                "schedd": "SCHEDD1",
+            },
+            "test-beta": {
+                "collector": "COLLECTOR2",
+                "schedd": "SCHEDD2",
+            },
+        }
+    )
 
 
 # --------------------------------------------------------------------------------------

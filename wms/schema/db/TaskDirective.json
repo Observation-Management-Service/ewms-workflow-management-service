@@ -1,0 +1,36 @@
+{
+    "type": "object",
+    "properties": {
+        "task_id": {
+            "type": "string"
+        },
+        "cluster_locations": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "task_image": {
+            "type": "string"
+        },
+        "task_args": {
+            "type": "string"
+        },
+        "timestamp": {
+            "type": "integer"
+        },
+        "aborted": {
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "task_id",
+        "cluster_locations",
+        "task_image",
+        "task_args",
+        "timestamp",
+        "aborted"
+    ],
+    "additionalProperties": false
+}

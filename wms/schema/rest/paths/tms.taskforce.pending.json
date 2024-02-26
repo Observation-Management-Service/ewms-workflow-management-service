@@ -1,0 +1,58 @@
+{
+    "parameters": [],
+    "get": {
+        "parameters": [
+            {
+                "$ref": "#/components/parameters/CondorCollector"
+            },
+            {
+                "$ref": "#/components/parameters/CondorSchedd"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "the next taskforce to start at the condor location",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/TaskforceObject"
+                                },
+                                {
+                                    "type": "object",
+                                    "additionalProperties": false
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

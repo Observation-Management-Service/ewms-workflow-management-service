@@ -162,3 +162,7 @@ cython_debug/
 
 # wipac-dev-py-setup-action
 !dependencies*.log
+
+
+tmp.*/
+tmp.*

@@ -1,0 +1,65 @@
+{
+    "parameters": [],
+    "post": {
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/FindObject"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "TODO",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "taskforces": {
+                                    "description": "a list of taskforce objects",
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TaskforceObject"
+                                    },
+                                    "minItems": 0
+                                }
+                            },
+                            "required": [
+                                "taskforces"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

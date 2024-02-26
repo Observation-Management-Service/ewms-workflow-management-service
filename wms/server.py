@@ -21,8 +21,6 @@ HANDLERS = [
     rest_handlers.task_handlers.TaskDirectiveIDHandler,
     rest_handlers.task_handlers.TaskDirectivesFindHandler,
     #
-    rest_handlers.job_event_log_handlers.JobEventLogHandler,
-    #
     rest_handlers.taskforce_handlers.TaskforcesReportHandler,
     rest_handlers.taskforce_handlers.TaskforcesFindHandler,
     #
@@ -30,6 +28,7 @@ HANDLERS = [
     rest_handlers.taskforce_handlers.TaskforceRunningUUIDHandler,
     rest_handlers.taskforce_handlers.TaskforceStopHandler,
     rest_handlers.taskforce_handlers.TaskforceStopUUIDHandler,
+    rest_handlers.taskforce_handlers.TaskforceCondorCompleteUUIDHandler,
     rest_handlers.taskforce_handlers.TaskforceUUIDHandler,
 ]
 

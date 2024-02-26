@@ -1,74 +1,78 @@
 """Mimic a TMS workflow, hitting the expected REST endpoints."""
 
 
-import json
 import logging
-from pathlib import Path
-from typing import Any
 
-import openapi_core
-import requests
-from jsonschema_path import SchemaPath
-from openapi_core.contrib import requests as openapi_core_requests
 from rest_tools.client import RestClient
 
+import ewms_actions
+from utils import request_and_validate
+
 LOGGER = logging.getLogger(__name__)
-logging.getLogger("parse").setLevel(logging.INFO)
 
 
-JOB_EVENT_LOG_FPATH = "/home/the_job_event_log_fpath"
-CONDOR_LOCATIONS = [("COLLECTOR1", "SCHEDD1"), ("COLLECTOR2", "SCHEDD2")]
+CONDOR_LOCATIONS = {
+    "test-alpha": {
+        "collector": "COLLECTOR1",
+        "schedd": "SCHEDD1",
+    },
+    "test-beta": {
+        "collector": "COLLECTOR2",
+        "schedd": "SCHEDD2",
+    },
+}
 
 
 # ----------------------------------------------------------------------------
 
 
-_OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/rest_openapi.json"
-
-
-def request_and_validate(
-    rc: RestClient,
-    openapi_spec: openapi_core.OpenAPI,
-    method: str,
-    path: str,
-    args: dict[str, Any] | None = None,
-) -> Any:
-    """Make request and validate the response."""
-    url, kwargs = rc._prepare(method, path, args=args)
-    response = requests.request(method, url, **kwargs)
-
-    # duck typing magic
-    class _DuckResponse(openapi_core.protocols.Response):
-        """AKA 'openapi_core_requests.RequestsOpenAPIResponse' but correct."""
-
-        @property
-        def data(self) -> bytes | None:
-            return response.content
-
-        @property
-        def status_code(self) -> int:
-            return int(response.status_code)
-
-        @property
-        def content_type(self) -> str:
-            # application/json; charset=UTF-8  ->  application/json
-            # ex: openapi_core.validation.response.exceptions.DataValidationError: DataValidationError: Content for the following mimetype not found: application/json; charset=UTF-8. Valid mimetypes: ['application/json']
-            return str(response.headers.get("Content-Type", "")).split(";")[0]
-            # alternatively, look at how 'openapi_core_requests.RequestsOpenAPIRequest.mimetype' handles similarly
-
-        @property
-        def headers(self) -> dict:
-            return dict(response.headers)
-
-    openapi_spec.validate_response(
-        openapi_core_requests.RequestsOpenAPIRequest(response.request),
-        _DuckResponse(),
-    )
-
-    out = rc._decode(response.content)
-    response.raise_for_status()
-    print(out)
-    return out
+COMPOUND_STATUSES__1 = {  # type: ignore[var-annotated]
+    "test-alpha": {},
+    "test-beta": {},
+}
+TOP_TASK_ERRORS__1 = {  # type: ignore[var-annotated]
+    "test-alpha": {},
+    "test-beta": {},
+}
+#
+COMPOUND_STATUSES__2 = {
+    "test-alpha": {
+        "started": {"tasked": 256},
+    },
+    "test-beta": {
+        "started": {"tasked": 150},
+        "stopped": {"tasked": 2000},
+    },
+}
+TOP_TASK_ERRORS__2 = {
+    "test-alpha": {
+        "too_cool": 326,
+    },
+    "test-beta": {
+        "too_warm": 453,
+    },
+}
+#
+COMPOUND_STATUSES__3 = {
+    "test-alpha": {
+        "started": {"tasked": 1126, "done": 1265},
+        "stopped": {"tasked": 502},
+    },
+    "test-beta": {
+        "started": {"pre-tasked": 811, "done": 135},
+        "stopped": {"tasked": 560},
+    },
+}
+TOP_TASK_ERRORS__3 = {
+    "test-alpha": {
+        "too_cool": 5156,
+        "full": 123,
+    },
+    "test-beta": {
+        "too_cool": 1565,
+        "empty": 861,
+    },
+}
 
 
 # ----------------------------------------------------------------------------
@@ -76,275 +80,490 @@ def request_and_validate(
 
 async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
-    resp = request_and_validate(
+    openapi_spec = ewms_actions.query_for_schema(rc)
+
+    task_id = ewms_actions.user_requests_new_task(
         rc,
-        # only read json file for this request
-        openapi_core.OpenAPI(SchemaPath.from_file_path(str(_OPENAPI_JSON))),
-        "GET",
-        "/schema/openapi",
+        openapi_spec,
+        list(CONDOR_LOCATIONS.keys()),
     )
-    with open(_OPENAPI_JSON, "rb") as f:
-        assert json.load(f) == resp
-    openapi_spec = openapi_core.OpenAPI(SchemaPath.from_dict(resp))
 
-    #
-    # USER...
-    #
+    # TMS STARTS TASKFORCES!
+    condor_locs_w_jel = ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
 
-    task_directive = request_and_validate(
+    # SEND UPDATES FROM TMS (JEL)!
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    # CONDOR CLUSTERS FINISH UP!
+    ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
+
+    # CHECK FINAL STATES...
+    resp = request_and_validate(
         rc,
         openapi_spec,
         "POST",
-        "/task/directive",
-        {"foo": 1, "bar": 2},
+        "/tms/taskforces/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": ["tms_most_recent_action", "condor_complete_ts"],
+        },
     )
-
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
+    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    # fmt: on
     resp = request_and_validate(
         rc,
         openapi_spec,
         "GET",
-        f"/task/directive/{task_directive['task_id']}",
+        f"/task/directive/{task_id}",
     )
-    assert resp == task_directive
+    assert resp["aborted"] is False
 
+
+# ----------------------------------------------------------------------------
+
+
+async def test_100__aborted_before_condor(rc: RestClient) -> None:
+    """Aborted workflow."""
+    openapi_spec = ewms_actions.query_for_schema(rc)
+
+    task_id = ewms_actions.user_requests_new_task(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS.keys()),
+    )
+
+    # ABORT!
+    ewms_actions.user_aborts_task(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
     resp = request_and_validate(
         rc,
         openapi_spec,
         "POST",
-        "/task/directives/find",
-        {"foo": 1, "bar": 2},
+        "/tms/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
     )
-    assert len(resp["task_directives"]) == 1
-    assert resp["task_directives"][0] == task_directive
-
-    #
-    # TMS(es) starter(s)...
-    #
-
-    for collector, schedd in CONDOR_LOCATIONS:
-        # get next to start
-        taskforce = request_and_validate(
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
+    # fmt: on
+    for loc in CONDOR_LOCATIONS.values():
+        # check that there is NOTHING to start
+        assert not request_and_validate(
             rc,
             openapi_spec,
             "GET",
             "/tms/taskforce/pending",
-            {"collector": collector, "schedd": schedd},
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
-        # check that it's not deleted
-        resp = request_and_validate(
+    for loc in CONDOR_LOCATIONS.values():
+        # check that there is NOTHING to stop
+        assert not request_and_validate(
             rc,
             openapi_spec,
             "GET",
-            f"/tms/taskforce/{taskforce['taskforce_uuid']}",
+            "/tms/taskforce/stop",
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
-        assert not resp["is_deleted"]
-        # confirm it has started
-        resp = request_and_validate(
+    for loc in CONDOR_LOCATIONS.values():
+        # check that there is NOTHING to start
+        assert not request_and_validate(
             rc,
             openapi_spec,
-            "POST",
-            f"/tms/taskforce/running/{taskforce['taskforce_uuid']}",
-            {"ewms_taskforce_attrs": 123},
+            "GET",
+            "/tms/taskforce/pending",
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
 
-    #
-    # USER...
-    # check directive reflects startup (runtime-assembled list of taskforces)
-    #
+    # NOTE - since the taskforce(s) aren't started, there are no updates from a JEL
 
-    #
-    # TMS(es) watcher(s)...
-    # no jobs yet (waiting for condor)
-    #
+    # condor_locs_w_jel = ewms_actions.tms_starter(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     CONDOR_LOCATIONS,
+    # )
 
-    for collector, schedd in CONDOR_LOCATIONS:
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/tms/taskforces/find",
-            {
-                "filter": {
-                    "collector": collector,
-                    "schedd": schedd,
-                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
-                },
-                "projection": ["taskforce_uuid", "cluster_id"],
-            },
-        )
-        assert len(resp["taskforces"]) == 1
-        taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/tms/taskforces/report",
-            {
-                "compound_statuses_by_taskforce": {
-                    taskforce_uuid: {
-                        "started": {"tasked": 15},
-                    }
-                },
-            },
-        )
-        assert resp["uuids"] == [taskforce_uuid]
+    # # SEND UPDATES FROM TMS (JEL)!
+    # ewms_actions.tms_watcher_sends_report_update(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    #     TOP_TASK_ERRORS__1,
+    #     COMPOUND_STATUSES__1,
+    # )
+    # ewms_actions.tms_watcher_sends_report_update(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    #     TOP_TASK_ERRORS__2,
+    #     COMPOUND_STATUSES__2,
+    # )
+    # ewms_actions.tms_watcher_sends_report_update(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    #     TOP_TASK_ERRORS__3,
+    #     COMPOUND_STATUSES__3,
+    # )
 
-    #
-    # USER...
-    # check above
-    #
+    # ewms_actions.tms_condor_clusters_done(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    # )
 
-    #
-    # TMS(es) watcher(s)...
-    # jobs in action!
-    #
+    # CHECK FINAL STATES...
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": ["tms_most_recent_action", "condor_complete_ts"],
+        },
+    )
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
+    assert all(tf["condor_complete_ts"] is None for tf in resp["taskforces"])
+    # fmt: on
 
-    for collector, schedd in CONDOR_LOCATIONS:
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/tms/taskforces/find",
-            {
-                "filter": {
-                    "collector": collector,
-                    "schedd": schedd,
-                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
-                },
-                "projection": ["taskforce_uuid", "cluster_id"],
-            },
-        )
-        assert len(resp["taskforces"]) == 1
-        taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/tms/taskforces/report",
-            {
-                "top_task_errors_by_taskforce": {taskforce_uuid: {"too_cool": 3}},
-                "compound_statuses_by_taskforce": {
-                    taskforce_uuid: {
-                        "started": {"tasked": 15},
-                        "stopped": {"tasked": 20},
-                    }
-                },
-            },
-        )
-        assert resp["uuids"] == [taskforce_uuid]
 
-    #
-    # USER...
-    # check above
-    #
+async def test_110__aborted_during_condor(rc: RestClient) -> None:
+    """Aborted workflow."""
+    openapi_spec = ewms_actions.query_for_schema(rc)
 
-    #
-    # TMS(es) watcher(s)...
-    # jobs done
-    #
+    task_id = ewms_actions.user_requests_new_task(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS.keys()),
+    )
 
-    for collector, schedd in CONDOR_LOCATIONS:
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/tms/taskforces/find",
-            {
-                "filter": {
-                    "collector": collector,
-                    "schedd": schedd,
-                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
-                },
-                "projection": ["taskforce_uuid", "cluster_id"],
-            },
-        )
-        assert len(resp["taskforces"]) == 1
-        taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/tms/taskforces/report",
-            {
-                "top_task_errors_by_taskforce": {
-                    taskforce_uuid: {"too_cool": 5, "empty": 1}
-                },
-                "compound_statuses_by_taskforce": {
-                    taskforce_uuid: {
-                        "started": {"tasked": 11, "done": 1},
-                        "stopped": {"tasked": 50},
-                    }
-                },
-            },
-        )
-        assert resp["uuids"] == [taskforce_uuid]
+    # TMS STARTS TASKFORCES!
+    condor_locs_w_jel = ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
 
-    #
-    # USER...
-    # check jobs done & result
-    #
+    # SEND UPDATES FROM TMS (JEL)!
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
 
-    #
-    # TMS(es) stopper(s)...
-    #
+    # ABORT!
+    ewms_actions.user_aborts_task(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
+    )
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
+    # fmt: on
+    ewms_actions.tms_stopper(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
 
-    for collector, schedd in CONDOR_LOCATIONS:
-        # get next to stop
+    # continue, SEND UPDATES FROM TMS (JEL)
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+        aborted_during_condor=True,
+    )
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+        aborted_during_condor=True,
+    )
+
+    # CONDOR CLUSTERS FINISH UP!
+    ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
+
+    # CHECK FINAL STATES...
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": ["tms_most_recent_action", "condor_complete_ts"],
+        },
+    )
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
+    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    # fmt: on
+
+
+async def test_111__aborted_during_condor(rc: RestClient) -> None:
+    """Aborted workflow."""
+    openapi_spec = ewms_actions.query_for_schema(rc)
+
+    task_id = ewms_actions.user_requests_new_task(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS.keys()),
+    )
+
+    # TMS STARTS TASKFORCES!
+    condor_locs_w_jel = ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
+
+    # SEND UPDATES FROM TMS (JEL)!
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    # ABORT!
+    ewms_actions.user_aborts_task(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
+    )
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
+    # fmt: on
+    ewms_actions.tms_stopper(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
+
+    # CONDOR CLUSTERS FINISH UP!
+    ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
+
+    # CHECK FINAL STATES...
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": ["tms_most_recent_action", "condor_complete_ts"],
+        },
+    )
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
+    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    # fmt: on
+
+
+async def test_120__aborted_after_condor(rc: RestClient) -> None:
+    """Aborted workflow."""
+    openapi_spec = ewms_actions.query_for_schema(rc)
+
+    task_id = ewms_actions.user_requests_new_task(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS.keys()),
+    )
+
+    # TMS STARTS TASKFORCES!
+    condor_locs_w_jel = ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
+
+    # SEND UPDATES FROM TMS (JEL)!
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+    ewms_actions.tms_watcher_sends_report_update(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    # CONDOR CLUSTERS FINISH UP!
+    ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        condor_locs_w_jel,
+    )
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
+    )
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
+    # fmt: on
+
+    # ABORT!
+    ewms_actions.user_aborts_task(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+        aborted_after_condor=True,
+    )
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
+    )
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
+    # fmt: on
+    for loc in CONDOR_LOCATIONS.values():
+        # make sure there is NOTHING to stop (taskforces are 'condor-submit' not 'pending-stopper')
         taskforce = request_and_validate(
             rc,
             openapi_spec,
             "GET",
             "/tms/taskforce/stop",
-            {"collector": collector, "schedd": schedd},
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
-        # confirm it has stopped
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "DELETE",
-            f"/tms/taskforce/stop/{taskforce['taskforce_uuid']}",
-        )
+        assert not taskforce
 
-    #
-    # USER...
-    # check above
-    #
-
-    #
-    # TMS(es) watcher(s)...
-    # jel done
-    #
-
-    for collector, schedd in CONDOR_LOCATIONS:
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/tms/job-event-log",
-            {
-                "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
-                "collector": collector,
-                "schedd": schedd,
-                "finished": True,
-            },
-        )
-        # check deleted
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/tms/taskforces/find",
-            {
-                "filter": {
-                    "collector": collector,
-                    "schedd": schedd,
-                    "job_event_log_fpath": JOB_EVENT_LOG_FPATH,
-                },
-                "projection": ["taskforce_uuid", "cluster_id"],
-            },
-        )
-        assert len(resp["taskforces"]) == 1
-        # TODO - CHECK THAT JEL IS DELETED / FINISHED
-
-
-# ----------------------------------------------------------------------------
+    # CHECK FINAL STATES...
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/tms/taskforces/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": ["tms_most_recent_action", "condor_complete_ts"],
+        },
+    )
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
+    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    # fmt: on

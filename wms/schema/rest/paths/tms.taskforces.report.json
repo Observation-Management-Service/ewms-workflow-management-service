@@ -1,0 +1,148 @@
+{
+    "parameters": [],
+    "post": {
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "top_task_errors_by_taskforce": {
+                                "description": "the top errors (paired with a count) for each indicated taskforce",
+                                "type": "object",
+                                "items": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "integer"
+                                    },
+                                    "minProperties": 0
+                                },
+                                "minProperties": 1
+                            },
+                            "compound_statuses_by_taskforce": {
+                                "description": "the compound statuses (status -> state -> count) for the indicated taskforces",
+                                "type": "object",
+                                "items": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "integer"
+                                        },
+                                        "minProperties": 0
+                                    },
+                                    "minProperties": 0
+                                },
+                                "minProperties": 1
+                            }
+                        },
+                        "required": [],
+                        "additionalProperties": false
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "individual results for the updates per uuid",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "results": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "uuid": {
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "uuid",
+                                            "status"
+                                        ],
+                                        "additionalProperties": false
+                                    },
+                                    "minItems": 1
+                                }
+                            },
+                            "required": [
+                                "results"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "207": {
+                "description": "individual results for the updates per uuid, with errors",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "results": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "uuid": {
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "type": "string"
+                                            },
+                                            "error": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "uuid",
+                                            "status"
+                                        ],
+                                        "additionalProperties": false
+                                    },
+                                    "minItems": 1
+                                }
+                            },
+                            "required": [
+                                "results"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

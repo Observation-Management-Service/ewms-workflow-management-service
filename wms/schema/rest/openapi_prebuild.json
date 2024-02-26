@@ -1,0 +1,87 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "EWMS - Workflow Management Service",
+        "summary": "The external interface for EWMS",
+        "description": "The external interface for starting, tracking, and retrieving results from tasks within EWMS",
+        "contact": {
+            "name": "WIPAC Developers",
+            "url": "icecube.wisc.edu",
+            "email": "developers@icecube.wisc.edu"
+        },
+        "license": {
+            "name": "MIT License"
+        },
+        "version": "0.0.0"
+    },
+    "components": {
+        "parameters": {
+            "TaskforceUUIDParam": {
+                "name": "taskforce_uuid",
+                "in": "path",
+                "required": true,
+                "description": "the taskforce object's uuid",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "CondorCollector": {
+                "name": "collector",
+                "in": "query",
+                "required": true,
+                "description": "name of the condor collector",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "CondorSchedd": {
+                "name": "schedd",
+                "in": "query",
+                "required": true,
+                "description": "name of the condor schedd",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas": {
+            "TaskDirectiveObject": "../db/TaskDirective.json",
+            "TaskforceObject": "../db/Taskforce.json",
+            "FindObject": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "description": "the search criteria (MongoDB-filter syntax)",
+                        "type": "object"
+                    },
+                    "projection": {
+                        "description": "the fields to include in the response",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "query"
+                ],
+                "additionalProperties": false
+            },
+            "TaskforceUUIDObject": {
+                "type": "object",
+                "properties": {
+                    "taskforce_uuid": {
+                        "description": "the uuid of the updated taskforce object",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "taskforce_uuid"
+                ],
+                "additionalProperties": false
+            }
+        }
+    },
+    "paths": "./paths/"
+}
