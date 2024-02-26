@@ -167,6 +167,7 @@ jobs:
               -i /local/$( basename $REST_OPENAPI_SPEC_FPATH ) \
               -g asciidoc \
               -o /local/$TMPDIR
+          cat ./$TMPDIR/index.adoc
           # now transform to md
           npm i --prefix $TMPDIR downdoc
           npx downdoc -o ${{ github.workspace }}/README.md ./$TMPDIR/index.adoc
