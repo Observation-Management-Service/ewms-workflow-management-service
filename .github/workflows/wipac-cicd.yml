@@ -173,16 +173,31 @@ jobs:
           ls -l $TMPDIR
           sudo chmod -R 777 $TMPDIR
 
-          # move
-          mv $TMPDIR/README.md ${{ github.workspace }}/README.md
-          #
+          # move dirs
           rm -r ${{ github.workspace }}/Apis || true
           mv $TMPDIR/Apis ${{ github.workspace }}
           #
           rm -r ${{ github.workspace }}/Models || true
           mv $TMPDIR/Models ${{ github.workspace }}
 
-          exit 1
+          # copy over auto-generated README contents
+          README="${{ github.workspace }}/README.md"
+          TOPDELIM="<!--- Top of README openapi docs (automated) --->"
+          ENDDELIM="<!--- End of README openapi docs (automated) --->"
+          if [ grep -Fxq "$TOPDELIM" $README ]; then
+              # delete text from README
+              tmpfile=$(mktemp -p .)
+              sed '/$TOPDELIM/,/$ENDDELIM/{//!d;}' $README > $tmpfile
+              mv $tmpfile $README
+              # replace text in README w/ auto-generated text
+              insertat=$(($(sed -n '/$TOPDELIM/{=;q;}' $README) + 1))  # add 1 from the match
+              sed '$insertat i $(cat $TMPDIR/README.md)' $README
+          else
+              # append to file
+              cat $TOPDELIM >> $README
+              cat $TMPDIR/README.md >> $README
+              cat $ENDDELIM >> $README
+          fi
 
       - name: git add, commit, push
         if: env.IS_GIT_BEHIND != 'true'
