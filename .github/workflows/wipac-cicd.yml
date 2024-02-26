@@ -184,7 +184,7 @@ jobs:
           README=${{ github.workspace }}/README.md
           TOPDELIM='<!--- Top of README openapi docs (automated) --->'
           ENDDELIM='<!--- End of README openapi docs (automated) --->'
-          if [ grep -Fxq '$TOPDELIM' $README ]; then
+          if grep -Fqx "$TOPDELIM" $README; then
               # delete text from README
               tmpfile=$(mktemp -p .)
               sed '/$TOPDELIM/,/$ENDDELIM/{//!d;}' $README > $tmpfile
@@ -194,6 +194,7 @@ jobs:
               sed '$insertat i $(cat $TMPDIR/README.md)' $README
           else
               # append to file
+              echo "" >> $README
               echo $TOPDELIM >> $README
               cat $TMPDIR/README.md >> $README
               echo $ENDDELIM >> $README
