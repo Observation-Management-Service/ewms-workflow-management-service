@@ -181,7 +181,7 @@ jobs:
           mv $TMPDIR/Models ${{ github.workspace }}
 
           # remove top header from auto-generated README -- we already have one
-          sed -i '/# /d' $TMPDIR/README.md
+          sed -i '/^# /d' $TMPDIR/README.md
 
           # copy over auto-generated README contents
           README=${{ github.workspace }}/README.md
@@ -193,7 +193,7 @@ jobs:
               sed '/$TOPDELIM/,/$ENDDELIM/{//!d;}' $README > $tmpfile
               mv $tmpfile $README
               # replace text in README w/ auto-generated text
-              insertat=$(($(sed -n '/$TOPDELIM/{=;q;}' $README) + 1))  # add 1 from the match
+              insertat=$(( $(sed -n '/$TOPDELIM/{=;q;}' $README) + 1 ))  # add 1 from the match
               sed '$insertat i $(cat $TMPDIR/README.md)' $README
           else
               # append to file
