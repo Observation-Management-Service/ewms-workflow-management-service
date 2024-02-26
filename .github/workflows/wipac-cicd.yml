@@ -180,6 +180,9 @@ jobs:
           rm -r ${{ github.workspace }}/Models || true
           mv $TMPDIR/Models ${{ github.workspace }}
 
+          # remove top header from auto-generated README -- we already have one
+          sed -i '/# /d' $TMPDIR/README.md
+
           # copy over auto-generated README contents
           README=${{ github.workspace }}/README.md
           TOPDELIM='<!--- Top of README openapi docs (automated) --->'
