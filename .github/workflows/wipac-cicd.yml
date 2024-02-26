@@ -176,10 +176,10 @@ jobs:
           # move
           mv $TMPDIR/README.md ${{ github.workspace }}/README.md
           #
-          rm -r ${{ github.workspace }}/Apis
+          rm -r ${{ github.workspace }}/Apis || true
           mv $TMPDIR/Apis ${{ github.workspace }}
           #
-          rm -r ${{ github.workspace }}/Models
+          rm -r ${{ github.workspace }}/Models || true
           mv $TMPDIR/Models ${{ github.workspace }}
 
       - name: git add, commit, push
