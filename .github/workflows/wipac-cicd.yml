@@ -194,9 +194,9 @@ jobs:
               sed '$insertat i $(cat $TMPDIR/README.md)' $README
           else
               # append to file
-              cat $TOPDELIM >> $README
+              echo $TOPDELIM >> $README
               cat $TMPDIR/README.md >> $README
-              cat $ENDDELIM >> $README
+              echo $ENDDELIM >> $README
           fi
 
       - name: git add, commit, push
