@@ -153,7 +153,7 @@ jobs:
               $( basename $REST_OPENAPI_PREBUILD_FPATH ) \
               $( basename $REST_OPENAPI_SPEC_FPATH )
 
-      - name: generate README
+      - name: generate docs (README)
         if: env.IS_GIT_BEHIND != 'true'
         run: |
           set -ex
@@ -173,9 +173,9 @@ jobs:
           ls -l $TMPDIR
 
           # move
-          mv README.md ${{ github.workspace }}/README.md
-          mv Apis ${{ github.workspace }}
-          mv Models ${{ github.workspace }}
+          mv $TMPDIR/README.md ${{ github.workspace }}/README.md
+          mv $TMPDIR/Apis ${{ github.workspace }}
+          mv $TMPDIR/Models ${{ github.workspace }}
 
       - name: git add, commit, push
         if: env.IS_GIT_BEHIND != 'true'
