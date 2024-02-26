@@ -168,7 +168,7 @@ jobs:
               -g asciidoc \
               -o /local/$TMPDIR
           # now transform to md
-          npm i downdoc
+          npm i --prefix $TMPDIR downdoc
           npx downdoc -o ${{ github.workspace }}/README.md ./$TMPDIR/index.adoc
 
       - name: git add, commit, push
