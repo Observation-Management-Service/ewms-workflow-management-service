@@ -182,6 +182,8 @@ jobs:
           rm -r ${{ github.workspace }}/Models || true
           mv $TMPDIR/Models ${{ github.workspace }}
 
+          exit 1
+
       - name: git add, commit, push
         if: env.IS_GIT_BEHIND != 'true'
         run: |
