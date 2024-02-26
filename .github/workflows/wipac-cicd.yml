@@ -173,15 +173,18 @@ jobs:
           ls -l $TMPDIR
           sudo chmod -R 777 $TMPDIR
 
-          # move dirs
+          # tweak auto-generated contents -- miscellaneous
+          # remove top header from auto-generated README -- we already have one
+          sed -i '/^# /d' $TMPDIR/README.md
+          sed -i '/All endpoints do not require authorization./d' $TMPDIR/README.md
+          find $TMPDIR -type f -exec sed -i '/No authorization required/d' {} +
+
+          # move auto-generated dirs
           rm -r ${{ github.workspace }}/Apis || true
           mv $TMPDIR/Apis ${{ github.workspace }}
           #
           rm -r ${{ github.workspace }}/Models || true
           mv $TMPDIR/Models ${{ github.workspace }}
-
-          # remove top header from auto-generated README -- we already have one
-          sed -i '/^# /d' $TMPDIR/README.md
 
           # copy over auto-generated README contents
           README=${{ github.workspace }}/README.md
