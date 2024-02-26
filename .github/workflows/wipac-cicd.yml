@@ -153,6 +153,24 @@ jobs:
               $( basename $REST_OPENAPI_PREBUILD_FPATH ) \
               $( basename $REST_OPENAPI_SPEC_FPATH )
 
+      - name: generate README
+        if: env.IS_GIT_BEHIND != 'true'
+        run: |
+          # generate first as asciidoc (compiles to one file, their md generator produces a dir)
+          cd wms/$( dirname $REST_OPENAPI_SPEC_FPATH )
+          TMPDIR=$(mktemp -d -p .)  # temp dir here (covered by .gitignore)
+          echo $TMPDIR
+          docker run --rm \
+              -v $PWD:/local \
+              openapitools/openapi-generator-cli generate \
+              --skip-validate-spec \
+              -i /local/$( basename $REST_OPENAPI_SPEC_FPATH ) \
+              -g asciidoc \
+              -o /local/$TMPDIR
+          # now transform to md
+          npm i downdoc
+          npx downdoc -o ${{ github.workspace }}/README.md ./$TMPDIR/index.adoc
+
       - name: git add, commit, push
         if: env.IS_GIT_BEHIND != 'true'
         run: |
