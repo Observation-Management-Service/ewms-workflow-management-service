@@ -171,6 +171,7 @@ jobs:
               -g markdown \
               -o /local/$TMPDIR
           ls -l $TMPDIR
+          chmod -R 777 $TMPDIR
 
           # move
           mv $TMPDIR/README.md ${{ github.workspace }}/README.md
