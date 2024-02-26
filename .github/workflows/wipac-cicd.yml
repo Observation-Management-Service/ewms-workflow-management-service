@@ -172,6 +172,8 @@ jobs:
           npm i --prefix $TMPDIR downdoc
           npx downdoc -o ${{ github.workspace }}/README.md ./$TMPDIR/index.adoc
 
+          exit 1
+
       - name: git add, commit, push
         if: env.IS_GIT_BEHIND != 'true'
         run: |
