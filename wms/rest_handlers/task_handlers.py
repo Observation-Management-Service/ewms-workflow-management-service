@@ -5,6 +5,7 @@ import logging
 import time
 import uuid
 
+import humanfriendly
 from tornado import web
 
 from .. import config
@@ -61,9 +62,25 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     collector=config.KNOWN_CLUSTERS[location]["collector"],
                     schedd=config.KNOWN_CLUSTERS[location]["schedd"],
                     #
+                    n_workers=None,  # TODO
+                    #
+                    container_config=dict(
+                        image=task_directive["task_image"],
+                        arguments=task_directive["task_args"],
+                        environment={},  # TODO -- insert queue id(s)
+                        input_files=[],  # TODO
+                    ),
+                    worker_config=dict(
+                        do_transfer_worker_stdouterr=False,
+                        max_worker_runtime=60,
+                        n_cores=1,
+                        priority=10,
+                        worker_disk_bytes=humanfriendly.parse_size("1G"),
+                        worker_memory_bytes=humanfriendly.parse_size("0.5G"),
+                    ),
+                    #
                     # set ONCE by tms via /taskforce/tms-action/condor-submit/<id>
                     cluster_id=None,
-                    n_workers=None,
                     submit_dict={},
                     job_event_log_fpath="",
                     # set ONCE by tms's watcher

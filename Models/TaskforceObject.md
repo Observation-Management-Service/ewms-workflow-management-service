@@ -11,7 +11,7 @@
 | **cluster\_id** | [**TaskforceObject_cluster_id**](TaskforceObject_cluster_id.md) |  | [optional] [default to null] |
 | **n\_workers** | [**TaskforceObject_cluster_id**](TaskforceObject_cluster_id.md) |  | [optional] [default to null] |
 | **container\_config** | [**TaskforceObject_container_config**](TaskforceObject_container_config.md) |  | [optional] [default to null] |
-| **condor\_config** | [**TaskforceObject_condor_config**](TaskforceObject_condor_config.md) |  | [optional] [default to null] |
+| **condor\_config** | [**TaskforceObject_worker_config**](TaskforceObject_worker_config.md) |  | [optional] [default to null] |
 | **submit\_dict** | [**Object**](.md) |  | [optional] [default to null] |
 | **job\_event\_log\_fpath** | **String** |  | [optional] [default to null] |
 | **condor\_complete\_ts** | [**TaskforceObject_cluster_id**](TaskforceObject_cluster_id.md) |  | [optional] [default to null] |

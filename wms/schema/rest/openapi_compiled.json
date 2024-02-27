@@ -143,7 +143,7 @@
                         },
                         "additionalProperties": true
                     },
-                    "condor_config": {
+                    "worker_config": {
                         "type": "object",
                         "properties": {
                             "do_transfer_worker_stdouterr": {

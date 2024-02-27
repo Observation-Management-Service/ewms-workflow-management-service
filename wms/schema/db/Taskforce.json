@@ -16,16 +16,6 @@
         "schedd": {
             "type": "string"
         },
-        "cluster_id": {
-            "anyOf": [
-                {
-                    "type": "integer"
-                },
-                {
-                    "type": "null"
-                }
-            ]
-        },
         "n_workers": {
             "anyOf": [
                 {
@@ -67,7 +57,7 @@
             },
             "additionalProperties": true
         },
-        "condor_config": {
+        "worker_config": {
             "type": "object",
             "properties": {
                 "do_transfer_worker_stdouterr": {
@@ -90,6 +80,16 @@
                 }
             },
             "additionalProperties": true
+        },
+        "cluster_id": {
+            "anyOf": [
+                {
+                    "type": "integer"
+                },
+                {
+                    "type": "null"
+                }
+            ]
         },
         "submit_dict": {
             "type": "object",
@@ -152,7 +152,7 @@
         "cluster_id",
         "n_workers",
         "container_config",
-        "condor_config",
+        "worker_config",
         "submit_dict",
         "job_event_log_fpath",
         "condor_complete_ts",

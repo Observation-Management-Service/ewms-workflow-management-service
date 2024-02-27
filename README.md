@@ -36,7 +36,7 @@ All URIs are relative to *http://localhost*
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
  - [TaskforceObject_cluster_id](./Models/TaskforceObject_cluster_id.md)
- - [TaskforceObject_condor_config](./Models/TaskforceObject_condor_config.md)
+ - [TaskforceObject_worker_config](./Models/TaskforceObject_worker_config.md)
  - [TaskforceObject_container_config](./Models/TaskforceObject_container_config.md)
  - [TaskforceUUIDObject](./Models/TaskforceUUIDObject.md)
  - [_schema_openapi_get_400_response](./Models/_schema_openapi_get_400_response.md)

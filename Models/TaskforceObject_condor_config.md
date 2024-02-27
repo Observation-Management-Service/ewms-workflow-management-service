@@ -1,4 +1,4 @@
-# TaskforceObject_condor_config
+# TaskforceObject_worker_config
 ## Properties
 
 | Name | Type | Description | Notes |
