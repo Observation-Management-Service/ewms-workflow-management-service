@@ -20,7 +20,7 @@ LOGGER = logging.getLogger(__name__)
 class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with reports for taskforce(s)."""
 
-    ROUTE = r"/tms/taskforces/report$"
+    ROUTE = r"/taskforces/tms/report$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -64,7 +64,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                     update,
                 )
             except DocumentNotFoundException:
-                LOGGER.warning(f"no running taskforce found with uuid: {uuid}")
+                LOGGER.warning(f"no condor-submitted taskforce found with uuid: {uuid}")
                 not_founds.append(uuid)
 
         # respond
@@ -76,7 +76,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                     {
                         "uuid": u,
                         "status": "failed",
-                        "error": "no running taskforce found with uuid",
+                        "error": "no condor-submitted taskforce found with uuid",
                     }
                     for u in not_founds
                 ]
@@ -98,7 +98,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for finding taskforces."""
 
-    ROUTE = r"/tms/taskforces/find$"
+    ROUTE = r"/taskforces/find$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -120,17 +120,17 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a pending taskforce."""
 
-    ROUTE = r"/tms/taskforce/pending$"
+    ROUTE = r"/taskforce/tms-action/pending-starter$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self) -> None:
         """Handle GET.
 
-        Get the next taskforce to START, for the given condor location.
+        Get the next taskforce to START for the given condor location.
         """
         try:
             taskforce = await self.taskforces_client.find_one(
@@ -152,18 +152,18 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions with a running taskforce."""
+class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a condor-submitted taskforce."""
 
-    ROUTE = r"/tms/taskforce/running/(?P<taskforce_uuid>\w+)$"
+    ROUTE = r"/taskforce/tms-action/condor-submit/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST.
 
-        Confirm that the taskforce is running and supply condor runtime
-        info.
+        Confirm that the taskforce is condor-submitted and supply condor
+        runtime info.
         """
         try:
             await self.taskforces_client.update_set_one(
@@ -195,17 +195,17 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions with a taskforce designated to be stopped."""
+class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions for the top taskforce designated to be stopped."""
 
-    ROUTE = r"/tms/taskforce/stop$"
+    ROUTE = r"/taskforce/tms-action/pending-stopper$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self) -> None:
         """Handle GET.
 
-        Get the next taskforce to STOP, for the given condor location.
+        Get the next taskforce to STOP for the given condor location.
         """
         try:
             taskforce = await self.taskforces_client.find_one(
@@ -228,10 +228,10 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions with a stopped taskforce."""
+class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a taskforce designated to be stopped."""
 
-    ROUTE = r"/tms/taskforce/stop/(?P<taskforce_uuid>\w+)$"
+    ROUTE = r"/taskforce/tms-action/pending-stopper/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -270,7 +270,7 @@ class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a condor-completed taskforce."""
 
-    ROUTE = r"/tms/taskforce/condor-complete/(?P<taskforce_uuid>\w+)$"
+    ROUTE = r"/taskforce/tms/condor-complete/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -309,7 +309,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
 class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for a taskforce."""
 
-    ROUTE = r"/tms/taskforce/(?P<taskforce_uuid>\w+)$"
+    ROUTE = r"/taskforce/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

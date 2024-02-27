@@ -61,7 +61,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     collector=config.KNOWN_CLUSTERS[location]["collector"],
                     schedd=config.KNOWN_CLUSTERS[location]["schedd"],
                     #
-                    # set ONCE by tms via /tms/taskforce/running/<id>
+                    # set ONCE by tms via /taskforce/tms-action/condor-submit/<id>
                     cluster_id=None,
                     n_workers=None,
                     submit_dict={},
@@ -141,7 +141,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     "task_id": task_id,
                     "$and": [
                         # not already aborted
-                        # NOTE - we don't care whether the taskforce has started up (see /tms/taskforce/stop)
+                        # NOTE - we don't care whether the taskforce has started up (see /taskforce/tms-action/pending-stopper)
                         {
                             "tms_most_recent_action": {
                                 "$nin": ["pending-stopper", "condor-rm"]

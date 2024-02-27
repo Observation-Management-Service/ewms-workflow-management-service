@@ -135,7 +135,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {"task_id": task_id},
             "projection": ["tms_most_recent_action", "condor_complete_ts"],
@@ -178,7 +178,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
     )
     # fmt: off
@@ -190,7 +190,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms/taskforce/pending",
+            "/taskforce/tms-action/pending-starter",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -199,7 +199,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms/taskforce/stop",
+            "/taskforce/tms-action/pending-stopper",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -208,7 +208,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms/taskforce/pending",
+            "/taskforce/tms-action/pending-starter",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
 
@@ -259,7 +259,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {"task_id": task_id},
             "projection": ["tms_most_recent_action", "condor_complete_ts"],
@@ -310,7 +310,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
     )
     # fmt: off
@@ -356,7 +356,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {"task_id": task_id},
             "projection": ["tms_most_recent_action", "condor_complete_ts"],
@@ -423,7 +423,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
     )
     # fmt: off
@@ -449,7 +449,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {"task_id": task_id},
             "projection": ["tms_most_recent_action", "condor_complete_ts"],
@@ -516,7 +516,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
     )
     # fmt: off
@@ -535,7 +535,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
     )
     # fmt: off
@@ -547,7 +547,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms/taskforce/stop",
+            "/taskforce/tms-action/pending-stopper",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert not taskforce
@@ -557,7 +557,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {"task_id": task_id},
             "projection": ["tms_most_recent_action", "condor_complete_ts"],

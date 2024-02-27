@@ -24,10 +24,10 @@ HANDLERS = [
     rest_handlers.taskforce_handlers.TaskforcesReportHandler,
     rest_handlers.taskforce_handlers.TaskforcesFindHandler,
     #
-    rest_handlers.taskforce_handlers.TaskforcePendingHandler,
-    rest_handlers.taskforce_handlers.TaskforceRunningUUIDHandler,
-    rest_handlers.taskforce_handlers.TaskforceStopHandler,
-    rest_handlers.taskforce_handlers.TaskforceStopUUIDHandler,
+    rest_handlers.taskforce_handlers.TaskforcePendingStarterHandler,
+    rest_handlers.taskforce_handlers.TaskforceCondorSubmitUUIDHandler,
+    rest_handlers.taskforce_handlers.TaskforcePendingStopperHandler,
+    rest_handlers.taskforce_handlers.TaskforcePendingStopperUUIDHandler,
     rest_handlers.taskforce_handlers.TaskforceCondorCompleteUUIDHandler,
     rest_handlers.taskforce_handlers.TaskforceUUIDHandler,
 ]

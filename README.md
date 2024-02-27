@@ -19,14 +19,14 @@ All URIs are relative to *http://localhost*
 *DefaultApi* | [**taskDirectiveTaskIdDelete**](Apis/DefaultApi.md#taskdirectivetaskiddelete) | **DELETE** /task/directive/{task_id} |  |
 *DefaultApi* | [**taskDirectiveTaskIdGet**](Apis/DefaultApi.md#taskdirectivetaskidget) | **GET** /task/directive/{task_id} |  |
 *DefaultApi* | [**taskDirectivesFindPost**](Apis/DefaultApi.md#taskdirectivesfindpost) | **POST** /task/directives/find |  |
-*DefaultApi* | [**tmsTaskforceCondorCompleteTaskforceUuidPost**](Apis/DefaultApi.md#tmstaskforcecondorcompletetaskforceuuidpost) | **POST** /tms/taskforce/condor-complete/{taskforce_uuid} |  |
-*DefaultApi* | [**tmsTaskforcePendingGet**](Apis/DefaultApi.md#tmstaskforcependingget) | **GET** /tms/taskforce/pending |  |
-*DefaultApi* | [**tmsTaskforceRunningTaskforceUuidPost**](Apis/DefaultApi.md#tmstaskforcerunningtaskforceuuidpost) | **POST** /tms/taskforce/running/{taskforce_uuid} |  |
-*DefaultApi* | [**tmsTaskforceStopGet**](Apis/DefaultApi.md#tmstaskforcestopget) | **GET** /tms/taskforce/stop |  |
-*DefaultApi* | [**tmsTaskforceStopTaskforceUuidDelete**](Apis/DefaultApi.md#tmstaskforcestoptaskforceuuiddelete) | **DELETE** /tms/taskforce/stop/{taskforce_uuid} |  |
-*DefaultApi* | [**tmsTaskforceTaskforceUuidGet**](Apis/DefaultApi.md#tmstaskforcetaskforceuuidget) | **GET** /tms/taskforce/{taskforce_uuid} |  |
-*DefaultApi* | [**tmsTaskforcesFindPost**](Apis/DefaultApi.md#tmstaskforcesfindpost) | **POST** /tms/taskforces/find |  |
-*DefaultApi* | [**tmsTaskforcesReportPost**](Apis/DefaultApi.md#tmstaskforcesreportpost) | **POST** /tms/taskforces/report |  |
+*DefaultApi* | [**taskforceTaskforceUuidGet**](Apis/DefaultApi.md#taskforcetaskforceuuidget) | **GET** /taskforce/{taskforce_uuid} |  |
+*DefaultApi* | [**taskforceTmsActionCondorSubmitTaskforceUuidPost**](Apis/DefaultApi.md#taskforcetmsactioncondorsubmittaskforceuuidpost) | **POST** /taskforce/tms-action/condor-submit/{taskforce_uuid} |  |
+*DefaultApi* | [**taskforceTmsActionPendingStarterGet**](Apis/DefaultApi.md#taskforcetmsactionpendingstarterget) | **GET** /taskforce/tms-action/pending-starter |  |
+*DefaultApi* | [**taskforceTmsActionPendingStopperGet**](Apis/DefaultApi.md#taskforcetmsactionpendingstopperget) | **GET** /taskforce/tms-action/pending-stopper |  |
+*DefaultApi* | [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](Apis/DefaultApi.md#taskforcetmsactionpendingstoppertaskforceuuiddelete) | **DELETE** /taskforce/tms-action/pending-stopper/{taskforce_uuid} |  |
+*DefaultApi* | [**taskforceTmsCondorCompleteTaskforceUuidPost**](Apis/DefaultApi.md#taskforcetmscondorcompletetaskforceuuidpost) | **POST** /taskforce/tms/condor-complete/{taskforce_uuid} |  |
+*DefaultApi* | [**taskforcesFindPost**](Apis/DefaultApi.md#taskforcesfindpost) | **POST** /taskforces/find |  |
+*DefaultApi* | [**taskforcesTmsReportPost**](Apis/DefaultApi.md#taskforcestmsreportpost) | **POST** /taskforces/tms/report |  |
 
 
 <a name="documentation-for-models"></a>
@@ -38,15 +38,15 @@ All URIs are relative to *http://localhost*
  - [TaskforceObject_cluster_id](./Models/TaskforceObject_cluster_id.md)
  - [TaskforceObject_submit_dict_value](./Models/TaskforceObject_submit_dict_value.md)
  - [TaskforceUUIDObject](./Models/TaskforceUUIDObject.md)
+ - [_schema_openapi_get_400_response](./Models/_schema_openapi_get_400_response.md)
  - [_task_directive__task_id__delete_200_response](./Models/_task_directive__task_id__delete_200_response.md)
  - [_task_directives_find_post_200_response](./Models/_task_directives_find_post_200_response.md)
- - [_tms_taskforce_condor_complete__taskforce_uuid__post_request](./Models/_tms_taskforce_condor_complete__taskforce_uuid__post_request.md)
- - [_tms_taskforce_pending_get_200_response](./Models/_tms_taskforce_pending_get_200_response.md)
- - [_tms_taskforce_pending_get_400_response](./Models/_tms_taskforce_pending_get_400_response.md)
- - [_tms_taskforces_find_post_200_response](./Models/_tms_taskforces_find_post_200_response.md)
- - [_tms_taskforces_report_post_200_response](./Models/_tms_taskforces_report_post_200_response.md)
- - [_tms_taskforces_report_post_207_response](./Models/_tms_taskforces_report_post_207_response.md)
- - [_tms_taskforces_report_post_request](./Models/_tms_taskforces_report_post_request.md)
+ - [_taskforce_tms_action_pending_starter_get_200_response](./Models/_taskforce_tms_action_pending_starter_get_200_response.md)
+ - [_taskforce_tms_condor_complete__taskforce_uuid__post_request](./Models/_taskforce_tms_condor_complete__taskforce_uuid__post_request.md)
+ - [_taskforces_find_post_200_response](./Models/_taskforces_find_post_200_response.md)
+ - [_taskforces_tms_report_post_200_response](./Models/_taskforces_tms_report_post_200_response.md)
+ - [_taskforces_tms_report_post_207_response](./Models/_taskforces_tms_report_post_207_response.md)
+ - [_taskforces_tms_report_post_request](./Models/_taskforces_tms_report_post_request.md)
 
 
 <a name="documentation-for-authorization"></a>

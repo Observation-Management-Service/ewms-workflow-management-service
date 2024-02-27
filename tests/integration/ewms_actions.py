@@ -10,7 +10,6 @@ from pathlib import Path
 import openapi_core
 from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
-
 from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
@@ -82,7 +81,7 @@ def user_requests_new_task(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {
                 "task_id": task_id,
@@ -115,7 +114,7 @@ def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            "/tms/taskforce/pending",
+            "/taskforce/tms-action/pending-starter",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -125,7 +124,7 @@ def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            f"/tms/taskforce/{taskforce_uuid}",
+            f"/taskforce/{taskforce_uuid}",
         )
         assert resp["tms_most_recent_action"] == "pending-starter"
         # confirm it has started
@@ -134,7 +133,7 @@ def tms_starter(
             rc,
             openapi_spec,
             "POST",
-            f"/tms/taskforce/running/{taskforce_uuid}",
+            f"/taskforce/tms-action/condor-submit/{taskforce_uuid}",
             {
                 "cluster_id": 123456,
                 "n_workers": 5600,
@@ -150,7 +149,7 @@ def tms_starter(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {
                 "task_id": task_id,
@@ -167,7 +166,7 @@ def tms_starter(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {"task_id": task_id},
             "projection": ["collector", "schedd"],
@@ -200,7 +199,7 @@ def tms_watcher_sends_report_update(
             rc,
             openapi_spec,
             "POST",
-            "/tms/taskforces/find",
+            "/taskforces/find",
             {
                 "query": {
                     "collector": loc["collector"],
@@ -216,7 +215,7 @@ def tms_watcher_sends_report_update(
             rc,
             openapi_spec,
             "POST",
-            "/tms/taskforces/report",
+            "/taskforces/tms/report",
             {
                 "top_task_errors_by_taskforce": {
                     taskforce_uuid: top_task_errors_by_locshortname[shortname],
@@ -231,7 +230,7 @@ def tms_watcher_sends_report_update(
                 {
                     "uuid": taskforce_uuid,
                     "status": "failed",
-                    "error": "no running taskforce found with uuid",
+                    "error": "no condor-submitted taskforce found with uuid",
                 }
             ]
         else:
@@ -245,7 +244,7 @@ def tms_watcher_sends_report_update(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {"task_id": task_id},
             "projection": [
@@ -323,7 +322,7 @@ def tms_stopper(
             rc,
             openapi_spec,
             "GET",
-            "/tms/taskforce/stop",
+            "/taskforce/tms-action/pending-stopper",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -332,7 +331,7 @@ def tms_stopper(
             rc,
             openapi_spec,
             "DELETE",
-            f"/tms/taskforce/stop/{taskforce['taskforce_uuid']}",
+            f"/taskforce/tms-action/pending-stopper/{taskforce['taskforce_uuid']}",
         )
 
     #
@@ -343,7 +342,7 @@ def tms_stopper(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {
                 "task_id": task_id,
@@ -370,7 +369,7 @@ def tms_condor_clusters_done(
             rc,
             openapi_spec,
             "POST",
-            "/tms/taskforces/find",
+            "/taskforces/find",
             {
                 "query": {
                     "collector": loc["collector"],
@@ -385,7 +384,7 @@ def tms_condor_clusters_done(
             rc,
             openapi_spec,
             "POST",
-            f"/tms/taskforce/condor-complete/{resp['taskforces'][0]['taskforce_uuid']}",
+            f"/taskforce/tms/condor-complete/{resp['taskforces'][0]['taskforce_uuid']}",
             {
                 "condor_complete_ts": (
                     # NOTE: need a unique timestamp that we don't need to rely on the timing of this test
@@ -403,7 +402,7 @@ def tms_condor_clusters_done(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {
                 "task_id": task_id,
