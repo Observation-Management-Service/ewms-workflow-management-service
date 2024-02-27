@@ -1,9 +1,10 @@
-# _tms_taskforce_condor_complete__taskforce_uuid__post_request
+# _schema_openapi_get_400_response
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **condor\_complete\_ts** | [**oas_any_type_not_mapped**](.md) | the time that the taskforce&#39;s condor cluster was ended/terminated/aborted | [default to null] |
+| **code** | [**oas_any_type_not_mapped**](.md) | http error code | [default to null] |
+| **error** | [**oas_any_type_not_mapped**](.md) | http error reason | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
