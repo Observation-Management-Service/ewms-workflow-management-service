@@ -134,7 +134,7 @@ def tms_starter(
             rc,
             openapi_spec,
             "POST",
-            f"/tms/taskforce/running/{taskforce_uuid}",
+            f"/taskforce/tms-action/condor-submit/{taskforce_uuid}",
             {
                 "cluster_id": 123456,
                 "n_workers": 5600,

@@ -1061,7 +1061,7 @@
                 }
             }
         },
-        "/tms/taskforce/running/{taskforce_uuid}": {
+        "/taskforce/tms-action/condor-submit/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"

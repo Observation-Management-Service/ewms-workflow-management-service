@@ -61,7 +61,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     collector=config.KNOWN_CLUSTERS[location]["collector"],
                     schedd=config.KNOWN_CLUSTERS[location]["schedd"],
                     #
-                    # set ONCE by tms via /tms/taskforce/running/<id>
+                    # set ONCE by tms via /taskforce/tms-action/condor-submit/<id>
                     cluster_id=None,
                     n_workers=None,
                     submit_dict={},

@@ -155,7 +155,7 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a running taskforce."""
 
-    ROUTE = r"/tms/taskforce/running/(?P<taskforce_uuid>\w+)$"
+    ROUTE = r"/taskforce/tms-action/condor-submit/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
