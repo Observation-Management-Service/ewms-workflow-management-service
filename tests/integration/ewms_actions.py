@@ -115,7 +115,7 @@ def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            "/tms/taskforce/pending",
+            "/taskforce/tms-action/pending",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce

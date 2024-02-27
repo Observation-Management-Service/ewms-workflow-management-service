@@ -204,7 +204,7 @@
         }
     },
     "paths": {
-        "/tms/taskforce/pending": {
+        "/taskforce/tms-action/pending": {
             "parameters": [],
             "get": {
                 "parameters": [
