@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.4 (2024-02-27)
+
+### Other
+
+* Improve Route Naming ([#5](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/5)) ([`ac822bc`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/ac822bc489a3915c31c7db99aeee1e1f72c918b6))
+
 ## v0.0.3 (2024-02-26)
 
 ### Other
