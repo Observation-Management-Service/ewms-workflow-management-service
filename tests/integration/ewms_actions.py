@@ -216,7 +216,7 @@ def tms_watcher_sends_report_update(
             rc,
             openapi_spec,
             "POST",
-            "/tms/taskforces/report",
+            "/taskforces/tms/report",
             {
                 "top_task_errors_by_taskforce": {
                     taskforce_uuid: top_task_errors_by_locshortname[shortname],

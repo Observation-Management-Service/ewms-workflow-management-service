@@ -396,7 +396,7 @@
                 }
             }
         },
-        "/tms/taskforces/report": {
+        "/taskforces/tms/report": {
             "parameters": [],
             "post": {
                 "requestBody": {

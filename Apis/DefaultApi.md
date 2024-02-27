@@ -17,7 +17,7 @@ All URIs are relative to *http://localhost*
 | [**tmsTaskforceStopTaskforceUuidDelete**](DefaultApi.md#tmsTaskforceStopTaskforceUuidDelete) | **DELETE** /tms/taskforce/stop/{taskforce_uuid} |  |
 | [**tmsTaskforceTaskforceUuidGet**](DefaultApi.md#tmsTaskforceTaskforceUuidGet) | **GET** /tms/taskforce/{taskforce_uuid} |  |
 | [**tmsTaskforcesFindPost**](DefaultApi.md#tmsTaskforcesFindPost) | **POST** /tms/taskforces/find |  |
-| [**tmsTaskforcesReportPost**](DefaultApi.md#tmsTaskforcesReportPost) | **POST** /tms/taskforces/report |  |
+| [**tmsTaskforcesReportPost**](DefaultApi.md#tmsTaskforcesReportPost) | **POST** /taskforces/tms/report |  |
 
 
 <a name="rootGet"></a>
