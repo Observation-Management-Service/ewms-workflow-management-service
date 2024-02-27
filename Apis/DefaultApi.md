@@ -15,7 +15,7 @@ All URIs are relative to *http://localhost*
 | [**tmsTaskforceRunningTaskforceUuidPost**](DefaultApi.md#tmsTaskforceRunningTaskforceUuidPost) | **POST** /taskforce/tms-action/condor-submit/{taskforce_uuid} |  |
 | [**tmsTaskforceStopGet**](DefaultApi.md#tmsTaskforceStopGet) | **GET** /taskforce/tms-action/pending-stopper |  |
 | [**tmsTaskforceStopTaskforceUuidDelete**](DefaultApi.md#tmsTaskforceStopTaskforceUuidDelete) | **DELETE** /taskforce/tms-action/pending-stopper/{taskforce_uuid} |  |
-| [**tmsTaskforceTaskforceUuidGet**](DefaultApi.md#tmsTaskforceTaskforceUuidGet) | **GET** /tms/taskforce/{taskforce_uuid} |  |
+| [**tmsTaskforceTaskforceUuidGet**](DefaultApi.md#tmsTaskforceTaskforceUuidGet) | **GET** /taskforce/{taskforce_uuid} |  |
 | [**tmsTaskforcesFindPost**](DefaultApi.md#tmsTaskforcesFindPost) | **POST** /taskforces/find |  |
 | [**tmsTaskforcesReportPost**](DefaultApi.md#tmsTaskforcesReportPost) | **POST** /taskforces/tms/report |  |
 

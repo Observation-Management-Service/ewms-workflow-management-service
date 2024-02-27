@@ -544,7 +544,7 @@
                 }
             }
         },
-        "/tms/taskforce/{taskforce_uuid}": {
+        "/taskforce/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
@@ -996,7 +996,7 @@
                 }
             }
         },
-        "/tms/taskforces/find": {
+        "/taskforces/find": {
             "parameters": [],
             "post": {
                 "requestBody": {

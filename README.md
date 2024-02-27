@@ -24,7 +24,7 @@ All URIs are relative to *http://localhost*
 *DefaultApi* | [**tmsTaskforceRunningTaskforceUuidPost**](Apis/DefaultApi.md#tmstaskforcerunningtaskforceuuidpost) | **POST** /taskforce/tms-action/condor-submit/{taskforce_uuid} |  |
 *DefaultApi* | [**tmsTaskforceStopGet**](Apis/DefaultApi.md#tmstaskforcestopget) | **GET** /taskforce/tms-action/pending-stopper |  |
 *DefaultApi* | [**tmsTaskforceStopTaskforceUuidDelete**](Apis/DefaultApi.md#tmstaskforcestoptaskforceuuiddelete) | **DELETE** /taskforce/tms-action/pending-stopper/{taskforce_uuid} |  |
-*DefaultApi* | [**tmsTaskforceTaskforceUuidGet**](Apis/DefaultApi.md#tmstaskforcetaskforceuuidget) | **GET** /tms/taskforce/{taskforce_uuid} |  |
+*DefaultApi* | [**tmsTaskforceTaskforceUuidGet**](Apis/DefaultApi.md#tmstaskforcetaskforceuuidget) | **GET** /taskforce/{taskforce_uuid} |  |
 *DefaultApi* | [**tmsTaskforcesFindPost**](Apis/DefaultApi.md#tmstaskforcesfindpost) | **POST** /taskforces/find |  |
 *DefaultApi* | [**tmsTaskforcesReportPost**](Apis/DefaultApi.md#tmstaskforcesreportpost) | **POST** /taskforces/tms/report |  |
 

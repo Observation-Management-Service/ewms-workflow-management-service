@@ -309,7 +309,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
 class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for a taskforce."""
 
-    ROUTE = r"/tms/taskforce/(?P<taskforce_uuid>\w+)$"
+    ROUTE = r"/taskforce/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

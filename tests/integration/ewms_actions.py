@@ -125,7 +125,7 @@ def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            f"/tms/taskforce/{taskforce_uuid}",
+            f"/taskforce/{taskforce_uuid}",
         )
         assert resp["tms_most_recent_action"] == "pending-starter"
         # confirm it has started
