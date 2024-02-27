@@ -10,7 +10,6 @@ from pathlib import Path
 import openapi_core
 from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
-
 from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
@@ -115,7 +114,7 @@ def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending",
+            "/taskforce/tms-action/pending-starter",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
