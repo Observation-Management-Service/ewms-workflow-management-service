@@ -151,6 +151,8 @@
         "schedd",
         "cluster_id",
         "n_workers",
+        "container_config",
+        "condor_config",
         "submit_dict",
         "job_event_log_fpath",
         "condor_complete_ts",
