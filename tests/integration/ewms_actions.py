@@ -82,7 +82,7 @@ def user_requests_new_task(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {
                 "task_id": task_id,
@@ -150,7 +150,7 @@ def tms_starter(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {
                 "task_id": task_id,
@@ -167,7 +167,7 @@ def tms_starter(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {"task_id": task_id},
             "projection": ["collector", "schedd"],
@@ -200,7 +200,7 @@ def tms_watcher_sends_report_update(
             rc,
             openapi_spec,
             "POST",
-            "/tms/taskforces/find",
+            "/taskforces/find",
             {
                 "query": {
                     "collector": loc["collector"],
@@ -245,7 +245,7 @@ def tms_watcher_sends_report_update(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {"task_id": task_id},
             "projection": [
@@ -343,7 +343,7 @@ def tms_stopper(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {
                 "task_id": task_id,
@@ -370,7 +370,7 @@ def tms_condor_clusters_done(
             rc,
             openapi_spec,
             "POST",
-            "/tms/taskforces/find",
+            "/taskforces/find",
             {
                 "query": {
                     "collector": loc["collector"],
@@ -403,7 +403,7 @@ def tms_condor_clusters_done(
         rc,
         openapi_spec,
         "POST",
-        "/tms/taskforces/find",
+        "/taskforces/find",
         {
             "query": {
                 "task_id": task_id,
