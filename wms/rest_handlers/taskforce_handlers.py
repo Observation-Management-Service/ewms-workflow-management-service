@@ -64,7 +64,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                     update,
                 )
             except DocumentNotFoundException:
-                LOGGER.warning(f"no running taskforce found with uuid: {uuid}")
+                LOGGER.warning(f"no condor-submitted taskforce found with uuid: {uuid}")
                 not_founds.append(uuid)
 
         # respond
@@ -76,7 +76,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                     {
                         "uuid": u,
                         "status": "failed",
-                        "error": "no running taskforce found with uuid",
+                        "error": "no condor-submitted taskforce found with uuid",
                     }
                     for u in not_founds
                 ]
@@ -120,7 +120,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a pending taskforce."""
 
     ROUTE = r"/taskforce/tms-action/pending-starter$"
@@ -130,7 +130,7 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def get(self) -> None:
         """Handle GET.
 
-        Get the next taskforce to START, for the given condor location.
+        Get the next taskforce to START for the given condor location.
         """
         try:
             taskforce = await self.taskforces_client.find_one(
@@ -152,8 +152,8 @@ class TaskforcePendingHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions with a running taskforce."""
+class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a condor-submitted taskforce."""
 
     ROUTE = r"/taskforce/tms-action/condor-submit/(?P<taskforce_uuid>\w+)$"
 
@@ -162,8 +162,8 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST.
 
-        Confirm that the taskforce is running and supply condor runtime
-        info.
+        Confirm that the taskforce is condor-submitted and supply condor
+        runtime info.
         """
         try:
             await self.taskforces_client.update_set_one(
@@ -195,8 +195,8 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions with a taskforce designated to be stopped."""
+class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions for the top taskforce designated to be stopped."""
 
     ROUTE = r"/taskforce/tms-action/pending-stopper$"
 
@@ -205,7 +205,7 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def get(self) -> None:
         """Handle GET.
 
-        Get the next taskforce to STOP, for the given condor location.
+        Get the next taskforce to STOP for the given condor location.
         """
         try:
             taskforce = await self.taskforces_client.find_one(
@@ -228,8 +228,8 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions with a stopped taskforce."""
+class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions with a taskforce designated to be stopped."""
 
     ROUTE = r"/taskforce/tms-action/pending-stopper/(?P<taskforce_uuid>\w+)$"
 

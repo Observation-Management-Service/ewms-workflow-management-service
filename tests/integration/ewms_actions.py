@@ -230,7 +230,7 @@ def tms_watcher_sends_report_update(
                 {
                     "uuid": taskforce_uuid,
                     "status": "failed",
-                    "error": "no running taskforce found with uuid",
+                    "error": "no condor-submitted taskforce found with uuid",
                 }
             ]
         else:
