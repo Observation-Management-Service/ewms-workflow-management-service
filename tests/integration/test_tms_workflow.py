@@ -199,7 +199,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms/taskforce/stop",
+            "/taskforce/tms-action/pending-stopper",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -547,7 +547,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms/taskforce/stop",
+            "/taskforce/tms-action/pending-stopper",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert not taskforce

@@ -13,8 +13,8 @@ All URIs are relative to *http://localhost*
 | [**tmsTaskforceCondorCompleteTaskforceUuidPost**](DefaultApi.md#tmsTaskforceCondorCompleteTaskforceUuidPost) | **POST** /tms/taskforce/condor-complete/{taskforce_uuid} |  |
 | [**tmsTaskforcePendingGet**](DefaultApi.md#tmsTaskforcePendingGet) | **GET** /taskforce/tms-action/pending |  |
 | [**tmsTaskforceRunningTaskforceUuidPost**](DefaultApi.md#tmsTaskforceRunningTaskforceUuidPost) | **POST** /taskforce/tms-action/condor-submit/{taskforce_uuid} |  |
-| [**tmsTaskforceStopGet**](DefaultApi.md#tmsTaskforceStopGet) | **GET** /tms/taskforce/stop |  |
-| [**tmsTaskforceStopTaskforceUuidDelete**](DefaultApi.md#tmsTaskforceStopTaskforceUuidDelete) | **DELETE** /tms/taskforce/stop/{taskforce_uuid} |  |
+| [**tmsTaskforceStopGet**](DefaultApi.md#tmsTaskforceStopGet) | **GET** /taskforce/tms-action/pending-stopper |  |
+| [**tmsTaskforceStopTaskforceUuidDelete**](DefaultApi.md#tmsTaskforceStopTaskforceUuidDelete) | **DELETE** /taskforce/tms-action/pending-stopper/{taskforce_uuid} |  |
 | [**tmsTaskforceTaskforceUuidGet**](DefaultApi.md#tmsTaskforceTaskforceUuidGet) | **GET** /tms/taskforce/{taskforce_uuid} |  |
 | [**tmsTaskforcesFindPost**](DefaultApi.md#tmsTaskforcesFindPost) | **POST** /taskforces/find |  |
 | [**tmsTaskforcesReportPost**](DefaultApi.md#tmsTaskforcesReportPost) | **POST** /taskforces/tms/report |  |

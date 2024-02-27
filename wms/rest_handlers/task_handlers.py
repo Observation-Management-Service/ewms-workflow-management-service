@@ -141,7 +141,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     "task_id": task_id,
                     "$and": [
                         # not already aborted
-                        # NOTE - we don't care whether the taskforce has started up (see /tms/taskforce/stop)
+                        # NOTE - we don't care whether the taskforce has started up (see /taskforce/tms-action/pending-stopper)
                         {
                             "tms_most_recent_action": {
                                 "$nin": ["pending-stopper", "condor-rm"]

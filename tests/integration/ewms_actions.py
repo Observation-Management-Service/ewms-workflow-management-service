@@ -323,7 +323,7 @@ def tms_stopper(
             rc,
             openapi_spec,
             "GET",
-            "/tms/taskforce/stop",
+            "/taskforce/tms-action/pending-stopper",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -332,7 +332,7 @@ def tms_stopper(
             rc,
             openapi_spec,
             "DELETE",
-            f"/tms/taskforce/stop/{taskforce['taskforce_uuid']}",
+            f"/taskforce/tms-action/pending-stopper/{taskforce['taskforce_uuid']}",
         )
 
     #

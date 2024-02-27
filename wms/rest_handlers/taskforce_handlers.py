@@ -198,7 +198,7 @@ class TaskforceRunningUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a taskforce designated to be stopped."""
 
-    ROUTE = r"/tms/taskforce/stop$"
+    ROUTE = r"/taskforce/tms-action/pending-stopper$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -231,7 +231,7 @@ class TaskforceStopHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforceStopUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a stopped taskforce."""
 
-    ROUTE = r"/tms/taskforce/stop/(?P<taskforce_uuid>\w+)$"
+    ROUTE = r"/taskforce/tms-action/pending-stopper/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
