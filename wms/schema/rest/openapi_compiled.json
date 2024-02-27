@@ -306,7 +306,7 @@
                 }
             }
         },
-        "taskforce/tms/condor-complete/{taskforce_uuid}": {
+        "/taskforce/tms/condor-complete/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
