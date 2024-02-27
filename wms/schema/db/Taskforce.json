@@ -36,6 +36,61 @@
                 }
             ]
         },
+        "container_config": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "string"
+                },
+                "arguments": {
+                    "type": "string"
+                },
+                "environment": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            }
+                        ]
+                    }
+                },
+                "input_files": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": true
+        },
+        "condor_config": {
+            "type": "object",
+            "properties": {
+                "do_transfer_worker_stdouterr": {
+                    "type": "boolean"
+                },
+                "max_worker_runtime": {
+                    "type": "integer"
+                },
+                "n_cores": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "worker_disk_bytes": {
+                    "type": "integer"
+                },
+                "worker_memory_bytes": {
+                    "type": "integer"
+                }
+            },
+            "additionalProperties": true
+        },
         "submit_dict": {
             "type": "object",
             "additionalProperties": {
