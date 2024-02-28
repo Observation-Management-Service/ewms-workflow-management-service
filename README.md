@@ -41,6 +41,7 @@ All URIs are relative to *http://localhost*
  - [TaskforceUUIDObject](./Models/TaskforceUUIDObject.md)
  - [_schema_openapi_get_400_response](./Models/_schema_openapi_get_400_response.md)
  - [_task_directive__task_id__delete_200_response](./Models/_task_directive__task_id__delete_200_response.md)
+ - [_task_directive_post_request](./Models/_task_directive_post_request.md)
  - [_task_directives_find_post_200_response](./Models/_task_directives_find_post_200_response.md)
  - [_taskforce_tms_action_pending_starter_get_200_response](./Models/_taskforce_tms_action_pending_starter_get_200_response.md)
  - [_taskforce_tms_condor_complete__taskforce_uuid__post_request](./Models/_taskforce_tms_condor_complete__taskforce_uuid__post_request.md)
@@ -48,6 +49,9 @@ All URIs are relative to *http://localhost*
  - [_taskforces_tms_report_post_200_response](./Models/_taskforces_tms_report_post_200_response.md)
  - [_taskforces_tms_report_post_207_response](./Models/_taskforces_tms_report_post_207_response.md)
  - [_taskforces_tms_report_post_request](./Models/_taskforces_tms_report_post_request.md)
+ - [container_config](./Models/container_config.md)
+ - [container_config_environment_value](./Models/container_config_environment_value.md)
+ - [worker_config](./Models/worker_config.md)
 
 
 <a name="documentation-for-authorization"></a>

@@ -581,7 +581,22 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TaskDirectiveObject"
+                                "type": "object",
+                                "properties": {
+                                    "task_directive": {
+                                        "$ref": "#/components/schemas/TaskDirectiveObject"
+                                    },
+                                    "container_config": {
+                                        "$ref": "#/components/schemas/TaskforceObject/properties/container_config"
+                                    },
+                                    "worker_config": {
+                                        "$ref": "#/components/schemas/TaskforceObject/properties/worker_config"
+                                    }
+                                },
+                                "required": [
+                                    "task_directive"
+                                ],
+                                "additionalProperties": false
                             }
                         }
                     }
