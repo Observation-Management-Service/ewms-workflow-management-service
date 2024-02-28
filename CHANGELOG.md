@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.5 (2024-02-28)
+
+### Other
+
+* Add `container_config` and `worker_config` Attrs to Taskforce Objects ([#6](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/6)) ([`5f8ff40`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/5f8ff40483fc587bbeb343437e3b91adee8f374d))
+
 ## v0.0.4 (2024-02-27)
 
 ### Other
