@@ -149,24 +149,10 @@
                                 "type": "integer"
                             },
                             "worker_disk": {
-                                "anyOf": [
-                                    {
-                                        "type": "integer"
-                                    },
-                                    {
-                                        "type": "string"
-                                    }
-                                ]
+                                "type": "string"
                             },
                             "worker_memory": {
-                                "anyOf": [
-                                    {
-                                        "type": "integer"
-                                    },
-                                    {
-                                        "type": "string"
-                                    }
-                                ]
+                                "type": "string"
                             }
                         },
                         "additionalProperties": true
