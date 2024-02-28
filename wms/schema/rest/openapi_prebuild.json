@@ -46,10 +46,14 @@
         },
         "schemas": {
             "TaskDirectiveObject": {
-                "$ref": "../db/TaskDirective.json"
+                "$ref": "../db/TaskDirective.json",
+                "required": [],
+                "additionalProperties": false
             },
             "TaskforceObject": {
-                "$ref": "../db/Taskforce.json"
+                "$ref": "../db/Taskforce.json",
+                "required": [],
+                "additionalProperties": false
             },
             "FindObject": {
                 "type": "object",
