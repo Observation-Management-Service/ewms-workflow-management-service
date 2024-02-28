@@ -85,7 +85,7 @@ async def test_000(rc: RestClient) -> None:
     task_id = ewms_actions.user_requests_new_task(
         rc,
         openapi_spec,
-        list(CONDOR_LOCATIONS.keys()),
+        CONDOR_LOCATIONS,
     )
 
     # TMS STARTS TASKFORCES!
@@ -164,7 +164,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     task_id = ewms_actions.user_requests_new_task(
         rc,
         openapi_spec,
-        list(CONDOR_LOCATIONS.keys()),
+        CONDOR_LOCATIONS,
     )
 
     # ABORT!
@@ -278,7 +278,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     task_id = ewms_actions.user_requests_new_task(
         rc,
         openapi_spec,
-        list(CONDOR_LOCATIONS.keys()),
+        CONDOR_LOCATIONS,
     )
 
     # TMS STARTS TASKFORCES!
@@ -375,7 +375,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
     task_id = ewms_actions.user_requests_new_task(
         rc,
         openapi_spec,
-        list(CONDOR_LOCATIONS.keys()),
+        CONDOR_LOCATIONS,
     )
 
     # TMS STARTS TASKFORCES!
@@ -468,7 +468,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
     task_id = ewms_actions.user_requests_new_task(
         rc,
         openapi_spec,
-        list(CONDOR_LOCATIONS.keys()),
+        CONDOR_LOCATIONS,
     )
 
     # TMS STARTS TASKFORCES!
