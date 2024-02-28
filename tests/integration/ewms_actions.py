@@ -106,7 +106,7 @@ def user_requests_new_task(
     # check collector and schedd were translated correctly
     assert sorted(
         (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
-    ) == sorted((tf["collector"], tf["schedd"]) for tf in condor_locations)
+    ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
 
     assert all(
         tf["tms_most_recent_action"] == "pending-starter" for tf in resp["taskforces"]
