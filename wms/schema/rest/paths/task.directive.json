@@ -7,21 +7,30 @@
                     "schema": {
                         "type": "object",
                         "properties": {
-                            "task_directive": {
-                                "$ref": "#/components/schemas/TaskDirectiveObject"
+                            "cluster_locations": {
+                                "$ref": "#/components/schemas/TaskDirectiveObject/properties/cluster_locations"
+                            },
+                            "task_image": {
+                                "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_image"
+                            },
+                            "task_args": {
+                                "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
+                            },
+                            "worker_config": {
+                                "$ref": "#/components/schemas/TaskforceObject/properties/worker_config"
                             },
                             "environment": {
                                 "$ref": "#/components/schemas/TaskforceObject/properties/container_config/properties/environment"
                             },
                             "input_files": {
                                 "$ref": "#/components/schemas/TaskforceObject/properties/container_config/properties/input_files"
-                            },
-                            "worker_config": {
-                                "$ref": "#/components/schemas/TaskforceObject/properties/worker_config"
                             }
                         },
                         "required": [
-                            "task_directive"
+                            "cluster_locations",
+                            "task_image",
+                            "task_args",
+                            "worker_config"
                         ],
                         "additionalProperties": false
                     }
