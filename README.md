@@ -33,6 +33,11 @@ All URIs are relative to *http://localhost*
 ## Documentation for Models
 
  - [FindObject](./Models/FindObject.md)
+ - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
+ - [TaskforceObject](./Models/TaskforceObject.md)
+ - [TaskforceObject_container_config](./Models/TaskforceObject_container_config.md)
+ - [TaskforceObject_n_workers](./Models/TaskforceObject_n_workers.md)
+ - [TaskforceObject_worker_config](./Models/TaskforceObject_worker_config.md)
  - [TaskforceUUIDObject](./Models/TaskforceUUIDObject.md)
  - [_schema_openapi_get_400_response](./Models/_schema_openapi_get_400_response.md)
  - [_task_directive__task_id__delete_200_response](./Models/_task_directive__task_id__delete_200_response.md)

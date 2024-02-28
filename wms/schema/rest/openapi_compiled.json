@@ -45,8 +45,206 @@
             }
         },
         "schemas": {
-            "TaskDirectiveObject": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"task_id\": {\n            \"type\": \"string\"\n        },\n        \"cluster_locations\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"string\"\n            },\n            \"minItems\": 1\n        },\n        \"task_image\": {\n            \"type\": \"string\"\n        },\n        \"task_args\": {\n            \"type\": \"string\"\n        },\n        \"timestamp\": {\n            \"type\": \"integer\"\n        },\n        \"aborted\": {\n            \"type\": \"boolean\"\n        }\n    },\n    \"required\": [\n        \"task_id\",\n        \"cluster_locations\",\n        \"task_image\",\n        \"task_args\",\n        \"timestamp\",\n        \"aborted\"\n    ],\n    \"additionalProperties\": false\n}\n",
-            "TaskforceObject": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"taskforce_uuid\": {\n            \"type\": \"string\"\n        },\n        \"task_id\": {\n            \"type\": \"string\"\n        },\n        \"timestamp\": {\n            \"type\": \"integer\"\n        },\n        \"collector\": {\n            \"type\": \"string\"\n        },\n        \"schedd\": {\n            \"type\": \"string\"\n        },\n        \"n_workers\": {\n            \"anyOf\": [\n                {\n                    \"type\": \"integer\"\n                },\n                {\n                    \"type\": \"null\"\n                }\n            ]\n        },\n        \"container_config\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"image\": {\n                    \"type\": \"string\"\n                },\n                \"arguments\": {\n                    \"type\": \"string\"\n                },\n                \"environment\": {\n                    \"type\": \"object\",\n                    \"additionalProperties\": {\n                        \"anyOf\": [\n                            {\n                                \"type\": \"string\"\n                            },\n                            {\n                                \"type\": \"integer\"\n                            }\n                        ]\n                    }\n                },\n                \"input_files\": {\n                    \"type\": \"array\",\n                    \"items\": {\n                        \"type\": \"string\"\n                    }\n                }\n            },\n            \"additionalProperties\": true\n        },\n        \"worker_config\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"do_transfer_worker_stdouterr\": {\n                    \"type\": \"boolean\"\n                },\n                \"max_worker_runtime\": {\n                    \"type\": \"integer\"\n                },\n                \"n_cores\": {\n                    \"type\": \"integer\"\n                },\n                \"priority\": {\n                    \"type\": \"integer\"\n                },\n                \"worker_disk_bytes\": {\n                    \"type\": \"integer\"\n                },\n                \"worker_memory_bytes\": {\n                    \"type\": \"integer\"\n                }\n            },\n            \"additionalProperties\": true\n        },\n        \"cluster_id\": {\n            \"anyOf\": [\n                {\n                    \"type\": \"integer\"\n                },\n                {\n                    \"type\": \"null\"\n                }\n            ]\n        },\n        \"submit_dict\": {\n            \"type\": \"object\",\n            \"additionalProperties\": {\n                \"anyOf\": [\n                    {\n                        \"type\": \"string\"\n                    },\n                    {\n                        \"type\": \"integer\"\n                    }\n                ]\n            }\n        },\n        \"job_event_log_fpath\": {\n            \"type\": \"string\"\n        },\n        \"condor_complete_ts\": {\n            \"anyOf\": [\n                {\n                    \"type\": \"integer\"\n                },\n                {\n                    \"type\": \"null\"\n                }\n            ]\n        },\n        \"tms_most_recent_action\": {\n            \"type\": \"string\",\n            \"enum\": [\n                \"pre-tms\",\n                \"pending-starter\",\n                \"condor-submit\",\n                \"pending-stopper\",\n                \"condor-rm\"\n            ]\n        },\n        \"compound_statuses\": {\n            \"type\": \"object\",\n            \"additionalProperties\": {\n                \"type\": \"object\",\n                \"additionalProperties\": {\n                    \"type\": \"integer\"\n                }\n            }\n        },\n        \"top_task_errors\": {\n            \"type\": \"object\",\n            \"additionalProperties\": {\n                \"type\": \"integer\"\n            }\n        }\n    },\n    \"required\": [\n        \"taskforce_uuid\",\n        \"task_id\",\n        \"timestamp\",\n        \"collector\",\n        \"schedd\",\n        \"n_workers\",\n        \"container_config\",\n        \"worker_config\",\n        \"cluster_id\",\n        \"submit_dict\",\n        \"job_event_log_fpath\",\n        \"condor_complete_ts\",\n        \"tms_most_recent_action\",\n        \"compound_statuses\",\n        \"top_task_errors\"\n    ],\n    \"additionalProperties\": false\n}\n",
+            "TaskDirectiveObject": {
+                "type": "object",
+                "properties": {
+                    "task_id": {
+                        "type": "string"
+                    },
+                    "cluster_locations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    },
+                    "task_image": {
+                        "type": "string"
+                    },
+                    "task_args": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "integer"
+                    },
+                    "aborted": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "task_id",
+                    "cluster_locations",
+                    "task_image",
+                    "task_args",
+                    "timestamp",
+                    "aborted"
+                ],
+                "additionalProperties": false
+            },
+            "TaskforceObject": {
+                "type": "object",
+                "properties": {
+                    "taskforce_uuid": {
+                        "type": "string"
+                    },
+                    "task_id": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "integer"
+                    },
+                    "collector": {
+                        "type": "string"
+                    },
+                    "schedd": {
+                        "type": "string"
+                    },
+                    "n_workers": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "container_config": {
+                        "type": "object",
+                        "properties": {
+                            "image": {
+                                "type": "string"
+                            },
+                            "arguments": {
+                                "type": "string"
+                            },
+                            "environment": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ]
+                                }
+                            },
+                            "input_files": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "additionalProperties": true
+                    },
+                    "worker_config": {
+                        "type": "object",
+                        "properties": {
+                            "do_transfer_worker_stdouterr": {
+                                "type": "boolean"
+                            },
+                            "max_worker_runtime": {
+                                "type": "integer"
+                            },
+                            "n_cores": {
+                                "type": "integer"
+                            },
+                            "priority": {
+                                "type": "integer"
+                            },
+                            "worker_disk_bytes": {
+                                "type": "integer"
+                            },
+                            "worker_memory_bytes": {
+                                "type": "integer"
+                            }
+                        },
+                        "additionalProperties": true
+                    },
+                    "cluster_id": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "submit_dict": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        }
+                    },
+                    "job_event_log_fpath": {
+                        "type": "string"
+                    },
+                    "condor_complete_ts": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "tms_most_recent_action": {
+                        "type": "string",
+                        "enum": [
+                            "pre-tms",
+                            "pending-starter",
+                            "condor-submit",
+                            "pending-stopper",
+                            "condor-rm"
+                        ]
+                    },
+                    "compound_statuses": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "top_task_errors": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "required": [
+                    "taskforce_uuid",
+                    "task_id",
+                    "timestamp",
+                    "collector",
+                    "schedd",
+                    "n_workers",
+                    "container_config",
+                    "worker_config",
+                    "cluster_id",
+                    "submit_dict",
+                    "job_event_log_fpath",
+                    "condor_complete_ts",
+                    "tms_most_recent_action",
+                    "compound_statuses",
+                    "top_task_errors"
+                ],
+                "additionalProperties": false
+            },
             "FindObject": {
                 "type": "object",
                 "properties": {

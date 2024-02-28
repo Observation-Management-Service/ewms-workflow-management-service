@@ -64,7 +64,7 @@ This endpoint does not need any parameter.
 
 <a name="taskDirectivePost"></a>
 # **taskDirectivePost**
-> TaskDirectiveObject taskDirectivePost(body)
+> TaskDirectiveObject taskDirectivePost(TaskDirectiveObject)
 
 
 
@@ -72,7 +72,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **body** | **TaskDirectiveObject**|  | [optional] |
+| **TaskDirectiveObject** | [**TaskDirectiveObject**](../Models/TaskDirectiveObject.md)|  | [optional] |
 
 ### Return type
 
@@ -184,7 +184,7 @@ This endpoint does not need any parameter.
 
 <a name="taskforceTmsActionCondorSubmitTaskforceUuidPost"></a>
 # **taskforceTmsActionCondorSubmitTaskforceUuidPost**
-> TaskforceUUIDObject taskforceTmsActionCondorSubmitTaskforceUuidPost(taskforce\_uuid, body)
+> TaskforceUUIDObject taskforceTmsActionCondorSubmitTaskforceUuidPost(taskforce\_uuid, TaskforceObject)
 
 
 
@@ -193,7 +193,7 @@ This endpoint does not need any parameter.
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **taskforce\_uuid** | **String**| the taskforce object&#39;s uuid | [default to null] |
-| **body** | **TaskforceObject**|  | [optional] |
+| **TaskforceObject** | [**TaskforceObject**](../Models/TaskforceObject.md)|  | [optional] |
 
 ### Return type
 
