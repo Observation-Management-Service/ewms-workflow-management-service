@@ -158,7 +158,8 @@ jobs:
         run: |
           set -ex
 
-          cd wms/$( dirname $REST_OPENAPI_SPEC_FPATH )
+          cd wms/schema  # bind container relative to here so to pull in external file "$refs"
+
           export TMPDIR=$(mktemp -d -p .)  # temp dir here (covered by .gitignore)
           echo $TMPDIR
 
@@ -167,7 +168,7 @@ jobs:
               -v $PWD:/local \
               openapitools/openapi-generator-cli generate \
               --skip-validate-spec \
-              -i /local/$( basename $REST_OPENAPI_SPEC_FPATH ) \
+              -i /local/rest/$( basename $REST_OPENAPI_SPEC_FPATH ) \
               -g markdown \
               -o /local/$TMPDIR
           ls -l $TMPDIR
