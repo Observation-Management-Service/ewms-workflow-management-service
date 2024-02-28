@@ -33,7 +33,7 @@ class EnvConfig:
     REST_HOST: str  # "localhost"
     REST_PORT: int  # 8080
 
-    AUTH_AUDIENCE: str = "skydriver"
+    AUTH_AUDIENCE: str = ""
     AUTH_OPENID_URL: str = ""
     MONGODB_AUTH_PASS: str = ""  # empty means no authentication required
     MONGODB_AUTH_USER: str = ""  # None means required to specify
