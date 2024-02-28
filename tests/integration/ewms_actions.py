@@ -103,7 +103,7 @@ def user_requests_new_task(
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
-    # check collector and schedd were translated correctly
+    # check locations were translated correctly to collector and schedd
     assert sorted(
         (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
     ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
