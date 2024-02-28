@@ -40,16 +40,6 @@ def main(src: str, dst: str) -> None:
                 print(fpath, path_pattern)
                 spec["paths"][path_pattern] = json.load(f)  # type: ignore[index]
 
-    # build components.schemas entries
-    # for key, val in copy.deepcopy(spec["components"]["schemas"]).items():
-    #     if isinstance(val, str):
-    #         fpath = pathlib.Path(val)
-    #         with open(fpath) as f:
-    #             print(fpath)
-    #             spec["components"]["schemas"][key] = json.load(f)
-    #             # *** OVERRIDE 'required' VALUE ***
-    #             spec["components"]["schemas"][key]["required"] = []
-
     # replace 'GHA_CI_INGEST_FILE_CONTENTS' with the targeted file's contents
     # ex: GHA_CI_INGEST_FILE_CONTENTS ../db/TaskDirective.json
     def ingest_file(d, k):
