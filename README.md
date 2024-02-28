@@ -36,6 +36,7 @@ All URIs are relative to *http://localhost*
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
  - [TaskforceObject_container_config](./Models/TaskforceObject_container_config.md)
+ - [TaskforceObject_container_config_environment_value](./Models/TaskforceObject_container_config_environment_value.md)
  - [TaskforceObject_n_workers](./Models/TaskforceObject_n_workers.md)
  - [TaskforceObject_worker_config](./Models/TaskforceObject_worker_config.md)
  - [TaskforceUUIDObject](./Models/TaskforceUUIDObject.md)
@@ -49,8 +50,6 @@ All URIs are relative to *http://localhost*
  - [_taskforces_tms_report_post_200_response](./Models/_taskforces_tms_report_post_200_response.md)
  - [_taskforces_tms_report_post_207_response](./Models/_taskforces_tms_report_post_207_response.md)
  - [_taskforces_tms_report_post_request](./Models/_taskforces_tms_report_post_request.md)
- - [container_config](./Models/container_config.md)
- - [container_config_environment_value](./Models/container_config_environment_value.md)
  - [worker_config](./Models/worker_config.md)
 
 
