@@ -16,6 +16,9 @@ from wipac_dev_tools import from_environment_as_dataclass, logging_tools
 
 LOGGER = logging.getLogger(__name__)
 
+DB_JSONSCHEMA_DIR = Path(__file__).parent / "schema/db"
+REST_OPENAPI_SPEC_FPATH = Path(__file__).parent / "schema/rest/openapi_compiled.json"
+
 
 # --------------------------------------------------------------------------------------
 
@@ -29,9 +32,6 @@ class EnvConfig:
     MONGODB_PORT: int  # 27017
     REST_HOST: str  # "localhost"
     REST_PORT: int  # 8080
-
-    DB_JSONSCHEMA_DIR: Path  # absolute or relative to pkg root dir
-    REST_OPENAPI_SPEC_FPATH: Path  # absolute or relative to pkg root dir
 
     AUTH_AUDIENCE: str = "skydriver"
     AUTH_OPENID_URL: str = ""
@@ -47,20 +47,6 @@ class EnvConfig:
     BACKLOG_RUNNER_SHORT_DELAY: int = 15
     BACKLOG_RUNNER_DELAY: int = 5 * 60
     BACKLOG_PENDING_ENTRY_TTL_REVIVE: int = 5 * 60  # entry is revived after N secs
-
-    def __post_init__(self) -> None:
-        if not self.DB_JSONSCHEMA_DIR.is_absolute():
-            object.__setattr__(
-                self,
-                "DB_JSONSCHEMA_DIR",
-                Path(__file__).parent / self.DB_JSONSCHEMA_DIR,
-            )
-        if not self.REST_OPENAPI_SPEC_FPATH.is_absolute():
-            object.__setattr__(
-                self,
-                "REST_OPENAPI_SPEC_FPATH",
-                Path(__file__).parent / self.REST_OPENAPI_SPEC_FPATH,
-            )
 
 
 ENV = from_environment_as_dataclass(EnvConfig)
@@ -80,7 +66,7 @@ def _get_jsonschema_specs(dpath: Path) -> dict[str, dict[str, Any]]:
 
 
 # keyed by the mongo collection name
-MONGO_COLLECTION_JSONSCHEMA_SPECS = _get_jsonschema_specs(ENV.DB_JSONSCHEMA_DIR)
+MONGO_COLLECTION_JSONSCHEMA_SPECS = _get_jsonschema_specs(DB_JSONSCHEMA_DIR)
 
 
 # --------------------------------------------------------------------------------------
@@ -93,7 +79,7 @@ def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
     return openapi_core.OpenAPI(SchemaPath.from_file_path(str(fpath)))
 
 
-REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(ENV.REST_OPENAPI_SPEC_FPATH)
+REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(REST_OPENAPI_SPEC_FPATH)
 
 
 # --------------------------------------------------------------------------------------
