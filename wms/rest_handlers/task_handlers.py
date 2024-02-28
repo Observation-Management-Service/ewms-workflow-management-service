@@ -5,7 +5,6 @@ import logging
 import time
 import uuid
 
-import humanfriendly
 from tornado import web
 
 from .. import config
