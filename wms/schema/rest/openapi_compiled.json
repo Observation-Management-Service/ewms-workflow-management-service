@@ -71,14 +71,7 @@
                         "type": "boolean"
                     }
                 },
-                "required": [
-                    "task_id",
-                    "cluster_locations",
-                    "task_image",
-                    "task_args",
-                    "timestamp",
-                    "aborted"
-                ],
+                "required": [],
                 "additionalProperties": false
             },
             "TaskforceObject": {
@@ -226,23 +219,7 @@
                         }
                     }
                 },
-                "required": [
-                    "taskforce_uuid",
-                    "task_id",
-                    "timestamp",
-                    "collector",
-                    "schedd",
-                    "n_workers",
-                    "container_config",
-                    "worker_config",
-                    "cluster_id",
-                    "submit_dict",
-                    "job_event_log_fpath",
-                    "condor_complete_ts",
-                    "tms_most_recent_action",
-                    "compound_statuses",
-                    "top_task_errors"
-                ],
+                "required": [],
                 "additionalProperties": false
             },
             "FindObject": {
