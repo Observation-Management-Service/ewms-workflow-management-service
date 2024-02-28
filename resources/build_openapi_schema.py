@@ -1,11 +1,12 @@
 """build_openapi_schema.py."""
 
 
-import copy
 import json
 import logging
 import pathlib
 import sys
+
+from set_all_nested import set_all_nested
 
 LOGGER = logging.getLogger(__name__)
 
@@ -22,8 +23,11 @@ def main(src: str, dst: str) -> None:
         spec = json.load(f)
 
     # build paths entries
-    if isinstance(spec["paths"], str):
-        paths_dir = pathlib.Path(spec["paths"])
+    if isinstance(spec["paths"], str) and spec["paths"].startswith(
+        "GHA_CI_MAKE_PATHS_FROM_DIR"
+    ):
+        # ex: GHA_CI_MAKE_PATHS_FROM_DIR ./paths/
+        paths_dir = pathlib.Path(spec["paths"].split()[1])
         spec["paths"] = {}  # *** OVERRIDE ANYTHING THAT WAS HERE ***
 
         # assemble
@@ -36,15 +40,25 @@ def main(src: str, dst: str) -> None:
                 print(fpath, path_pattern)
                 spec["paths"][path_pattern] = json.load(f)  # type: ignore[index]
 
-    # build components.schemas entries
-    for key, val in copy.deepcopy(spec["components"]["schemas"]).items():
-        if isinstance(val, str):
-            fpath = pathlib.Path(val)
-            with open(fpath) as f:
-                print(fpath)
-                spec["components"]["schemas"][key] = json.load(f)
-                # *** OVERRIDE 'required' VALUE ***
-                spec["components"]["schemas"][key]["required"] = []
+    # replace 'GHA_CI_INGEST_FILE_CONTENTS' with the targeted file's contents
+    # ex: GHA_CI_INGEST_FILE_CONTENTS ../db/TaskDirective.json
+    def ingest_file(d, k):
+        parts = d[k].split()
+        fpath = parts[1]
+        options = parts[2:]
+        with open(fpath) as f:
+            d[k] = json.load(f)
+            # grab options
+            for opt in options:
+                okey, oval = opt.split("=")
+                d[k][okey] = json.loads(oval)
+
+    set_all_nested(
+        spec,
+        ingest_file,
+        lambda d, k: isinstance(d[k], str)
+        and d[k].startswith("GHA_CI_INGEST_FILE_CONTENTS"),
+    )
 
     # format neatly
     with open(dst, "w") as f:

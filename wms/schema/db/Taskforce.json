@@ -16,7 +16,7 @@
         "schedd": {
             "type": "string"
         },
-        "cluster_id": {
+        "n_workers": {
             "anyOf": [
                 {
                     "type": "integer"
@@ -26,7 +26,62 @@
                 }
             ]
         },
-        "n_workers": {
+        "container_config": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "string"
+                },
+                "arguments": {
+                    "type": "string"
+                },
+                "environment": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            }
+                        ]
+                    }
+                },
+                "input_files": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": true
+        },
+        "worker_config": {
+            "type": "object",
+            "properties": {
+                "do_transfer_worker_stdouterr": {
+                    "type": "boolean"
+                },
+                "max_worker_runtime": {
+                    "type": "integer"
+                },
+                "n_cores": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "worker_disk": {
+                    "type": "string"
+                },
+                "worker_memory": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true
+        },
+        "cluster_id": {
             "anyOf": [
                 {
                     "type": "integer"
@@ -94,8 +149,10 @@
         "timestamp",
         "collector",
         "schedd",
-        "cluster_id",
         "n_workers",
+        "container_config",
+        "worker_config",
+        "cluster_id",
         "submit_dict",
         "job_event_log_fpath",
         "condor_complete_ts",

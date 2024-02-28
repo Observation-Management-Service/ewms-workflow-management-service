@@ -5,7 +5,34 @@
             "content": {
                 "application/json": {
                     "schema": {
-                        "$ref": "#/components/schemas/TaskDirectiveObject"
+                        "type": "object",
+                        "properties": {
+                            "cluster_locations": {
+                                "$ref": "#/components/schemas/TaskDirectiveObject/properties/cluster_locations"
+                            },
+                            "task_image": {
+                                "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_image"
+                            },
+                            "task_args": {
+                                "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
+                            },
+                            "worker_config": {
+                                "$ref": "#/components/schemas/TaskforceObject/properties/worker_config"
+                            },
+                            "environment": {
+                                "$ref": "#/components/schemas/TaskforceObject/properties/container_config/properties/environment"
+                            },
+                            "input_files": {
+                                "$ref": "#/components/schemas/TaskforceObject/properties/container_config/properties/input_files"
+                            }
+                        },
+                        "required": [
+                            "cluster_locations",
+                            "task_image",
+                            "task_args",
+                            "worker_config"
+                        ],
+                        "additionalProperties": false
                     }
                 }
             }

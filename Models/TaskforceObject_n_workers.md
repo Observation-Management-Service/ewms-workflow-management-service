@@ -1,4 +1,4 @@
-# TaskforceObject_cluster_id
+# TaskforceObject_n_workers
 ## Properties
 
 | Name | Type | Description | Notes |

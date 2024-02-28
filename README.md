@@ -35,11 +35,14 @@ All URIs are relative to *http://localhost*
  - [FindObject](./Models/FindObject.md)
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
- - [TaskforceObject_cluster_id](./Models/TaskforceObject_cluster_id.md)
- - [TaskforceObject_submit_dict_value](./Models/TaskforceObject_submit_dict_value.md)
+ - [TaskforceObject_container_config](./Models/TaskforceObject_container_config.md)
+ - [TaskforceObject_container_config_environment_value](./Models/TaskforceObject_container_config_environment_value.md)
+ - [TaskforceObject_n_workers](./Models/TaskforceObject_n_workers.md)
+ - [TaskforceObject_worker_config](./Models/TaskforceObject_worker_config.md)
  - [TaskforceUUIDObject](./Models/TaskforceUUIDObject.md)
  - [_schema_openapi_get_400_response](./Models/_schema_openapi_get_400_response.md)
  - [_task_directive__task_id__delete_200_response](./Models/_task_directive__task_id__delete_200_response.md)
+ - [_task_directive_post_request](./Models/_task_directive_post_request.md)
  - [_task_directives_find_post_200_response](./Models/_task_directives_find_post_200_response.md)
  - [_taskforce_tms_action_pending_starter_get_200_response](./Models/_taskforce_tms_action_pending_starter_get_200_response.md)
  - [_taskforce_tms_condor_complete__taskforce_uuid__post_request](./Models/_taskforce_tms_condor_complete__taskforce_uuid__post_request.md)
@@ -47,6 +50,7 @@ All URIs are relative to *http://localhost*
  - [_taskforces_tms_report_post_200_response](./Models/_taskforces_tms_report_post_200_response.md)
  - [_taskforces_tms_report_post_207_response](./Models/_taskforces_tms_report_post_207_response.md)
  - [_taskforces_tms_report_post_request](./Models/_taskforces_tms_report_post_request.md)
+ - [worker_config](./Models/worker_config.md)
 
 
 <a name="documentation-for-authorization"></a>

@@ -38,8 +38,21 @@ def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
 def user_requests_new_task(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
-    condor_lnames: list[str],
+    condor_locations: dict,
 ) -> str:
+    task_image = "icecube/earthpilot"
+    task_args = "aaa bbb --ccc 123"
+    worker_config = {
+        "do_transfer_worker_stdouterr": False,
+        "max_worker_runtime": 60 * 60 * 1,
+        "n_cores": 4,
+        "priority": 10,
+        "worker_disk": "1G",
+        "worker_memory": "512M",
+    }
+    environment = {}
+    input_files = []
+
     #
     # USER...
     # requests new task
@@ -50,9 +63,12 @@ def user_requests_new_task(
         "POST",
         "/task/directive",
         {
-            "task_image": "icecube/earthpilot",
-            "task_args": "aaa bbb --ccc 123",
-            "cluster_locations": condor_lnames,
+            "task_image": task_image,
+            "task_args": task_args,
+            "cluster_locations": list(condor_locations.keys()),
+            "worker_config": worker_config,
+            # "environment": environment,  # empty
+            # "input_files": input_files,  # empty
         },
     )
     task_id = task_directive["task_id"]
@@ -86,12 +102,28 @@ def user_requests_new_task(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["tms_most_recent_action"],
         },
     )
-    assert len(resp["taskforces"]) == len(condor_lnames)
+    assert len(resp["taskforces"]) == len(condor_locations)
+    # check locations were translated correctly to collector+schedd
+    assert sorted(
+        (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
+    ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
+
     assert all(
         tf["tms_most_recent_action"] == "pending-starter" for tf in resp["taskforces"]
+    )
+
+    assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
+    assert all(
+        tf["container_config"]
+        == dict(
+            image=task_image,
+            arguments=task_args,
+            environment=environment,
+            input_files=input_files,
+        )
+        for tf in resp["taskforces"]
     )
 
     return task_id  # type: ignore[no-any-return]

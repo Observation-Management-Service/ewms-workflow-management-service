@@ -34,7 +34,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             task_id=uuid.uuid4().hex,
             cluster_locations=self.get_argument("cluster_locations"),
             task_image=self.get_argument("task_image"),
-            task_args=self.get_argument("task_args", ""),
+            task_args=self.get_argument("task_args"),
             timestamp=int(time.time()),
             aborted=False,
         )
@@ -61,9 +61,19 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     collector=config.KNOWN_CLUSTERS[location]["collector"],
                     schedd=config.KNOWN_CLUSTERS[location]["schedd"],
                     #
+                    n_workers=None,  # TODO
+                    #
+                    container_config=dict(
+                        image=task_directive["task_image"],
+                        arguments=task_directive["task_args"],
+                        environment=self.get_argument("environment", {}),
+                        # TODO -- insert queue id(s) into environment?
+                        input_files=self.get_argument("input_files", []),
+                    ),
+                    worker_config=self.get_argument("worker_config"),
+                    #
                     # set ONCE by tms via /taskforce/tms-action/condor-submit/<id>
                     cluster_id=None,
-                    n_workers=None,
                     submit_dict={},
                     job_event_log_fpath="",
                     # set ONCE by tms's watcher

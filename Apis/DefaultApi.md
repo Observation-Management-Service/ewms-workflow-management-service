@@ -64,7 +64,7 @@ This endpoint does not need any parameter.
 
 <a name="taskDirectivePost"></a>
 # **taskDirectivePost**
-> TaskDirectiveObject taskDirectivePost(TaskDirectiveObject)
+> TaskDirectiveObject taskDirectivePost(\_task\_directive\_post\_request)
 
 
 
@@ -72,7 +72,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **TaskDirectiveObject** | [**TaskDirectiveObject**](../Models/TaskDirectiveObject.md)|  | [optional] |
+| **\_task\_directive\_post\_request** | [**_task_directive_post_request**](../Models/_task_directive_post_request.md)|  | [optional] |
 
 ### Return type
 
