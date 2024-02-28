@@ -72,7 +72,7 @@
                 "priority": {
                     "type": "integer"
                 },
-                "worker_disk_bytes": {
+                "worker_disk": {
                     "anyOf": [
                         {
                             "type": "integer"
@@ -82,7 +82,7 @@
                         }
                     ]
                 },
-                "worker_memory_bytes": {
+                "worker_memory": {
                     "anyOf": [
                         {
                             "type": "integer"

@@ -1,4 +1,4 @@
-# worker_config_worker_disk_bytes
+# worker_config_worker_disk
 ## Properties
 
 | Name | Type | Description | Notes |

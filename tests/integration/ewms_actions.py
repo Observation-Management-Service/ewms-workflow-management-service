@@ -10,7 +10,6 @@ from pathlib import Path
 import openapi_core
 from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
-
 from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
@@ -48,8 +47,8 @@ def user_requests_new_task(
         "max_worker_runtime": 60 * 60 * 1,
         "n_cores": 4,
         "priority": 10,
-        "worker_disk_bytes": "1G",
-        "worker_memory_bytes": "512M",
+        "worker_disk": "1G",
+        "worker_memory": "512M",
     }
     environment = {}
     input_files = []
