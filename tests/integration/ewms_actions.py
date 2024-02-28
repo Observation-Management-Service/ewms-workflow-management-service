@@ -51,6 +51,8 @@ def user_requests_new_task(
         "worker_disk_bytes": "1G",
         "worker_memory_bytes": "512M",
     }
+    environment = {}
+    input_files = []
 
     #
     # USER...
@@ -66,6 +68,8 @@ def user_requests_new_task(
             "task_args": task_args,
             "cluster_locations": list(condor_locations.keys()),
             "worker_config": worker_config,
+            # "environment": environment,  # empty
+            # "input_files": input_files,  # empty
         },
     )
     task_id = task_directive["task_id"]
@@ -118,8 +122,8 @@ def user_requests_new_task(
         == dict(
             image=task_image,
             arguments=task_args,
-            environment={},
-            input_files=[],
+            environment=environment,
+            input_files=input_files,
         )
         for tf in resp["taskforces"]
     )

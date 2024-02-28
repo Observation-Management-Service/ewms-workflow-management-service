@@ -73,10 +73,24 @@
                     "type": "integer"
                 },
                 "worker_disk_bytes": {
-                    "type": "integer"
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
                 },
                 "worker_memory_bytes": {
-                    "type": "integer"
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
                 }
             },
             "additionalProperties": true
