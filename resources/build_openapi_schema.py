@@ -23,8 +23,11 @@ def main(src: str, dst: str) -> None:
         spec = json.load(f)
 
     # build paths entries
-    if isinstance(spec["paths"], str):
-        paths_dir = pathlib.Path(spec["paths"])
+    if isinstance(spec["paths"], str) and spec["paths"].startswith(
+        "GHA_CI_MAKE_PATHS_FROM_DIR"
+    ):
+        # ex: GHA_CI_MAKE_PATHS_FROM_DIR ./paths/
+        paths_dir = pathlib.Path(spec["paths"].split()[1])
         spec["paths"] = {}  # *** OVERRIDE ANYTHING THAT WAS HERE ***
 
         # assemble
@@ -47,7 +50,8 @@ def main(src: str, dst: str) -> None:
     #             # *** OVERRIDE 'required' VALUE ***
     #             spec["components"]["schemas"][key]["required"] = []
 
-    # replace 'GHA_CI_GETFILE' with the targeted file's contents
+    # replace 'GHA_CI_INGEST_FILE_CONTENTS' with the targeted file's contents
+    # ex: GHA_CI_INGEST_FILE_CONTENTS ../db/TaskDirective.json
     def ingest_file(d, k):
         with open(d[k].split()[1]) as f:
             d[k] = f.read()
@@ -55,7 +59,8 @@ def main(src: str, dst: str) -> None:
     set_all_nested(
         spec,
         ingest_file,
-        lambda d, k: isinstance(d[k], str) and d[k].startswith("GHA_CI_GETFILE"),
+        lambda d, k: isinstance(d[k], str)
+        and d[k].startswith("GHA_CI_INGEST_FILE_CONTENTS"),
     )
 
     # format neatly
