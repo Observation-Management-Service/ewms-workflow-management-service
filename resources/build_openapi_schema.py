@@ -53,8 +53,15 @@ def main(src: str, dst: str) -> None:
     # replace 'GHA_CI_INGEST_FILE_CONTENTS' with the targeted file's contents
     # ex: GHA_CI_INGEST_FILE_CONTENTS ../db/TaskDirective.json
     def ingest_file(d, k):
-        with open(d[k].split()[1]) as f:
+        parts = d[k].split()
+        fpath = parts[1]
+        options = parts[2:]
+        with open(fpath) as f:
             d[k] = json.load(f)
+            # grab options
+            for opt in options:
+                okey, oval = opt.split("=")
+                d[k][okey] = json.loads(oval)
 
     set_all_nested(
         spec,
