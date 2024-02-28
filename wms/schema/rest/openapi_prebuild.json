@@ -45,8 +45,8 @@
             }
         },
         "schemas": {
-            "TaskDirectiveObject": "../db/TaskDirective.json",
-            "TaskforceObject": "../db/Taskforce.json",
+            "TaskDirectiveObject": "GHA_CI_GETFILE ../db/TaskDirective.json",
+            "TaskforceObject": "GHA_CI_GETFILE ../db/Taskforce.json",
             "FindObject": {
                 "type": "object",
                 "properties": {
@@ -83,5 +83,5 @@
             }
         }
     },
-    "paths": "./paths/"
+    "paths": "GITHUB_CI_PLACEHOLDER_FOR_PATHS"
 }

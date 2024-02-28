@@ -1,11 +1,12 @@
 """build_openapi_schema.py."""
 
 
-import copy
 import json
 import logging
 import pathlib
 import sys
+
+from set_all_nested import set_all_nested
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,14 +38,25 @@ def main(src: str, dst: str) -> None:
                 spec["paths"][path_pattern] = json.load(f)  # type: ignore[index]
 
     # build components.schemas entries
-    for key, val in copy.deepcopy(spec["components"]["schemas"]).items():
-        if isinstance(val, str):
-            fpath = pathlib.Path(val)
-            with open(fpath) as f:
-                print(fpath)
-                spec["components"]["schemas"][key] = json.load(f)
-                # *** OVERRIDE 'required' VALUE ***
-                spec["components"]["schemas"][key]["required"] = []
+    # for key, val in copy.deepcopy(spec["components"]["schemas"]).items():
+    #     if isinstance(val, str):
+    #         fpath = pathlib.Path(val)
+    #         with open(fpath) as f:
+    #             print(fpath)
+    #             spec["components"]["schemas"][key] = json.load(f)
+    #             # *** OVERRIDE 'required' VALUE ***
+    #             spec["components"]["schemas"][key]["required"] = []
+
+    # replace 'GHA_CI_GETFILE' with the targeted file's contents
+    def ingest_file(d, k):
+        with open(d[k].split()[1]) as f:
+            d[k] = f.read()
+
+    set_all_nested(
+        spec,
+        ingest_file,
+        lambda d, k: isinstance(d[k], str) and d[k].startswith("GHA_CI_GETFILE"),
+    )
 
     # format neatly
     with open(dst, "w") as f:
