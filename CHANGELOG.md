@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.6 (2024-02-28)
+
+### Other
+
+* Update Env Vars ([#8](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/8)) ([`ca181d6`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/ca181d6fbf396705b95b6b5d6756743616348b2a))
+
 ## v0.0.5 (2024-02-28)
 
 ### Other
