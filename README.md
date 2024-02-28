@@ -51,6 +51,7 @@ All URIs are relative to *http://localhost*
  - [_taskforces_tms_report_post_207_response](./Models/_taskforces_tms_report_post_207_response.md)
  - [_taskforces_tms_report_post_request](./Models/_taskforces_tms_report_post_request.md)
  - [worker_config](./Models/worker_config.md)
+ - [worker_config_worker_disk_bytes](./Models/worker_config_worker_disk_bytes.md)
 
 
 <a name="documentation-for-authorization"></a>
