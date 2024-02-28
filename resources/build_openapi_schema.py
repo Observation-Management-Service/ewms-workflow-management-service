@@ -54,7 +54,7 @@ def main(src: str, dst: str) -> None:
     # ex: GHA_CI_INGEST_FILE_CONTENTS ../db/TaskDirective.json
     def ingest_file(d, k):
         with open(d[k].split()[1]) as f:
-            d[k] = f.read()
+            d[k] = json.load(f)
 
     set_all_nested(
         spec,
