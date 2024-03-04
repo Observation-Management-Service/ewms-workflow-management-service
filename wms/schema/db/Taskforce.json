@@ -46,16 +46,24 @@
                                 "type": "integer"
                             }
                         ]
-                    }
+                    },
+                    "minProperties": 0
                 },
                 "input_files": {
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "minItems": 0
                 }
             },
-            "additionalProperties": true
+            "additionalProperties": true,
+            "required": [
+                "image",
+                "arguments",
+                "environment",
+                "input_files"
+            ]
         },
         "worker_config": {
             "type": "object",
@@ -79,7 +87,15 @@
                     "type": "string"
                 }
             },
-            "additionalProperties": true
+            "additionalProperties": true,
+            "required": [
+                "do_transfer_worker_stdouterr",
+                "max_worker_runtime",
+                "n_cores",
+                "priority",
+                "worker_disk",
+                "worker_memory"
+            ]
         },
         "cluster_id": {
             "anyOf": [
@@ -102,7 +118,8 @@
                         "type": "integer"
                     }
                 ]
-            }
+            },
+            "minProperties": 0
         },
         "job_event_log_fpath": {
             "type": "string"
@@ -133,14 +150,17 @@
                 "type": "object",
                 "additionalProperties": {
                     "type": "integer"
-                }
-            }
+                },
+                "minProperties": 0
+            },
+            "minProperties": 0
         },
         "top_task_errors": {
             "type": "object",
             "additionalProperties": {
                 "type": "integer"
-            }
+            },
+            "minProperties": 0
         }
     },
     "required": [
