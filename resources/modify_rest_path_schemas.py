@@ -6,7 +6,7 @@ import logging
 import pathlib
 import re
 
-from set_all_nested import set_all_nested
+import jsonschema_tools
 
 LOGGER = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ def main() -> None:
         def set_responses_400(d, k):
             d["responses"].update({"400": NEW_400})
 
-        set_all_nested(
+        jsonschema_tools.set_all_nested(
             spec,
             set_responses_400,
             lambda d, k: k == "responses" and d["responses"].get("400") != NEW_400,
@@ -68,49 +68,15 @@ def main() -> None:
         # Using re.findall() to extract strings inside {}
         # ex: example.{id}.json
         if re.findall(r"\{([^/{}]+)\}", str(fpath)):
-            set_all_nested(
+            jsonschema_tools.set_all_nested(
                 spec,
                 set_responses_404,
                 lambda d, k: k == "responses" and d["responses"].get("404") != NEW_404,
             )
 
-        # set 'minItems' for all arrays (that don't already have it)
-        def set_array_minimum(d, k):
-            d.update({"minItems": 0})
-
-        set_all_nested(
-            spec,
-            set_array_minimum,
-            lambda d, k: k == "type" and d[k] == "array" and "minItems" not in d,
-        )
-
-        # set "additionalProperties" keys
-        # NOTE: do this last since it affects above modifications
-        def set_additionalProperties(d, k):
-            d["additionalProperties"] = False
-
-        set_all_nested(
-            spec,
-            set_additionalProperties,
-            lambda d, k: k == "properties" and "additionalProperties" not in d,
-        )
-
-        # set 'minProperties' for all arrays (that don't already have it)
-        def set_properties_minimum(d, k):
-            d.update({"minProperties": 0})
-
-        set_all_nested(
-            spec,
-            set_properties_minimum,
-            lambda d, k: (
-                k == "type"
-                and d[k] == "object"
-                and "minProperties" not in d  # don't override
-                #
-                and "properties" not in d  # AKA it's completely open object
-                and d.get("additionalProperties") is not False  # just in case
-            ),
-        )
+        jsonschema_tools.set_default_array_minitems(spec, 0)
+        jsonschema_tools.set_default_additionalproperties(spec, False)  # after error-codes
+        jsonschema_tools.set_default_minproperties(spec, 0)
 
         # format neatly
         with open(fpath, "w") as f:
