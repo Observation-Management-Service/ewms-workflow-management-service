@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.7 (2024-03-04)
+
+### Other
+
+* Improve CI Build (`jsonschema_tools.py`) ([#9](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/9)) ([`2a289ce`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/2a289ceecc753cac80b5d57ad6de7dcc428a5420))
+
 ## v0.0.6 (2024-02-28)
 
 ### Other
