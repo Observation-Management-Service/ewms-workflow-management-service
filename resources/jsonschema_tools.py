@@ -40,6 +40,7 @@ def override_all_properties_required(spec: dict) -> None:
     """Find "properties" keys, then set their "required" keys."""
 
     def set_requireds(d, k):
+        LOGGER.debug("Found properties and setting all as required")
         d["required"] = list(d["properties"].keys())
 
     set_all_nested(
@@ -53,6 +54,7 @@ def set_default_array_minitems(spec: dict, default: int) -> None:
     """Set 'minItems' for all arrays (that don't already have it)."""
 
     def set_minItems(d, k):
+        LOGGER.debug(f"Found array and setting minItems={default}")
         d.update({"minItems": default})
 
     set_all_nested(
@@ -66,6 +68,7 @@ def set_default_additionalproperties(spec: dict, default: bool) -> None:
     """Set "additionalProperties" keys."""
 
     def set_additionalProperties(d, k):
+        LOGGER.debug(f"Found properties and setting additionalProperties={default}")
         d["additionalProperties"] = default
 
     set_all_nested(
@@ -76,9 +79,11 @@ def set_default_additionalproperties(spec: dict, default: bool) -> None:
 
 
 def set_default_minproperties(spec: dict, default: int) -> None:
-    """Set 'minProperties' for all arrays (that don't already have it)."""
+    """Set 'minProperties' for all open objects (that don't already have
+    it)."""
 
     def set_minProperties(d, k):
+        LOGGER.debug(f"Found open object and setting minProperties={default}")
         d.update({"minProperties": default})
 
     set_all_nested(
