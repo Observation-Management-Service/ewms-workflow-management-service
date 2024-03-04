@@ -46,7 +46,9 @@ def override_all_properties_required(spec: dict) -> None:
     set_all_nested(
         spec,
         set_requireds,
-        lambda d, k: k == "properties",
+        lambda d, k: (
+            k == "properties" and d.get("required") != list(d["properties"].keys())
+        ),
     )
 
 
