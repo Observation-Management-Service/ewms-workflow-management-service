@@ -6,7 +6,7 @@ import logging
 import pathlib
 import sys
 
-from set_all_nested import set_all_nested
+from jsonschema_tools import set_all_nested
 
 LOGGER = logging.getLogger(__name__)
 

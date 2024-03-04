@@ -5,6 +5,8 @@ import json
 import logging
 import pathlib
 
+import jsonschema_tools
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -12,11 +14,13 @@ def main() -> None:
     """Main."""
 
     for fpath in pathlib.Path(".").iterdir():
-        # find 'responses' keys, and override/add 400
         with open(fpath) as f:
             spec = json.load(f)
-        spec["required"] = list(spec["properties"].keys())
-        spec["additionalProperties"] = False
+
+        jsonschema_tools.all_properties_required(spec)
+        jsonschema_tools.array_min_items(spec, 0)
+        jsonschema_tools.additional_properties_default(spec, False)
+        jsonschema_tools.properties_minimum(spec, 0)
 
         # format neatly
         with open(fpath, "w") as f:
