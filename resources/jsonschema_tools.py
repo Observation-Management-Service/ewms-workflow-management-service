@@ -36,7 +36,7 @@ def set_all_nested(
     return spec
 
 
-def all_properties_required(spec: dict) -> None:
+def override_all_properties_required(spec: dict) -> None:
     """Find "properties" keys, then set their "required" keys."""
 
     def set_requireds(d, k):
@@ -49,7 +49,7 @@ def all_properties_required(spec: dict) -> None:
     )
 
 
-def array_min_items(spec: dict, default: int) -> None:
+def set_default_array_minitems(spec: dict, default: int) -> None:
     """Set 'minItems' for all arrays (that don't already have it)."""
 
     def set_minItems(d, k):
@@ -62,10 +62,8 @@ def array_min_items(spec: dict, default: int) -> None:
     )
 
 
-def additional_properties_default(spec: dict, default: bool) -> None:
+def set_default_additionalproperties(spec: dict, default: bool) -> None:
     """Set "additionalProperties" keys."""
-
-    # NOTE: do this last since it affects above modifications
 
     def set_additionalProperties(d, k):
         d["additionalProperties"] = default
@@ -77,7 +75,7 @@ def additional_properties_default(spec: dict, default: bool) -> None:
     )
 
 
-def properties_minimum(spec: dict, default: int) -> None:
+def set_default_minproperties(spec: dict, default: int) -> None:
     """Set 'minProperties' for all arrays (that don't already have it)."""
 
     def set_minProperties(d, k):

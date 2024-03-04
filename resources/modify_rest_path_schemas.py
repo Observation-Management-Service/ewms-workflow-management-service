@@ -74,9 +74,9 @@ def main() -> None:
                 lambda d, k: k == "responses" and d["responses"].get("404") != NEW_404,
             )
 
-        jsonschema_tools.array_min_items(spec, 0)
-        jsonschema_tools.additional_properties_default(spec, False)  # after error-codes
-        jsonschema_tools.properties_minimum(spec, 0)
+        jsonschema_tools.set_default_array_minitems(spec, 0)
+        jsonschema_tools.set_default_additionalproperties(spec, False)  # after error-codes
+        jsonschema_tools.set_default_minproperties(spec, 0)
 
         # format neatly
         with open(fpath, "w") as f:

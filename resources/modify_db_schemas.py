@@ -17,10 +17,10 @@ def main() -> None:
         with open(fpath) as f:
             spec = json.load(f)
 
-        jsonschema_tools.all_properties_required(spec)
-        jsonschema_tools.array_min_items(spec, 0)
-        jsonschema_tools.additional_properties_default(spec, False)
-        jsonschema_tools.properties_minimum(spec, 0)
+        jsonschema_tools.override_all_properties_required(spec)
+        jsonschema_tools.set_default_array_minitems(spec, 0)
+        jsonschema_tools.set_default_additionalproperties(spec, False)
+        jsonschema_tools.set_default_minproperties(spec, 0)
 
         # format neatly
         with open(fpath, "w") as f:
