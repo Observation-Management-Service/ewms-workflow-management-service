@@ -26,7 +26,7 @@ All URIs are relative to *http://localhost*
 *DefaultApi* | [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](Apis/DefaultApi.md#taskforcetmsactionpendingstoppertaskforceuuiddelete) | **DELETE** /taskforce/tms-action/pending-stopper/{taskforce_uuid} |  |
 *DefaultApi* | [**taskforceTmsCondorCompleteTaskforceUuidPost**](Apis/DefaultApi.md#taskforcetmscondorcompletetaskforceuuidpost) | **POST** /taskforce/tms/condor-complete/{taskforce_uuid} |  |
 *DefaultApi* | [**taskforcesFindPost**](Apis/DefaultApi.md#taskforcesfindpost) | **POST** /taskforces/find |  |
-*DefaultApi* | [**taskforcesTmsSnapshotPost**](Apis/DefaultApi.md#taskforcestmsstatuspost) | **POST** /taskforces/tms/status |  |
+*DefaultApi* | [**taskforcesTmsStatusPost**](Apis/DefaultApi.md#taskforcestmsstatuspost) | **POST** /taskforces/tms/status |  |
 
 
 <a name="documentation-for-models"></a>

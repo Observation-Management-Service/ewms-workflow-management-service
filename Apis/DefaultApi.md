@@ -17,7 +17,7 @@ All URIs are relative to *http://localhost*
 | [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](DefaultApi.md#taskforceTmsActionPendingStopperTaskforceUuidDelete) | **DELETE** /taskforce/tms-action/pending-stopper/{taskforce_uuid} |  |
 | [**taskforceTmsCondorCompleteTaskforceUuidPost**](DefaultApi.md#taskforceTmsCondorCompleteTaskforceUuidPost) | **POST** /taskforce/tms/condor-complete/{taskforce_uuid} |  |
 | [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost) | **POST** /taskforces/find |  |
-| [**taskforcesTmsSnapshotPost**](DefaultApi.md#taskforcesTmsSnapshotPost) | **POST** /taskforces/tms/status |  |
+| [**taskforcesTmsStatusPost**](DefaultApi.md#taskforcesTmsStatusPost) | **POST** /taskforces/tms/status |  |
 
 
 <a name="rootGet"></a>
@@ -330,9 +330,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="taskforcesTmsSnapshotPost"></a>
-# **taskforcesTmsSnapshotPost**
-> _taskforces_tms_status_post_200_response taskforcesTmsSnapshotPost(\_taskforces\_tms\_status\_post\_request)
+<a name="taskforcesTmsStatusPost"></a>
+# **taskforcesTmsStatusPost**
+> _taskforces_tms_status_post_200_response taskforcesTmsStatusPost(\_taskforces\_tms\_status\_post\_request)
 
 
 
