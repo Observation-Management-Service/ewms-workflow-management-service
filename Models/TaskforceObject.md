@@ -5,7 +5,7 @@
 |------------ | ------------- | ------------- | -------------|
 | **taskforce\_uuid** | **String** |  | [optional] [default to null] |
 | **task\_id** | **String** |  | [optional] [default to null] |
-| **timestamp** | [**oas_any_type_not_mapped**](.md) |  | [optional] [default to null] |
+| **timestamp** | **Integer** |  | [optional] [default to null] |
 | **collector** | **String** |  | [optional] [default to null] |
 | **schedd** | **String** |  | [optional] [default to null] |
 | **n\_workers** | [**TaskforceObject_n_workers**](TaskforceObject_n_workers.md) |  | [optional] [default to null] |
