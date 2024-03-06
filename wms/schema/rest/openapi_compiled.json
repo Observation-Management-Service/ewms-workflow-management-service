@@ -279,6 +279,225 @@
         }
     },
     "paths": {
+        "/taskforces/tms/report": {
+            "parameters": [],
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "top_task_errors_by_taskforce": {
+                                        "description": "the top errors (paired with a count) for each indicated taskforce",
+                                        "type": "object",
+                                        "items": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "integer"
+                                            },
+                                            "minProperties": 0
+                                        },
+                                        "minProperties": 1
+                                    },
+                                    "compound_statuses_by_taskforce": {
+                                        "description": "the compound statuses (status -> state -> count) for the indicated taskforces",
+                                        "type": "object",
+                                        "items": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                    "type": "integer"
+                                                },
+                                                "minProperties": 0
+                                            },
+                                            "minProperties": 0
+                                        },
+                                        "minProperties": 1
+                                    }
+                                },
+                                "required": [],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "individual results for the updates per uuid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "uuid": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "uuid",
+                                                    "status"
+                                                ],
+                                                "additionalProperties": false
+                                            },
+                                            "minItems": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "results"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "207": {
+                        "description": "individual results for the updates per uuid, with errors",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "uuid": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    },
+                                                    "error": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "uuid",
+                                                    "status"
+                                                ],
+                                                "additionalProperties": false
+                                            },
+                                            "minItems": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "results"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/taskforce/tms-action/pending-stopper/{taskforce_uuid}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/TaskforceUUIDParam"
+                }
+            ],
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "the uuid of the updated taskforce objects",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/schema/openapi": {
             "parameters": [],
             "get": {
@@ -291,187 +510,6 @@
                                     "type": "object",
                                     "properties": {},
                                     "additionalProperties": true
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/taskforce/tms-action/pending-starter": {
-            "parameters": [],
-            "get": {
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/CondorCollector"
-                    },
-                    {
-                        "$ref": "#/components/parameters/CondorSchedd"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "the next taskforce to start at the condor location",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "anyOf": [
-                                        {
-                                            "$ref": "#/components/schemas/TaskforceObject"
-                                        },
-                                        {
-                                            "type": "object",
-                                            "additionalProperties": false
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/taskforce/tms-action/pending-stopper": {
-            "parameters": [],
-            "get": {
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/CondorCollector"
-                    },
-                    {
-                        "$ref": "#/components/parameters/CondorSchedd"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "the next taskforce to stop at the condor location",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "anyOf": [
-                                        {
-                                            "$ref": "#/components/schemas/TaskforceObject"
-                                        },
-                                        {
-                                            "type": "object",
-                                            "additionalProperties": false
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/taskforces/find": {
-            "parameters": [],
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/FindObject"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "TODO",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "taskforces": {
-                                            "description": "a list of taskforce objects",
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/TaskforceObject"
-                                            },
-                                            "minItems": 0
-                                        }
-                                    },
-                                    "required": [
-                                        "taskforces"
-                                    ],
-                                    "additionalProperties": false
                                 }
                             }
                         }
@@ -612,6 +650,9 @@
                                     "task_args": {
                                         "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                     },
+                                    "n_workers": {
+                                        "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"
+                                    },
                                     "worker_config": {
                                         "$ref": "#/components/schemas/TaskforceObject/properties/worker_config"
                                     },
@@ -640,6 +681,109 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/TaskDirectiveObject"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/": {
+            "parameters": [],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "an empty response",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/task/directives/find": {
+            "parameters": [],
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FindObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "TODO",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "task_directives": {
+                                            "description": "a list of task directive objects",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskDirectiveObject"
+                                            },
+                                            "minItems": 0
+                                        }
+                                    },
+                                    "required": [
+                                        "task_directives"
+                                    ],
+                                    "additionalProperties": false
                                 }
                             }
                         }
@@ -828,148 +972,6 @@
                 }
             }
         },
-        "/taskforce/tms-action/pending-stopper/{taskforce_uuid}": {
-            "parameters": [
-                {
-                    "$ref": "#/components/parameters/TaskforceUUIDParam"
-                }
-            ],
-            "delete": {
-                "responses": {
-                    "200": {
-                        "description": "the uuid of the updated taskforce objects",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/taskforce/{taskforce_uuid}": {
-            "parameters": [
-                {
-                    "$ref": "#/components/parameters/TaskforceUUIDParam"
-                }
-            ],
-            "get": {
-                "responses": {
-                    "200": {
-                        "description": "the matching taskforce object",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TaskforceObject"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/taskforce/tms-action/condor-submit/{taskforce_uuid}": {
             "parameters": [
                 {
@@ -1050,14 +1052,34 @@
                 }
             }
         },
-        "/": {
+        "/taskforce/tms-action/pending-starter": {
             "parameters": [],
             "get": {
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/CondorCollector"
+                    },
+                    {
+                        "$ref": "#/components/parameters/CondorSchedd"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "an empty response",
+                        "description": "the next taskforce to start at the condor location",
                         "content": {
-                            "application/json": {}
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/TaskforceObject"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "additionalProperties": false
+                                        }
+                                    ]
+                                }
+                            }
                         }
                     },
                     "400": {
@@ -1088,7 +1110,7 @@
                 }
             }
         },
-        "/task/directives/find": {
+        "/taskforces/find": {
             "parameters": [],
             "post": {
                 "requestBody": {
@@ -1108,17 +1130,17 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "task_directives": {
-                                            "description": "a list of task directive objects",
+                                        "taskforces": {
+                                            "description": "a list of taskforce objects",
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/TaskDirectiveObject"
+                                                "$ref": "#/components/schemas/TaskforceObject"
                                             },
                                             "minItems": 0
                                         }
                                     },
                                     "required": [
-                                        "task_directives"
+                                        "taskforces"
                                     ],
                                     "additionalProperties": false
                                 }
@@ -1153,128 +1175,109 @@
                 }
             }
         },
-        "/taskforces/tms/report": {
+        "/taskforce/tms-action/pending-stopper": {
             "parameters": [],
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "top_task_errors_by_taskforce": {
-                                        "description": "the top errors (paired with a count) for each indicated taskforce",
-                                        "type": "object",
-                                        "items": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "integer"
-                                            },
-                                            "minProperties": 0
-                                        },
-                                        "minProperties": 1
-                                    },
-                                    "compound_statuses_by_taskforce": {
-                                        "description": "the compound statuses (status -> state -> count) for the indicated taskforces",
-                                        "type": "object",
-                                        "items": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "object",
-                                                "additionalProperties": {
-                                                    "type": "integer"
-                                                },
-                                                "minProperties": 0
-                                            },
-                                            "minProperties": 0
-                                        },
-                                        "minProperties": 1
-                                    }
-                                },
-                                "required": [],
-                                "additionalProperties": false
-                            }
-                        }
+            "get": {
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/CondorCollector"
+                    },
+                    {
+                        "$ref": "#/components/parameters/CondorSchedd"
                     }
-                },
+                ],
                 "responses": {
                     "200": {
-                        "description": "individual results for the updates per uuid",
+                        "description": "the next taskforce to stop at the condor location",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "results": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "uuid": {
-                                                        "type": "string"
-                                                    },
-                                                    "status": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "required": [
-                                                    "uuid",
-                                                    "status"
-                                                ],
-                                                "additionalProperties": false
-                                            },
-                                            "minItems": 1
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/TaskforceObject"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "additionalProperties": false
                                         }
-                                    },
-                                    "required": [
-                                        "results"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    },
-                    "207": {
-                        "description": "individual results for the updates per uuid, with errors",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "results": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "uuid": {
-                                                        "type": "string"
-                                                    },
-                                                    "status": {
-                                                        "type": "string"
-                                                    },
-                                                    "error": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "required": [
-                                                    "uuid",
-                                                    "status"
-                                                ],
-                                                "additionalProperties": false
-                                            },
-                                            "minItems": 1
-                                        }
-                                    },
-                                    "required": [
-                                        "results"
-                                    ],
-                                    "additionalProperties": false
+                                    ]
                                 }
                             }
                         }
                     },
                     "400": {
                         "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/taskforce/{taskforce_uuid}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/TaskforceUUIDParam"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "the matching taskforce object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskforceObject"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
                         "content": {
                             "application/json": {
                                 "schema": {

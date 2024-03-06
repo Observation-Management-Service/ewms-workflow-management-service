@@ -43,7 +43,7 @@ null (empty response body)
 
 <a name="schemaOpenapiGet"></a>
 # **schemaOpenapiGet**
-> Map schemaOpenapiGet()
+> Object schemaOpenapiGet()
 
 
 
@@ -52,7 +52,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**Map**](../Models/AnyType.md)
+**Object**
 
 ### Authorization
 
