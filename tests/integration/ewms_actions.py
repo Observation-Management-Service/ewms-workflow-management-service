@@ -10,6 +10,7 @@ from pathlib import Path
 import openapi_core
 from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
+
 from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
@@ -42,6 +43,7 @@ def user_requests_new_task(
 ) -> str:
     task_image = "icecube/earthpilot"
     task_args = "aaa bbb --ccc 123"
+    n_workers = 99
     worker_config = {
         "do_transfer_worker_stdouterr": False,
         "max_worker_runtime": 60 * 60 * 1,
@@ -66,6 +68,7 @@ def user_requests_new_task(
             "task_image": task_image,
             "task_args": task_args,
             "cluster_locations": list(condor_locations.keys()),
+            "n_workers": n_workers,
             "worker_config": worker_config,
             # "environment": environment,  # empty
             # "input_files": input_files,  # empty
@@ -115,6 +118,7 @@ def user_requests_new_task(
     )
 
     assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
+    assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])
     assert all(
         tf["container_config"]
         == dict(
