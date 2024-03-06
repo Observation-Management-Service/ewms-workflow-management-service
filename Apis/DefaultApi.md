@@ -17,7 +17,7 @@ All URIs are relative to *http://localhost*
 | [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](DefaultApi.md#taskforceTmsActionPendingStopperTaskforceUuidDelete) | **DELETE** /taskforce/tms-action/pending-stopper/{taskforce_uuid} |  |
 | [**taskforceTmsCondorCompleteTaskforceUuidPost**](DefaultApi.md#taskforceTmsCondorCompleteTaskforceUuidPost) | **POST** /taskforce/tms/condor-complete/{taskforce_uuid} |  |
 | [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost) | **POST** /taskforces/find |  |
-| [**taskforcesTmsReportPost**](DefaultApi.md#taskforcesTmsReportPost) | **POST** /taskforces/tms/report |  |
+| [**taskforcesTmsReportPost**](DefaultApi.md#taskforcesTmsReportPost) | **POST** /taskforces/tms/snapshot |  |
 
 
 <a name="rootGet"></a>
@@ -332,7 +332,7 @@ This endpoint does not need any parameter.
 
 <a name="taskforcesTmsReportPost"></a>
 # **taskforcesTmsReportPost**
-> _taskforces_tms_report_post_200_response taskforcesTmsReportPost(\_taskforces\_tms\_report\_post\_request)
+> _taskforces_tms_snapshot_post_200_response taskforcesTmsReportPost(\_taskforces\_tms\_snapshot\_post\_request)
 
 
 
@@ -340,11 +340,11 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **\_taskforces\_tms\_report\_post\_request** | [**_taskforces_tms_report_post_request**](../Models/_taskforces_tms_report_post_request.md)|  | [optional] |
+| **\_taskforces\_tms\_snapshot\_post\_request** | [**_taskforces_tms_snapshot_post_request**](../Models/_taskforces_tms_snapshot_post_request.md)|  | [optional] |
 
 ### Return type
 
-[**_taskforces_tms_report_post_200_response**](../Models/_taskforces_tms_report_post_200_response.md)
+[**_taskforces_tms_snapshot_post_200_response**](../Models/_taskforces_tms_snapshot_post_200_response.md)
 
 ### Authorization
 

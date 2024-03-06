@@ -1156,7 +1156,7 @@
                 }
             }
         },
-        "/taskforces/tms/report": {
+        "/taskforces/tms/snapshot": {
             "parameters": [],
             "post": {
                 "requestBody": {
