@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.9 (2024-03-06)
+
+### Other
+
+* Rename to `/taskforces/tms/status` (previously, "report") ([#12](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/12)) ([`fd51902`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/fd51902ca5b1bbc64f23f71dde3c6b13fb6fee2c))
+
 ## v0.0.8 (2024-03-06)
 
 ### Other
