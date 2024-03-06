@@ -10,6 +10,7 @@ from pathlib import Path
 import openapi_core
 from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
+
 from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
@@ -265,7 +266,7 @@ def tms_watcher_sends_status_update(
                 {
                     "uuid": taskforce_uuid,
                     "status": "failed",
-                    "error": "no condor-submitted taskforce found with uuid",
+                    "error": "no taskforce found with uuid",
                 }
             ]
         else:
