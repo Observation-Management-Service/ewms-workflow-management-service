@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.8 (2024-03-06)
+
+### Other
+
+* Add `n_workers` to Task Request ([#11](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/11)) ([`69f13f8`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/69f13f832eff7c17a0d80a2724d75210e4df0793))
+
 ## v0.0.7 (2024-03-04)
 
 ### Other
