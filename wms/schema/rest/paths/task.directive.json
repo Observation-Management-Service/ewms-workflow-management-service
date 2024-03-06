@@ -16,6 +16,9 @@
                             "task_args": {
                                 "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                             },
+                            "n_workers": {
+                                "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"
+                            },
                             "worker_config": {
                                 "$ref": "#/components/schemas/TaskforceObject/properties/worker_config"
                             },

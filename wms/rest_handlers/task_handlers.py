@@ -61,7 +61,8 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     collector=config.KNOWN_CLUSTERS[location]["collector"],
                     schedd=config.KNOWN_CLUSTERS[location]["schedd"],
                     #
-                    n_workers=None,  # TODO
+                    # TODO: make optional/smart
+                    n_workers=self.get_argument("n_workers"),
                     #
                     container_config=dict(
                         image=task_directive["task_image"],
