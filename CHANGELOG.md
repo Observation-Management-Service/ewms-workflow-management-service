@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.10 (2024-03-06)
+
+### Other
+
+* Allow Any Taskforce Status to Be Updated ([#13](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/13)) ([`36d555e`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/36d555e1bcdf1bc7c1652b44b902d892eb8b291c))
+
 ## v0.0.9 (2024-03-06)
 
 ### Other
