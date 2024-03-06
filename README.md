@@ -26,7 +26,7 @@ All URIs are relative to *http://localhost*
 *DefaultApi* | [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](Apis/DefaultApi.md#taskforcetmsactionpendingstoppertaskforceuuiddelete) | **DELETE** /taskforce/tms-action/pending-stopper/{taskforce_uuid} |  |
 *DefaultApi* | [**taskforceTmsCondorCompleteTaskforceUuidPost**](Apis/DefaultApi.md#taskforcetmscondorcompletetaskforceuuidpost) | **POST** /taskforce/tms/condor-complete/{taskforce_uuid} |  |
 *DefaultApi* | [**taskforcesFindPost**](Apis/DefaultApi.md#taskforcesfindpost) | **POST** /taskforces/find |  |
-*DefaultApi* | [**taskforcesTmsSnapshotPost**](Apis/DefaultApi.md#taskforcestmssnapshotpost) | **POST** /taskforces/tms/snapshot |  |
+*DefaultApi* | [**taskforcesTmsSnapshotPost**](Apis/DefaultApi.md#taskforcestmsstatuspost) | **POST** /taskforces/tms/status |  |
 
 
 <a name="documentation-for-models"></a>
@@ -48,9 +48,9 @@ All URIs are relative to *http://localhost*
  - [_taskforce_tms_action_pending_starter_get_200_response](./Models/_taskforce_tms_action_pending_starter_get_200_response.md)
  - [_taskforce_tms_condor_complete__taskforce_uuid__post_request](./Models/_taskforce_tms_condor_complete__taskforce_uuid__post_request.md)
  - [_taskforces_find_post_200_response](./Models/_taskforces_find_post_200_response.md)
- - [_taskforces_tms_snapshot_post_200_response](./Models/_taskforces_tms_snapshot_post_200_response.md)
- - [_taskforces_tms_snapshot_post_207_response](./Models/_taskforces_tms_snapshot_post_207_response.md)
- - [_taskforces_tms_snapshot_post_request](./Models/_taskforces_tms_snapshot_post_request.md)
+ - [_taskforces_tms_status_post_200_response](./Models/_taskforces_tms_status_post_200_response.md)
+ - [_taskforces_tms_status_post_207_response](./Models/_taskforces_tms_status_post_207_response.md)
+ - [_taskforces_tms_status_post_request](./Models/_taskforces_tms_status_post_request.md)
  - [n_workers](./Models/n_workers.md)
  - [worker_config](./Models/worker_config.md)
 

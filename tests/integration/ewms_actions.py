@@ -216,7 +216,7 @@ def tms_starter(
     return condor_locs_w_jel
 
 
-def tms_watcher_sends_snapshot_update(
+def tms_watcher_sends_status_update(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
@@ -250,7 +250,7 @@ def tms_watcher_sends_snapshot_update(
             rc,
             openapi_spec,
             "POST",
-            "/taskforces/tms/snapshot",
+            "/taskforces/tms/status",
             {
                 "top_task_errors_by_taskforce": {
                     taskforce_uuid: top_task_errors_by_locshortname[shortname],
