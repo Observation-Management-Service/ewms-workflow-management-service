@@ -10,7 +10,6 @@ from pathlib import Path
 import openapi_core
 from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
-
 from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
@@ -217,7 +216,7 @@ def tms_starter(
     return condor_locs_w_jel
 
 
-def tms_watcher_sends_report_update(
+def tms_watcher_sends_status_update(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
@@ -251,7 +250,7 @@ def tms_watcher_sends_report_update(
             rc,
             openapi_spec,
             "POST",
-            "/taskforces/tms/report",
+            "/taskforces/tms/status",
             {
                 "top_task_errors_by_taskforce": {
                     taskforce_uuid: top_task_errors_by_locshortname[shortname],

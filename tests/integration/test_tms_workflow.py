@@ -97,7 +97,7 @@ async def test_000(rc: RestClient) -> None:
     )
 
     # SEND UPDATES FROM TMS (JEL)!
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -105,7 +105,7 @@ async def test_000(rc: RestClient) -> None:
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -113,7 +113,7 @@ async def test_000(rc: RestClient) -> None:
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -222,7 +222,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     # )
 
     # # SEND UPDATES FROM TMS (JEL)!
-    # ewms_actions.tms_watcher_sends_report_update(
+    # ewms_actions.tms_watcher_sends_status_update(
     #     rc,
     #     openapi_spec,
     #     task_id,
@@ -230,7 +230,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     #     TOP_TASK_ERRORS__1,
     #     COMPOUND_STATUSES__1,
     # )
-    # ewms_actions.tms_watcher_sends_report_update(
+    # ewms_actions.tms_watcher_sends_status_update(
     #     rc,
     #     openapi_spec,
     #     task_id,
@@ -238,7 +238,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     #     TOP_TASK_ERRORS__2,
     #     COMPOUND_STATUSES__2,
     # )
-    # ewms_actions.tms_watcher_sends_report_update(
+    # ewms_actions.tms_watcher_sends_status_update(
     #     rc,
     #     openapi_spec,
     #     task_id,
@@ -290,7 +290,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # SEND UPDATES FROM TMS (JEL)!
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -324,7 +324,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # continue, SEND UPDATES FROM TMS (JEL)
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -333,7 +333,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         COMPOUND_STATUSES__2,
         aborted_during_condor=True,
     )
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -387,7 +387,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # SEND UPDATES FROM TMS (JEL)!
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -395,7 +395,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -403,7 +403,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -480,7 +480,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
     )
 
     # SEND UPDATES FROM TMS (JEL)!
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -488,7 +488,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
@@ -496,7 +496,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
-    ewms_actions.tms_watcher_sends_report_update(
+    ewms_actions.tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         task_id,
