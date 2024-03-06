@@ -10,6 +10,7 @@ from pathlib import Path
 import openapi_core
 from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
+
 from utils import request_and_validate
 
 LOGGER = logging.getLogger(__name__)
@@ -223,7 +224,6 @@ def tms_watcher_sends_status_update(
     condor_locs_w_jel: dict,
     top_task_errors_by_locshortname: dict,
     compound_statuses_by_locshortname: dict,
-    aborted_during_condor: bool = False,
 ) -> None:
     #
     # TMS(es) watcher(s)...
@@ -260,16 +260,7 @@ def tms_watcher_sends_status_update(
                 },
             },
         )
-        if aborted_during_condor:
-            assert resp["results"] == [
-                {
-                    "uuid": taskforce_uuid,
-                    "status": "failed",
-                    "error": "no condor-submitted taskforce found with uuid",
-                }
-            ]
-        else:
-            assert resp["results"] == [{"uuid": taskforce_uuid, "status": "updated"}]
+        assert resp["results"] == [{"uuid": taskforce_uuid, "status": "updated"}]
 
     #
     # USER...
@@ -300,14 +291,9 @@ def tms_watcher_sends_status_update(
         else:
             assert 0  # -> did not find it
         # fmt: off
-        if aborted_during_condor:
-            # has old vals
-            assert tf["compound_statuses"] != compound_statuses_by_locshortname[shortname]
-            assert tf["top_task_errors"] != top_task_errors_by_locshortname[shortname]
-        else:
-            # has new vals
-            assert tf["compound_statuses"] == compound_statuses_by_locshortname[shortname]
-            assert tf["top_task_errors"] == top_task_errors_by_locshortname[shortname]
+        # has new vals
+        assert tf["compound_statuses"] == compound_statuses_by_locshortname[shortname]
+        assert tf["top_task_errors"] == top_task_errors_by_locshortname[shortname]
         # fmt: on
 
 

@@ -27,7 +27,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def post(self) -> None:
         """Handle POST.
 
-        Update taskforces' ongoing statuses of its workers.
+        Update taskforces' statuses of its workers.
         """
         top_task_errors_by_taskforce = self.get_argument(
             "top_task_errors_by_taskforce", default={}
@@ -59,12 +59,12 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 await self.taskforces_client.update_set_one(
                     {
                         "taskforce_uuid": uuid,
-                        "tms_most_recent_action": {"$in": ["condor-submit"]},
+                        # we don't care what the 'tms_most_recent_action' is
                     },
                     update,
                 )
             except DocumentNotFoundException:
-                LOGGER.warning(f"no condor-submitted taskforce found with uuid: {uuid}")
+                LOGGER.warning(f"no taskforce found with uuid: {uuid}")
                 not_founds.append(uuid)
 
         # respond
@@ -76,7 +76,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                     {
                         "uuid": u,
                         "status": "failed",
-                        "error": "no condor-submitted taskforce found with uuid",
+                        "error": "no taskforce found with uuid",
                     }
                     for u in not_founds
                 ]
