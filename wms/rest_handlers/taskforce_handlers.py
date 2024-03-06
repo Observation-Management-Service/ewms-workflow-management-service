@@ -27,7 +27,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def post(self) -> None:
         """Handle POST.
 
-        Update taskforces' ongoing statuses of its workers.
+        Update taskforces' statuses of its workers.
         """
         top_task_errors_by_taskforce = self.get_argument(
             "top_task_errors_by_taskforce", default={}
