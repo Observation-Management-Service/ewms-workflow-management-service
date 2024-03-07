@@ -15,6 +15,6 @@ def test_tmsaction() -> None:
     spec = copy.deepcopy(config.MONGO_COLLECTION_JSONSCHEMA_SPECS["TaskDirective"])
     spec["required"] = []
 
-    for attr in [*schema.enums.TMSAction]:
+    for attr in [e.value for e in schema.enums.TMSAction]:
         print(f"validating: {attr}")
         jsonschema.validate({"tms_most_recent_action": attr}, spec)
