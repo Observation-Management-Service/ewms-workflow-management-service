@@ -138,7 +138,7 @@ async def user_requests_new_task(
         )
 
         # wait until backlogger sets taskforces as 'pending-starter'
-        await asyncio.sleep(os.environ["BACKLOG_RUNNER_DELAY"])
+        await asyncio.sleep(int(os.environ["BACKLOG_RUNNER_DELAY"]))
 
     return task_id  # type: ignore[no-any-return]
 
