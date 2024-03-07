@@ -10,6 +10,7 @@ from tornado import web
 from .. import config
 from ..config import ENV
 from ..database.client import DocumentNotFoundException
+from ..schema.enums import TMSAction
 from . import auth, utils
 from .base_handlers import BaseWMSHandler
 
@@ -83,10 +84,10 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     #
                     # updated by backlogger, tms
                     tms_most_recent_action=(
-                        "pre-tms"
+                        TMSAction.PRE_TMS
                         if self.get_argument("worker_config")["priority"]
                         < ENV.SKIP_BACKLOG_MIN_PRIORITY
-                        else "pending-starter"
+                        else TMSAction.PENDING_STARTER
                     ),
                     #
                     # updated by tms SEVERAL times
@@ -161,7 +162,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                         # NOTE - we don't care whether the taskforce has started up (see /taskforce/tms-action/pending-stopper)
                         {
                             "tms_most_recent_action": {
-                                "$nin": ["pending-stopper", "condor-rm"]
+                                "$nin": [TMSAction.PENDING_STOPPER, TMSAction.CONDOR_RM]
                             },  # "not in"
                         },
                         # AND
@@ -172,7 +173,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     ],
                 },
                 {
-                    "tms_most_recent_action": "pending-stopper",
+                    "tms_most_recent_action": TMSAction.PENDING_STOPPER,
                 },
             )
         except DocumentNotFoundException:

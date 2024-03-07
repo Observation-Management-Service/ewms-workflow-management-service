@@ -9,21 +9,25 @@ from pymongo import ASCENDING, DESCENDING
 
 from . import database as db
 from .config import ENV
+from .schema.enums import TMSAction
 
 LOGGER = logging.getLogger(__name__)
 
 
 async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
     """Start up the daemon task."""
+    LOGGER.info("Starting up backlogger...")
+
     taskforces_client = db.client.WMSMongoClient(
         mongo_client,
         db.utils.TASKFORCES_COLL_NAME,
     )
 
     while True:
+        LOGGER.info("Looking at next in backlog...")
         modified_count = await taskforces_client.update_set_one(
-            dict(tms_most_recent_action="pre-tms"),
-            dict(tms_most_recent_action="pending-starter"),
+            dict(tms_most_recent_action=TMSAction.PRE_TMS),
+            dict(tms_most_recent_action=TMSAction.PENDING_STARTER),
             sort=[
                 ("worker_config.priority", DESCENDING),  # highest first
                 ("timestamp", ASCENDING),  # oldest first
@@ -31,6 +35,10 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         )
 
         if not modified_count:
+            LOGGER.info("NOTHING IN BACKLOG TO START UP")
             await asyncio.sleep(ENV.BACKLOG_RUNNER_SHORT_DELAY)
         else:
+            LOGGER.info(
+                f"CHANGED 'tms_most_recent_action' FROM {TMSAction.PRE_TMS} TO {TMSAction.PENDING_STARTER}"
+            )
             await asyncio.sleep(ENV.BACKLOG_RUNNER_DELAY)
