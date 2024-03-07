@@ -136,7 +136,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         Abort a task.
         """
         try:
-            await self.task_directives_client.update_set_one(
+            await self.task_directives_client.find_one_and_update(
                 {
                     "task_id": task_id,
                     "aborted": {"$nin": [True]},  # "not in"

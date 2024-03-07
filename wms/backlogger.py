@@ -25,7 +25,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
 
     while True:
         LOGGER.info("Looking at next in backlog...")
-        modified_count = await taskforces_client.update_set_one(
+        modified_count = await taskforces_client.find_one_and_update(
             dict(tms_most_recent_action=TMSAction.PRE_TMS),
             dict(tms_most_recent_action=TMSAction.PENDING_STARTER),
             sort=[

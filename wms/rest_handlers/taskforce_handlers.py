@@ -57,7 +57,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 update["compound_statuses"] = compound_statuses_by_taskforce[uuid]
 
             try:
-                await self.taskforces_client.update_set_one(
+                await self.taskforces_client.find_one_and_update(
                     {
                         "taskforce_uuid": uuid,
                         # we don't care what the 'tms_most_recent_action' is
@@ -167,7 +167,7 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         runtime info.
         """
         try:
-            await self.taskforces_client.update_set_one(
+            await self.taskforces_client.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
                     "tms_most_recent_action": {"$in": [TMSAction.PENDING_STARTER]},
@@ -243,7 +243,7 @@ class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         invoked).
         """
         try:
-            await self.taskforces_client.update_set_one(
+            await self.taskforces_client.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
                     # NOTE: any taskforce can be marked as 'condor-rm' regardless of state
@@ -282,7 +282,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         finished, regardless if it ended in success or failure.
         """
         try:
-            await self.taskforces_client.update_set_one(
+            await self.taskforces_client.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
                     "condor_complete_ts": None,
