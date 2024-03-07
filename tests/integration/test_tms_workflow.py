@@ -87,6 +87,12 @@ async def test_000(rc: RestClient) -> None:
         openapi_spec,
         CONDOR_LOCATIONS,
     )
+    await ewms_actions.backlogger_marks_taskforces_pending_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        len(CONDOR_LOCATIONS),
+    )
 
     # TMS STARTS TASKFORCES!
     condor_locs_w_jel = ewms_actions.tms_starter(
@@ -165,6 +171,12 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
+    )
+    await ewms_actions.backlogger_marks_taskforces_pending_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        len(CONDOR_LOCATIONS),
     )
 
     # ABORT!
@@ -271,6 +283,127 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     # fmt: on
 
 
+async def test_101__aborted_before_condor(rc: RestClient) -> None:
+    """Aborted workflow."""
+    openapi_spec = ewms_actions.query_for_schema(rc)
+
+    task_id = ewms_actions.user_requests_new_task(
+        rc,
+        openapi_spec,
+        CONDOR_LOCATIONS,
+    )
+
+    # ABORT!
+    ewms_actions.user_aborts_task(
+        rc,
+        openapi_spec,
+        task_id,
+        CONDOR_LOCATIONS,
+    )
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/taskforces/find",
+        {"query": {"task_id": task_id}, "projection": ["tms_most_recent_action"]},
+    )
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
+    # fmt: on
+    for loc in CONDOR_LOCATIONS.values():
+        # check that there is NOTHING to start
+        assert not request_and_validate(
+            rc,
+            openapi_spec,
+            "GET",
+            "/taskforce/tms-action/pending-starter",
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
+        )
+    for loc in CONDOR_LOCATIONS.values():
+        # check that there is NOTHING to stop
+        assert not request_and_validate(
+            rc,
+            openapi_spec,
+            "GET",
+            "/taskforce/tms-action/pending-stopper",
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
+        )
+    for loc in CONDOR_LOCATIONS.values():
+        # check that there is NOTHING to start
+        assert not request_and_validate(
+            rc,
+            openapi_spec,
+            "GET",
+            "/taskforce/tms-action/pending-starter",
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
+        )
+
+    # await ewms_actions.backlogger_marks_taskforces_pending_starter(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     len(CONDOR_LOCATIONS),
+    # )
+
+    # NOTE - since the taskforce(s) aren't started, there are no updates from a JEL
+
+    # condor_locs_w_jel = ewms_actions.tms_starter(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     CONDOR_LOCATIONS,
+    # )
+
+    # # SEND UPDATES FROM TMS (JEL)!
+    # ewms_actions.tms_watcher_sends_status_update(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    #     TOP_TASK_ERRORS__1,
+    #     COMPOUND_STATUSES__1,
+    # )
+    # ewms_actions.tms_watcher_sends_status_update(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    #     TOP_TASK_ERRORS__2,
+    #     COMPOUND_STATUSES__2,
+    # )
+    # ewms_actions.tms_watcher_sends_status_update(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    #     TOP_TASK_ERRORS__3,
+    #     COMPOUND_STATUSES__3,
+    # )
+
+    # ewms_actions.tms_condor_clusters_done(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     condor_locs_w_jel,
+    # )
+
+    # CHECK FINAL STATES...
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/taskforces/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": ["tms_most_recent_action", "condor_complete_ts"],
+        },
+    )
+    # fmt: off
+    assert [tf["tms_most_recent_action"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
+    assert all(tf["condor_complete_ts"] is None for tf in resp["taskforces"])
+    # fmt: on
+
+
 async def test_110__aborted_during_condor(rc: RestClient) -> None:
     """Aborted workflow."""
     openapi_spec = ewms_actions.query_for_schema(rc)
@@ -279,6 +412,12 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
+    )
+    await ewms_actions.backlogger_marks_taskforces_pending_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        len(CONDOR_LOCATIONS),
     )
 
     # TMS STARTS TASKFORCES!
@@ -375,6 +514,12 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         openapi_spec,
         CONDOR_LOCATIONS,
     )
+    await ewms_actions.backlogger_marks_taskforces_pending_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        len(CONDOR_LOCATIONS),
+    )
 
     # TMS STARTS TASKFORCES!
     condor_locs_w_jel = ewms_actions.tms_starter(
@@ -467,6 +612,12 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
+    )
+    await ewms_actions.backlogger_marks_taskforces_pending_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        len(CONDOR_LOCATIONS),
     )
 
     # TMS STARTS TASKFORCES!

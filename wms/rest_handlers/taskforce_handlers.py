@@ -8,6 +8,7 @@ from tornado import web
 
 from .. import config
 from ..database.client import DocumentNotFoundException
+from ..schema.enums import TMSAction
 from . import auth, utils
 from .base_handlers import BaseWMSHandler
 
@@ -56,7 +57,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                 update["compound_statuses"] = compound_statuses_by_taskforce[uuid]
 
             try:
-                await self.taskforces_client.update_set_one(
+                await self.taskforces_client.find_one_and_update(
                     {
                         "taskforce_uuid": uuid,
                         # we don't care what the 'tms_most_recent_action' is
@@ -137,7 +138,7 @@ class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
                 dict(
                     collector=self.get_argument("collector"),
                     schedd=self.get_argument("schedd"),
-                    tms_most_recent_action="pending-starter",
+                    tms_most_recent_action=TMSAction.PENDING_STARTER,
                 ),
                 sort=[
                     ("timestamp", ASCENDING),  # oldest first
@@ -166,17 +167,17 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         runtime info.
         """
         try:
-            await self.taskforces_client.update_set_one(
+            await self.taskforces_client.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
-                    "tms_most_recent_action": {"$in": ["pending-starter"]},
+                    "tms_most_recent_action": {"$in": [TMSAction.PENDING_STARTER]},
                 },
                 dict(
                     cluster_id=self.get_argument("cluster_id"),
                     n_workers=self.get_argument("n_workers"),
                     submit_dict=self.get_argument("submit_dict"),
                     job_event_log_fpath=self.get_argument("job_event_log_fpath"),
-                    tms_most_recent_action="condor-submit",
+                    tms_most_recent_action=TMSAction.CONDOR_SUBMIT,
                 ),
             )
         except DocumentNotFoundException as e:
@@ -212,7 +213,7 @@ class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
                 {
                     "collector": self.get_argument("collector"),
                     "schedd": self.get_argument("schedd"),
-                    "tms_most_recent_action": "pending-stopper",
+                    "tms_most_recent_action": TMSAction.PENDING_STOPPER,
                     "cluster_id": {"$ne": None},  # there has to be something to stop
                 },
                 sort=[
@@ -242,13 +243,13 @@ class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         invoked).
         """
         try:
-            await self.taskforces_client.update_set_one(
+            await self.taskforces_client.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
                     # NOTE: any taskforce can be marked as 'condor-rm' regardless of state
                 },
                 {
-                    "tms_most_recent_action": "condor-rm",
+                    "tms_most_recent_action": TMSAction.CONDOR_RM,
                 },
             )
         except DocumentNotFoundException as e:
@@ -281,7 +282,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         finished, regardless if it ended in success or failure.
         """
         try:
-            await self.taskforces_client.update_set_one(
+            await self.taskforces_client.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
                     "condor_complete_ts": None,

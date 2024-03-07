@@ -15,6 +15,10 @@ env:
   REST_OPENAPI_PREBUILD_FPATH: "schema/rest/openapi_prebuild.json"
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
+  #
+  BACKLOG_RUNNER_SHORT_DELAY: 3
+  BACKLOG_RUNNER_DELAY: 3
+  SKIP_BACKLOG_MIN_PRIORITY: 10
 
 
 jobs:
@@ -295,6 +299,9 @@ jobs:
             --env REST_PORT="${{ env.REST_PORT }}" \
             --env REST_OPENAPI_SPEC_FPATH="${{ env.REST_OPENAPI_SPEC_FPATH }}" \
             --env DB_JSONSCHEMA_DIR="${{ env.DB_JSONSCHEMA_DIR }}" \
+            --env BACKLOG_RUNNER_SHORT_DELAY="${{ env.BACKLOG_RUNNER_SHORT_DELAY }}" \
+            --env BACKLOG_RUNNER_DELAY="${{ env.BACKLOG_RUNNER_DELAY }}" \
+            --env SKIP_BACKLOG_MIN_PRIORITY="${{ env.SKIP_BACKLOG_MIN_PRIORITY }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
           sleep 10

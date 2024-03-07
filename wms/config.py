@@ -42,11 +42,9 @@ class EnvConfig:
     LOG_LEVEL: str = "DEBUG"
     LOG_LEVEL_THIRD_PARTY: str = "DEBUG"
 
-    BACKLOG_MIN_PRIORITY_TO_START_NOW: int = 10
-    BACKLOG_MAX_ATTEMPTS: int = 3
+    SKIP_BACKLOG_MIN_PRIORITY: int = 10
     BACKLOG_RUNNER_SHORT_DELAY: int = 15
     BACKLOG_RUNNER_DELAY: int = 5 * 60
-    BACKLOG_PENDING_ENTRY_TTL_REVIVE: int = 5 * 60  # entry is revived after N secs
 
 
 ENV = from_environment_as_dataclass(EnvConfig)

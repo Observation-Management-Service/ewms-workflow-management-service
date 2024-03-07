@@ -8,7 +8,9 @@ import uuid
 from tornado import web
 
 from .. import config
+from ..config import ENV
 from ..database.client import DocumentNotFoundException
+from ..schema.enums import TMSAction
 from . import auth, utils
 from .base_handlers import BaseWMSHandler
 
@@ -80,8 +82,13 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     # set ONCE by tms's watcher
                     condor_complete_ts=None,
                     #
-                    # TODO - set to 'pre-tms', then backlogger changes to 'pending-starter'
-                    tms_most_recent_action="pending-starter",  # updated by backlogger, tms
+                    # updated by backlogger, tms
+                    tms_most_recent_action=(
+                        TMSAction.PRE_TMS
+                        if self.get_argument("worker_config")["priority"]
+                        < ENV.SKIP_BACKLOG_MIN_PRIORITY
+                        else TMSAction.PENDING_STARTER
+                    ),
                     #
                     # updated by tms SEVERAL times
                     compound_statuses={},
@@ -129,7 +136,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         Abort a task.
         """
         try:
-            await self.task_directives_client.update_set_one(
+            await self.task_directives_client.find_one_and_update(
                 {
                     "task_id": task_id,
                     "aborted": {"$nin": [True]},  # "not in"
@@ -155,7 +162,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                         # NOTE - we don't care whether the taskforce has started up (see /taskforce/tms-action/pending-stopper)
                         {
                             "tms_most_recent_action": {
-                                "$nin": ["pending-stopper", "condor-rm"]
+                                "$nin": [TMSAction.PENDING_STOPPER, TMSAction.CONDOR_RM]
                             },  # "not in"
                         },
                         # AND
@@ -166,7 +173,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     ],
                 },
                 {
-                    "tms_most_recent_action": "pending-stopper",
+                    "tms_most_recent_action": TMSAction.PENDING_STOPPER,
                 },
             )
         except DocumentNotFoundException:

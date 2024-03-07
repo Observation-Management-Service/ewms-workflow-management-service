@@ -1,6 +1,7 @@
 """Common high-level actions that occur in many situations."""
 
 
+import asyncio
 import copy
 import json
 import logging
@@ -48,7 +49,7 @@ def user_requests_new_task(
         "do_transfer_worker_stdouterr": False,
         "max_worker_runtime": 60 * 60 * 1,
         "n_cores": 4,
-        "priority": 10,
+        "priority": 1,
         "worker_disk": "1G",
         "worker_memory": "512M",
     }
@@ -96,6 +97,8 @@ def user_requests_new_task(
     )
     assert len(resp["task_directives"]) == 1
     assert resp["task_directives"][0] == task_directive
+
+    # look at taskforces
     resp = request_and_validate(
         rc,
         openapi_spec,
@@ -113,9 +116,7 @@ def user_requests_new_task(
         (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
     ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
 
-    assert all(
-        tf["tms_most_recent_action"] == "pending-starter" for tf in resp["taskforces"]
-    )
+    assert all(tf["tms_most_recent_action"] == "pre-tms" for tf in resp["taskforces"])
 
     assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
     assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])
@@ -130,7 +131,35 @@ def user_requests_new_task(
         for tf in resp["taskforces"]
     )
 
-    return task_id  # type: ignore[no-any-return]
+    return task_id
+
+
+async def backlogger_marks_taskforces_pending_starter(
+    rc: RestClient,
+    openapi_spec: openapi_core.OpenAPI,
+    task_id: str,
+    n_locations: int,
+) -> None:
+    """Wait expected time for backlogger to set taskforces as 'pending-
+    starter'."""
+    await asyncio.sleep(int(os.environ["BACKLOG_RUNNER_DELAY"]) * (n_locations + 1))
+
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/taskforces/find",
+        {
+            "query": {
+                "task_id": task_id,
+            },
+            "projection": ["tms_most_recent_action"],
+        },
+    )
+    assert len(resp["taskforces"]) == n_locations
+    assert all(
+        tf["tms_most_recent_action"] == "pending-starter" for tf in resp["taskforces"]
+    )
 
 
 def tms_starter(

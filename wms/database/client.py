@@ -6,6 +6,7 @@ import logging
 from typing import Any, AsyncIterator
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
+from pymongo import ReturnDocument
 
 from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
 from .utils import _DB_NAME, get_jsonschema_spec_name, web_jsonschema_validate
@@ -53,17 +54,27 @@ class WMSMongoClient:
         self.logger.debug(f"inserted one: {doc}")
         return doc
 
-    async def update_set_one(self, query: dict, set_update: dict) -> int:
-        """Update the doc."""
+    async def find_one_and_update(
+        self,
+        query: dict,
+        set_update: dict,
+        **kwargs: Any,
+    ) -> dict:
+        """Update the doc and return updated doc."""
         self.logger.debug(f"update one with query: {query}")
 
         web_jsonschema_validate(set_update, self._schema_partial)
-        res = await self._collection.update_one(query, {"$set": set_update})
-        if not res.matched_count:
+        doc = await self._collection.find_one_and_update(
+            query,
+            {"$set": set_update},
+            return_document=ReturnDocument.AFTER,
+            **kwargs,
+        )
+        if not doc:
             raise DocumentNotFoundException()
 
-        self.logger.debug(f"updated one: {query}")
-        return res.modified_count
+        self.logger.debug(f"updated one ({query}): {doc}")
+        return doc  # type: ignore[no-any-return]
 
     async def update_set_many(self, query: dict, set_update: dict) -> int:
         """Update all matching docs."""
@@ -81,16 +92,11 @@ class WMSMongoClient:
     # READS
     ####################################################################
 
-    async def find_one(
-        self,
-        query: dict,
-        *args: Any,
-        **kwargs: Any,
-    ) -> dict:
+    async def find_one(self, query: dict, **kwargs: Any) -> dict:
         """Find one matching the query."""
         self.logger.debug(f"finding one with query: {query}")
 
-        doc = await self._collection.find_one(query, *args, **kwargs)
+        doc = await self._collection.find_one(query, **kwargs)
         if not doc:
             raise DocumentNotFoundException()
         # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
