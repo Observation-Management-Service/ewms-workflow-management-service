@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.11 (2024-03-07)
+
+### Other
+
+* Add Backlogger ([#14](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/14)) ([`472cea1`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/472cea1cac3443a2da7413925c0180a7fcc3d514))
+
 ## v0.0.10 (2024-03-06)
 
 ### Other
