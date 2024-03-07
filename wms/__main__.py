@@ -19,20 +19,20 @@ async def main() -> None:
     await database.utils.ensure_indexes(mongo_client)
     LOGGER.info("Mongo client connected.")
 
-    # Backlogger
-    LOGGER.info("Starting backlogger in background...")
-    backlogger_task = asyncio.create_task(backlogger.startup(mongo_client))
-    await asyncio.sleep(0)  # start up previous task
+    async with asyncio.TaskGroup() as tg:
+        # Backlogger
+        LOGGER.info("Starting backlogger in background...")
+        tg.create_task(backlogger.startup(mongo_client))
+        LOGGER.info("Started backlogger.")
 
-    # REST Server
-    LOGGER.info("Setting up REST server...")
-    rs = await server.make(mongo_client)
-    rs.startup(address=ENV.REST_HOST, port=ENV.REST_PORT)  # type: ignore[no-untyped-call]
-    try:
-        await asyncio.Event().wait()
-    finally:
-        await rs.stop()  # type: ignore[no-untyped-call]
-        backlogger_task.cancel()
+        # REST Server
+        LOGGER.info("Setting up REST server...")
+        rs = await server.make(mongo_client)
+        rs.startup(address=ENV.REST_HOST, port=ENV.REST_PORT)  # type: ignore[no-untyped-call]
+        tg.create_task(asyncio.Event().wait())
+        LOGGER.info("Started REST server.")
+
+    await rs.stop()  # type: ignore[no-untyped-call]
 
 
 if __name__ == "__main__":
