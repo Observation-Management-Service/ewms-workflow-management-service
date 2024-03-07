@@ -16,8 +16,7 @@ async def main() -> None:
     # Mongo client
     LOGGER.info("Setting up Mongo client...")
     mongo_client = await database.utils.create_mongodb_client()
-    indexing_task = asyncio.create_task(database.utils.ensure_indexes(mongo_client))
-    await asyncio.sleep(0)  # start up previous task
+    await database.utils.ensure_indexes(mongo_client)
     LOGGER.info("Mongo client connected.")
 
     # Backlogger
@@ -33,7 +32,6 @@ async def main() -> None:
         await asyncio.Event().wait()
     finally:
         await rs.stop()  # type: ignore[no-untyped-call]
-        indexing_task.cancel()
         backlogger_task.cancel()
 
 

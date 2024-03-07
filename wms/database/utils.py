@@ -44,39 +44,23 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     Call on server startup.
     """
 
+    async def make_index(attr: str, coll: str, unique: bool = False) -> None:
+        await mongo_client[_DB_NAME][TASK_DIRECTIVES_COLL_NAME].create_index(  # type: ignore[index]
+            attr,
+            name=f"{attr.replace('.','_')}_index",
+            unique=unique,
+            background=True,
+        )
+
     # TASK_DIRECTIVES
-    await mongo_client[_DB_NAME][TASK_DIRECTIVES_COLL_NAME].create_index(  # type: ignore[index]
-        "task_id",
-        name="task_id_index",
-        unique=True,
-    )
+    await make_index("task_id", TASK_DIRECTIVES_COLL_NAME, unique=True)
 
     # TASKFORCES
-    await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
-        "taskforce_uuid",
-        name="taskforce_uuid_index",
-        unique=True,
-    )
-    await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
-        "task_id",
-        name="task_id_index",
-        unique=False,  # foreign key
-    )
-    await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
-        "tms_most_recent_action",
-        name="tms_most_recent_action_index",
-        unique=False,
-    )
-    await mongo_client[_DB_NAME][TASKFORCES_COLL_NAME].create_index(  # type: ignore[index]
-        "timestamp",
-        name="timestamp_index",
-        unique=False,
-    )
-    await mongo_client[_DB_NAME][TASK_DIRECTIVES_COLL_NAME].create_index(  # type: ignore[index]
-        "worker_config.priority",
-        name="worker_config_priority_index",
-        unique=False,
-    )
+    await make_index(TASKFORCES_COLL_NAME, "taskforce_uuid", unique=True)
+    await make_index(TASKFORCES_COLL_NAME, "task_id")
+    await make_index(TASKFORCES_COLL_NAME, "tms_most_recent_action")
+    await make_index(TASKFORCES_COLL_NAME, "timestamp")
+    await make_index(TASKFORCES_COLL_NAME, "worker_config.priority")
 
 
 def web_jsonschema_validate(instance: Any, schema: dict) -> None:
