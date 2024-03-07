@@ -43,8 +43,10 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
 
     Call on server startup.
     """
+    LOGGER.info("Ensuring indexes...")
 
     async def make_index(coll: str, attr: str, unique: bool = False) -> None:
+        LOGGER.info(f"creating index for {coll=} {attr=} {unique=}...")
         await mongo_client[_DB_NAME][coll].create_index(  # type: ignore[index]
             attr,
             name=f"{attr.replace('.','_')}_index",
@@ -61,6 +63,8 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     await make_index(TASKFORCES_COLL_NAME, "tms_most_recent_action")
     await make_index(TASKFORCES_COLL_NAME, "timestamp")
     await make_index(TASKFORCES_COLL_NAME, "worker_config.priority")
+
+    LOGGER.info("Ensured indexes (may continue in background).")
 
 
 def web_jsonschema_validate(instance: Any, schema: dict) -> None:
