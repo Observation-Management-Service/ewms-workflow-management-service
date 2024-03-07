@@ -25,16 +25,17 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
 
     while True:
         LOGGER.info("Looking at next in backlog...")
-        modified_count = await taskforces_client.find_one_and_update(
-            dict(tms_most_recent_action=TMSAction.PRE_TMS),
-            dict(tms_most_recent_action=TMSAction.PENDING_STARTER),
-            sort=[
-                ("worker_config.priority", DESCENDING),  # highest first
-                ("timestamp", ASCENDING),  # oldest first
-            ],
-        )
 
-        if not modified_count:
+        try:
+            await taskforces_client.find_one_and_update(
+                dict(tms_most_recent_action=TMSAction.PRE_TMS),
+                dict(tms_most_recent_action=TMSAction.PENDING_STARTER),
+                sort=[
+                    ("worker_config.priority", DESCENDING),  # highest first
+                    ("timestamp", ASCENDING),  # oldest first
+                ],
+            )
+        except db.client.DocumentNotFoundException:
             LOGGER.info("NOTHING IN BACKLOG TO START UP")
             await asyncio.sleep(ENV.BACKLOG_RUNNER_SHORT_DELAY)
         else:
