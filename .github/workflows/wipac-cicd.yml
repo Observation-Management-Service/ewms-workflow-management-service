@@ -15,6 +15,10 @@ env:
   REST_OPENAPI_PREBUILD_FPATH: "schema/rest/openapi_prebuild.json"
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
+  #
+  BACKLOG_RUNNER_SHORT_DELAY: 3
+  BACKLOG_RUNNER_DELAY: 3
+  SKIP_BACKLOG_MIN_PRIORITY: 10
 
 
 jobs:

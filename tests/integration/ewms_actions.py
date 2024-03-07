@@ -1,6 +1,7 @@
 """Common high-level actions that occur in many situations."""
 
 
+import asyncio
 import copy
 import json
 import logging
@@ -36,7 +37,7 @@ def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
     return openapi_spec
 
 
-def user_requests_new_task(
+async def user_requests_new_task(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     condor_locations: dict,
@@ -96,39 +97,48 @@ def user_requests_new_task(
     )
     assert len(resp["task_directives"]) == 1
     assert resp["task_directives"][0] == task_directive
-    resp = request_and_validate(
-        rc,
-        openapi_spec,
-        "POST",
-        "/taskforces/find",
-        {
-            "query": {
-                "task_id": task_id,
+
+    # look at taskforces
+    for tms_most_recent_action in ["pre-tms", "pending-starter"]:
+        resp = request_and_validate(
+            rc,
+            openapi_spec,
+            "POST",
+            "/taskforces/find",
+            {
+                "query": {
+                    "task_id": task_id,
+                },
             },
-        },
-    )
-    assert len(resp["taskforces"]) == len(condor_locations)
-    # check locations were translated correctly to collector+schedd
-    assert sorted(
-        (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
-    ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
-
-    assert all(
-        tf["tms_most_recent_action"] == "pending-starter" for tf in resp["taskforces"]
-    )
-
-    assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
-    assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])
-    assert all(
-        tf["container_config"]
-        == dict(
-            image=task_image,
-            arguments=task_args,
-            environment=environment,
-            input_files=input_files,
         )
-        for tf in resp["taskforces"]
-    )
+        assert len(resp["taskforces"]) == len(condor_locations)
+        # check locations were translated correctly to collector+schedd
+        assert sorted(
+            (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
+        ) == sorted(
+            (loc["collector"], loc["schedd"]) for loc in condor_locations.values()
+        )
+
+        assert all(
+            tf["tms_most_recent_action"] == tms_most_recent_action
+            for tf in resp["taskforces"]
+        )
+
+        assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
+        assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])
+        assert all(
+            tf["container_config"]
+            == dict(
+                image=task_image,
+                arguments=task_args,
+                environment=environment,
+                input_files=input_files,
+            )
+            for tf in resp["taskforces"]
+        )
+
+        # wait until backlogger sets taskforces as 'pending-starter'
+        await asyncio.sleep(os.environ["BACKLOG_RUNNER_DELAY"])
 
     return task_id  # type: ignore[no-any-return]
 
