@@ -44,8 +44,8 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     Call on server startup.
     """
 
-    async def make_index(attr: str, coll: str, unique: bool = False) -> None:
-        await mongo_client[_DB_NAME][TASK_DIRECTIVES_COLL_NAME].create_index(  # type: ignore[index]
+    async def make_index(coll: str, attr: str, unique: bool = False) -> None:
+        await mongo_client[_DB_NAME][coll].create_index(  # type: ignore[index]
             attr,
             name=f"{attr.replace('.','_')}_index",
             unique=unique,
@@ -53,7 +53,7 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
         )
 
     # TASK_DIRECTIVES
-    await make_index("task_id", TASK_DIRECTIVES_COLL_NAME, unique=True)
+    await make_index(TASK_DIRECTIVES_COLL_NAME, "task_id", unique=True)
 
     # TASKFORCES
     await make_index(TASKFORCES_COLL_NAME, "taskforce_uuid", unique=True)
