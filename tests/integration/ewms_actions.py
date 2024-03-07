@@ -48,7 +48,7 @@ def user_requests_new_task(
         "do_transfer_worker_stdouterr": False,
         "max_worker_runtime": 60 * 60 * 1,
         "n_cores": 4,
-        "priority": 10,
+        "priority": 1,
         "worker_disk": "1G",
         "worker_memory": "512M",
     }
