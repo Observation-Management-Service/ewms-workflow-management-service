@@ -23,14 +23,12 @@ async def main() -> None:
         # Backlogger
         LOGGER.info("Starting backlogger in background...")
         tg.create_task(backlogger.startup(mongo_client))
-        LOGGER.info("Started backlogger.")
 
         # REST Server
         LOGGER.info("Setting up REST server...")
         rs = await server.make(mongo_client)
         rs.startup(address=ENV.REST_HOST, port=ENV.REST_PORT)  # type: ignore[no-untyped-call]
         tg.create_task(asyncio.Event().wait())
-        LOGGER.info("Started REST server.")
 
     await rs.stop()  # type: ignore[no-untyped-call]
 
