@@ -33,6 +33,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                 ("timestamp", ASCENDING),  # oldest first
             ],
         )
+        LOGGER.critical("HERE!")
 
         if not modified_count:
             LOGGER.info("NOTHING IN BACKLOG TO START UP")
