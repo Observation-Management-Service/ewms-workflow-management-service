@@ -37,7 +37,7 @@ def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
     return openapi_spec
 
 
-async def user_requests_new_task(
+def user_requests_new_task(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     condor_locations: dict,
@@ -99,48 +99,67 @@ async def user_requests_new_task(
     assert resp["task_directives"][0] == task_directive
 
     # look at taskforces
-    for tms_most_recent_action in ["pre-tms", "pending-starter"]:
-        resp = request_and_validate(
-            rc,
-            openapi_spec,
-            "POST",
-            "/taskforces/find",
-            {
-                "query": {
-                    "task_id": task_id,
-                },
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/taskforces/find",
+        {
+            "query": {
+                "task_id": task_id,
             },
-        )
-        assert len(resp["taskforces"]) == len(condor_locations)
-        # check locations were translated correctly to collector+schedd
-        assert sorted(
-            (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
-        ) == sorted(
-            (loc["collector"], loc["schedd"]) for loc in condor_locations.values()
-        )
+        },
+    )
+    assert len(resp["taskforces"]) == len(condor_locations)
+    # check locations were translated correctly to collector+schedd
+    assert sorted(
+        (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
+    ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
 
-        assert all(
-            tf["tms_most_recent_action"] == tms_most_recent_action
-            for tf in resp["taskforces"]
+    assert all(tf["tms_most_recent_action"] == "pre-tms" for tf in resp["taskforces"])
+
+    assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
+    assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])
+    assert all(
+        tf["container_config"]
+        == dict(
+            image=task_image,
+            arguments=task_args,
+            environment=environment,
+            input_files=input_files,
         )
+        for tf in resp["taskforces"]
+    )
 
-        assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
-        assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])
-        assert all(
-            tf["container_config"]
-            == dict(
-                image=task_image,
-                arguments=task_args,
-                environment=environment,
-                input_files=input_files,
-            )
-            for tf in resp["taskforces"]
-        )
+    return task_id
 
-        # wait until backlogger sets taskforces as 'pending-starter'
-        await asyncio.sleep(int(os.environ["BACKLOG_RUNNER_DELAY"]) * 3)
 
-    return task_id  # type: ignore[no-any-return]
+async def backlogger_marks_taskforces_pending_starter(
+    rc: RestClient,
+    openapi_spec: openapi_core.OpenAPI,
+    task_id: str,
+    n_locations: int,
+) -> None:
+    """Wait expected time for backlogger to set taskforces as 'pending-
+    starter'."""
+    await asyncio.sleep(int(os.environ["BACKLOG_RUNNER_DELAY"]) * (n_locations + 1))
+
+    resp = request_and_validate(
+        rc,
+        openapi_spec,
+        "POST",
+        "/taskforces/find",
+        {
+            "query": {
+                "task_id": task_id,
+            },
+            "projection": ["tms_most_recent_action"],
+        },
+    )
+    assert len(resp["taskforces"]) == n_locations
+    assert all(
+        tf["tms_most_recent_action"] == "pending-starter" for tf in resp["taskforces"]
+    )
 
 
 def tms_starter(
