@@ -12,7 +12,7 @@ LOGGER = logging.getLogger(__name__)
 
 def test_tmsaction() -> None:
     """Validate the TMSAction attrs with the jsonschema."""
-    spec = copy.deepcopy(config.MONGO_COLLECTION_JSONSCHEMA_SPECS["TaskDirective"])
+    spec = copy.deepcopy(config.MONGO_COLLECTION_JSONSCHEMA_SPECS["Taskforce"])
     spec["required"] = []
 
     for attr in [e.value for e in schema.enums.TMSAction]:
