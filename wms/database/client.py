@@ -7,7 +7,6 @@ from typing import Any, AsyncIterator
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from pymongo import ReturnDocument
-from pymongo.collection import ReturnDocument
 
 from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
 from .utils import _DB_NAME, get_jsonschema_spec_name, web_jsonschema_validate
