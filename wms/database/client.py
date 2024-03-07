@@ -70,11 +70,11 @@ class WMSMongoClient:
             return_document=ReturnDocument.AFTER,
             **kwargs,
         )
-        if doc:
+        if not doc:
             raise DocumentNotFoundException()
 
         self.logger.debug(f"updated one ({query}): {doc}")
-        return doc
+        return doc  # type: ignore[no-any-return]
 
     async def update_set_many(self, query: dict, set_update: dict) -> int:
         """Update all matching docs."""
