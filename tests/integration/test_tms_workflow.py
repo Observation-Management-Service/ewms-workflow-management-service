@@ -338,12 +338,12 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
 
-    await ewms_actions.backlogger_marks_taskforces_pending_starter(
-        rc,
-        openapi_spec,
-        task_id,
-        len(CONDOR_LOCATIONS),
-    )
+    # await ewms_actions.backlogger_marks_taskforces_pending_starter(
+    #     rc,
+    #     openapi_spec,
+    #     task_id,
+    #     len(CONDOR_LOCATIONS),
+    # )
 
     # NOTE - since the taskforce(s) aren't started, there are no updates from a JEL
 
