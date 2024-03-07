@@ -72,6 +72,11 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
         name="timestamp_index",
         unique=False,
     )
+    await mongo_client[_DB_NAME][TASK_DIRECTIVES_COLL_NAME].create_index(  # type: ignore[index]
+        "worker_config.priority",
+        name="worker_config_priority_index",
+        unique=False,
+    )
 
 
 def web_jsonschema_validate(instance: Any, schema: dict) -> None:

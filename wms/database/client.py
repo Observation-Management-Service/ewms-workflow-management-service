@@ -53,12 +53,23 @@ class WMSMongoClient:
         self.logger.debug(f"inserted one: {doc}")
         return doc
 
-    async def update_set_one(self, query: dict, set_update: dict) -> int:
+    async def update_set_one(
+        self,
+        query: dict,
+        set_update: dict,
+        *args: Any,
+        **kwargs: Any,
+    ) -> int:
         """Update the doc."""
         self.logger.debug(f"update one with query: {query}")
 
         web_jsonschema_validate(set_update, self._schema_partial)
-        res = await self._collection.update_one(query, {"$set": set_update})
+        res = await self._collection.update_one(
+            query,
+            {"$set": set_update},
+            *args,
+            **kwargs,
+        )
         if not res.matched_count:
             raise DocumentNotFoundException()
 

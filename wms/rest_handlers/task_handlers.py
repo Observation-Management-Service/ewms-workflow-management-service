@@ -8,6 +8,7 @@ import uuid
 from tornado import web
 
 from .. import config
+from ..config import ENV
 from ..database.client import DocumentNotFoundException
 from . import auth, utils
 from .base_handlers import BaseWMSHandler
@@ -80,8 +81,13 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     # set ONCE by tms's watcher
                     condor_complete_ts=None,
                     #
-                    # TODO - set to 'pre-tms', then backlogger changes to 'pending-starter'
-                    tms_most_recent_action="pending-starter",  # updated by backlogger, tms
+                    # updated by backlogger, tms
+                    tms_most_recent_action=(
+                        "pre-tms"
+                        if self.get_argument("worker_config")["priority"]
+                        < ENV.SKIP_BACKLOG_MIN_PRIORITY
+                        else "pending-starter"
+                    ),
                     #
                     # updated by tms SEVERAL times
                     compound_statuses={},
