@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.12 (2024-03-11)
+
+### Other
+
+* Add `example/` Scripts for Testing in Prod ([#15](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/15)) ([`dedc8c3`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/dedc8c3a3d38aca4fe48c789edfc00cfc0e54634))
+
 ## v0.0.11 (2024-03-07)
 
 ### Other
