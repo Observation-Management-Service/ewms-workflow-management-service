@@ -1,6 +1,7 @@
 """request_task.py."""
 
 
+import argparse
 import asyncio
 import json
 import logging
@@ -81,11 +82,16 @@ async def load_queue(task_in_queue: str) -> None:
             LOGGER.debug(f"enqueued #{i}: {msg}")
 
 
-async def request(rc: RestClient, task_in_queue: str, task_out_queue: str) -> str:
+async def request(
+    rc: RestClient,
+    task_in_queue: str,
+    task_out_queue: str,
+    cvmfs_image_tag: str,
+) -> str:
     """Request EWMS (WMS) to process a task."""
     post_body = dict(
         cluster_locations=["sub-2"],
-        task_image="/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-task-management-service:0.1.11",
+        task_image=f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-task-management-service:{cvmfs_image_tag}",
         task_args=f"python examples/do_task.py --queue-incoming {task_in_queue} --queue-outgoing {task_out_queue}",
         environment={
             "EWMS_PILOT_BROKER_ADDRESS": os.environ["EWMS_PILOT_BROKER_ADDRESS"],
@@ -139,6 +145,14 @@ async def monitor_wms(rc: RestClient, task_id: str) -> None:
 
 async def main() -> None:
     """explain."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--cvmfs-image-tag",
+        required=True,
+        help="the tag (version) of the WMS image that the workers will piggyback. Ex: 0.1.11",
+    )
+    args = parser.parse_args()
+
     rc = SavedDeviceGrantAuth(
         "https://ewms-dev.icecube.aq",
         token_url="https://keycloak.icecube.wisc.edu/auth/realms/IceCube",
@@ -154,7 +168,7 @@ async def main() -> None:
         raise RuntimeError("EWMS_PILOT_BROKER_AUTH_TOKEN must be given")
 
     await load_queue(task_in_queue)
-    task_id = await request(rc, task_in_queue, task_out_queue)
+    task_id = await request(rc, task_in_queue, task_out_queue, args.cvmfs_image_tag)
 
     async with asyncio.TaskGroup() as tg:
         tg.create_task(read_queue(task_out_queue))
