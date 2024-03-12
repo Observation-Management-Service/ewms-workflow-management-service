@@ -1,4 +1,7 @@
-"""request_task.py."""
+"""A simple example script (task) to send to EWMS.
+
+See https://github.com/Observation-Management-Service/ewms-task-management-service/blob/main/examples/do_task.py
+"""
 
 
 import argparse
