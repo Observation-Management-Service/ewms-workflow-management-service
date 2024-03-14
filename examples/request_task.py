@@ -9,7 +9,6 @@ import asyncio
 import json
 import logging
 import os
-import sys
 import threading
 import time
 from pathlib import Path
@@ -23,63 +22,63 @@ LOGGER.setLevel(logging.DEBUG)
 
 EWMS_PILOT_BROKER_CLIENT = "rabbitmq"
 
+MSGS = [
+    "foo",
+    "bar",
+    "baz",
+    "dummy",
+    "test",
+    "data",
+    "example",
+    "123",
+    "abc",
+    "xyz",
+    "apple",
+    "banana",
+    "orange",
+    "grape",
+    "pineapple",
+    "watermelon",
+    "kiwi",
+    "pear",
+    "strawberry",
+    "melon",
+    "carrot",
+    "potato",
+    "broccoli",
+    "lettuce",
+    "cucumber",
+    "tomato",
+    "onion",
+    "garlic",
+    "pepper",
+    "spinach",
+    "dog",
+    "cat",
+    "bird",
+    "fish",
+    "rabbit",
+    "hamster",
+    "turtle",
+    "snake",
+    "lizard",
+    "frog",
+    "red",
+    "blue",
+    "green",
+    "yellow",
+    "orange",
+    "purple",
+    "black",
+    "white",
+    "gray",
+    "brown",
+]
+
 
 async def load_queue(task_in_queue: str, mq_token: str) -> None:
     """Load the in-queue's with several contents."""
     LOGGER.info("Loading in-queue with messages...")
-
-    msgs = [
-        "foo",
-        "bar",
-        "baz",
-        "dummy",
-        "test",
-        "data",
-        "example",
-        "123",
-        "abc",
-        "xyz",
-        "apple",
-        "banana",
-        "orange",
-        "grape",
-        "pineapple",
-        "watermelon",
-        "kiwi",
-        "pear",
-        "strawberry",
-        "melon",
-        "carrot",
-        "potato",
-        "broccoli",
-        "lettuce",
-        "cucumber",
-        "tomato",
-        "onion",
-        "garlic",
-        "pepper",
-        "spinach",
-        "dog",
-        "cat",
-        "bird",
-        "fish",
-        "rabbit",
-        "hamster",
-        "turtle",
-        "snake",
-        "lizard",
-        "frog",
-        "red",
-        "blue",
-        "green",
-        "yellow",
-        "orange",
-        "purple",
-        "black",
-        "white",
-        "gray",
-        "brown",
-    ]
 
     queue = mq.Queue(
         EWMS_PILOT_BROKER_CLIENT,
@@ -88,7 +87,7 @@ async def load_queue(task_in_queue: str, mq_token: str) -> None:
         auth_token=mq_token,
     )
     async with queue.open_pub() as pub:
-        for i, msg in enumerate(msgs):
+        for i, msg in enumerate(MSGS):
             await pub.send(msg)
             LOGGER.debug(f"enqueued #{i}: {msg}")
 
