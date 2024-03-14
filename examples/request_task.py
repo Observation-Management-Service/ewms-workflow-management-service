@@ -12,6 +12,7 @@ import os
 import threading
 import time
 from pathlib import Path
+from typing import Any
 
 import mqclient as mq
 from rest_tools.client import ClientCredentialsAuth, RestClient, SavedDeviceGrantAuth
@@ -133,6 +134,12 @@ async def read_queue(task_out_queue: str, mq_token: str) -> None:
     """Read and dump the out-queue's contents."""
     LOGGER.info("Reading out-queue messages...")
 
+    # using a set bc...
+    # 1. mqclient doesn't guarantee deliver-once delivery
+    # 2. assuming (without domain knowledge) that result values are unique
+    got: set[Any] = set()
+    # alternatively, we could adjust the timeout though that requires other assumptions
+
     queue = mq.Queue(
         EWMS_PILOT_BROKER_CLIENT,
         address=os.environ["EWMS_PILOT_BROKER_ADDRESS"],
@@ -144,7 +151,10 @@ async def read_queue(task_out_queue: str, mq_token: str) -> None:
         i = 0
         async for msg in sub:
             LOGGER.debug(f"received #{i}: {msg}")
+            got.add(msg)
             i += 1
+            if len(got) == len(MSGS):  # naively check (see )
+                break
 
     LOGGER.info("Done reading queue")
 
