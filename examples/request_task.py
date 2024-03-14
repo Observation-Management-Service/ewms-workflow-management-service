@@ -99,7 +99,7 @@ async def request(
     rc: RestClient,
     task_in_queue: str,
     task_out_queue: str,
-    cvmfs_image_tag: str,
+    pilot_cvmfs_image_tag: str,
     mq_token: str,
     n_workers: int,
 ) -> str:
@@ -108,7 +108,7 @@ async def request(
 
     post_body = dict(
         cluster_locations=["sub-2"],
-        task_image=f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-task-management-service:{cvmfs_image_tag}",
+        task_image=f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
         task_args=f"python /app/examples/do_task.py --queue-incoming {task_in_queue} --queue-outgoing {task_out_queue}",
         environment={
             "EWMS_PILOT_BROKER_ADDRESS": os.environ["EWMS_PILOT_BROKER_ADDRESS"],
@@ -197,9 +197,9 @@ async def main() -> None:
     """explain."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--cvmfs-image-tag",
+        "--pilot-cvmfs-image-tag",
         required=True,
-        help="the tag (version) of the WMS image that the workers will piggyback. Ex: 0.1.11",
+        help="the tag (version) of the pilot example image that the workers will use. Ex: 0.1.11",
     )
     parser.add_argument(
         "--n-workers",
@@ -232,7 +232,7 @@ async def main() -> None:
         rc,
         task_in_queue,
         task_out_queue,
-        args.cvmfs_image_tag,
+        args.pilot_cvmfs_image_tag,
         mq_token,
         args.n_workers,
     )
