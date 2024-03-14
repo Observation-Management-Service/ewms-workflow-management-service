@@ -245,6 +245,9 @@ async def main() -> None:
 
     await read_queue(task_out_queue, mq_token)
 
+    # wait at end, so monitor thread can get some final updates
+    await asyncio.sleep(60)
+
 
 if __name__ == "__main__":
     asyncio.run(main())
