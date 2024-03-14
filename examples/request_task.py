@@ -171,6 +171,8 @@ def monitor_wms(rc: RestClient, task_id: str) -> None:
                         "tms_most_recent_action",
                         "compound_statuses",
                         "top_task_errors",
+                        "taskforce_uuid",
+                        "task_id",
                     ],
                 },
             )
