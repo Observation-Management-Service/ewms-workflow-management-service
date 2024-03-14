@@ -1,6 +1,6 @@
 """A simple example script (task) to send to EWMS.
 
-See https://github.com/Observation-Management-Service/ewms-task-management-service/blob/main/examples/do_task.py
+See https://github.com/Observation-Management-Service/ewms-pilot/blob/main/examples/do_task.py
 """
 
 
