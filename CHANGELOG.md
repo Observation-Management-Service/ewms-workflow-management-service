@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.13 (2024-03-15)
+
+### Other
+
+* Update Example Scripts ([#16](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/16)) ([`594b9b9`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/594b9b958ba1095dbfd16ed1d82f66b353554fdc))
+
 ## v0.0.12 (2024-03-11)
 
 ### Other
