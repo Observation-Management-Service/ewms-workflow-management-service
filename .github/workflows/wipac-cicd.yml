@@ -109,8 +109,12 @@ jobs:
   # AUTO-GENERATION
   #############################################################################
 
-
   schema-modifications:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: WIPACrepo/wipac-dev-rest-interface-schema-action@main
+
+  api-documentation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -131,37 +135,10 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-
-      - name: modify REST path schemas - ${{ env.REST_OPENAPI_PATHS_DIR }}
-        if: env.IS_GIT_BEHIND != 'true'
-        run: |
-          cd wms/$REST_OPENAPI_PATHS_DIR
-          python ${{ github.workspace }}/resources/modify_rest_path_schemas.py
-
-      - name: modify DB schemas - ${{ env.DB_JSONSCHEMA_DIR }}
-        if: env.IS_GIT_BEHIND != 'true'
-        run: |
-          cd wms/$DB_JSONSCHEMA_DIR
-          python ${{ github.workspace }}/resources/modify_db_schemas.py
-
-      - name: auto-build ${{ env.REST_OPENAPI_SPEC_FPATH }}
-        if: env.IS_GIT_BEHIND != 'true'
-        run: |
-          # NOTE: DO NOT CHANGE THE CONTENTS OF THE SCHEMA, ONLY ASSEMBLE.
-          #
-          # ANY MODIFICATIONS SHOULD BE MADE TO **ORIGINAL FILES**
-          # (NOT THE AUTO-GENERATED FILE) AND COMMITTED.
-
-          cd wms/$( dirname $REST_OPENAPI_PREBUILD_FPATH )
-          python ${{ github.workspace }}/resources/build_openapi_schema.py \
-              $( basename $REST_OPENAPI_PREBUILD_FPATH ) \
-              $( basename $REST_OPENAPI_SPEC_FPATH )
-
       - name: generate docs (README)
         if: env.IS_GIT_BEHIND != 'true'
         run: |
           outdir=Docs
-
           # generate
           docker run --rm \
               -v $PWD:/local \
@@ -170,7 +147,6 @@ jobs:
               -i /local/wms/$REST_OPENAPI_SPEC_FPATH \
               -g markdown \
               -o /local/$outdir
-          
           set -ex
           # tweak auto-generated contents -- miscellaneous
           # remove "no auth" mentions
@@ -178,7 +154,6 @@ jobs:
           sed -i "\|All URIs are relative to \*http://localhost\*|d" $outdir/README.md
           #       ^^ alternate delimiter: https://stackoverflow.com/a/1797967
           find $outdir -type f -exec sed -i '/No authorization required/d' {} +
-
       - name: git add, commit, push
         if: env.IS_GIT_BEHIND != 'true'
         run: |
@@ -290,7 +265,7 @@ jobs:
   release:
     # only run on main/master/default
     if: format('refs/heads/{0}', github.event.repository.default_branch) == github.ref
-    needs: [flake8, mypy, py-setup, py-versions, schema-modifications, test-build-docker, integration-tests, unit-tests]
+    needs: [flake8, mypy, py-setup, py-versions, schema-modifications, api-documentation, test-build-docker, integration-tests, unit-tests]
     runs-on: ubuntu-latest
     concurrency: release
     steps:
