@@ -117,8 +117,8 @@ jobs:
         with:
           rest_openapi_paths_dir: "wms/schema/rest/paths"
           rest_openapi_prebuild_fpath: "wms/schema/rest/openapi_prebuild.json"
-          rest_openapi_spec_fpath: "wms/$REST_OPENAPI_SPEC_FPATH"
-          db_jsonschema_dir: "wms/$DB_JSONSCHEMA_DIR"
+          rest_openapi_spec_fpath: "wms/${{ env.REST_OPENAPI_SPEC_FPATH }}"
+          db_jsonschema_dir: "wms/${{ env.DB_JSONSCHEMA_DIR }}"
 
   api-documentation:
     runs-on: ubuntu-latest
