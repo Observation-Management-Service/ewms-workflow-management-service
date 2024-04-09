@@ -110,6 +110,9 @@ jobs:
   schema-modifications:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       - uses: WIPACrepo/wipac-dev-rest-interface-schema-action@main
         with:
           rest_openapi_paths_dir: "wms/schema/rest/paths"
