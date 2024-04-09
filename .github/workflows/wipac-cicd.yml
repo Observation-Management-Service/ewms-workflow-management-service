@@ -11,8 +11,6 @@ env:
   REST_HOST: localhost  # the server should connect to 0.0.0.0
   REST_PORT: 8080
   #
-  REST_OPENAPI_PATHS_DIR: "schema/rest/paths"
-  REST_OPENAPI_PREBUILD_FPATH: "schema/rest/openapi_prebuild.json"
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
   #
@@ -113,6 +111,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: WIPACrepo/wipac-dev-rest-interface-schema-action@main
+        with:
+          rest_openapi_paths_dir: "wms/schema/rest/paths"
+          rest_openapi_prebuild_fpath: "wms/schema/rest/openapi_prebuild.json"
+          rest_openapi_spec_fpath: "wms/$REST_OPENAPI_SPEC_FPATH"
+          db_jsonschema_dir: "wms/$DB_JSONSCHEMA_DIR"
 
   api-documentation:
     runs-on: ubuntu-latest
