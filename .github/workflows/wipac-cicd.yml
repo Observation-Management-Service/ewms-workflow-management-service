@@ -167,7 +167,7 @@ jobs:
               -v $PWD:/local \
               openapitools/openapi-generator-cli generate \
               --skip-validate-spec \
-              -i /local/wms/$( basename $REST_OPENAPI_SPEC_FPATH ) \
+              -i /local/wms/$REST_OPENAPI_SPEC_FPATH \
               -g markdown \
               -o /local/$outdir
           
