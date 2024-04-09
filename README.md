@@ -5,4 +5,4 @@
 The external interface for EWMS
 
 # API Documentation
-See [docs/](./docs)
+See [Docs/](./Docs)
