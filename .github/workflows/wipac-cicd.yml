@@ -175,8 +175,10 @@ jobs:
           # tweak auto-generated contents -- miscellaneous
           # remove "no auth" mentions
           sed -i "/All endpoints do not require authorization./d" $outdir/README.md
-          sed -i "\|All URIs are relative to *http://localhost*|d" $outdir/README.md
+          tfile=$(tempfile)
+          sed "\|All URIs are relative to *http://localhost*|d" $outdir/README.md | tee $tfile
           #       ^^ alternate delimiter: https://stackoverflow.com/a/1797967
+          cat $tfile > $outdir/README.md
           find $outdir -type f -exec sed -i '/No authorization required/d' {} +
 
       - name: git add, commit, push
