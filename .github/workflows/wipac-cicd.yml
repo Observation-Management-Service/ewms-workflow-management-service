@@ -171,6 +171,7 @@ jobs:
               -g markdown \
               -o /local/$outdir
           
+          set -ex
           # tweak auto-generated contents -- miscellaneous
           # remove "no auth" mentions
           sed -i "/All endpoints do not require authorization./d" $outdir/README.md
