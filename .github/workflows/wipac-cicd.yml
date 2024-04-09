@@ -160,33 +160,21 @@ jobs:
       - name: generate docs (README)
         if: env.IS_GIT_BEHIND != 'true'
         run: |
-          set -ex
+          outdir=Docs
 
-          cd wms/$( dirname $REST_OPENAPI_SPEC_FPATH )
-          export TMPDIR=$(mktemp -d -p .)  # temp dir here (covered by .gitignore)
-          echo $TMPDIR
-
-          # generate first as asciidoc (compiles to one file, their md generator produces a dir)
+          # generate
           docker run --rm \
               -v $PWD:/local \
               openapitools/openapi-generator-cli generate \
               --skip-validate-spec \
-              -i /local/$( basename $REST_OPENAPI_SPEC_FPATH ) \
+              -i /local/wms/$( basename $REST_OPENAPI_SPEC_FPATH ) \
               -g markdown \
-              -o /local/$TMPDIR
-          ls -l $TMPDIR
-          sudo chmod -R 777 $TMPDIR
+              -o /local/$outdir
           
-          cat $TMPDIR/README.md
-
           # tweak auto-generated contents -- miscellaneous
           # remove "no auth" mentions
-          sed -i "/All endpoints do not require authorization./d" $TMPDIR/README.md
-          find $TMPDIR -type f -exec sed -i '/No authorization required/d' {} +
-
-          # move auto-generated docs (override previous)
-          rm -r ${{ github.workspace }}/Docs || true
-          mv $TMPDIR ${{ github.workspace }}/Docs
+          sed -i "/All endpoints do not require authorization./d" $outdir/README.md
+          find $outdir -type f -exec sed -i '/No authorization required/d' {} +
 
       - name: git add, commit, push
         if: env.IS_GIT_BEHIND != 'true'
