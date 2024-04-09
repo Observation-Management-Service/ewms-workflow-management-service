@@ -25,7 +25,7 @@ class WMSMongoClient:
         collection_name: str,
     ) -> None:
         self._collection = AsyncIOMotorCollection(
-            mongo_client[_DB_NAME],  # type: ignore[index]
+            mongo_client[_DB_NAME],  # type: ignore[arg-type]
             collection_name,
         )
         self._schema = MONGO_COLLECTION_JSONSCHEMA_SPECS[

@@ -1,9 +1,9 @@
-# _taskforces_tms_status_post_200_response
+# _task_directives_find_post_200_response
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **results** | [**oas_any_type_not_mapped**](.md) |  | [default to null] |
+| **task\_directives** | [**List**](TaskDirectiveObject.md) | a list of task directive objects | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
