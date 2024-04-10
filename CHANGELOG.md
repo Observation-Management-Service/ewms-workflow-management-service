@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.14 (2024-04-10)
+
+### Other
+
+* Clean Up Autodoc Generation, Organization ([#17](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/17)) ([`3b8a33d`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/3b8a33dd1462d8e828f48fab4861836168f426ef))
+
 ## v0.0.13 (2024-03-15)
 
 ### Other
