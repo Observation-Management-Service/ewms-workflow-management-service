@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.16 (2024-04-15)
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`be6a4a7`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/be6a4a75c8ff40127caff0b52c3229ee2ea55059))
+
 ## v0.0.15 (2024-04-15)
 
 ### Other
