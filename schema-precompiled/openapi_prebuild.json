@@ -45,8 +45,8 @@
             }
         },
         "schemas": {
-            "TaskDirectiveObject": "GHA_CI_INGEST_FILE_CONTENTS ../db/TaskDirective.json required=[]",
-            "TaskforceObject": "GHA_CI_INGEST_FILE_CONTENTS ../db/Taskforce.json required=[]",
+            "TaskDirectiveObject": "GHA_CI_INGEST_FILE_CONTENTS ../wms/schema/db/TaskDirective.json required=[]",
+            "TaskforceObject": "GHA_CI_INGEST_FILE_CONTENTS ../wms/schema/db/Taskforce.json required=[]",
             "FindObject": {
                 "type": "object",
                 "properties": {

@@ -1,18 +1,18 @@
 """REST handlers for task-related routes."""
 
-
 import logging
 import time
 import uuid
 
+from rest_tools.server import validate_request
 from tornado import web
 
+from . import auth
+from .base_handlers import BaseWMSHandler
 from .. import config
 from ..config import ENV
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TMSAction
-from . import auth, utils
-from .base_handlers import BaseWMSHandler
 
 LOGGER = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/task/directive$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
         """Handle POST.
 
@@ -108,7 +108,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/task/directive/(?P<task_id>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, task_id: str) -> None:
         """Handle GET.
 
@@ -129,7 +129,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         self.write(task_directive)
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def delete(self, task_id: str) -> None:
         """Handle DELETE.
 
@@ -193,7 +193,7 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/task/directives/find$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
         """Handle POST.
 

@@ -115,8 +115,8 @@ jobs:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       - uses: WIPACrepo/wipac-dev-rest-interface-schema-action@v1.0
         with:
-          rest_openapi_paths_dir: "wms/schema/rest/paths"
-          rest_openapi_prebuild_fpath: "wms/schema/rest/openapi_prebuild.json"
+          rest_openapi_paths_dir: "schema-precompiled/paths"
+          rest_openapi_prebuild_fpath: "schema-precompiled/openapi_prebuild.json"
           rest_openapi_spec_fpath: "wms/${{ env.REST_OPENAPI_SPEC_FPATH }}"
           db_jsonschema_dir: "wms/${{ env.DB_JSONSCHEMA_DIR }}"
 

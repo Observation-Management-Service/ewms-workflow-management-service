@@ -1,16 +1,16 @@
 """REST handlers for taskforce-related routes."""
 
-
 import logging
 
 from pymongo import ASCENDING
+from rest_tools.server import validate_request
 from tornado import web
 
+from . import auth
+from .base_handlers import BaseWMSHandler
 from .. import config
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TMSAction
-from . import auth, utils
-from .base_handlers import BaseWMSHandler
 
 LOGGER = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/taskforces/tms/status$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
         """Handle POST.
 
@@ -102,7 +102,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/taskforces/find$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self) -> None:
         """Handle POST.
 
@@ -127,7 +127,7 @@ class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/taskforce/tms-action/pending-starter$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self) -> None:
         """Handle GET.
 
@@ -159,7 +159,7 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/taskforce/tms-action/condor-submit/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST.
 
@@ -202,7 +202,7 @@ class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/taskforce/tms-action/pending-stopper$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self) -> None:
         """Handle GET.
 
@@ -235,7 +235,7 @@ class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
     ROUTE = r"/taskforce/tms-action/pending-stopper/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def delete(self, taskforce_uuid: str) -> None:
         """Handle DELETE.
 
@@ -274,7 +274,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
     ROUTE = r"/taskforce/tms/condor-complete/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST.
 
@@ -313,7 +313,7 @@ class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     ROUTE = r"/taskforce/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @utils.validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def get(self, taskforce_uuid: str) -> None:
         """Handle GET.
 

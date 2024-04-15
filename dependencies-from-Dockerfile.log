@@ -18,7 +18,7 @@ dnspython==2.6.1
 googleapis-common-protos==1.59.1
 grpcio==1.62.1
 humanfriendly==10.0
-idna==3.6
+idna==3.7
 importlib-metadata==7.0.0
 isodate==0.6.1
 jsonschema==4.21.1
@@ -29,7 +29,7 @@ MarkupSafe==2.1.5
 more-itertools==10.2.0
 motor==3.4.0
 oms-mqclient==2.4.10
-openapi-core==0.19.0
+openapi-core==0.19.1
 openapi-schema-validator==0.6.2
 openapi-spec-validator==0.7.1
 opentelemetry-api==1.24.0
@@ -63,7 +63,7 @@ typing_extensions==4.11.0
 urllib3==2.2.1
 Werkzeug==3.0.2
 wipac-dev-tools==1.9.1
-wipac-rest-tools==1.6.1
+wipac-rest-tools==1.7.0
 wipac-telemetry==0.3.0
 wrapt==1.16.0
 zipp==3.18.1
@@ -74,7 +74,7 @@ cryptography==42.0.5
 └── cffi [required: >=1.12, installed: 1.16.0]
     └── pycparser [required: Any, installed: 2.22]
 pika==1.3.2
-pipdeptree==2.17.0
+pipdeptree==2.18.1
 ├── packaging [required: >=23.1, installed: 24.0]
 └── pip [required: >=23.1.2, installed: 24.0]
 setuptools==65.5.1
@@ -147,7 +147,7 @@ wipac-telemetry==0.3.0
 │   └── requests [required: ~=2.7, installed: 2.31.0]
 │       ├── certifi [required: >=2017.4.17, installed: 2024.2.2]
 │       ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
-│       ├── idna [required: >=2.5,<4, installed: 3.6]
+│       ├── idna [required: >=2.5,<4, installed: 3.7]
 │       └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
 ├── opentelemetry-sdk [required: Any, installed: 1.24.0]
 │   ├── opentelemetry-api [required: ==1.24.0, installed: 1.24.0]
@@ -163,7 +163,7 @@ wipac-telemetry==0.3.0
     ├── requests [required: Any, installed: 2.31.0]
     │   ├── certifi [required: >=2017.4.17, installed: 2024.2.2]
     │   ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
-    │   ├── idna [required: >=2.5,<4, installed: 3.6]
+    │   ├── idna [required: >=2.5,<4, installed: 3.7]
     │   └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
     └── typing_extensions [required: Any, installed: 4.11.0]
 wms
@@ -185,10 +185,10 @@ wms
 │       ├── requests [required: Any, installed: 2.31.0]
 │       │   ├── certifi [required: >=2017.4.17, installed: 2024.2.2]
 │       │   ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
-│       │   ├── idna [required: >=2.5,<4, installed: 3.6]
+│       │   ├── idna [required: >=2.5,<4, installed: 3.7]
 │       │   └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
 │       └── typing_extensions [required: Any, installed: 4.11.0]
-├── openapi-core [required: Any, installed: 0.19.0]
+├── openapi-core [required: Any, installed: 0.19.1]
 │   ├── isodate [required: Any, installed: 0.6.1]
 │   │   └── six [required: Any, installed: 1.16.0]
 │   ├── jsonschema [required: >=4.18.0,<5.0.0, installed: 4.21.1]
@@ -210,7 +210,7 @@ wms
 │   │   └── requests [required: >=2.31.0,<3.0.0, installed: 2.31.0]
 │   │       ├── certifi [required: >=2017.4.17, installed: 2024.2.2]
 │   │       ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
-│   │       ├── idna [required: >=2.5,<4, installed: 3.6]
+│   │       ├── idna [required: >=2.5,<4, installed: 3.7]
 │   │       └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
 │   ├── more-itertools [required: Any, installed: 10.2.0]
 │   ├── openapi-schema-validator [required: >=0.6.0,<0.7.0, installed: 0.6.2]
@@ -250,7 +250,7 @@ wms
 │   │   │   └── requests [required: >=2.31.0,<3.0.0, installed: 2.31.0]
 │   │   │       ├── certifi [required: >=2017.4.17, installed: 2024.2.2]
 │   │   │       ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
-│   │   │       ├── idna [required: >=2.5,<4, installed: 3.6]
+│   │   │       ├── idna [required: >=2.5,<4, installed: 3.7]
 │   │   │       └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
 │   │   ├── lazy-object-proxy [required: >=1.7.1,<2.0.0, installed: 1.10.0]
 │   │   └── openapi-schema-validator [required: >=0.6.0,<0.7.0, installed: 0.6.2]
@@ -277,10 +277,10 @@ wms
 │   ├── requests [required: Any, installed: 2.31.0]
 │   │   ├── certifi [required: >=2017.4.17, installed: 2024.2.2]
 │   │   ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
-│   │   ├── idna [required: >=2.5,<4, installed: 3.6]
+│   │   ├── idna [required: >=2.5,<4, installed: 3.7]
 │   │   └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
 │   └── typing_extensions [required: Any, installed: 4.11.0]
-└── wipac-rest-tools [required: Any, installed: 1.6.1]
+└── wipac-rest-tools [required: Any, installed: 1.7.0]
     ├── cachetools [required: Any, installed: 5.3.3]
     ├── PyJWT [required: !=2.6.0, installed: 2.8.0]
     ├── qrcode [required: Any, installed: 7.4.2]
@@ -289,13 +289,13 @@ wms
     ├── requests [required: Any, installed: 2.31.0]
     │   ├── certifi [required: >=2017.4.17, installed: 2024.2.2]
     │   ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
-    │   ├── idna [required: >=2.5,<4, installed: 3.6]
+    │   ├── idna [required: >=2.5,<4, installed: 3.7]
     │   └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
     ├── requests-futures [required: Any, installed: 1.0.1]
     │   └── requests [required: >=1.2.0, installed: 2.31.0]
     │       ├── certifi [required: >=2017.4.17, installed: 2024.2.2]
     │       ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
-    │       ├── idna [required: >=2.5,<4, installed: 3.6]
+    │       ├── idna [required: >=2.5,<4, installed: 3.7]
     │       └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
     ├── tornado [required: Any, installed: 6.4]
     ├── urllib3 [required: >=2.0.4, installed: 2.2.1]
@@ -303,6 +303,6 @@ wms
         ├── requests [required: Any, installed: 2.31.0]
         │   ├── certifi [required: >=2017.4.17, installed: 2024.2.2]
         │   ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
-        │   ├── idna [required: >=2.5,<4, installed: 3.6]
+        │   ├── idna [required: >=2.5,<4, installed: 3.7]
         │   └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
         └── typing_extensions [required: Any, installed: 4.11.0]
