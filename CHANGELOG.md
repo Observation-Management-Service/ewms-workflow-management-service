@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.15 (2024-04-15)
+
+### Other
+
+* Merge remote-tracking branch 'origin/main' ([`99bd94b`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/99bd94be1d7b5050f19916c2e297f60d14448cbb))
+* Allow running setup & dep actions on main ([`00d6a9c`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/00d6a9c8adabd85873009307f5083eb0dcb4d553))
+* Use `rest-tools` & `WIPACrepo/wipac-dev-rest-interface-schema-action` OpenAPI Utils ([#18](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/18)) ([`6a6507d`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/6a6507da9f8c27719811f18e9b01c16f2a47f7ed))
+
 ## v0.0.14 (2024-04-10)
 
 ### Other
