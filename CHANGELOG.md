@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.17 (2024-04-22)
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`cb388cc`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/cb388cc6ac5b72584bfad248dcaf41759c6f3d24))
+* <ci> modify rest documentation ([`b73cdfb`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/b73cdfbcd9ac1ca031ba0c85a6f297f18ef419dc))
+* CI: misc updates from mqs repo - 2 ([`5ce09f7`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/5ce09f7377bf1083035512bbe091bd89ec7fe94b))
+* CI: misc updates from mqs repo ([`80674e9`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/80674e91977a40794ff1635cc90d154c3c0e59ee))
+
 ## v0.0.16 (2024-04-15)
 
 ### Other
