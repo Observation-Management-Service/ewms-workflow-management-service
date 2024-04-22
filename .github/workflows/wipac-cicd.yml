@@ -1,7 +1,7 @@
 name: wipac ci/cd
 
 
-on: [push]
+on: [ push ]
 
 
 env:
@@ -43,7 +43,7 @@ jobs:
       - uses: WIPACrepo/wipac-dev-flake8-action@v1.0
 
   mypy:
-    needs: [py-versions]
+    needs: [ py-versions ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -59,18 +59,12 @@ jobs:
   py-setup:
     runs-on: ubuntu-latest
     steps:
-      # dependabot can't access normal secrets
-      #   & don't run non-branch triggers (like tags)
-      - if: |
-          github.actor != 'dependabot[bot]' &&
-          github.ref_type == 'branch'
+      - if: github.ref_type == 'branch' && github.actor != 'dependabot[bot]'
         name: checkout (only for non-dependabot non-default branches)
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-      - if: |
-          github.actor != 'dependabot[bot]' &&
-          github.ref_type == 'branch'
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
+      - if: github.ref_type == 'branch' && github.actor != 'dependabot[bot]'
         name: wipac-dev-py-setup-action (only for non-dependabot non-default branches)
         uses: WIPACrepo/wipac-dev-py-setup-action@v3.0
         with:
@@ -78,19 +72,16 @@ jobs:
 
   py-dependencies:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ github.job }}
+      cancel-in-progress: true
     steps:
-      # dependabot can't access normal secrets
-      #   & don't run non-branch triggers (like tags)
-      - if: |
-          github.actor != 'dependabot[bot]' &&
-          github.ref_type == 'branch'
+      - if: github.ref_type == 'branch' && github.actor != 'dependabot[bot]'
         name: checkout (only for non-dependabot non-default branches)
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-      - if: |
-          github.actor != 'dependabot[bot]' &&
-          github.ref_type == 'branch'
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
+      - if: github.ref_type == 'branch' && github.actor != 'dependabot[bot]'
         name: wipac-dev-py-setup-action (only for non-dependabot non-default branches)
         uses: WIPACrepo/wipac-dev-py-dependencies-action@v1.0
 
@@ -117,7 +108,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
       - uses: actions/setup-python@v4
       - name: Is this the most recent commit? It won't be if the action was reran
         run: |
@@ -137,15 +128,17 @@ jobs:
         if: env.IS_GIT_BEHIND != 'true'
         run: |
           outdir=Docs
+          git rm -r $outdir || true
           # generate
           docker run --rm \
               -v $PWD:/local \
               openapitools/openapi-generator-cli generate \
               --skip-validate-spec \
-              -i /local/wms/$REST_OPENAPI_SPEC_FPATH \
+              -i /local/mqs/$REST_OPENAPI_SPEC_FPATH \
               -g markdown \
               -o /local/$outdir
           set -ex
+          sudo chmod -R +777 $outdir  # needed since the 'rm' above wiped previous ownership & now container owns it all
           # tweak auto-generated contents -- miscellaneous
           # remove "no auth" mentions
           sed -i "/All endpoints do not require authorization./d" $outdir/README.md
@@ -156,7 +149,7 @@ jobs:
         if: env.IS_GIT_BEHIND != 'true'
         run: |
           git add . || true
-          git commit -m "<ci> modify openapi/jsonschema file(s)" || true
+          git commit -m "<ci> modify rest documentation" || true
           git push || true
 
 
@@ -179,7 +172,7 @@ jobs:
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
 
   integration-tests:
-    needs: [py-versions, schema-modifications]
+    needs: [ py-versions, schema-modifications ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -189,7 +182,7 @@ jobs:
       mongo:
         image: bitnami/mongodb:4
         ports:
-        - 27017:27017
+          - 27017:27017
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -237,7 +230,7 @@ jobs:
 
 
   unit-tests:
-    needs: [py-versions, schema-modifications]
+    needs: [ py-versions, schema-modifications ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -263,17 +256,28 @@ jobs:
   release:
     # only run on main/master/default
     if: format('refs/heads/{0}', github.event.repository.default_branch) == github.ref
-    needs: [flake8, mypy, py-setup, py-versions, schema-modifications, api-documentation, test-build-docker, integration-tests, unit-tests]
+    needs: [
+      flake8,
+      mypy,
+      py-setup,
+      py-versions,
+      py-dependencies,
+      schema-modifications,
+      api-documentation,
+      test-build-docker,
+      integration-tests,
+      unit-tests
+    ]
     runs-on: ubuntu-latest
     concurrency: release
     steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    - name: Python Semantic Release
-      uses: python-semantic-release/python-semantic-release@v7.34.6
-      with:
-        github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        # repository_username: __token__
-        # repository_password: ${{ secrets.PYPI_TOKEN }}
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Python Semantic Release
+        uses: python-semantic-release/python-semantic-release@v7.34.6
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          # repository_username: __token__
+          # repository_password: ${{ secrets.PYPI_TOKEN }}
