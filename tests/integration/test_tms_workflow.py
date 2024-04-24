@@ -86,7 +86,7 @@ async def test_000(rc: RestClient) -> None:
         openapi_spec,
         CONDOR_LOCATIONS,
     )
-    await ewms_actions.backlogger_marks_taskforces_pending_starter(
+    await ewms_actions.launch_control_marks_taskforces_pending_starter(
         rc,
         openapi_spec,
         task_id,
@@ -171,7 +171,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         openapi_spec,
         CONDOR_LOCATIONS,
     )
-    await ewms_actions.backlogger_marks_taskforces_pending_starter(
+    await ewms_actions.launch_control_marks_taskforces_pending_starter(
         rc,
         openapi_spec,
         task_id,
@@ -337,7 +337,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
 
-    # await ewms_actions.backlogger_marks_taskforces_pending_starter(
+    # await ewms_actions.launch_control_marks_taskforces_pending_starter(
     #     rc,
     #     openapi_spec,
     #     task_id,
@@ -412,7 +412,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         openapi_spec,
         CONDOR_LOCATIONS,
     )
-    await ewms_actions.backlogger_marks_taskforces_pending_starter(
+    await ewms_actions.launch_control_marks_taskforces_pending_starter(
         rc,
         openapi_spec,
         task_id,
@@ -513,7 +513,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         openapi_spec,
         CONDOR_LOCATIONS,
     )
-    await ewms_actions.backlogger_marks_taskforces_pending_starter(
+    await ewms_actions.launch_control_marks_taskforces_pending_starter(
         rc,
         openapi_spec,
         task_id,
@@ -612,7 +612,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         openapi_spec,
         CONDOR_LOCATIONS,
     )
-    await ewms_actions.backlogger_marks_taskforces_pending_starter(
+    await ewms_actions.launch_control_marks_taskforces_pending_starter(
         rc,
         openapi_spec,
         task_id,

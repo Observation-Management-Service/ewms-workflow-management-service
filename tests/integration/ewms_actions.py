@@ -132,15 +132,15 @@ async def user_requests_new_task(
     return task_id
 
 
-async def backlogger_marks_taskforces_pending_starter(
+async def launch_control_marks_taskforces_pending_starter(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
     n_locations: int,
 ) -> None:
-    """Wait expected time for backlogger to set taskforces as 'pending-
+    """Wait expected time for launch_control to set taskforces as 'pending-
     starter'."""
-    await asyncio.sleep(int(os.environ["BACKLOG_RUNNER_DELAY"]) * (n_locations + 1))
+    await asyncio.sleep(int(os.environ["LAUNCH_CONTROL_DELAY"]) * (n_locations + 1))
 
     resp = await request_and_validate(
         rc,

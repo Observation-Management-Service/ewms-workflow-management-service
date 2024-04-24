@@ -82,11 +82,11 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     # set ONCE by tms's watcher
                     condor_complete_ts=None,
                     #
-                    # updated by backlogger, tms
+                    # updated by launch_control, tms
                     phase=(
                         TaskforcePhase.PRE_LAUNCH
                         if self.get_argument("worker_config")["priority"]
-                        < ENV.SKIP_BACKLOG_MIN_PRIORITY
+                        < ENV.SKIP_LAUNCH_CONTROL_MIN_PRIORITY
                         else TaskforcePhase.PENDING_STARTER
                     ),
                     #

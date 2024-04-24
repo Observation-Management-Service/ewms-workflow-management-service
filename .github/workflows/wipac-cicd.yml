@@ -15,9 +15,9 @@ env:
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
   #
-  BACKLOG_RUNNER_SHORT_DELAY: 3
-  BACKLOG_RUNNER_DELAY: 3
-  SKIP_BACKLOG_MIN_PRIORITY: 10
+  LAUNCH_CONTROL_SHORT_DELAY: 3
+  LAUNCH_CONTROL_DELAY: 3
+  SKIP_LAUNCH_CONTROL_MIN_PRIORITY: 10
 
 
 jobs:
@@ -210,9 +210,9 @@ jobs:
             --env MQS_ADDRESS="${{ env.MQS_ADDRESS }}" \
             --env REST_OPENAPI_SPEC_FPATH="${{ env.REST_OPENAPI_SPEC_FPATH }}" \
             --env DB_JSONSCHEMA_DIR="${{ env.DB_JSONSCHEMA_DIR }}" \
-            --env BACKLOG_RUNNER_SHORT_DELAY="${{ env.BACKLOG_RUNNER_SHORT_DELAY }}" \
-            --env BACKLOG_RUNNER_DELAY="${{ env.BACKLOG_RUNNER_DELAY }}" \
-            --env SKIP_BACKLOG_MIN_PRIORITY="${{ env.SKIP_BACKLOG_MIN_PRIORITY }}" \
+            --env LAUNCH_CONTROL_SHORT_DELAY="${{ env.LAUNCH_CONTROL_SHORT_DELAY }}" \
+            --env LAUNCH_CONTROL_DELAY="${{ env.LAUNCH_CONTROL_DELAY }}" \
+            --env SKIP_LAUNCH_CONTROL_MIN_PRIORITY="${{ env.SKIP_LAUNCH_CONTROL_MIN_PRIORITY }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
           sleep 10

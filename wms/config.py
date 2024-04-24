@@ -44,9 +44,9 @@ class EnvConfig:
     LOG_LEVEL: str = "DEBUG"
     LOG_LEVEL_THIRD_PARTY: str = "DEBUG"
 
-    SKIP_BACKLOG_MIN_PRIORITY: int = 10
-    BACKLOG_RUNNER_SHORT_DELAY: int = 15
-    BACKLOG_RUNNER_DELAY: int = 5 * 60
+    SKIP_LAUNCH_CONTROL_MIN_PRIORITY: int = 10
+    LAUNCH_CONTROL_SHORT_DELAY: int = 15
+    LAUNCH_CONTROL_DELAY: int = 5 * 60
 
 
 ENV = from_environment_as_dataclass(EnvConfig)
