@@ -20,9 +20,9 @@ async def main() -> None:
     LOGGER.info("Mongo client connected.")
 
     async with asyncio.TaskGroup() as tg:
-        # launch_control
-        LOGGER.info("Starting launch_control in background...")
-        tg.create_task(launch_control.startup(mongo_client))
+        # taskforce_launch_control
+        LOGGER.info("Starting taskforce_launch_control in background...")
+        tg.create_task(taskforce_launch_control.startup(mongo_client))
 
         # REST Server
         LOGGER.info("Setting up REST server...")
