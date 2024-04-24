@@ -12,9 +12,13 @@ import os
 import threading
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-import mqclient as mq
+if TYPE_CHECKING:  # not installing dependency just for example script
+    Queue = Any
+else:
+    from mqclient import Queue
+
 from rest_tools.client import ClientCredentialsAuth, RestClient, SavedDeviceGrantAuth
 
 LOGGER = logging.getLogger(__name__)
@@ -83,7 +87,7 @@ async def load_queue(task_in_queue: str, mq_token: str) -> None:
     """Load the in-queue's with several contents."""
     LOGGER.info("Loading in-queue with messages...")
 
-    queue = mq.Queue(
+    queue = Queue(
         EWMS_PILOT_BROKER_CLIENT,
         address=os.environ["EWMS_PILOT_BROKER_ADDRESS"],
         name=task_in_queue,
@@ -142,7 +146,7 @@ async def read_queue(task_out_queue: str, mq_token: str) -> None:
     got: set[Any] = set()
     # alternatively, we could adjust the timeout though that requires other assumptions
 
-    queue = mq.Queue(
+    queue = Queue(
         EWMS_PILOT_BROKER_CLIENT,
         address=os.environ["EWMS_PILOT_BROKER_ADDRESS"],
         name=task_out_queue,
@@ -224,8 +228,8 @@ async def main() -> None:
         client_secret=os.environ["KEYCLOAK_CLIENT_SECRET_BROKER"],
     ).make_access_token()
 
-    task_in_queue = mq.Queue.make_name()
-    task_out_queue = mq.Queue.make_name()
+    task_in_queue = Queue.make_name()
+    task_out_queue = Queue.make_name()
 
     await load_queue(task_in_queue, mq_token)
     task_id = await request(
