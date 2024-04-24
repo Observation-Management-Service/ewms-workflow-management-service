@@ -33,6 +33,8 @@ class EnvConfig:
     REST_HOST: str  # "localhost"
     REST_PORT: int  # 8080
 
+    MQS_ADDRESS: str
+
     AUTH_AUDIENCE: str = ""
     AUTH_OPENID_URL: str = ""
     MONGODB_AUTH_PASS: str = ""  # empty means no authentication required
