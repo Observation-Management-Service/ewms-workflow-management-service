@@ -37,9 +37,10 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             task_image=self.get_argument("task_image"),
             task_args=self.get_argument("task_args"),
             timestamp=int(time.time()),
+            priority=self.get_argument("worker_config")["priority"],
             #
-            # values determined by mqs, updated by launch_control
-            queues={k: None for k in self.get_argument("queues")},  # list -> dict
+            n_queues=self.get_argument("n_queues"),
+            queues=[],  # values determined by mqs, updated by task_mq_assembly
             #
             aborted=False,
         )
@@ -84,7 +85,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     # set ONCE by tms's watcher
                     condor_complete_ts=None,
                     #
-                    # updated by launch_control, tms
+                    # updated by taskforce_launch_control, tms
                     # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)
                     phase=TaskforcePhase.PRE_MQ_ASSEMBLY,
                     #

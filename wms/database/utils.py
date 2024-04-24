@@ -56,6 +56,9 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
 
     # TASK_DIRECTIVES
     await make_index(TASK_DIRECTIVES_COLL_NAME, "task_id", unique=True)
+    await make_index(TASK_DIRECTIVES_COLL_NAME, "queues")
+    await make_index(TASK_DIRECTIVES_COLL_NAME, "timestamp")
+    await make_index(TASK_DIRECTIVES_COLL_NAME, "priority")
 
     # TASKFORCES
     await make_index(TASKFORCES_COLL_NAME, "taskforce_uuid", unique=True)

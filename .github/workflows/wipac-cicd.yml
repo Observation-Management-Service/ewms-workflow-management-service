@@ -15,8 +15,8 @@ env:
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
   #
-  TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY: 3
-  TASKFORCE_LAUNCH_CONTROL_DELAY: 3
+  TASK_MQ_ASSEMBLY_CONTROL_SHORT_DELAY: 3
+  TASK_MQ_ASSEMBLY_CONTROL_DELAY: 3
 
 
 
@@ -210,8 +210,8 @@ jobs:
             --env MQS_ADDRESS="${{ env.MQS_ADDRESS }}" \
             --env REST_OPENAPI_SPEC_FPATH="${{ env.REST_OPENAPI_SPEC_FPATH }}" \
             --env DB_JSONSCHEMA_DIR="${{ env.DB_JSONSCHEMA_DIR }}" \
-            --env TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY }}" \
-            --env TASKFORCE_LAUNCH_CONTROL_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_DELAY }}" \
+            --env TASK_MQ_ASSEMBLY_CONTROL_SHORT_DELAY="${{ env.TASK_MQ_ASSEMBLY_CONTROL_SHORT_DELAY }}" \
+            --env TASK_MQ_ASSEMBLY_CONTROL_DELAY="${{ env.TASK_MQ_ASSEMBLY_CONTROL_DELAY }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
           sleep 10

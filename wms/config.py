@@ -44,8 +44,11 @@ class EnvConfig:
     LOG_LEVEL: str = "DEBUG"
     LOG_LEVEL_THIRD_PARTY: str = "DEBUG"
 
-    TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY: int = 15
-    TASKFORCE_LAUNCH_CONTROL_DELAY: int = 5 * 60
+    TASK_MQ_ASSEMBLY_SHORT_DELAY: int = 15
+    TASK_MQ_ASSEMBLY_DELAY: int = 5 * 60
+
+    TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY: int = 5
+    TASKFORCE_LAUNCH_CONTROL_DELAY: int = 1
 
 
 ENV = from_environment_as_dataclass(EnvConfig)
