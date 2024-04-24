@@ -15,7 +15,7 @@
 | **submit\_dict** | [**Map**](TaskforceObject_container_config_environment_value.md) |  | [optional] [default to null] |
 | **job\_event\_log\_fpath** | **String** |  | [optional] [default to null] |
 | **condor\_complete\_ts** | [**TaskforceObject_n_workers**](TaskforceObject_n_workers.md) |  | [optional] [default to null] |
-| **tms\_most\_recent\_action** | [**oas_any_type_not_mapped**](AnyType.md) |  | [optional] [default to null] |
+| **phase** | [**oas_any_type_not_mapped**](AnyType.md) |  | [optional] [default to null] |
 | **compound\_statuses** | [**Map**](map.md) |  | [optional] [default to null] |
 | **top\_task\_errors** | [**Map**](AnyType.md) |  | [optional] [default to null] |
 
