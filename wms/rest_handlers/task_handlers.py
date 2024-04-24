@@ -12,7 +12,7 @@ from .base_handlers import BaseWMSHandler
 from .. import config
 from ..config import ENV
 from ..database.client import DocumentNotFoundException
-from ..schema.enums import TMSAction
+from ..schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
 
@@ -83,11 +83,11 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     condor_complete_ts=None,
                     #
                     # updated by backlogger, tms
-                    tms_most_recent_action=(
-                        TMSAction.PRE_LAUNCH
+                    phase=(
+                        TaskforcePhase.PRE_LAUNCH
                         if self.get_argument("worker_config")["priority"]
                         < ENV.SKIP_BACKLOG_MIN_PRIORITY
-                        else TMSAction.PENDING_STARTER
+                        else TaskforcePhase.PENDING_STARTER
                     ),
                     #
                     # updated by tms SEVERAL times
@@ -161,8 +161,11 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                         # not already aborted
                         # NOTE - we don't care whether the taskforce has started up (see /taskforce/tms-action/pending-stopper)
                         {
-                            "tms_most_recent_action": {
-                                "$nin": [TMSAction.PENDING_STOPPER, TMSAction.CONDOR_RM]
+                            "phase": {
+                                "$nin": [
+                                    TaskforcePhase.PENDING_STOPPER,
+                                    TaskforcePhase.CONDOR_RM,
+                                ]
                             },  # "not in"
                         },
                         # AND
@@ -173,7 +176,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     ],
                 },
                 {
-                    "tms_most_recent_action": TMSAction.PENDING_STOPPER,
+                    "phase": TaskforcePhase.PENDING_STOPPER,
                 },
             )
         except DocumentNotFoundException:

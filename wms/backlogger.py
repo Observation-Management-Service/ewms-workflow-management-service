@@ -9,7 +9,7 @@ from pymongo import ASCENDING, DESCENDING
 
 from . import database as db
 from .config import ENV
-from .schema.enums import TMSAction
+from .schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
 
@@ -28,8 +28,8 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
 
         try:
             await taskforces_client.find_one_and_update(
-                dict(tms_most_recent_action=TMSAction.PRE_LAUNCH),
-                dict(tms_most_recent_action=TMSAction.PENDING_STARTER),
+                dict(phase=TaskforcePhase.PRE_LAUNCH),
+                dict(phase=TaskforcePhase.PENDING_STARTER),
                 sort=[
                     ("worker_config.priority", DESCENDING),  # highest first
                     ("timestamp", ASCENDING),  # oldest first
@@ -40,6 +40,6 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             await asyncio.sleep(ENV.BACKLOG_RUNNER_SHORT_DELAY)
         else:
             LOGGER.info(
-                f"CHANGED 'tms_most_recent_action' FROM {TMSAction.PRE_LAUNCH} TO {TMSAction.PENDING_STARTER}"
+                f"CHANGED 'phase' FROM {TaskforcePhase.PRE_LAUNCH} TO {TaskforcePhase.PENDING_STARTER}"
             )
             await asyncio.sleep(ENV.BACKLOG_RUNNER_DELAY)

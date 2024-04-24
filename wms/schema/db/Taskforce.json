@@ -134,7 +134,7 @@
                 }
             ]
         },
-        "tms_most_recent_action": {
+        "phase": {
             "type": "string",
             "enum": [
                 "pre-launch",
@@ -176,7 +176,7 @@
         "submit_dict",
         "job_event_log_fpath",
         "condor_complete_ts",
-        "tms_most_recent_action",
+        "phase",
         "compound_statuses",
         "top_task_errors"
     ],

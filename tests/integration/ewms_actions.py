@@ -114,9 +114,7 @@ async def user_requests_new_task(
         (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
     ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
 
-    assert all(
-        tf["tms_most_recent_action"] == "pre-launch" for tf in resp["taskforces"]
-    )
+    assert all(tf["phase"] == "pre-launch" for tf in resp["taskforces"])
 
     assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
     assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])
@@ -153,13 +151,11 @@ async def backlogger_marks_taskforces_pending_starter(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["tms_most_recent_action"],
+            "projection": ["phase"],
         },
     )
     assert len(resp["taskforces"]) == n_locations
-    assert all(
-        tf["tms_most_recent_action"] == "pending-starter" for tf in resp["taskforces"]
-    )
+    assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
 
 
 async def tms_starter(
@@ -191,7 +187,7 @@ async def tms_starter(
             "GET",
             f"/taskforce/{taskforce_uuid}",
         )
-        assert resp["tms_most_recent_action"] == "pending-starter"
+        assert resp["phase"] == "pending-starter"
         # confirm it has started
         condor_locs_w_jel[shortname]["jel"] = "/home/the_job_event_log_fpath"
         resp = await request_and_validate(
@@ -219,13 +215,11 @@ async def tms_starter(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["tms_most_recent_action"],
+            "projection": ["phase"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(
-        tf["tms_most_recent_action"] == "condor-submit" for tf in resp["taskforces"]
-    )
+    assert all(tf["phase"] == "condor-submit" for tf in resp["taskforces"])
     # check directive reflects startup (runtime-assembled list of taskforces)
     resp = await request_and_validate(
         rc,
@@ -397,11 +391,11 @@ async def tms_stopper(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["tms_most_recent_action"],
+            "projection": ["phase"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(tf["tms_most_recent_action"] == "condor-rm" for tf in resp["taskforces"])
+    assert all(tf["phase"] == "condor-rm" for tf in resp["taskforces"])
 
 
 async def tms_condor_clusters_done(

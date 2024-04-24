@@ -184,7 +184,7 @@ def monitor_wms(rc: RestClient, task_id: str) -> None:
                     "query": {"task_id": task_id},
                     "projection": [
                         "condor_complete_ts",
-                        "tms_most_recent_action",
+                        "phase",
                         "compound_statuses",
                         "top_task_errors",
                         "taskforce_uuid",

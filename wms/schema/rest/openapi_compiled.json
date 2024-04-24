@@ -210,7 +210,7 @@
                             }
                         ]
                     },
-                    "tms_most_recent_action": {
+                    "phase": {
                         "type": "string",
                         "enum": [
                             "pre-launch",
