@@ -213,7 +213,7 @@
                     "tms_most_recent_action": {
                         "type": "string",
                         "enum": [
-                            "pre-tms",
+                            "pre-launch",
                             "pending-starter",
                             "condor-submit",
                             "pending-stopper",

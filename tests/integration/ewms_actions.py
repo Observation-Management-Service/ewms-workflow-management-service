@@ -114,7 +114,9 @@ async def user_requests_new_task(
         (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
     ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
 
-    assert all(tf["tms_most_recent_action"] == "pre-tms" for tf in resp["taskforces"])
+    assert all(
+        tf["tms_most_recent_action"] == "pre-launch" for tf in resp["taskforces"]
+    )
 
     assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
     assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])

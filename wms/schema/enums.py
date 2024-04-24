@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 class TMSAction(enum.StrEnum):  # attrs are str subclass types! (no `.value` needed)
     """The enum values used for 'tms_most_recent_action'."""
 
-    PRE_TMS = "pre-tms"
+    PRE_LAUNCH = "pre-launch"
     PENDING_STARTER = "pending-starter"
     CONDOR_SUBMIT = "condor-submit"
     PENDING_STOPPER = "pending-stopper"

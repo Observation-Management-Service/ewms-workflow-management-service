@@ -28,7 +28,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
 
         try:
             await taskforces_client.find_one_and_update(
-                dict(tms_most_recent_action=TMSAction.PRE_TMS),
+                dict(tms_most_recent_action=TMSAction.PRE_LAUNCH),
                 dict(tms_most_recent_action=TMSAction.PENDING_STARTER),
                 sort=[
                     ("worker_config.priority", DESCENDING),  # highest first
@@ -40,6 +40,6 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             await asyncio.sleep(ENV.BACKLOG_RUNNER_SHORT_DELAY)
         else:
             LOGGER.info(
-                f"CHANGED 'tms_most_recent_action' FROM {TMSAction.PRE_TMS} TO {TMSAction.PENDING_STARTER}"
+                f"CHANGED 'tms_most_recent_action' FROM {TMSAction.PRE_LAUNCH} TO {TMSAction.PENDING_STARTER}"
             )
             await asyncio.sleep(ENV.BACKLOG_RUNNER_DELAY)

@@ -84,7 +84,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     #
                     # updated by backlogger, tms
                     tms_most_recent_action=(
-                        TMSAction.PRE_TMS
+                        TMSAction.PRE_LAUNCH
                         if self.get_argument("worker_config")["priority"]
                         < ENV.SKIP_BACKLOG_MIN_PRIORITY
                         else TMSAction.PENDING_STARTER
