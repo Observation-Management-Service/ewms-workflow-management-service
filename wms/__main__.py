@@ -4,7 +4,7 @@
 import asyncio
 import logging
 
-from . import launch_control, database, server
+from . import database, server
 from .config import ENV, config_logging
 
 LOGGER = logging.getLogger(__package__)

@@ -10,7 +10,6 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
-from ..config import ENV
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TaskforcePhase
 
@@ -38,6 +37,10 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             task_image=self.get_argument("task_image"),
             task_args=self.get_argument("task_args"),
             timestamp=int(time.time()),
+            #
+            # values determined by mqs, updated by launch_control
+            queues={k: None for k in self.get_argument("queues")},  # list -> dict
+            #
             aborted=False,
         )
 
@@ -70,7 +73,6 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                         image=task_directive["task_image"],
                         arguments=task_directive["task_args"],
                         environment=self.get_argument("environment", {}),
-                        # TODO -- insert queue id(s) into environment?
                         input_files=self.get_argument("input_files", []),
                     ),
                     worker_config=self.get_argument("worker_config"),
@@ -83,12 +85,8 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     condor_complete_ts=None,
                     #
                     # updated by launch_control, tms
-                    phase=(
-                        TaskforcePhase.PRE_LAUNCH
-                        if self.get_argument("worker_config")["priority"]
-                        < ENV.SKIP_LAUNCH_CONTROL_MIN_PRIORITY
-                        else TaskforcePhase.PENDING_STARTER
-                    ),
+                    # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)
+                    phase=TaskforcePhase.PRE_MQ_ASSEMBLY,
                     #
                     # updated by tms SEVERAL times
                     compound_statuses={},

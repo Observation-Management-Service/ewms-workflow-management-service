@@ -11,11 +11,10 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-class TaskforcePhase(
-    enum.StrEnum
-):  # attrs are str subclass types! (no `.value` needed)
+class TaskforcePhase(enum.StrEnum):  # attrs are str sub-types! (no `.value` needed)
     """The enum values used for 'phase'."""
 
+    PRE_MQ_ASSEMBLY = "pre-mq-assembly"
     PRE_LAUNCH = "pre-launch"
     PENDING_STARTER = "pending-starter"
     CONDOR_SUBMIT = "condor-submit"
