@@ -10,6 +10,7 @@ env:
   MONGODB_PORT: 27017
   REST_HOST: localhost  # the server should connect to 0.0.0.0
   REST_PORT: 8080
+  MQS_ADDRESS: this-needs-to-be-monkeypatched-in-tests
   #
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
@@ -206,6 +207,7 @@ jobs:
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
             --env REST_HOST="${{ env.REST_HOST }}" \
             --env REST_PORT="${{ env.REST_PORT }}" \
+            --env MQS_ADDRESS="${{ env.MQS_ADDRESS }}" \
             --env REST_OPENAPI_SPEC_FPATH="${{ env.REST_OPENAPI_SPEC_FPATH }}" \
             --env DB_JSONSCHEMA_DIR="${{ env.DB_JSONSCHEMA_DIR }}" \
             --env BACKLOG_RUNNER_SHORT_DELAY="${{ env.BACKLOG_RUNNER_SHORT_DELAY }}" \
