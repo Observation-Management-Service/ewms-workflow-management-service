@@ -4,5 +4,13 @@
 # ewms-workflow-management-service
 The external interface for EWMS
 
-# API Documentation
+## API Documentation
 See [Docs/](./Docs)
+
+## Task Startup Flow
+1. The user requests a new task
+1. WMS requests to the MQS for _n_ queues. the MQS tells WMS "not now" (not enough avail resources)
+1. WMS waits (alternatively, requests to MQS for other pending tasks)
+1. MQS creates queues, and gives them to WMS
+1. WMS marks task/taskforce(s) ready for TMS
+1. When ready, TMS initiates condor jobs for task/taskforce(s)
