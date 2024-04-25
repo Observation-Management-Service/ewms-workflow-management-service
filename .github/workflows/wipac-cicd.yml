@@ -220,15 +220,8 @@ jobs:
             --env TASK_MQ_ASSEMBLY_DELAY="${{ env.TASK_MQ_ASSEMBLY_DELAY }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
+          
           sleep 10
-
-          if [[ $(ping -c 1 "http://${{ env.REST_HOST }}:${{ env.REST_PORT }}") ]]; then
-            echo "rest server connected"
-          else
-            echo "ERROR: cannot reach rest server"
-            cat ./rest.out
-          fi
-
           pytest -vvv --exitfirst tests/integration/
       #
       - if: always()
