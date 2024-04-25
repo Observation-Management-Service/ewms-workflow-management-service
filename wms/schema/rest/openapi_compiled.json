@@ -79,7 +79,7 @@
                         "items": {
                             "type": "string"
                         },
-                        "minItems": 1
+                        "minItems": 0
                     },
                     "aborted": {
                         "type": "boolean"
