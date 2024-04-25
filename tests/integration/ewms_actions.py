@@ -143,9 +143,8 @@ async def taskforce_launch_control_marks_taskforces_pending_starter(
 ) -> None:
     """Wait expected time for taskforce_launch_control to set taskforces as 'pending-
     starter'."""
-    await asyncio.sleep(
-        int(os.environ["TASKFORCE_LAUNCH_CONTROL_DELAY"]) * (n_locations + 1)
-    )
+    await asyncio.sleep(int(os.environ["TASK_MQ_ASSEMBLY_DELAY"]))
+    await asyncio.sleep(int(os.environ["TASKFORCE_LAUNCH_CONTROL_DELAY"]) * n_locations)
 
     resp = await request_and_validate(
         rc,

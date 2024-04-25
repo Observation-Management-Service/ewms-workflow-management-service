@@ -15,10 +15,10 @@ env:
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
   #
-  TASKFORCE_LAUNCH_CONTROL_DELAY: 3  # need to define for pytests
-  TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY: 3  # ''
-  TASK_MQ_ASSEMBLY_SHORT_DELAY: 3  # ''
+  TASK_MQ_ASSEMBLY_SHORT_DELAY: 3  # need to define for pytests
   TASK_MQ_ASSEMBLY_DELAY: 3  # ''
+  TASKFORCE_LAUNCH_CONTROL_DELAY: 3  # ''
+  TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY: 3  # ''
 
 
 

@@ -4,7 +4,7 @@
 import os
 import time
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -28,7 +28,7 @@ def dummy_mq_group_post():
                     timestamp=now,
                     nickname=f"mq-{mqgroup_id}-{i}",
                 )
-                for i in range(2)
+                for i in range(request.get_json()["criteria"]["n_queues"])
             ],
         )
     )
