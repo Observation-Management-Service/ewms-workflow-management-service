@@ -394,6 +394,9 @@
                                     "task_args": {
                                         "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                     },
+                                    "n_queues": {
+                                        "$ref": "#/components/schemas/TaskDirectiveObject/properties/n_queues"
+                                    },
                                     "n_workers": {
                                         "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"
                                     },
@@ -411,6 +414,7 @@
                                     "cluster_locations",
                                     "task_image",
                                     "task_args",
+                                    "n_queues",
                                     "worker_config"
                                 ],
                                 "additionalProperties": false
