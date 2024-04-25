@@ -38,5 +38,5 @@ if __name__ == "__main__":
     app.run(
         debug=True,
         host="0.0.0.0",
-        port=int(os.environ["MQS_ADDRESS"].split(":")[1]),
+        port=int(os.environ["MQS_ADDRESS"].split(":")[-1]),
     )
