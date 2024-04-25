@@ -2,7 +2,7 @@
 
 import logging
 
-from pymongo import ASCENDING
+from pymongo import ASCENDING, DESCENDING
 from rest_tools.server import validate_request
 from tornado import web
 
@@ -141,6 +141,7 @@ class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
                     phase=TaskforcePhase.PENDING_STARTER,
                 ),
                 sort=[
+                    ("priority", DESCENDING),  # highest first
                     ("timestamp", ASCENDING),  # oldest first
                 ],
             )
