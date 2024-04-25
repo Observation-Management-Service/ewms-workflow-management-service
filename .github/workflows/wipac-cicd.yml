@@ -10,7 +10,7 @@ env:
   MONGODB_PORT: 27017
   REST_HOST: localhost  # the server should connect to 0.0.0.0
   REST_PORT: 8080
-  MQS_ADDRESS: this-needs-to-be-monkeypatched-in-tests
+  MQS_ADDRESS: localhost:8081
   #
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
@@ -201,8 +201,10 @@ jobs:
           load: true
       - run: |
           pip install .[tests]
-      - name: test (run rest server in background)
+      - name: test (run servers in background)
         run: |
+          python tests/integration/dummy_mqs.py &> ./dummy_mqs.out &
+          
           # this needs to be in the same step b/c shell exits when step is done
           docker run --network='host' --rm --name rest \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
@@ -229,6 +231,9 @@ jobs:
 
           pytest -vvv --exitfirst tests/integration/
       #
+      - if: always()
+        run: |
+          cat ./dummy_mqs.out
       - if: always()
         run: |
           docker logs rest || cat ./rest.out
