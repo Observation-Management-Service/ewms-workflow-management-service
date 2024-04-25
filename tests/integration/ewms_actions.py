@@ -64,9 +64,12 @@ async def user_requests_new_task(
         "POST",
         "/task/directive",
         {
+            "cluster_locations": list(condor_locations.keys()),
             "task_image": task_image,
             "task_args": task_args,
-            "cluster_locations": list(condor_locations.keys()),
+            #
+            "n_queues": 2,  # TODO: parameterize tests
+            #
             "n_workers": n_workers,
             "worker_config": worker_config,
             # "environment": environment,  # empty
@@ -114,7 +117,7 @@ async def user_requests_new_task(
         (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
     ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
 
-    assert all(tf["tms_most_recent_action"] == "pre-tms" for tf in resp["taskforces"])
+    assert all(tf["phase"] == "pre-mq-assembly" for tf in resp["taskforces"])
 
     assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
     assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])
@@ -132,15 +135,16 @@ async def user_requests_new_task(
     return task_id
 
 
-async def backlogger_marks_taskforces_pending_starter(
+async def taskforce_launch_control_marks_taskforces_pending_starter(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
     n_locations: int,
 ) -> None:
-    """Wait expected time for backlogger to set taskforces as 'pending-
+    """Wait expected time for taskforce_launch_control to set taskforces as 'pending-
     starter'."""
-    await asyncio.sleep(int(os.environ["BACKLOG_RUNNER_DELAY"]) * (n_locations + 1))
+    await asyncio.sleep(int(os.environ["TASK_MQ_ASSEMBLY_DELAY"]))
+    await asyncio.sleep(int(os.environ["TASKFORCE_LAUNCH_CONTROL_DELAY"]) * n_locations)
 
     resp = await request_and_validate(
         rc,
@@ -151,13 +155,11 @@ async def backlogger_marks_taskforces_pending_starter(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["tms_most_recent_action"],
+            "projection": ["phase"],
         },
     )
     assert len(resp["taskforces"]) == n_locations
-    assert all(
-        tf["tms_most_recent_action"] == "pending-starter" for tf in resp["taskforces"]
-    )
+    assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
 
 
 async def tms_starter(
@@ -189,7 +191,7 @@ async def tms_starter(
             "GET",
             f"/taskforce/{taskforce_uuid}",
         )
-        assert resp["tms_most_recent_action"] == "pending-starter"
+        assert resp["phase"] == "pending-starter"
         # confirm it has started
         condor_locs_w_jel[shortname]["jel"] = "/home/the_job_event_log_fpath"
         resp = await request_and_validate(
@@ -217,13 +219,11 @@ async def tms_starter(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["tms_most_recent_action"],
+            "projection": ["phase"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(
-        tf["tms_most_recent_action"] == "condor-submit" for tf in resp["taskforces"]
-    )
+    assert all(tf["phase"] == "condor-submit" for tf in resp["taskforces"])
     # check directive reflects startup (runtime-assembled list of taskforces)
     resp = await request_and_validate(
         rc,
@@ -395,11 +395,11 @@ async def tms_stopper(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["tms_most_recent_action"],
+            "projection": ["phase"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(tf["tms_most_recent_action"] == "condor-rm" for tf in resp["taskforces"])
+    assert all(tf["phase"] == "condor-rm" for tf in resp["taskforces"])
 
 
 async def tms_condor_clusters_done(

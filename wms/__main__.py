@@ -4,7 +4,7 @@
 import asyncio
 import logging
 
-from . import backlogger, database, server
+from . import database, server, taskforce_launch_control, task_mq_assembly
 from .config import ENV, config_logging
 
 LOGGER = logging.getLogger(__package__)
@@ -20,9 +20,13 @@ async def main() -> None:
     LOGGER.info("Mongo client connected.")
 
     async with asyncio.TaskGroup() as tg:
-        # Backlogger
-        LOGGER.info("Starting backlogger in background...")
-        tg.create_task(backlogger.startup(mongo_client))
+        # taskforce_launch_control
+        LOGGER.info("Starting taskforce_launch_control in background...")
+        tg.create_task(taskforce_launch_control.startup(mongo_client))
+
+        # task_mq_assembly
+        LOGGER.info("Starting task_mq_assembly in background...")
+        tg.create_task(task_mq_assembly.startup(mongo_client))
 
         # REST Server
         LOGGER.info("Setting up REST server...")

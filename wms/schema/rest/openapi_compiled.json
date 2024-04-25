@@ -67,6 +67,20 @@
                     "timestamp": {
                         "type": "integer"
                     },
+                    "priority": {
+                        "type": "integer"
+                    },
+                    "n_queues": {
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "queues": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 0
+                    },
                     "aborted": {
                         "type": "boolean"
                     }
@@ -210,10 +224,11 @@
                             }
                         ]
                     },
-                    "tms_most_recent_action": {
+                    "phase": {
                         "type": "string",
                         "enum": [
-                            "pre-tms",
+                            "pre-mq-assembly",
+                            "pre-launch",
                             "pending-starter",
                             "condor-submit",
                             "pending-stopper",
@@ -379,6 +394,9 @@
                                     "task_args": {
                                         "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                     },
+                                    "n_queues": {
+                                        "$ref": "#/components/schemas/TaskDirectiveObject/properties/n_queues"
+                                    },
                                     "n_workers": {
                                         "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"
                                     },
@@ -396,6 +414,7 @@
                                     "cluster_locations",
                                     "task_image",
                                     "task_args",
+                                    "n_queues",
                                     "worker_config"
                                 ],
                                 "additionalProperties": false

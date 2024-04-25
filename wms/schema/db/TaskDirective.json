@@ -20,6 +20,20 @@
         "timestamp": {
             "type": "integer"
         },
+        "priority": {
+            "type": "integer"
+        },
+        "n_queues": {
+            "type": "integer",
+            "minimum": 1
+        },
+        "queues": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 0
+        },
         "aborted": {
             "type": "boolean"
         }
@@ -30,6 +44,9 @@
         "task_image",
         "task_args",
         "timestamp",
+        "priority",
+        "n_queues",
+        "queues",
         "aborted"
     ],
     "additionalProperties": false

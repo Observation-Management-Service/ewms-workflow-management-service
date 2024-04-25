@@ -10,13 +10,16 @@ env:
   MONGODB_PORT: 27017
   REST_HOST: localhost  # the server should connect to 0.0.0.0
   REST_PORT: 8080
+  MQS_ADDRESS: http://localhost:8081
   #
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
   #
-  BACKLOG_RUNNER_SHORT_DELAY: 3
-  BACKLOG_RUNNER_DELAY: 3
-  SKIP_BACKLOG_MIN_PRIORITY: 10
+  TASK_MQ_ASSEMBLY_SHORT_DELAY: 3  # need to define for pytests
+  TASK_MQ_ASSEMBLY_DELAY: 3  # ''
+  TASKFORCE_LAUNCH_CONTROL_DELAY: 3  # ''
+  TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY: 3  # ''
+
 
 
 jobs:
@@ -198,32 +201,32 @@ jobs:
           load: true
       - run: |
           pip install .[tests]
-      - name: test (run rest server in background)
+      - name: test (run servers in background)
         run: |
+          python tests/integration/dummy_mqs.py &> ./dummy_mqs.out &
+          
           # this needs to be in the same step b/c shell exits when step is done
           docker run --network='host' --rm --name rest \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
             --env REST_HOST="${{ env.REST_HOST }}" \
             --env REST_PORT="${{ env.REST_PORT }}" \
+            --env MQS_ADDRESS="${{ env.MQS_ADDRESS }}" \
             --env REST_OPENAPI_SPEC_FPATH="${{ env.REST_OPENAPI_SPEC_FPATH }}" \
             --env DB_JSONSCHEMA_DIR="${{ env.DB_JSONSCHEMA_DIR }}" \
-            --env BACKLOG_RUNNER_SHORT_DELAY="${{ env.BACKLOG_RUNNER_SHORT_DELAY }}" \
-            --env BACKLOG_RUNNER_DELAY="${{ env.BACKLOG_RUNNER_DELAY }}" \
-            --env SKIP_BACKLOG_MIN_PRIORITY="${{ env.SKIP_BACKLOG_MIN_PRIORITY }}" \
+            --env TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY }}" \
+            --env TASKFORCE_LAUNCH_CONTROL_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_DELAY }}" \
+            --env TASK_MQ_ASSEMBLY_SHORT_DELAY="${{ env.TASK_MQ_ASSEMBLY_SHORT_DELAY }}" \
+            --env TASK_MQ_ASSEMBLY_DELAY="${{ env.TASK_MQ_ASSEMBLY_DELAY }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
+          
           sleep 10
-
-          if [[ $(ping -c 1 "http://${{ env.REST_HOST }}:${{ env.REST_PORT }}") ]]; then
-            echo "rest server connected"
-          else
-            echo "ERROR: cannot reach rest server"
-            cat ./rest.out
-          fi
-
           pytest -vvv --exitfirst tests/integration/
       #
+      - if: always()
+        run: |
+          cat ./dummy_mqs.out
       - if: always()
         run: |
           docker logs rest || cat ./rest.out

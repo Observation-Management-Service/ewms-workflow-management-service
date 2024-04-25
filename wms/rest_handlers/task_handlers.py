@@ -10,9 +10,8 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
-from ..config import ENV
 from ..database.client import DocumentNotFoundException
-from ..schema.enums import TMSAction
+from ..schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,6 +37,11 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             task_image=self.get_argument("task_image"),
             task_args=self.get_argument("task_args"),
             timestamp=int(time.time()),
+            priority=self.get_argument("worker_config")["priority"],
+            #
+            n_queues=self.get_argument("n_queues"),
+            queues=[],  # values determined by mqs, updated by task_mq_assembly
+            #
             aborted=False,
         )
 
@@ -70,7 +74,6 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                         image=task_directive["task_image"],
                         arguments=task_directive["task_args"],
                         environment=self.get_argument("environment", {}),
-                        # TODO -- insert queue id(s) into environment?
                         input_files=self.get_argument("input_files", []),
                     ),
                     worker_config=self.get_argument("worker_config"),
@@ -82,13 +85,9 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
                     # set ONCE by tms's watcher
                     condor_complete_ts=None,
                     #
-                    # updated by backlogger, tms
-                    tms_most_recent_action=(
-                        TMSAction.PRE_TMS
-                        if self.get_argument("worker_config")["priority"]
-                        < ENV.SKIP_BACKLOG_MIN_PRIORITY
-                        else TMSAction.PENDING_STARTER
-                    ),
+                    # updated by taskforce_launch_control, tms
+                    # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)
+                    phase=TaskforcePhase.PRE_MQ_ASSEMBLY,
                     #
                     # updated by tms SEVERAL times
                     compound_statuses={},
@@ -161,8 +160,11 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                         # not already aborted
                         # NOTE - we don't care whether the taskforce has started up (see /taskforce/tms-action/pending-stopper)
                         {
-                            "tms_most_recent_action": {
-                                "$nin": [TMSAction.PENDING_STOPPER, TMSAction.CONDOR_RM]
+                            "phase": {
+                                "$nin": [
+                                    TaskforcePhase.PENDING_STOPPER,
+                                    TaskforcePhase.CONDOR_RM,
+                                ]
                             },  # "not in"
                         },
                         # AND
@@ -173,7 +175,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     ],
                 },
                 {
-                    "tms_most_recent_action": TMSAction.PENDING_STOPPER,
+                    "phase": TaskforcePhase.PENDING_STOPPER,
                 },
             )
         except DocumentNotFoundException:
