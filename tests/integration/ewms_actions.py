@@ -64,9 +64,12 @@ async def user_requests_new_task(
         "POST",
         "/task/directive",
         {
+            "cluster_locations": list(condor_locations.keys()),
             "task_image": task_image,
             "task_args": task_args,
-            "cluster_locations": list(condor_locations.keys()),
+            #
+            "n_queues": 2,  # TODO: parameterize tests
+            #
             "n_workers": n_workers,
             "worker_config": worker_config,
             # "environment": environment,  # empty
