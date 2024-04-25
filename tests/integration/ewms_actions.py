@@ -146,7 +146,7 @@ async def taskforce_launch_control_marks_taskforces_pending_starter(
     await asyncio.sleep(
         int(os.environ["TASKFORCE_LAUNCH_CONTROL_DELAY"]) * (n_locations + 1)
     )
-b
+
     resp = await request_and_validate(
         rc,
         openapi_spec,
