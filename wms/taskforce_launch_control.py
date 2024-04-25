@@ -32,8 +32,8 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                 dict(phase=TaskforcePhase.PRE_LAUNCH),
                 dict(phase=TaskforcePhase.PENDING_STARTER),
                 sort=[
-                    ("worker_config.priority", DESCENDING),  # highest first
-                    ("timestamp", ASCENDING),  # oldest first
+                    ("worker_config.priority", DESCENDING),  # first, highest priority
+                    ("timestamp", ASCENDING),  # then, oldest
                 ],
             )
         except db.client.DocumentNotFoundException:

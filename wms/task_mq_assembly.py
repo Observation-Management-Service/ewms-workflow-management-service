@@ -40,8 +40,8 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             task_directive = await task_directives_client.find_one(
                 dict(queues=[]),  # has no queues
                 sort=[
-                    ("priority", DESCENDING),  # highest first
-                    ("timestamp", ASCENDING),  # oldest first
+                    ("priority", DESCENDING),  # first, highest priority
+                    ("timestamp", ASCENDING),  # then, oldest
                 ],
             )
         except db.client.DocumentNotFoundException:

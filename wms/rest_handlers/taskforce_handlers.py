@@ -141,8 +141,8 @@ class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
                     phase=TaskforcePhase.PENDING_STARTER,
                 ),
                 sort=[
-                    ("priority", DESCENDING),  # highest first
-                    ("timestamp", ASCENDING),  # oldest first
+                    ("worker_config.priority", DESCENDING),  # first, highest priority
+                    ("timestamp", ASCENDING),  # then, oldest
                 ],
             )
         except DocumentNotFoundException:
