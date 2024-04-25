@@ -44,6 +44,9 @@
         "task_image",
         "task_args",
         "timestamp",
+        "priority",
+        "n_queues",
+        "queues",
         "aborted"
     ],
     "additionalProperties": false

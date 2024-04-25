@@ -67,6 +67,20 @@
                     "timestamp": {
                         "type": "integer"
                     },
+                    "priority": {
+                        "type": "integer"
+                    },
+                    "n_queues": {
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "queues": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    },
                     "aborted": {
                         "type": "boolean"
                     }
