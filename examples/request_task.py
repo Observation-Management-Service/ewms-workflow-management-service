@@ -119,6 +119,7 @@ async def request(
             "EWMS_PILOT_BROKER_AUTH_TOKEN": mq_token,
             "EWMS_PILOT_BROKER_CLIENT": EWMS_PILOT_BROKER_CLIENT,
         },
+        n_queues=2,
         n_workers=n_workers,
         worker_config=dict(
             do_transfer_worker_stdouterr=True,

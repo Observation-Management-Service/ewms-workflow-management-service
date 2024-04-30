@@ -34,6 +34,9 @@ class EnvConfig:
     REST_PORT: int  # 8080
 
     MQS_ADDRESS: str
+    MQS_TOKEN_URL: str = ""  # needed in prod
+    MQS_CLIENT_ID: str = ""  # ''
+    MQS_CLIENT_SECRET: str = ""  # ''
 
     AUTH_AUDIENCE: str = ""
     AUTH_OPENID_URL: str = ""

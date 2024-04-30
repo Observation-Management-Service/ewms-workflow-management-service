@@ -4,9 +4,10 @@
 import asyncio
 import logging
 
+import requests
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING, DESCENDING
-from rest_tools.client import RestClient
+from rest_tools.client import ClientCredentialsAuth, RestClient
 
 from . import database as db
 from .config import ENV
@@ -19,6 +20,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
     """Start up the daemon task."""
     LOGGER.info("Starting up task_mq_assembly...")
 
+    # database clients
     task_directives_client = db.client.WMSMongoClient(
         mongo_client,
         db.utils.TASK_DIRECTIVES_COLL_NAME,
@@ -29,11 +31,23 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         db.utils.TASKFORCES_COLL_NAME,
         parent_logger=LOGGER,
     )
-    mqs_rc = RestClient(
-        ENV.MQS_ADDRESS,
-        logger=logging.getLogger(f"{LOGGER.name}.mqs"),
-    )
 
+    # connect to mqs
+    if ENV.CI:
+        mqs_rc = RestClient(
+            ENV.MQS_ADDRESS,
+            logger=logging.getLogger(f"{LOGGER.name}.mqs"),
+        )
+    else:
+        mqs_rc = ClientCredentialsAuth(
+            ENV.MQS_ADDRESS,
+            ENV.MQS_TOKEN_URL,
+            ENV.MQS_CLIENT_ID,
+            ENV.MQS_CLIENT_SECRET,
+            logger=logging.getLogger(f"{LOGGER.name}.mqs"),
+        )
+
+    # main loop
     while True:
         LOGGER.debug("Looking at next task directive without queues...")
 
@@ -55,17 +69,22 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         LOGGER.info(
             f"REQUESTING {task_directive['n_queues']} queues (task_id={task_directive['task_id']})..."
         )
-        resp = await mqs_rc.request(
-            "POST",
-            "/mq-group",
-            dict(
-                criteria=dict(
-                    priority=task_directive["priority"],
-                    n_queues=task_directive["n_queues"],
-                )
-            ),
-        )
-        # TODO - Add error handling ^^^
+        try:
+            resp = await mqs_rc.request(
+                "POST",
+                "/mq-group",
+                dict(
+                    criteria=dict(
+                        priority=task_directive["priority"],
+                        n_queues=task_directive["n_queues"],
+                    )
+                ),
+            )
+        except requests.exceptions.HTTPError as e:
+            # TODO: add mqs "not now" logic
+            LOGGER.exception(e)
+            await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY)
+            continue
 
         # update task directive -- insert queues
         await task_directives_client.find_one_and_update(
