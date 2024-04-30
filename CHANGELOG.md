@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.4 (2024-04-30)
+
+### Other
+
+* Use `ClientCredentialsAuth` for MQS ([`cfbb4e7`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/cfbb4e73ed31aea21f2db42c40a778c1abb361c3))
+
 ## v0.1.3 (2024-04-30)
 
 ### Other
