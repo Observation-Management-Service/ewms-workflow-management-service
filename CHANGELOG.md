@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.2 (2024-04-30)
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`0268787`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/0268787cc34644312586f5db5e2b7f2e7d70247f))
+* Adjust Daemon's Loggers in Prod ([`84ca695`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/84ca695528573d0c94de05739235a44f7198fa4a))
+
 ## v0.1.1 (2024-04-25)
 
 ### Other
