@@ -24,7 +24,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
     )
 
     while True:
-        LOGGER.info("Looking at next pre-launch taskforce...")
+        LOGGER.debug("Looking at next pre-launch taskforce...")
 
         # find & advance phase
         try:
@@ -37,7 +37,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                 ],
             )
         except db.client.DocumentNotFoundException:
-            LOGGER.info("NOTHING FOR TASKFORCE_LAUNCH_CONTROL TO START UP")
+            LOGGER.debug("NOTHING FOR TASKFORCE_LAUNCH_CONTROL TO START UP")
             await asyncio.sleep(ENV.TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY)
         else:
             LOGGER.info(

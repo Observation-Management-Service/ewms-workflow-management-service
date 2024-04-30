@@ -33,7 +33,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
     )
 
     while True:
-        LOGGER.info("Looking at next task directive without queues...")
+        LOGGER.debug("Looking at next task directive without queues...")
 
         # find
         try:
@@ -45,7 +45,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                 ],
             )
         except db.client.DocumentNotFoundException:
-            LOGGER.info("NOTHING FOR TASK_MQ_ASSEMBLY TO START UP")
+            LOGGER.debug("NOTHING FOR TASK_MQ_ASSEMBLY TO START UP")
             await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY)
             continue
 

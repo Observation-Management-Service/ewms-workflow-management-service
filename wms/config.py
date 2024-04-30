@@ -126,6 +126,15 @@ def config_logging() -> None:
         )
     )
     logging.getLogger().addHandler(hand)
+
+    if not ENV.CI and ENV.LOG_LEVEL.upper() == "DEBUG":
+        demoted_first_parties = {
+            "wms.taskforce_launch_control": "INFO",
+            "wms.task_mq_assembly": "INFO",
+        }
+    else:
+        demoted_first_parties = {}
+
     logging_tools.set_level(
         ENV.LOG_LEVEL,  # type: ignore[arg-type]
         first_party_loggers=[__name__.split(".", maxsplit=1)[0]],
@@ -134,5 +143,6 @@ def config_logging() -> None:
         specialty_loggers={
             "wipac-telemetry": "WARNING",
             "parse": "WARNING",  # from openapi
+            **demoted_first_parties,  # type: ignore
         },
     )
