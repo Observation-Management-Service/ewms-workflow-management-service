@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.3 (2024-04-30)
+
+### Other
+
+* Adjust Daemon's Loggers in Prod - 2 ([`2a7540f`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/2a7540fede4657e27a40f9b86f1338447ca5c676))
+
 ## v0.1.2 (2024-04-30)
 
 ### Other
