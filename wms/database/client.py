@@ -8,8 +8,8 @@ from typing import Any, AsyncIterator
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from pymongo import ReturnDocument
 
-from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
 from .utils import _DB_NAME, get_jsonschema_spec_name, web_jsonschema_validate
+from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
 
 
 class DocumentNotFoundException(Exception):
@@ -23,6 +23,7 @@ class WMSMongoClient:
         self,
         mongo_client: AsyncIOMotorClient,  # type: ignore[valid-type]
         collection_name: str,
+        parent_logger: logging.Logger | None = None,
     ) -> None:
         self._collection = AsyncIOMotorCollection(
             mongo_client[_DB_NAME],  # type: ignore[arg-type]
@@ -36,7 +37,12 @@ class WMSMongoClient:
         self._schema_partial = copy.deepcopy(self._schema)
         self._schema_partial["required"] = []
 
-        self.logger = logging.getLogger(f"{__name__}.{collection_name.lower()}")
+        if parent_logger is not None:
+            self.logger = logging.getLogger(
+                f"{parent_logger.name}.db.{collection_name.lower()}"
+            )
+        else:
+            self.logger = logging.getLogger(f"{__name__}.{collection_name.lower()}")
 
     ####################################################################
     # WRITES

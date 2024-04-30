@@ -22,10 +22,12 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
     task_directives_client = db.client.WMSMongoClient(
         mongo_client,
         db.utils.TASK_DIRECTIVES_COLL_NAME,
+        parent_logger=LOGGER,
     )
     taskforces_client = db.client.WMSMongoClient(
         mongo_client,
         db.utils.TASKFORCES_COLL_NAME,
+        parent_logger=LOGGER,
     )
     mqs_rc = RestClient(
         ENV.MQS_ADDRESS,

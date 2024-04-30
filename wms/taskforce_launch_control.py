@@ -21,6 +21,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
     taskforces_client = db.client.WMSMongoClient(
         mongo_client,
         db.utils.TASKFORCES_COLL_NAME,
+        parent_logger=LOGGER,
     )
 
     while True:
