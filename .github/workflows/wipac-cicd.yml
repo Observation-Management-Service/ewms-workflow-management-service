@@ -62,13 +62,11 @@ jobs:
   py-setup:
     runs-on: ubuntu-latest
     steps:
-      - if: github.ref_type == 'branch' && github.actor != 'dependabot[bot]'
-        name: checkout (only for non-dependabot non-default branches)
+      - if: github.actor != 'dependabot[bot]'
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
-      - if: github.ref_type == 'branch' && github.actor != 'dependabot[bot]'
-        name: wipac-dev-py-setup-action (only for non-dependabot non-default branches)
+      - if: github.actor != 'dependabot[bot]'
         uses: WIPACrepo/wipac-dev-py-setup-action@v3.0
         with:
           base-keywords: WIPAC IceCube "Observation Management Service" "Event Workflow Management Service"
@@ -79,13 +77,11 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ github.job }}
       cancel-in-progress: true
     steps:
-      - if: github.ref_type == 'branch' && github.actor != 'dependabot[bot]'
-        name: checkout (only for non-dependabot non-default branches)
+      - if: github.actor != 'dependabot[bot]'
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
-      - if: github.ref_type == 'branch' && github.actor != 'dependabot[bot]'
-        name: wipac-dev-py-setup-action (only for non-dependabot non-default branches)
+      - if: github.actor != 'dependabot[bot]'
         uses: WIPACrepo/wipac-dev-py-dependencies-action@v1.0
 
 
