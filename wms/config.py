@@ -46,6 +46,7 @@ class EnvConfig:
     CI: bool = False  # github actions sets this to 'true'
     LOG_LEVEL: str = "DEBUG"
     LOG_LEVEL_THIRD_PARTY: str = "DEBUG"
+    LOG_LEVEL_REST_TOOLS: str = "DEBUG"
 
     TASK_MQ_ASSEMBLY_SHORT_DELAY: int = 15
     TASK_MQ_ASSEMBLY_DELAY: int = 5 * 60
@@ -146,6 +147,7 @@ def config_logging() -> None:
         specialty_loggers={
             "wipac-telemetry": "WARNING",
             "parse": "WARNING",  # from openapi
+            "rest_tools": ENV.LOG_LEVEL_REST_TOOLS,  # type: ignore
             **demoted_first_parties,  # type: ignore
         },
     )
