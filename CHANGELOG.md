@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.6 (2024-05-01)
+
+### Other
+
+* Add `LOG_LEVEL_REST_TOOLS` ([`c2b62ea`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/c2b62eab0278c0160322e0d769710991d6a199d9))
+
 ## v0.1.5 (2024-05-01)
 
 ### Other
