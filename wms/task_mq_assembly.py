@@ -86,17 +86,26 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY)
             continue
 
+        queues = [p["mqid"] for p in resp["mqprofiles"]]
+
         # update task directive -- insert queues
         await task_directives_client.find_one_and_update(
             dict(task_id=task_directive["task_id"]),
-            dict(queues=[p["mqid"] for p in resp["mqprofiles"]]),
+            dict(queues=queues),
         )
         LOGGER.info(
             f"ASSEMBLED {len(resp['mqprofiles'])} queues (task_id={task_directive['task_id']})"
         )
-        # update taskforces -- advance phase
+        # update taskforces -- advance phase & insert queue ids
+        environment_updates = {
+            f"container_config.environment.EWMS_PILOT_QUEUE_{i}": qid
+            for i, qid in enumerate(queues)
+        }
         await taskforces_client.update_set_many(
-            dict(task_id=task_directive["task_id"]),
+            dict(
+                task_id=task_directive["task_id"],
+                **environment_updates,
+            ),
             dict(phase=TaskforcePhase.PRE_LAUNCH),
         )
         LOGGER.info(
