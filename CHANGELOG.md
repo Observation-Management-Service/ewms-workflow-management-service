@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.5 (2024-05-01)
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`3ff01c6`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/3ff01c65a1c9f87bdb4bb8973899d6c54a438cec))
+* Run Py Meta GHA on `main` ([`941393c`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/941393c1c767ac0be89e6a40e7eb43e9309dd65b))
+
 ## v0.1.4 (2024-04-30)
 
 ### Other
