@@ -153,14 +153,16 @@ def _mongo_to_jsonschema_prep(
         else:
             # (re)set cursors to root
             cursor = out
-            schema_cursor = schema["properties"]
+            schema_props_cursor = schema["properties"]
             # iterate & attach keys
             *parent_keys, leaf_key = og_key.split(".")
             for k in parent_keys:
                 cursor = cursor.setdefault(k, {})
                 # mark nested object 'required' as none
-                schema_cursor[k]["required"] = []
-                schema_cursor = schema_cursor[k]["properties"]
+                if schema_props_cursor:
+                    # ^^^ falsy when not "in" a properties obj, ex: parent only has 'additionalProperties'
+                    schema_props_cursor[k]["required"] = []
+                    schema_props_cursor = schema_props_cursor[k].get("properties")
             # place value
             cursor[leaf_key] = value
     return out, schema
