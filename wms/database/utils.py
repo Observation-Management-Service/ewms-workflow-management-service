@@ -137,28 +137,31 @@ def _mongo_to_jsonschema_prep(
                 log_message="Partial updating disallowed but instance contains dotted parent_keys.",
                 reason="Internal database schema validation error",
             )
-        # no partial & no dots -> quick exit
+        # no partial & no dots -> immediate exit
         case (False, False):
             return og_dict, og_schema
         # ???
         case _other:
             raise RuntimeError(f"Unknown match: {_other}")
 
-    # https://stackoverflow.com/a/75734554/13156561
+    # https://stackoverflow.com/a/75734554/13156561 (looping logic)
     out = {}  # type: ignore
     for og_key, value in og_dict.items():
         if "." not in og_key:
             out[og_key] = value
             continue
         else:
+            # (re)set cursors to root
             cursor = out
-            schema_cursor = schema
+            schema_cursor = schema["properties"]
+            # iterate & attach keys
             *parent_keys, leaf_key = og_key.split(".")
             for k in parent_keys:
                 cursor = cursor.setdefault(k, {})
                 # mark nested object 'required' as none
                 schema_cursor[k]["required"] = []
                 schema_cursor = schema_cursor[k]["properties"]
+            # place value
             cursor[leaf_key] = value
     return out, schema
 
