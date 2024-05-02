@@ -81,12 +81,14 @@ def web_jsonschema_validate(instance: dict, schema: dict) -> None:
         data_out = {}  # type: ignore
         for key, value in data_in.items():
             if "." not in key:
+                data_out[key] = value
                 continue
-            cursor = data_out
-            *keys, leaf = key.split(".")
-            for k in keys:
-                cursor = cursor.setdefault(k, {})
-            cursor[leaf] = value
+            else:
+                cursor = data_out
+                *keys, leaf = key.split(".")
+                for k in keys:
+                    cursor = cursor.setdefault(k, {})
+                cursor[leaf] = value
         return data_out
 
     try:
