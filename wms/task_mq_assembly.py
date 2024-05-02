@@ -106,11 +106,11 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             )
         }
         await taskforces_client.update_set_many(
+            dict(task_id=task_directive["task_id"]),
             dict(
-                task_id=task_directive["task_id"],
+                phase=TaskforcePhase.PRE_LAUNCH,
                 **environment_updates,
             ),
-            dict(phase=TaskforcePhase.PRE_LAUNCH),
         )
         LOGGER.info(
             f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({task_directive['task_id']}=)"
