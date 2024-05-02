@@ -2,7 +2,6 @@
 
 
 import logging
-from typing import Any
 from urllib.parse import quote_plus
 
 import jsonschema
@@ -70,10 +69,28 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     LOGGER.info("Ensured indexes (may continue in background).")
 
 
-def web_jsonschema_validate(instance: Any, schema: dict) -> None:
+def web_jsonschema_validate(instance: dict, schema: dict) -> None:
     """Wrap `jsonschema.validate` with `web.HTTPError` (500)."""
+
+    def dedottify_root_keys(data_in: dict) -> dict:
+        """Converts a dotted dict to a nested dict (just first-level keys).
+        in:  {"book.title": "abc", "book.content": "def", "author": "ghi"}
+        out: {"book": {"title": "abc", "content": "def"}, "author": "ghi"}
+        """
+        # https://stackoverflow.com/a/75734554/13156561
+        data_out = {}  # type: ignore
+        for key, value in data_in.items():
+            if "." not in key:
+                continue
+            cursor = data_out
+            *keys, leaf = key.split(".")
+            for k in keys:
+                cursor = cursor.setdefault(k, {})
+            cursor[leaf] = value
+        return data_out
+
     try:
-        jsonschema.validate(instance, schema)
+        jsonschema.validate(dedottify_root_keys(instance), schema)
     except jsonschema.exceptions.ValidationError as e:
         LOGGER.exception(e)
         raise web.HTTPError(
