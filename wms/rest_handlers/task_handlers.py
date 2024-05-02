@@ -39,7 +39,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             timestamp=int(time.time()),
             priority=self.get_argument("worker_config")["priority"],
             #
-            n_queues=self.get_argument("n_queues"),
+            n_queues=2,  # TODO: make user configurable?
             queues=[],  # values determined by mqs, updated by task_mq_assembly
             #
             aborted=False,

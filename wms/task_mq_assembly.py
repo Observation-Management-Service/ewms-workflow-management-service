@@ -98,8 +98,12 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         )
         # update taskforces -- advance phase & insert queue ids
         environment_updates = {
-            f"container_config.environment.EWMS_PILOT_QUEUE_{i}": qid
-            for i, qid in enumerate(queues)
+            f"container_config.environment.EWMS_PILOT_QUEUE_{suffix}": qid
+            for suffix, qid in zip(
+                # TODO: add other types of queues (DEADLETTER, etc.)
+                ["INCOMING", "OUTGOING"],
+                queues,
+            )
         }
         await taskforces_client.update_set_many(
             dict(
