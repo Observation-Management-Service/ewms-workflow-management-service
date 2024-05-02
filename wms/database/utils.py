@@ -143,7 +143,6 @@ def _mongo_to_jsonschema_prep(
         case _other:
             raise RuntimeError(f"Unknown match: {_other}")
 
-
     # https://stackoverflow.com/a/75734554/13156561
     data_out = {}  # type: ignore
     for key, value in data_in.items():
