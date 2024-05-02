@@ -1,8 +1,7 @@
 """utils.py."""
 
-
+import copy
 import logging
-from typing import Any
 from urllib.parse import quote_plus
 
 import jsonschema
@@ -70,10 +69,116 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     LOGGER.info("Ensured indexes (may continue in background).")
 
 
-def web_jsonschema_validate(instance: Any, schema: dict) -> None:
+def _mongo_to_jsonschema_prep(
+    og_dict: dict,
+    og_schema: dict,
+    allow_partial_update: bool,
+) -> tuple[dict, dict]:
+    """Converts a mongo-style dotted dict to a nested dict with an augmented schema.
+
+    NOTE: Does not support array/list dot-indexing
+
+    Example:
+        in:
+            {"book.title": "abc", "book.content": "def", "author": "ghi"}
+            {
+                "type": "object",
+                "properties": {
+                    "author": { "type": "string" },
+                    "book": {
+                        "type": "object",
+                        "properties": { "content": { "type": "string" } },
+                        "required": [<some>]
+                    },
+                    "copyright": {
+                        "type": "object",
+                        "properties": { ... },
+                        "required": [<some>]
+                    },
+                    ...
+                },
+                "required": [<some>]
+            }
+        out:
+            {"book": {"title": "abc", "content": "def"}, "author": "ghi"}
+            {
+                "type": "object",
+                "properties": {
+                    "author": { "type": "string" },
+                    "book": {
+                        "type": "object",
+                        "properties": { "content": { "type": "string" } },
+                        "required": []  # NONE!
+                    },
+                    "copyright": {
+                        "type": "object",
+                        "properties": { ... },
+                        "required": [<some>]  # not changed b/c og_key was not seen in dot notation
+                    },
+                    ...
+                },
+                "required": []  # NONE!
+            }
+    """
+    match (allow_partial_update, any("." in k for k in og_dict.keys())):
+        # yes partial & yes dots -> proceed to rest of func
+        case (True, True):
+            schema = copy.deepcopy(og_schema)
+            schema["required"] = []
+        # yes partial & no dots -> quick exit
+        case (True, False):
+            schema = copy.deepcopy(og_schema)
+            schema["required"] = []
+            return og_dict, schema
+        # no partial & yes dots -> error
+        case (False, True):
+            raise web.HTTPError(
+                500,
+                log_message="Partial updating disallowed but instance contains dotted parent_keys.",
+                reason="Internal database schema validation error",
+            )
+        # no partial & no dots -> immediate exit
+        case (False, False):
+            return og_dict, og_schema
+        # ???
+        case _other:
+            raise RuntimeError(f"Unknown match: {_other}")
+
+    # https://stackoverflow.com/a/75734554/13156561 (looping logic)
+    out = {}  # type: ignore
+    for og_key, value in og_dict.items():
+        if "." not in og_key:
+            out[og_key] = value
+            continue
+        else:
+            # (re)set cursors to root
+            cursor = out
+            schema_props_cursor = schema["properties"]
+            # iterate & attach keys
+            *parent_keys, leaf_key = og_key.split(".")
+            for k in parent_keys:
+                cursor = cursor.setdefault(k, {})
+                # mark nested object 'required' as none
+                if schema_props_cursor:
+                    # ^^^ falsy when not "in" a properties obj, ex: parent only has 'additionalProperties'
+                    schema_props_cursor[k]["required"] = []
+                    schema_props_cursor = schema_props_cursor[k].get("properties")
+            # place value
+            cursor[leaf_key] = value
+    return out, schema
+
+
+def web_jsonschema_validate(
+    instance: dict,
+    schema: dict,
+    allow_partial_update: bool = False,
+) -> None:
     """Wrap `jsonschema.validate` with `web.HTTPError` (500)."""
+
     try:
-        jsonschema.validate(instance, schema)
+        jsonschema.validate(
+            *_mongo_to_jsonschema_prep(instance, schema, allow_partial_update)
+        )
     except jsonschema.exceptions.ValidationError as e:
         LOGGER.exception(e)
         raise web.HTTPError(

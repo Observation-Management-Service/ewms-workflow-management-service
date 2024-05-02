@@ -14,6 +14,8 @@ import time
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
+import wipac_dev_tools.logging_tools
+
 if TYPE_CHECKING:  # not installing dependency just for example script
     Queue = Any
 else:
@@ -22,8 +24,7 @@ else:
 from rest_tools.client import ClientCredentialsAuth, RestClient, SavedDeviceGrantAuth
 
 LOGGER = logging.getLogger(__name__)
-logging.getLogger("mqclient").setLevel(logging.INFO)
-LOGGER.setLevel(logging.DEBUG)
+
 
 EWMS_PILOT_BROKER_CLIENT = "rabbitmq"
 
@@ -171,6 +172,12 @@ def monitor_wms(rc: RestClient, task_id: str) -> None:
     LOGGER.info("Monitoring WMS...")
     first = True
     while True:
+        resp = rc.request_seq(
+            "GET",
+            f"/task/directive/{task_id}",
+        )
+        LOGGER.info("TASK DIRECTIVE:")
+        LOGGER.info(json.dumps(resp, indent=4))
         if first:
             resp = rc.request_seq(
                 "POST",
@@ -193,9 +200,14 @@ def monitor_wms(rc: RestClient, task_id: str) -> None:
                     ],
                 },
             )
-        LOGGER.info(json.dumps(resp["taskforces"][0], indent=4))
+        LOGGER.info("TASKFORCES:")
+        LOGGER.info(json.dumps(resp["taskforces"], indent=4))
         first = False
+
+        LOGGER.info("\n\n\n\n\n\n")
+        LOGGER.info("Trying again in 15 seconds...")
         time.sleep(15)
+        LOGGER.info("\n\n\n\n\n\n")
 
 
 async def main() -> None:
@@ -213,6 +225,7 @@ async def main() -> None:
         help="the number of workers to use",
     )
     args = parser.parse_args()
+    wipac_dev_tools.logging_tools.log_argparse_args(args)
 
     rc = SavedDeviceGrantAuth(
         "https://ewms-dev.icecube.aq",
@@ -233,6 +246,7 @@ async def main() -> None:
     task_out_queue = Queue.make_name()
 
     await load_queue(task_in_queue, mq_token)
+
     task_id = await request(
         rc,
         task_in_queue,
@@ -255,4 +269,18 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
+    hand = logging.StreamHandler()
+    hand.setFormatter(
+        logging.Formatter(
+            "%(asctime)s.%(msecs)03d [%(levelname)8s] %(name)s[%(process)d] %(message)s <%(filename)s:%(lineno)s/%(funcName)s()>",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+    )
+    logging.getLogger().addHandler(hand)
+    wipac_dev_tools.logging_tools.set_level(
+        "DEBUG",
+        first_party_loggers=LOGGER,
+        third_party_level="INFO",
+        specialty_loggers={"mqclient": "INFO"},
+    )
     asyncio.run(main())

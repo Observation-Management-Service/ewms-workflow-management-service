@@ -68,8 +68,6 @@ async def user_requests_new_task(
             "task_image": task_image,
             "task_args": task_args,
             #
-            "n_queues": 2,  # TODO: parameterize tests
-            #
             "n_workers": n_workers,
             "worker_config": worker_config,
             # "environment": environment,  # empty
