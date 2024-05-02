@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.7 (2024-05-02)
+
+### Other
+
+* Inject Queue IDs into Taskforce Env Vars ([#21](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/21)) ([`66ca842`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/66ca842a89232d71a50de3bd54b858b860decb9b))
+
 ## v0.1.6 (2024-05-01)
 
 ### Other
