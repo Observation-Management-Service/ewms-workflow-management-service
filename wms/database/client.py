@@ -1,7 +1,5 @@
 """Tools for interacting with the mongo database."""
 
-
-import copy
 import logging
 from typing import Any, AsyncIterator
 
@@ -32,10 +30,6 @@ class WMSMongoClient:
         self._schema = MONGO_COLLECTION_JSONSCHEMA_SPECS[
             get_jsonschema_spec_name(collection_name)
         ]
-
-        # like schema, but for partial updates
-        self._schema_partial = copy.deepcopy(self._schema)
-        self._schema_partial["required"] = []
 
         if parent_logger is not None:
             self.logger = logging.getLogger(
@@ -69,7 +63,7 @@ class WMSMongoClient:
         """Update the doc and return updated doc."""
         self.logger.debug(f"update one with query: {query}")
 
-        web_jsonschema_validate(set_update, self._schema_partial)
+        web_jsonschema_validate(set_update, self._schema, allow_partial_update=True)
         doc = await self._collection.find_one_and_update(
             query,
             {"$set": set_update},
@@ -86,7 +80,7 @@ class WMSMongoClient:
         """Update all matching docs."""
         self.logger.debug(f"update many with query: {query}")
 
-        web_jsonschema_validate(set_update, self._schema_partial)
+        web_jsonschema_validate(set_update, self._schema, allow_partial_update=True)
         res = await self._collection.update_many(query, {"$set": set_update})
         if not res.matched_count:
             raise DocumentNotFoundException()

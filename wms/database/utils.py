@@ -1,6 +1,5 @@
 """utils.py."""
-
-
+import copy
 import logging
 from urllib.parse import quote_plus
 
@@ -69,30 +68,110 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     LOGGER.info("Ensured indexes (may continue in background).")
 
 
-def web_jsonschema_validate(instance: dict, schema: dict) -> None:
+def _mongo_to_jsonschema_prep(
+    data_in: dict,
+    og_schema: dict,
+    allow_partial_update: bool,
+) -> tuple[dict, dict]:
+    """Converts a mongo-style dotted dict to a nested dict with an augmented schema.
+
+    NOTE: Does not support array/list dot-indexing
+
+    Example:
+        in:
+            {"book.title": "abc", "book.content": "def", "author": "ghi"}
+            {
+                "type": "object",
+                "properties": {
+                    "author": { "type": "string" },
+                    "book": {
+                        "type": "object",
+                        "properties": { "content": { "type": "string" } },
+                        "required": [<some>]
+                    },
+                    "copyright": {
+                        "type": "object",
+                        "properties": { ... },
+                        "required": [<some>]
+                    },
+                    ...
+                },
+                "required": [<some>]
+            }
+        out:
+            {"book": {"title": "abc", "content": "def"}, "author": "ghi"}
+            {
+                "type": "object",
+                "properties": {
+                    "author": { "type": "string" },
+                    "book": {
+                        "type": "object",
+                        "properties": { "content": { "type": "string" } },
+                        "required": []  # NONE!
+                    },
+                    "copyright": {
+                        "type": "object",
+                        "properties": { ... },
+                        "required": [<some>]  # not changed b/c key was not seen in dot notation
+                    },
+                    ...
+                },
+                "required": []  # NONE!
+            }
+    """
+    match (allow_partial_update, any("." in k for k in data_in.keys())):
+        # yes partial & yes dots -> proceed to rest of func
+        case (True, True):
+            schema = copy.deepcopy(og_schema)
+            schema["required"] = []
+        # yes partial & no dots -> quick exit
+        case (True, False):
+            schema = copy.deepcopy(og_schema)
+            schema["required"] = []
+            return data_in, schema
+        # no partial & yes dots -> error
+        case (False, True):
+            raise web.HTTPError(
+                500,
+                log_message="Partial updating disallowed but instance contains dotted keys.",
+                reason="Internal database schema validation error",
+            )
+        # no partial & no dots -> quick exit
+        case (False, False):
+            return data_in, og_schema
+        # ???
+        case _other:
+            raise RuntimeError(f"Unknown match: {_other}")
+
+
+    # https://stackoverflow.com/a/75734554/13156561
+    data_out = {}  # type: ignore
+    for key, value in data_in.items():
+        if "." not in key:
+            data_out[key] = value
+            continue
+        else:
+            cursor = data_out
+            schema_cursor = schema
+            *keys, leaf = key.split(".")
+            for k in keys:
+                cursor = cursor.setdefault(k, {})
+                # mark nested object 'required' as none
+                schema_cursor[key]["required"] = []
+                schema_cursor = schema_cursor[key]["properties"]
+            cursor[leaf] = value
+    return data_out, schema
+
+
+def web_jsonschema_validate(
+    instance: dict,
+    schema: dict,
+    allow_partial_update: bool = False,
+) -> None:
     """Wrap `jsonschema.validate` with `web.HTTPError` (500)."""
 
-    def dedottify_root_keys(data_in: dict) -> dict:
-        """Converts a dotted dict to a nested dict (just first-level keys).
-        in:  {"book.title": "abc", "book.content": "def", "author": "ghi"}
-        out: {"book": {"title": "abc", "content": "def"}, "author": "ghi"}
-        """
-        # https://stackoverflow.com/a/75734554/13156561
-        data_out = {}  # type: ignore
-        for key, value in data_in.items():
-            if "." not in key:
-                data_out[key] = value
-                continue
-            else:
-                cursor = data_out
-                *keys, leaf = key.split(".")
-                for k in keys:
-                    cursor = cursor.setdefault(k, {})
-                cursor[leaf] = value
-        return data_out
-
     try:
-        jsonschema.validate(dedottify_root_keys(instance), schema)
+        jsonschema.validate(*_mongo_to_jsonschema_prep(instance, schema, allow_partial_update))
     except jsonschema.exceptions.ValidationError as e:
         LOGGER.exception(e)
         raise web.HTTPError(
