@@ -1,4 +1,5 @@
 """utils.py."""
+
 import copy
 import logging
 from urllib.parse import quote_plus
@@ -69,7 +70,7 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
 
 
 def _mongo_to_jsonschema_prep(
-    data_in: dict,
+    og_dict: dict,
     og_schema: dict,
     allow_partial_update: bool,
 ) -> tuple[dict, dict]:
@@ -112,14 +113,14 @@ def _mongo_to_jsonschema_prep(
                     "copyright": {
                         "type": "object",
                         "properties": { ... },
-                        "required": [<some>]  # not changed b/c key was not seen in dot notation
+                        "required": [<some>]  # not changed b/c og_key was not seen in dot notation
                     },
                     ...
                 },
                 "required": []  # NONE!
             }
     """
-    match (allow_partial_update, any("." in k for k in data_in.keys())):
+    match (allow_partial_update, any("." in k for k in og_dict.keys())):
         # yes partial & yes dots -> proceed to rest of func
         case (True, True):
             schema = copy.deepcopy(og_schema)
@@ -128,38 +129,38 @@ def _mongo_to_jsonschema_prep(
         case (True, False):
             schema = copy.deepcopy(og_schema)
             schema["required"] = []
-            return data_in, schema
+            return og_dict, schema
         # no partial & yes dots -> error
         case (False, True):
             raise web.HTTPError(
                 500,
-                log_message="Partial updating disallowed but instance contains dotted keys.",
+                log_message="Partial updating disallowed but instance contains dotted parent_keys.",
                 reason="Internal database schema validation error",
             )
         # no partial & no dots -> quick exit
         case (False, False):
-            return data_in, og_schema
+            return og_dict, og_schema
         # ???
         case _other:
             raise RuntimeError(f"Unknown match: {_other}")
 
     # https://stackoverflow.com/a/75734554/13156561
-    data_out = {}  # type: ignore
-    for key, value in data_in.items():
-        if "." not in key:
-            data_out[key] = value
+    out = {}  # type: ignore
+    for og_key, value in og_dict.items():
+        if "." not in og_key:
+            out[og_key] = value
             continue
         else:
-            cursor = data_out
+            cursor = out
             schema_cursor = schema
-            *keys, leaf = key.split(".")
-            for k in keys:
+            *parent_keys, leaf_key = og_key.split(".")
+            for k in parent_keys:
                 cursor = cursor.setdefault(k, {})
                 # mark nested object 'required' as none
-                schema_cursor[key]["required"] = []
-                schema_cursor = schema_cursor[key]["properties"]
-            cursor[leaf] = value
-    return data_out, schema
+                schema_cursor[k]["required"] = []
+                schema_cursor = schema_cursor[k]["properties"]
+            cursor[leaf_key] = value
+    return out, schema
 
 
 def web_jsonschema_validate(
@@ -170,7 +171,9 @@ def web_jsonschema_validate(
     """Wrap `jsonschema.validate` with `web.HTTPError` (500)."""
 
     try:
-        jsonschema.validate(*_mongo_to_jsonschema_prep(instance, schema, allow_partial_update))
+        jsonschema.validate(
+            *_mongo_to_jsonschema_prep(instance, schema, allow_partial_update)
+        )
     except jsonschema.exceptions.ValidationError as e:
         LOGGER.exception(e)
         raise web.HTTPError(
