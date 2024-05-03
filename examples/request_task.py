@@ -3,9 +3,9 @@
 See https://github.com/Observation-Management-Service/ewms-pilot/blob/main/examples/do_task.py
 """
 
-
 import argparse
 import asyncio
+import itertools
 import json
 import logging
 import os
@@ -102,8 +102,6 @@ async def load_queue(task_in_queue: str, mq_token: str) -> None:
 
 async def request(
     rc: RestClient,
-    task_in_queue: str,
-    task_out_queue: str,
     pilot_cvmfs_image_tag: str,
     mq_token: str,
     n_workers: int,
@@ -114,13 +112,12 @@ async def request(
     post_body = dict(
         cluster_locations=["sub-2"],
         task_image=f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
-        task_args=f"python /app/examples/do_task.py --queue-incoming {task_in_queue} --queue-outgoing {task_out_queue}",
+        task_args=f"python /app/examples/do_task.py",
         environment={
             "EWMS_PILOT_BROKER_ADDRESS": os.environ["EWMS_PILOT_BROKER_ADDRESS"],
             "EWMS_PILOT_BROKER_AUTH_TOKEN": mq_token,
             "EWMS_PILOT_BROKER_CLIENT": EWMS_PILOT_BROKER_CLIENT,
         },
-        n_queues=2,
         n_workers=n_workers,
         worker_config=dict(
             do_transfer_worker_stdouterr=True,
@@ -170,22 +167,26 @@ async def read_queue(task_out_queue: str, mq_token: str) -> None:
 def monitor_wms(rc: RestClient, task_id: str) -> None:
     """Routinely query WMS."""
     LOGGER.info("Monitoring WMS...")
-    first = True
-    while True:
-        resp = rc.request_seq(
+
+    prev_task_directive = {}  # type: ignore
+    prev_taskforces = []  # type: ignore
+
+    for i in itertools.count():
+        if i > 0:
+            time.sleep(15)
+
+        task_directive = rc.request_seq(
             "GET",
             f"/task/directive/{task_id}",
         )
-        LOGGER.info("TASK DIRECTIVE:")
-        LOGGER.info(json.dumps(resp, indent=4))
-        if first:
-            resp = rc.request_seq(
+        if i == 0:
+            taskforces = rc.request_seq(
                 "POST",
                 "/taskforces/find",
                 {"query": {"task_id": task_id}},
             )
         else:
-            resp = rc.request_seq(
+            taskforces = rc.request_seq(
                 "POST",
                 "/taskforces/find",
                 {
@@ -200,14 +201,20 @@ def monitor_wms(rc: RestClient, task_id: str) -> None:
                     ],
                 },
             )
+
+        if task_directive == prev_task_directive and taskforces == prev_taskforces:
+            LOGGER.info("no change")
+            continue
+        prev_task_directive = task_directive
+        prev_taskforces = taskforces
+
+        LOGGER.info("TASK DIRECTIVE:")
+        LOGGER.info(json.dumps(task_directive, indent=4))
         LOGGER.info("TASKFORCES:")
-        LOGGER.info(json.dumps(resp["taskforces"], indent=4))
-        first = False
+        LOGGER.info(json.dumps(taskforces["taskforces"], indent=4))
 
         LOGGER.info("\n\n\n\n\n\n")
-        LOGGER.info("Trying again in 15 seconds...")
-        time.sleep(15)
-        LOGGER.info("\n\n\n\n\n\n")
+        LOGGER.info("Looking again in 15 seconds...")
 
 
 async def main() -> None:
@@ -242,27 +249,36 @@ async def main() -> None:
         client_secret=os.environ["KEYCLOAK_CLIENT_SECRET_BROKER"],
     ).make_access_token()
 
-    task_in_queue = Queue.make_name()
-    task_out_queue = Queue.make_name()
-
-    await load_queue(task_in_queue, mq_token)
-
+    # request task
     task_id = await request(
         rc,
-        task_in_queue,
-        task_out_queue,
         args.pilot_cvmfs_image_tag,
         mq_token,
         args.n_workers,
     )
-
     threading.Thread(
         target=monitor_wms,
         args=(rc, task_id),
         daemon=True,
     ).start()
 
-    await read_queue(task_out_queue, mq_token)
+    # get queue ids
+    LOGGER.info("getting queues...")
+    queues: list[str] = []
+    while not queues:
+        await asyncio.sleep(10)
+        queues = (
+            await rc.request(
+                "GET",
+                f"/task/directive/{task_id}",
+                dict(projection=["queues"]),
+            )
+        )["queues"]
+    LOGGER.info(f"{queues=}")
+
+    # load & read queues
+    await load_queue(queues[0], mq_token)
+    await read_queue(queues[1], mq_token)
 
     # wait at end, so monitor thread can get some final updates
     await asyncio.sleep(60)
@@ -280,7 +296,8 @@ if __name__ == "__main__":
     wipac_dev_tools.logging_tools.set_level(
         "DEBUG",
         first_party_loggers=LOGGER,
-        third_party_level="INFO",
+        third_party_level="WARNING",
+        future_third_parties=["OpenIDRestClient"],
         specialty_loggers={"mqclient": "INFO"},
     )
     asyncio.run(main())
