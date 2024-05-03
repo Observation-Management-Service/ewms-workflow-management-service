@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.8 (2024-05-03)
+
+### Other
+
+* Flake8 ([`8d3eba1`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/8d3eba1a8e8845299e95d53d16dc418fbf909b80))
+* Update example script ([`d00223e`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/d00223e758b406d716c6485aa9983ddd7fb358b2))
+
 ## v0.1.7 (2024-05-02)
 
 ### Other
