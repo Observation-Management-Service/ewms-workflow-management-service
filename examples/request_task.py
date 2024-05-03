@@ -112,7 +112,7 @@ async def request(
     post_body = dict(
         cluster_locations=["sub-2"],
         task_image=f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
-        task_args=f"python /app/examples/do_task.py",
+        task_args="python /app/examples/do_task.py",
         environment={
             "EWMS_PILOT_BROKER_ADDRESS": os.environ["EWMS_PILOT_BROKER_ADDRESS"],
             "EWMS_PILOT_BROKER_AUTH_TOKEN": mq_token,
