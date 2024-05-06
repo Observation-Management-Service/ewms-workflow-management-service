@@ -35,6 +35,9 @@
             },
             "minItems": 0
         },
+        "_mqs_retry_at_ts": {
+            "type": "number"
+        },
         "aborted": {
             "type": "boolean"
         }

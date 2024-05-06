@@ -10,7 +10,7 @@ from pymongo import ASCENDING, DESCENDING
 from rest_tools.client import ClientCredentialsAuth, RestClient
 
 from . import database as db
-from .config import ENV, MQS_NOT_NOW_HTTP_CODE
+from .config import ENV, MQS_NOT_NOW_HTTP_CODE, MQS_RETRY_AT_TS_DEFAULT_VALUE
 from .schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
@@ -81,7 +81,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                     "$or": [
                         # A: normal entries not needing a retry ('inf' indicates n/a)
                         #    using 'inf' helps with sorting correctly, see 'sort' below
-                        {"_mqs_retry_at_ts": float("inf")},
+                        {"_mqs_retry_at_ts": MQS_RETRY_AT_TS_DEFAULT_VALUE},
                         # or B: any with an 'at time' that is due
                         {"_mqs_retry_at_ts": {"$lte": int(time.time())}},
                     ],
