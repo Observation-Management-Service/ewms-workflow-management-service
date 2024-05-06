@@ -11,6 +11,7 @@
 | **priority** | **Integer** |  | [optional] [default to null] |
 | **n\_queues** | **Integer** |  | [optional] [default to null] |
 | **queues** | **List** |  | [optional] [default to null] |
+| **\_mqs\_retry\_at\_ts** | **BigDecimal** |  | [optional] [default to null] |
 | **aborted** | **Boolean** |  | [optional] [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
