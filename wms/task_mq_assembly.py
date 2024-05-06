@@ -21,7 +21,7 @@ async def set_mqs_retry_at_ts(
     task_id: str,
 ) -> None:
     """Set _mqs_retry_at_ts and place back on "backlog"."""
-    retry_at = int(time.time() + (ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY * 4))
+    retry_at = int(time.time()) + ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
     LOGGER.warning(
         f"MQS responded w/ 'not now' signal, will try task_directive "
         f"{task_id} at {retry_at} ({time.ctime(retry_at)})"
@@ -64,7 +64,13 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         )
 
     # main loop
+    short_sleep = False
     while True:
+        if short_sleep:
+            await asyncio.sleep(1)
+            short_sleep = False
+        else:
+            await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_DELAY)
         LOGGER.debug("Looking at next task directive without queues...")
 
         # find
@@ -88,7 +94,6 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             )
         except db.client.DocumentNotFoundException:
             LOGGER.debug("NOTHING FOR TASK_MQ_ASSEMBLY TO START UP")
-            await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY)
             continue
 
         # request to mqs
@@ -112,11 +117,9 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                     task_directives_client,
                     task_directive["task_id"],
                 )
-                # don't wait long, want to give other tasks a chance to start
-                await asyncio.sleep(1)
+                short_sleep = True  # want to give other tasks a chance to start up
             else:
                 LOGGER.exception(e)
-                await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY)
             continue
 
         queues = [p["mqid"] for p in resp["mqprofiles"]]
@@ -148,5 +151,3 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         LOGGER.info(
             f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({task_directive['task_id']}=)"
         )
-
-        await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_DELAY)

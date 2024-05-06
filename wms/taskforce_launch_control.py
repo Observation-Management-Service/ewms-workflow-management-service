@@ -1,6 +1,5 @@
 """The daemon task that 'launches' pre-launch taskforces."""
 
-
 import asyncio
 import logging
 
@@ -25,6 +24,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
     )
 
     while True:
+        await asyncio.sleep(ENV.TASKFORCE_LAUNCH_CONTROL_DELAY)
         LOGGER.debug("Looking at next pre-launch taskforce...")
 
         # find & advance phase
@@ -39,10 +39,8 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             )
         except db.client.DocumentNotFoundException:
             LOGGER.debug("NOTHING FOR TASKFORCE_LAUNCH_CONTROL TO START UP")
-            await asyncio.sleep(ENV.TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY)
         else:
             LOGGER.info(
                 f"ADVANCED 'phase' FROM {TaskforcePhase.PRE_LAUNCH} TO {TaskforcePhase.PENDING_STARTER}"
                 f" ({taskforce['taskforce_uuid']=})"
             )
-            await asyncio.sleep(ENV.TASKFORCE_LAUNCH_CONTROL_DELAY)
