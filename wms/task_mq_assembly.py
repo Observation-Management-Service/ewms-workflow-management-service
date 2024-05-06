@@ -1,8 +1,8 @@
 """The daemon task that 'assembles' message queues via the MQS."""
 
-
 import asyncio
 import logging
+import time
 
 import requests
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -10,10 +10,26 @@ from pymongo import ASCENDING, DESCENDING
 from rest_tools.client import ClientCredentialsAuth, RestClient
 
 from . import database as db
-from .config import ENV
+from .config import ENV, MQS_NOT_NOW_HTTP_CODE
 from .schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
+
+
+async def set_mqs_retry_at_ts(
+    task_directives_client: db.client.WMSMongoClient,
+    task_id: str,
+) -> None:
+    """Set _mqs_retry_at_ts and place back on "backlog"."""
+    retry_at = int(time.time() + (ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY * 4))
+    LOGGER.warning(
+        f"MQS responded w/ 'not now' signal, will try task_directive "
+        f"{task_id} at {retry_at} ({time.ctime(retry_at)})"
+    )
+    await task_directives_client.find_one_and_update(
+        dict(task_id=task_id),
+        dict(_mqs_retry_at_ts=retry_at),
+    )
 
 
 async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
@@ -54,9 +70,19 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         # find
         try:
             task_directive = await task_directives_client.find_one(
-                dict(queues=[]),  # has no queues
+                {
+                    "queues": [],  # has no queues
+                    "$or": [
+                        # A: normal entries not needing a retry ('inf' indicates n/a)
+                        #    using 'inf' helps with sorting correctly, see 'sort' below
+                        {"_mqs_retry_at_ts": float("inf")},
+                        # or B: any with an 'at time' that is due
+                        {"_mqs_retry_at_ts": {"$lte": int(time.time())}},
+                    ],
+                },
                 sort=[
-                    ("priority", DESCENDING),  # first, highest priority
+                    ("_mqs_retry_at_ts", ASCENDING),  # any w/ mqs-retry due (inf last)
+                    ("priority", DESCENDING),  # then, highest priority
                     ("timestamp", ASCENDING),  # then, oldest
                 ],
             )
@@ -81,9 +107,16 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                 ),
             )
         except requests.exceptions.HTTPError as e:
-            # TODO: add mqs "not now" logic
-            LOGGER.exception(e)
-            await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY)
+            if e.response.status_code == MQS_NOT_NOW_HTTP_CODE:
+                await set_mqs_retry_at_ts(
+                    task_directives_client,
+                    task_directive["task_id"],
+                )
+                # don't wait long, want to give other tasks a chance to start
+                await asyncio.sleep(1)
+            else:
+                LOGGER.exception(e)
+                await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY)
             continue
 
         queues = [p["mqid"] for p in resp["mqprofiles"]]
