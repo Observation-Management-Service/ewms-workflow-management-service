@@ -10,7 +10,7 @@ from pymongo import ASCENDING, DESCENDING
 from rest_tools.client import ClientCredentialsAuth, RestClient
 
 from . import database as db
-from .config import ENV, MQS_NOT_NOW_HTTP_CODE, MQS_RETRY_AT_TS_DEFAULT_VALUE
+from .config import ENV, MQS_RETRY_AT_TS_DEFAULT_VALUE
 from .schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
@@ -112,14 +112,11 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                 ),
             )
         except requests.exceptions.HTTPError as e:
-            if e.response.status_code == MQS_NOT_NOW_HTTP_CODE:
-                await set_mqs_retry_at_ts(
-                    task_directives_client,
-                    task_directive["task_id"],
-                )
-                short_sleep = True  # want to give other tasks a chance to start up
-            else:
-                LOGGER.exception(e)
+            LOGGER.exception(e)
+            continue
+        if resp.get("try_again_later"):
+            await set_mqs_retry_at_ts(task_directives_client, task_directive["task_id"])
+            short_sleep = True  # want to give other tasks a chance to start up
             continue
 
         queues = [p["mqid"] for p in resp["mqprofiles"]]

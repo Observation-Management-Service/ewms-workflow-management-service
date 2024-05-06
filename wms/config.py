@@ -18,7 +18,6 @@ LOGGER = logging.getLogger(__name__)
 DB_JSONSCHEMA_DIR = Path(__file__).parent / "schema/db"
 REST_OPENAPI_SPEC_FPATH = Path(__file__).parent / "schema/rest/openapi_compiled.json"
 
-MQS_NOT_NOW_HTTP_CODE = 1
 MQS_RETRY_AT_TS_DEFAULT_VALUE = float("inf")
 
 
