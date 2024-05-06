@@ -51,6 +51,7 @@
         "priority",
         "n_queues",
         "queues",
+        "_mqs_retry_at_ts",
         "aborted"
     ],
     "additionalProperties": false
