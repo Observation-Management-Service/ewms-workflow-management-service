@@ -157,6 +157,7 @@ async def taskforce_launch_control_marks_taskforces_pending_starter(
         },
     )
     assert len(resp["taskforces"]) == n_locations
+    LOGGER.debug(resp["taskforces"])
     assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
 
 
