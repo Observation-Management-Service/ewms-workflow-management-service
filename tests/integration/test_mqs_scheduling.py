@@ -5,7 +5,7 @@ and mock/patched MQS REST calls."""
 
 import asyncio
 import logging
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
 
 import pytest
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -151,8 +151,9 @@ class MQSRESTCalls:
         assert 0
 
 
-@patch("wms.task_mq_assembly.RestClient")  # it's a from-import
-async def test_000(mock_mqs_rc: MagicMock) -> None:
+@patch("wms.task_mq_assembly.request_to_mqs", new_callable=AsyncMock)
+@patch("wms.task_mq_assembly.RestClient", new=MagicMock)  # it's a from-import
+async def test_000(mock_mqs_req: AsyncMock) -> None:
     """Test the MQS scheduling with several tasks and requests."""
     mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
     task_directives_client = database.client.WMSMongoClient(
@@ -173,7 +174,7 @@ async def test_000(mock_mqs_rc: MagicMock) -> None:
             )
 
     # pre-patch all the REST calls to MQS
-    mock_mqs_rc.request.side_effect = MQSRESTCalls.request
+    mock_mqs_req.side_effect = MQSRESTCalls.request
 
     # go!
     with pytest.raises(asyncio.TimeoutError):

@@ -16,6 +16,21 @@ from .schema.enums import TaskforcePhase
 LOGGER = logging.getLogger(__name__)
 
 
+async def request_to_mqs(mqs_rc: RestClient, task_directive: dict) -> dict:
+    """Send request to MQS for queues."""
+    return await mqs_rc.request(
+        "POST",
+        "/mq-group",
+        dict(
+            task_id=task_directive["task_id"],
+            criteria=dict(
+                priority=task_directive["priority"],
+                n_queues=task_directive["n_queues"],
+            ),
+        ),
+    )
+
+
 async def set_mqs_retry_at_ts(
     task_directives_client: db.client.WMSMongoClient,
     task_id: str,
@@ -101,17 +116,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             f"REQUESTING {task_directive['n_queues']} queues (task_id={task_directive['task_id']})..."
         )
         try:
-            resp = await mqs_rc.request(
-                "POST",
-                "/mq-group",
-                dict(
-                    task_id=task_directive["task_id"],
-                    criteria=dict(
-                        priority=task_directive["priority"],
-                        n_queues=task_directive["n_queues"],
-                    ),
-                ),
-            )
+            resp = await request_to_mqs(mqs_rc, task_directive)
         except requests.exceptions.HTTPError as e:
             LOGGER.exception(e)
             continue
