@@ -151,7 +151,7 @@ class MQSRESTCalls:
         assert 0
 
 
-@patch("task_mq_assembly.RestClient")  # it's a from-import
+@patch("wms.task_mq_assembly.RestClient")  # it's a from-import
 async def test_000(mock_mqs_rc: MagicMock) -> None:
     """Test the MQS scheduling with several tasks and requests."""
     mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
