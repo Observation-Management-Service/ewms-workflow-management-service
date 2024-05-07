@@ -70,9 +70,10 @@ class MQSRESTCalls:
     call_ct = -1  # class var
 
     @staticmethod
-    def request(method: str, path: str, body: dict) -> dict:
+    def request(method: str, path: str, body: dict | None = None) -> dict:
         assert method == "POST"
         assert path == "/mq-group"
+        assert body
         MQSRESTCalls.call_ct += 1
         match MQSRESTCalls.call_ct:
             # accept A
