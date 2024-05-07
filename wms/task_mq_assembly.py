@@ -85,7 +85,7 @@ async def update_db(
         ),
     )
     LOGGER.info(
-        f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({task_directive['task_id']}=)"
+        f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({task_id=})"
     )
 
 
