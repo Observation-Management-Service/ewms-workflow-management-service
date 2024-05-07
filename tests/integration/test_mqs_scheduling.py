@@ -32,7 +32,7 @@ TEST_TASK_DIRECTIVES = [
 
 def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
     return dict(
-        tuaskforce_uuid=f"{task_directive['task_id']}-{i}",
+        taskforce_uuid=f"{task_directive['task_id']}-{i}",
         task_id=task_directive["task_id"],
         timestamp=task_directive["timestamp"],
         collector=f"collector-{location}",
