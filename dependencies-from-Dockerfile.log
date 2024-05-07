@@ -73,7 +73,7 @@ zipp==3.18.1
 cryptography==42.0.7
 └── cffi [required: >=1.12, installed: 1.16.0]
     └── pycparser [required: Any, installed: 2.22]
-pipdeptree==2.19.1
+pipdeptree==2.20.0
 ├── packaging [required: >=23.1, installed: 24.0]
 └── pip [required: >=23.1.2, installed: 24.0]
 setuptools==69.5.1
