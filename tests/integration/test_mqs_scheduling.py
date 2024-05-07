@@ -4,12 +4,16 @@ Runs everything in main process and thread. Uses a real mongo database
 and mock/patched MQS REST calls."""
 
 import asyncio
+import logging
 from unittest.mock import patch, MagicMock
 
 import pytest
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from wms import task_mq_assembly, database, config, schema
+
+logging.getLogger("pymongo").setLevel(logging.INFO)
+
 
 TEST_TASK_DIRECTIVES = [
     dict(
