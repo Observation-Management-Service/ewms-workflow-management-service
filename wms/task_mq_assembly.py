@@ -16,6 +16,29 @@ from .schema.enums import TaskforcePhase
 LOGGER = logging.getLogger(__name__)
 
 
+async def get_next_task_directive(
+    task_directives_client: db.client.WMSMongoClient,
+) -> dict:
+    """Grab the next task directive from db."""
+    return await task_directives_client.find_one(
+        {
+            "queues": [],  # has no queues
+            "$or": [
+                # A: normal entries not needing a retry ('inf' indicates n/a)
+                #    using 'inf' helps with sorting correctly, see 'sort' below
+                {"_mqs_retry_at_ts": MQS_RETRY_AT_TS_DEFAULT_VALUE},
+                # or B: any with an 'at time' that is due
+                {"_mqs_retry_at_ts": {"$lte": int(time.time())}},
+            ],
+        },
+        sort=[
+            ("_mqs_retry_at_ts", ASCENDING),  # any w/ mqs-retry due (inf last)
+            ("priority", DESCENDING),  # then, highest priority
+            ("timestamp", ASCENDING),  # then, oldest
+        ],
+    )
+
+
 async def request_to_mqs(mqs_rc: RestClient, task_directive: dict) -> dict:
     """Send request to MQS for queues."""
     return await mqs_rc.request(
@@ -28,6 +51,41 @@ async def request_to_mqs(mqs_rc: RestClient, task_directive: dict) -> dict:
                 n_queues=task_directive["n_queues"],
             ),
         ),
+    )
+
+
+async def update_db(
+    task_directives_client: db.client.WMSMongoClient,
+    taskforces_client: db.client.WMSMongoClient,
+    task_id: str,
+    queues: list[str],
+) -> None:
+    """Update the database with queues and advance taskforces' phases."""
+    # update task directive -- insert queues
+    await task_directives_client.find_one_and_update(
+        dict(task_id=task_id),
+        dict(queues=queues),
+    )
+    LOGGER.info(f"ASSEMBLED {len(queues)} queues ({task_id=})")
+
+    # update taskforces -- advance phase & insert queue ids
+    environment_updates = {
+        f"container_config.environment.EWMS_PILOT_QUEUE_{suffix}": qid
+        for suffix, qid in zip(
+            # TODO: add other types of queues (DEADLETTER, etc.)
+            ["INCOMING", "OUTGOING"],
+            queues,
+        )
+    }
+    await taskforces_client.update_set_many(
+        dict(task_id=task_id),
+        dict(
+            phase=TaskforcePhase.PRE_LAUNCH,
+            **environment_updates,
+        ),
+    )
+    LOGGER.info(
+        f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({task_directive['task_id']}=)"
     )
 
 
@@ -90,23 +148,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
 
         # find
         try:
-            task_directive = await task_directives_client.find_one(
-                {
-                    "queues": [],  # has no queues
-                    "$or": [
-                        # A: normal entries not needing a retry ('inf' indicates n/a)
-                        #    using 'inf' helps with sorting correctly, see 'sort' below
-                        {"_mqs_retry_at_ts": MQS_RETRY_AT_TS_DEFAULT_VALUE},
-                        # or B: any with an 'at time' that is due
-                        {"_mqs_retry_at_ts": {"$lte": int(time.time())}},
-                    ],
-                },
-                sort=[
-                    ("_mqs_retry_at_ts", ASCENDING),  # any w/ mqs-retry due (inf last)
-                    ("priority", DESCENDING),  # then, highest priority
-                    ("timestamp", ASCENDING),  # then, oldest
-                ],
-            )
+            task_directive = await get_next_task_directive(task_directives_client)
         except db.client.DocumentNotFoundException:
             LOGGER.debug("NOTHING FOR TASK_MQ_ASSEMBLY TO START UP")
             continue
@@ -125,32 +167,10 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             short_sleep = True  # want to give other tasks a chance to start up
             continue
 
-        queues = [p["mqid"] for p in resp["mqprofiles"]]
-
-        # update task directive -- insert queues
-        await task_directives_client.find_one_and_update(
-            dict(task_id=task_directive["task_id"]),
-            dict(queues=queues),
-        )
-        LOGGER.info(
-            f"ASSEMBLED {len(resp['mqprofiles'])} queues (task_id={task_directive['task_id']})"
-        )
-        # update taskforces -- advance phase & insert queue ids
-        environment_updates = {
-            f"container_config.environment.EWMS_PILOT_QUEUE_{suffix}": qid
-            for suffix, qid in zip(
-                # TODO: add other types of queues (DEADLETTER, etc.)
-                ["INCOMING", "OUTGOING"],
-                queues,
-            )
-        }
-        await taskforces_client.update_set_many(
-            dict(task_id=task_directive["task_id"]),
-            dict(
-                phase=TaskforcePhase.PRE_LAUNCH,
-                **environment_updates,
-            ),
-        )
-        LOGGER.info(
-            f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({task_directive['task_id']}=)"
+        # update db
+        await update_db(
+            task_directives_client,
+            taskforces_client,
+            task_directive["task_id"],
+            [p["mqid"] for p in resp["mqprofiles"]],
         )
