@@ -105,10 +105,11 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                 "POST",
                 "/mq-group",
                 dict(
+                    task_id=task_directive["task_id"],
                     criteria=dict(
                         priority=task_directive["priority"],
                         n_queues=task_directive["n_queues"],
-                    )
+                    ),
                 ),
             )
         except requests.exceptions.HTTPError as e:
