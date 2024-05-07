@@ -45,7 +45,7 @@ pathable==0.4.3
 protobuf==4.25.3
 pycparser==2.22
 PyJWT==2.8.0
-pymongo==4.7.1
+pymongo==4.7.2
 pypng==0.20220715.0
 PyYAML==6.0.1
 qrcode==7.4.2
@@ -177,7 +177,7 @@ wms
 │   │   └── rpds-py [required: >=0.7.0, installed: 0.18.1]
 │   └── rpds-py [required: >=0.7.1, installed: 0.18.1]
 ├── motor [required: Any, installed: 3.4.0]
-│   └── pymongo [required: >=4.5,<5, installed: 4.7.1]
+│   └── pymongo [required: >=4.5,<5, installed: 4.7.2]
 │       └── dnspython [required: >=1.16.0,<3.0.0, installed: 2.6.1]
 ├── openapi-core [required: Any, installed: 0.19.1]
 │   ├── isodate [required: Any, installed: 0.6.1]
