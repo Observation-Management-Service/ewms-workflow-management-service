@@ -91,7 +91,7 @@ class MQSRESTCalls:
             # accept C
             case 2:
                 assert task_directive["task_id"] == "C3"
-                dict(
+                return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
                         dict(mqid=f"200-{MQSRESTCalls.call_ct}"),
@@ -100,7 +100,7 @@ class MQSRESTCalls:
             # accept D
             case 3:
                 assert task_directive["task_id"] == "D4"
-                dict(
+                return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
                         dict(mqid=f"200-{MQSRESTCalls.call_ct}"),
@@ -125,7 +125,7 @@ class MQSRESTCalls:
             # accept E
             case 8:
                 assert task_directive["task_id"] == "E5"
-                dict(
+                return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
                         dict(mqid=f"200-{MQSRESTCalls.call_ct}"),
@@ -138,7 +138,7 @@ class MQSRESTCalls:
             # accept B
             case 10:
                 assert task_directive["task_id"] == "B2"
-                dict(
+                return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
                         dict(mqid=f"200-{MQSRESTCalls.call_ct}"),
@@ -148,7 +148,6 @@ class MQSRESTCalls:
             case other:
                 print(other)
                 assert 0
-        assert 0
 
 
 @patch("wms.task_mq_assembly.request_to_mqs", new_callable=AsyncMock)
