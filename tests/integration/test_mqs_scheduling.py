@@ -4,7 +4,6 @@ Runs everything in main process and thread. Uses a real mongo database
 and mock/patched MQS REST calls."""
 
 import asyncio
-import copy
 import logging
 import time
 from typing import Any
@@ -227,6 +226,20 @@ class MQSRESTCalls:
                 assert 0
 
 
+def _make_post_mqs_loop_taskforce(task_directive: dict, location: str, i: int) -> dict:
+    taskforce = _make_test_taskforce(task_directive, location, i)
+    taskforce["container_config"].update(
+        {
+            "environment": {
+                "EWMS_PILOT_QUEUE_INCOMING": f"100-{task_directive['task_id']}",
+                "EWMS_PILOT_QUEUE_OUTGOING": f"200-{task_directive['task_id']}",
+            }
+        }
+    )
+    taskforce["phase"] = str(schema.enums.TaskforcePhase.PRE_LAUNCH)
+    return taskforce
+
+
 @patch("wms.task_mq_assembly.request_to_mqs", new_callable=AsyncMock)
 @patch("wms.task_mq_assembly.RestClient", new=MagicMock)  # it's a from-import
 async def test_000(mock_req_to_mqs: AsyncMock) -> None:
@@ -264,9 +277,10 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
         src = next(  # using 'next' gives shorter debug than w/ 'in'
             t for t in TEST_TASK_DIRECTIVES if t["task_id"] == td_db["task_id"]
         )
-        expected = copy.deepcopy(src)
-        expected["queues"] = [f"100-{td_db['task_id']}", f"200-{td_db['task_id']}"]
-        assert td_db == expected
+        assert td_db == {
+            **src,
+            "queues": [f"100-{td_db['task_id']}", f"200-{td_db['task_id']}"],
+        }
         # look at taskforces
         tfs_in_db = [
             t
@@ -275,6 +289,6 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
             )
         ]
         assert tfs_in_db == [  # type: ignore
-            _make_test_taskforce(td_db, location, i)
+            _make_post_mqs_loop_taskforce(td_db, location, i)
             for i, location in enumerate(td_db["cluster_locations"])  # type: ignore
         ]
