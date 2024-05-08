@@ -1,6 +1,5 @@
 """Config settings."""
 
-
 import dataclasses as dc
 import json
 import logging
@@ -18,6 +17,9 @@ LOGGER = logging.getLogger(__name__)
 
 DB_JSONSCHEMA_DIR = Path(__file__).parent / "schema/db"
 REST_OPENAPI_SPEC_FPATH = Path(__file__).parent / "schema/rest/openapi_compiled.json"
+
+MQS_RETRY_AT_TS_DEFAULT_VALUE = float("inf")
+TASK_MQ_ASSEMBLY_SHORTEST_SLEEP = 1
 
 
 # --------------------------------------------------------------------------------------
@@ -45,13 +47,11 @@ class EnvConfig:
 
     CI: bool = False  # github actions sets this to 'true'
     LOG_LEVEL: str = "DEBUG"
-    LOG_LEVEL_THIRD_PARTY: str = "DEBUG"
+    LOG_LEVEL_THIRD_PARTY: str = "INFO"
     LOG_LEVEL_REST_TOOLS: str = "DEBUG"
 
-    TASK_MQ_ASSEMBLY_SHORT_DELAY: int = 15
-    TASK_MQ_ASSEMBLY_DELAY: int = 5 * 60
-
-    TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY: int = 5
+    TASK_MQ_ASSEMBLY_DELAY: int = 15
+    TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT: int = 60
     TASKFORCE_LAUNCH_CONTROL_DELAY: int = 1
 
 

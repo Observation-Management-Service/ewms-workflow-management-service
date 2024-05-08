@@ -1,8 +1,8 @@
 """The daemon task that 'assembles' message queues via the MQS."""
 
-
 import asyncio
 import logging
+import time
 
 import requests
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -10,10 +10,99 @@ from pymongo import ASCENDING, DESCENDING
 from rest_tools.client import ClientCredentialsAuth, RestClient
 
 from . import database as db
-from .config import ENV
+from .config import ENV, MQS_RETRY_AT_TS_DEFAULT_VALUE, TASK_MQ_ASSEMBLY_SHORTEST_SLEEP
 from .schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
+
+
+async def get_next_task_directive(
+    task_directives_client: db.client.WMSMongoClient,
+) -> dict:
+    """Grab the next task directive from db."""
+    return await task_directives_client.find_one(
+        {
+            "queues": [],  # has no queues
+            "$or": [
+                # A: normal entries not needing a retry ('inf' indicates n/a)
+                #    using 'inf' helps with sorting correctly, see 'sort' below
+                {"_mqs_retry_at_ts": MQS_RETRY_AT_TS_DEFAULT_VALUE},
+                # or B: any with an 'at time' that is due
+                {"_mqs_retry_at_ts": {"$lte": int(time.time())}},
+            ],
+        },
+        sort=[
+            ("_mqs_retry_at_ts", ASCENDING),  # any w/ mqs-retry due (inf last)
+            ("priority", DESCENDING),  # then, highest priority
+            ("timestamp", ASCENDING),  # then, oldest
+        ],
+    )
+
+
+async def request_to_mqs(mqs_rc: RestClient, task_directive: dict) -> dict:
+    """Send request to MQS for queues."""
+    return await mqs_rc.request(
+        "POST",
+        "/mq-group",
+        dict(
+            task_id=task_directive["task_id"],
+            criteria=dict(
+                priority=task_directive["priority"],
+                n_queues=task_directive["n_queues"],
+            ),
+        ),
+    )
+
+
+async def update_db(
+    task_directives_client: db.client.WMSMongoClient,
+    taskforces_client: db.client.WMSMongoClient,
+    task_id: str,
+    queues: list[str],
+) -> None:
+    """Update the database with queues and advance taskforces' phases."""
+    # update task directive -- insert queues
+    await task_directives_client.find_one_and_update(
+        dict(task_id=task_id),
+        dict(queues=queues),
+    )
+    LOGGER.info(f"ASSEMBLED {len(queues)} queues ({task_id=})")
+
+    # update taskforces -- advance phase & insert queue ids
+    environment_updates = {
+        f"container_config.environment.EWMS_PILOT_QUEUE_{suffix}": qid
+        for suffix, qid in zip(
+            # TODO: add other types of queues (DEADLETTER, etc.)
+            ["INCOMING", "OUTGOING"],
+            queues,
+        )
+    }
+    await taskforces_client.update_set_many(
+        dict(task_id=task_id),
+        dict(
+            phase=TaskforcePhase.PRE_LAUNCH,
+            **environment_updates,
+        ),
+    )
+    LOGGER.info(
+        f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({task_id=})"
+    )
+
+
+async def set_mqs_retry_at_ts(
+    task_directives_client: db.client.WMSMongoClient,
+    task_id: str,
+) -> None:
+    """Set _mqs_retry_at_ts and place back on "backlog"."""
+    retry_at = int(time.time()) + ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+    LOGGER.warning(
+        f"MQS responded w/ 'not now' signal, will try task_directive "
+        f"{task_id} at {retry_at} ({time.ctime(retry_at)})"
+    )
+    await task_directives_client.find_one_and_update(
+        dict(task_id=task_id),
+        dict(_mqs_retry_at_ts=retry_at),
+    )
 
 
 async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
@@ -48,21 +137,20 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         )
 
     # main loop
+    short_sleep = False
     while True:
+        if short_sleep:
+            await asyncio.sleep(TASK_MQ_ASSEMBLY_SHORTEST_SLEEP)
+            short_sleep = False
+        else:
+            await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_DELAY)
         LOGGER.debug("Looking at next task directive without queues...")
 
         # find
         try:
-            task_directive = await task_directives_client.find_one(
-                dict(queues=[]),  # has no queues
-                sort=[
-                    ("priority", DESCENDING),  # first, highest priority
-                    ("timestamp", ASCENDING),  # then, oldest
-                ],
-            )
+            task_directive = await get_next_task_directive(task_directives_client)
         except db.client.DocumentNotFoundException:
             LOGGER.debug("NOTHING FOR TASK_MQ_ASSEMBLY TO START UP")
-            await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY)
             continue
 
         # request to mqs
@@ -70,50 +158,19 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             f"REQUESTING {task_directive['n_queues']} queues (task_id={task_directive['task_id']})..."
         )
         try:
-            resp = await mqs_rc.request(
-                "POST",
-                "/mq-group",
-                dict(
-                    criteria=dict(
-                        priority=task_directive["priority"],
-                        n_queues=task_directive["n_queues"],
-                    )
-                ),
-            )
+            resp = await request_to_mqs(mqs_rc, task_directive)
         except requests.exceptions.HTTPError as e:
-            # TODO: add mqs "not now" logic
             LOGGER.exception(e)
-            await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_SHORT_DELAY)
+            continue
+        if resp.get("try_again_later"):
+            await set_mqs_retry_at_ts(task_directives_client, task_directive["task_id"])
+            short_sleep = True  # want to give other tasks a chance to start up
             continue
 
-        queues = [p["mqid"] for p in resp["mqprofiles"]]
-
-        # update task directive -- insert queues
-        await task_directives_client.find_one_and_update(
-            dict(task_id=task_directive["task_id"]),
-            dict(queues=queues),
+        # update db
+        await update_db(
+            task_directives_client,
+            taskforces_client,
+            task_directive["task_id"],
+            [p["mqid"] for p in resp["mqprofiles"]],
         )
-        LOGGER.info(
-            f"ASSEMBLED {len(resp['mqprofiles'])} queues (task_id={task_directive['task_id']})"
-        )
-        # update taskforces -- advance phase & insert queue ids
-        environment_updates = {
-            f"container_config.environment.EWMS_PILOT_QUEUE_{suffix}": qid
-            for suffix, qid in zip(
-                # TODO: add other types of queues (DEADLETTER, etc.)
-                ["INCOMING", "OUTGOING"],
-                queues,
-            )
-        }
-        await taskforces_client.update_set_many(
-            dict(task_id=task_directive["task_id"]),
-            dict(
-                phase=TaskforcePhase.PRE_LAUNCH,
-                **environment_updates,
-            ),
-        )
-        LOGGER.info(
-            f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({task_directive['task_id']}=)"
-        )
-
-        await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_DELAY)

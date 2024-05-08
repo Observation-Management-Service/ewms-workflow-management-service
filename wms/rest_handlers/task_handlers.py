@@ -41,6 +41,7 @@ class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
             #
             n_queues=2,  # TODO: make user configurable?
             queues=[],  # values determined by mqs, updated by task_mq_assembly
+            _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by task_mq_assembly
             #
             aborted=False,
         )

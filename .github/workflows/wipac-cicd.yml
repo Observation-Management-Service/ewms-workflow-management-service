@@ -15,10 +15,9 @@ env:
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
   #
-  TASK_MQ_ASSEMBLY_SHORT_DELAY: 3  # need to define for pytests
-  TASK_MQ_ASSEMBLY_DELAY: 3  # ''
-  TASKFORCE_LAUNCH_CONTROL_DELAY: 3  # ''
-  TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY: 3  # ''
+  TASK_MQ_ASSEMBLY_DELAY: 2  # need to define for pytests
+  TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT: 10  # ''
+  TASKFORCE_LAUNCH_CONTROL_DELAY: 2  # ''
 
 
 
@@ -170,7 +169,7 @@ jobs:
           file: Dockerfile
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
 
-  integration-tests:
+  integration-test-full-wms-workflow:
     needs: [ py-versions, schema-modifications ]
     runs-on: ubuntu-latest
     strategy:
@@ -210,15 +209,14 @@ jobs:
             --env MQS_ADDRESS="${{ env.MQS_ADDRESS }}" \
             --env REST_OPENAPI_SPEC_FPATH="${{ env.REST_OPENAPI_SPEC_FPATH }}" \
             --env DB_JSONSCHEMA_DIR="${{ env.DB_JSONSCHEMA_DIR }}" \
-            --env TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_SHORT_DELAY }}" \
             --env TASKFORCE_LAUNCH_CONTROL_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_DELAY }}" \
-            --env TASK_MQ_ASSEMBLY_SHORT_DELAY="${{ env.TASK_MQ_ASSEMBLY_SHORT_DELAY }}" \
+            --env TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT="${{ env.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT }}" \
             --env TASK_MQ_ASSEMBLY_DELAY="${{ env.TASK_MQ_ASSEMBLY_DELAY }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
           
           sleep 10
-          pytest -vvv --exitfirst tests/integration/
+          pytest -vvv --exitfirst tests/integration/test_tms_workflow.py
       #
       - if: always()
         run: |
@@ -227,6 +225,28 @@ jobs:
         run: |
           docker logs rest || cat ./rest.out
 
+  integration-test-mqs-scheduling:
+    needs: [ py-versions, schema-modifications ]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
+    services:
+      mongo:
+        image: bitnami/mongodb:4
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.py3 }}
+      - run: |
+          pip install .[tests]
+      - name: test (run servers in background)
+        run: |
+          pytest -vvv --exitfirst tests/integration/test_mqs_scheduling.py
 
   unit-tests:
     needs: [ py-versions, schema-modifications ]
@@ -264,7 +284,8 @@ jobs:
       schema-modifications,
       api-documentation,
       test-build-docker,
-      integration-tests,
+      integration-test-full-wms-workflow,
+      integration-test-mqs-scheduling,
       unit-tests
     ]
     runs-on: ubuntu-latest

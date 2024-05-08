@@ -35,6 +35,9 @@
             },
             "minItems": 0
         },
+        "_mqs_retry_at_ts": {
+            "type": "number"
+        },
         "aborted": {
             "type": "boolean"
         }
@@ -48,6 +51,7 @@
         "priority",
         "n_queues",
         "queues",
+        "_mqs_retry_at_ts",
         "aborted"
     ],
     "additionalProperties": false

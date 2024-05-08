@@ -3,8 +3,8 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **task\_id** | [**oas_any_type_not_mapped**](.md) | the task id | [default to null] |
-| **n\_taskforces** | [**oas_any_type_not_mapped**](.md) | number of updated taskforces | [default to null] |
+| **task\_id** | **String** | the task id | [default to null] |
+| **n\_taskforces** | **Integer** | number of updated taskforces | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
