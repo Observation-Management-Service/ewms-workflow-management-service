@@ -4,6 +4,7 @@ Runs everything in main process and thread. Uses a real mongo database
 and mock/patched MQS REST calls."""
 
 import asyncio
+import copy
 import logging
 import time
 from typing import Any
@@ -263,9 +264,9 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
         src = next(  # using 'next' gives shorter debug than w/ 'in'
             t for t in TEST_TASK_DIRECTIVES if t["task_id"] == td_db["task_id"]
         )
-        assert td_db == dict(
-            **src, queues=[f"100-{td_db['task_id']}", f"200-{td_db['task_id']}"]
-        )
+        expected = copy.deepcopy(src)
+        expected["queues"] = [f"100-{td_db['task_id']}", f"200-{td_db['task_id']}"]
+        assert td_db == expected
         # look at taskforces
         tfs_in_db = [
             t
