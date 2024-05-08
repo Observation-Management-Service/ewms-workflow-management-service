@@ -10,7 +10,7 @@ from pymongo import ASCENDING, DESCENDING
 from rest_tools.client import ClientCredentialsAuth, RestClient
 
 from . import database as db
-from .config import ENV, MQS_RETRY_AT_TS_DEFAULT_VALUE
+from .config import ENV, MQS_RETRY_AT_TS_DEFAULT_VALUE, TASK_MQ_ASSEMBLY_SHORTEST_SLEEP
 from .schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
@@ -140,7 +140,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
     short_sleep = False
     while True:
         if short_sleep:
-            await asyncio.sleep(1)
+            await asyncio.sleep(TASK_MQ_ASSEMBLY_SHORTEST_SLEEP)
             short_sleep = False
         else:
             await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_DELAY)

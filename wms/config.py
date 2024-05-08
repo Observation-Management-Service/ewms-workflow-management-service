@@ -19,6 +19,7 @@ DB_JSONSCHEMA_DIR = Path(__file__).parent / "schema/db"
 REST_OPENAPI_SPEC_FPATH = Path(__file__).parent / "schema/rest/openapi_compiled.json"
 
 MQS_RETRY_AT_TS_DEFAULT_VALUE = float("inf")
+TASK_MQ_ASSEMBLY_SHORTEST_SLEEP = 1
 
 
 # --------------------------------------------------------------------------------------

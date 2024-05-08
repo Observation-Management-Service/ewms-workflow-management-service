@@ -103,10 +103,10 @@ class MQSRESTCalls:
             # accept C
             case 2:
                 assert task_directive["task_id"] == "C3"
-                assert (
-                    config.ENV.TASK_MQ_ASSEMBLY_DELAY
+                assert (  # prev was denied AND this one was accepted, so this was a short sleep
+                    config.TASK_MQ_ASSEMBLY_SHORTEST_SLEEP
                     <= diff
-                    <= config.ENV.TASK_MQ_ASSEMBLY_DELAY + 1
+                    <= config.TASK_MQ_ASSEMBLY_SHORTEST_SLEEP + 1
                 )
                 return dict(
                     mqprofiles=[
