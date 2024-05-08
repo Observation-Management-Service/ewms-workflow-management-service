@@ -256,4 +256,23 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
         # use asyncio's timeout to artificially stop loop, otherwise it'd go forever
         await asyncio.wait_for(task_mq_assembly.startup(mongo_client), timeout=60)
 
-    # TODO: check mongo db state
+    # check mongo db state
+    all_in_db = [t async for t in task_directives_client.find_all({}, [])]
+    # look at task directives
+    assert len(all_in_db) == len(TEST_TASK_DIRECTIVES)
+    # now, individually
+    for task_directive in all_in_db:
+        assert task_directive in TEST_TASK_DIRECTIVES
+        # look at taskforces
+        taskforces = [
+            t
+            async for t in taskforces_client.find_all(
+                dict(task_id=task_directive["task_id"]), []
+            )
+        ]
+        assert len(taskforces) == len(task_directive["cluster_locations"])  # type: ignore
+        # now, individually
+        assert taskforces == [  # type: ignore
+            _make_test_taskforce(task_directive, location, i)
+            for i, location in enumerate(task_directive["cluster_locations"])  # type: ignore
+        ]
