@@ -5,6 +5,7 @@ and mock/patched MQS REST calls."""
 
 import asyncio
 import logging
+from typing import Any
 from unittest.mock import patch, MagicMock, AsyncMock
 
 import pytest
@@ -70,15 +71,14 @@ class MQSRESTCalls:
     call_ct = -1  # class var
 
     @staticmethod
-    def request(method: str, path: str, body: dict | None = None) -> dict:
-        assert method == "POST"
-        assert path == "/mq-group"
-        assert body
+    def request_to_mqs(mqs_rc: Any, task_directive: dict) -> dict:
+        assert mqs_rc
+        assert task_directive
         MQSRESTCalls.call_ct += 1
         match MQSRESTCalls.call_ct:
             # accept A
             case 0:
-                assert body["task_id"] == "A1"
+                assert task_directive["task_id"] == "A1"
                 return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
@@ -87,11 +87,11 @@ class MQSRESTCalls:
                 )
             # deny B
             case 1:
-                assert body["task_id"] == "B2"
+                assert task_directive["task_id"] == "B2"
                 return dict(try_again_later=True)
             # accept C
             case 2:
-                assert body["task_id"] == "C3"
+                assert task_directive["task_id"] == "C3"
                 dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
@@ -100,7 +100,7 @@ class MQSRESTCalls:
                 )
             # accept D
             case 3:
-                assert body["task_id"] == "D4"
+                assert task_directive["task_id"] == "D4"
                 dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
@@ -109,23 +109,23 @@ class MQSRESTCalls:
                 )
             # deny E
             case 4:
-                assert body["task_id"] == "E5"
+                assert task_directive["task_id"] == "E5"
                 return dict(try_again_later=True)
             # deny B
             case 5:
-                assert body["task_id"] == "B2"
+                assert task_directive["task_id"] == "B2"
                 return dict(try_again_later=True)
             # deny E
             case 6:
-                assert body["task_id"] == "E5"
+                assert task_directive["task_id"] == "E5"
                 return dict(try_again_later=True)
             # deny B
             case 7:
-                assert body["task_id"] == "B2"
+                assert task_directive["task_id"] == "B2"
                 return dict(try_again_later=True)
             # accept E
             case 8:
-                assert body["task_id"] == "E5"
+                assert task_directive["task_id"] == "E5"
                 dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
@@ -134,11 +134,11 @@ class MQSRESTCalls:
                 )
             # deny B
             case 9:
-                assert body["task_id"] == "B2"
+                assert task_directive["task_id"] == "B2"
                 return dict(try_again_later=True)
             # accept B
             case 10:
-                assert body["task_id"] == "B2"
+                assert task_directive["task_id"] == "B2"
                 dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
@@ -154,7 +154,7 @@ class MQSRESTCalls:
 
 @patch("wms.task_mq_assembly.request_to_mqs", new_callable=AsyncMock)
 @patch("wms.task_mq_assembly.RestClient", new=MagicMock)  # it's a from-import
-async def test_000(mock_mqs_req: AsyncMock) -> None:
+async def test_000(mock_req_to_mqs: AsyncMock) -> None:
     """Test the MQS scheduling with several tasks and requests."""
     mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
     task_directives_client = database.client.WMSMongoClient(
@@ -175,7 +175,7 @@ async def test_000(mock_mqs_req: AsyncMock) -> None:
             )
 
     # pre-patch all the REST calls to MQS
-    mock_mqs_req.side_effect = MQSRESTCalls.request
+    mock_req_to_mqs.side_effect = MQSRESTCalls.request_to_mqs
 
     # go!
     with pytest.raises(asyncio.TimeoutError):
