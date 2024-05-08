@@ -262,7 +262,9 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
     assert len(all_in_db) == len(TEST_TASK_DIRECTIVES)
     # now, individually
     for task_directive in all_in_db:
-        assert task_directive in TEST_TASK_DIRECTIVES
+        assert task_directive == next(
+            t for t in TEST_TASK_DIRECTIVES if t["task_id"] == task_directive["task_id"]
+        )
         # look at taskforces
         taskforces = [
             t
@@ -270,8 +272,6 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
                 dict(task_id=task_directive["task_id"]), []
             )
         ]
-        assert len(taskforces) == len(task_directive["cluster_locations"])  # type: ignore
-        # now, individually
         assert taskforces == [  # type: ignore
             _make_test_taskforce(task_directive, location, i)
             for i, location in enumerate(task_directive["cluster_locations"])  # type: ignore
