@@ -264,7 +264,7 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
             t for t in TEST_TASK_DIRECTIVES if t["task_id"] == td_db["task_id"]
         )
         assert td_db == dict(
-            **src, queues=[f"100-{td_db["task_id"]}", f"200-{td_db["task_id"]}"]
+            **src, queues=[f"100-{td_db['task_id']}", f"200-{td_db['task_id']}"]
         )
         # look at taskforces
         tfs_in_db = [
