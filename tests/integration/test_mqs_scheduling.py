@@ -141,9 +141,9 @@ class MQSRESTCalls:
             case 5:
                 assert task_directive["task_id"] == "B2"
                 assert (
-                    config.ENV.TASK_MQ_ASSEMBLY_DELAY
+                    config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
                     <= diff
-                    <= config.ENV.TASK_MQ_ASSEMBLY_DELAY + 1
+                    <= config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT + 1
                 )
                 return dict(try_again_later=True)
             # retry: deny E
