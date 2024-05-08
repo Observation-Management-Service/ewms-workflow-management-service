@@ -88,8 +88,8 @@ class MQSRESTCalls:
                 # assert config.ENV.TASK_MQ_ASSEMBLY_DELAY <= diff <= config.ENV.TASK_MQ_ASSEMBLY_DELAY+1  # check won't work for first call
                 return dict(
                     mqprofiles=[
-                        dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
-                        dict(mqid=f"200-{MQSRESTCalls.call_ct}"),
+                        dict(mqid=f"100-{task_directive['task_id']}"),
+                        dict(mqid=f"200-{task_directive['task_id']}"),
                     ]
                 )
             # deny B
@@ -114,8 +114,8 @@ class MQSRESTCalls:
                 )
                 return dict(
                     mqprofiles=[
-                        dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
-                        dict(mqid=f"200-{MQSRESTCalls.call_ct}"),
+                        dict(mqid=f"100-{task_directive['task_id']}"),
+                        dict(mqid=f"200-{task_directive['task_id']}"),
                     ]
                 )
             # accept D
@@ -128,8 +128,8 @@ class MQSRESTCalls:
                 )
                 return dict(
                     mqprofiles=[
-                        dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
-                        dict(mqid=f"200-{MQSRESTCalls.call_ct}"),
+                        dict(mqid=f"100-{task_directive['task_id']}"),
+                        dict(mqid=f"200-{task_directive['task_id']}"),
                     ]
                 )
             # deny E
@@ -190,8 +190,8 @@ class MQSRESTCalls:
                 )
                 return dict(
                     mqprofiles=[
-                        dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
-                        dict(mqid=f"200-{MQSRESTCalls.call_ct}"),
+                        dict(mqid=f"100-{task_directive['task_id']}"),
+                        dict(mqid=f"200-{task_directive['task_id']}"),
                     ]
                 )
             # retry: re-deny B
@@ -216,8 +216,8 @@ class MQSRESTCalls:
                 )
                 return dict(
                     mqprofiles=[
-                        dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
-                        dict(mqid=f"200-{MQSRESTCalls.call_ct}"),
+                        dict(mqid=f"100-{task_directive['task_id']}"),
+                        dict(mqid=f"200-{task_directive['task_id']}"),
                     ]
                 )
             # ???
@@ -241,12 +241,10 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
     )
 
     # ingest data into mongo as if REST user did so
-    for task_directive in TEST_TASK_DIRECTIVES:
-        await task_directives_client.insert_one(task_directive)
-        for i, location in enumerate(task_directive["cluster_locations"]):  # type: ignore
-            await taskforces_client.insert_one(
-                _make_test_taskforce(task_directive, location, i)
-            )
+    for td_db in TEST_TASK_DIRECTIVES:
+        await task_directives_client.insert_one(td_db)
+        for i, location in enumerate(td_db["cluster_locations"]):  # type: ignore
+            await taskforces_client.insert_one(_make_test_taskforce(td_db, location, i))
 
     # pre-patch all the REST calls to MQS
     mock_req_to_mqs.side_effect = MQSRESTCalls.request_to_mqs
@@ -257,22 +255,25 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
         await asyncio.wait_for(task_mq_assembly.startup(mongo_client), timeout=60)
 
     # check mongo db state
-    all_in_db = [t async for t in task_directives_client.find_all({}, [])]
+    tds_in_db = [t async for t in task_directives_client.find_all({}, [])]
     # look at task directives
-    assert len(all_in_db) == len(TEST_TASK_DIRECTIVES)
+    assert len(tds_in_db) == len(TEST_TASK_DIRECTIVES)
     # now, individually
-    for task_directive in all_in_db:
-        assert task_directive == next(
-            t for t in TEST_TASK_DIRECTIVES if t["task_id"] == task_directive["task_id"]
+    for td_db in tds_in_db:
+        src = next(  # using 'next' gives shorter debug than w/ 'in'
+            t for t in TEST_TASK_DIRECTIVES if t["task_id"] == td_db["task_id"]
+        )
+        assert td_db == dict(
+            **src, queues=[f"100-{td_db["task_id"]}", f"200-{td_db["task_id"]}"]
         )
         # look at taskforces
-        taskforces = [
+        tfs_in_db = [
             t
             async for t in taskforces_client.find_all(
-                dict(task_id=task_directive["task_id"]), []
+                dict(task_id=td_db["task_id"]), []
             )
         ]
-        assert taskforces == [  # type: ignore
-            _make_test_taskforce(task_directive, location, i)
-            for i, location in enumerate(task_directive["cluster_locations"])  # type: ignore
+        assert tfs_in_db == [  # type: ignore
+            _make_test_taskforce(td_db, location, i)
+            for i, location in enumerate(td_db["cluster_locations"])  # type: ignore
         ]
