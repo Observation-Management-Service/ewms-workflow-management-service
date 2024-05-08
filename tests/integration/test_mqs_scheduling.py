@@ -5,6 +5,7 @@ and mock/patched MQS REST calls."""
 
 import asyncio
 import logging
+import time
 from typing import Any
 from unittest.mock import patch, MagicMock, AsyncMock
 
@@ -69,15 +70,21 @@ def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
 
 class MQSRESTCalls:
     call_ct = -1  # class var
+    last_ts = 0.0
 
     @staticmethod
     def request_to_mqs(_: Any, task_directive: dict) -> dict:
         assert task_directive
+
+        diff = time.time() - MQSRESTCalls.last_ts
+        MQSRESTCalls.last_ts = time.time()
         MQSRESTCalls.call_ct += 1
+
         match MQSRESTCalls.call_ct:
             # accept A
             case 0:
                 assert task_directive["task_id"] == "A1"
+                # assert config.ENV.TASK_MQ_ASSEMBLY_DELAY <= diff <= config.ENV.TASK_MQ_ASSEMBLY_DELAY+1  # check won't work for first call
                 return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
@@ -87,10 +94,20 @@ class MQSRESTCalls:
             # deny B
             case 1:
                 assert task_directive["task_id"] == "B2"
+                assert (
+                    config.ENV.TASK_MQ_ASSEMBLY_DELAY
+                    <= diff
+                    <= config.ENV.TASK_MQ_ASSEMBLY_DELAY + 1
+                )
                 return dict(try_again_later=True)
             # accept C
             case 2:
                 assert task_directive["task_id"] == "C3"
+                assert (
+                    config.ENV.TASK_MQ_ASSEMBLY_DELAY
+                    <= diff
+                    <= config.ENV.TASK_MQ_ASSEMBLY_DELAY + 1
+                )
                 return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
@@ -100,6 +117,11 @@ class MQSRESTCalls:
             # accept D
             case 3:
                 assert task_directive["task_id"] == "D4"
+                assert (
+                    config.ENV.TASK_MQ_ASSEMBLY_DELAY
+                    <= diff
+                    <= config.ENV.TASK_MQ_ASSEMBLY_DELAY + 1
+                )
                 return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
@@ -109,35 +131,70 @@ class MQSRESTCalls:
             # deny E
             case 4:
                 assert task_directive["task_id"] == "E5"
+                assert (
+                    config.ENV.TASK_MQ_ASSEMBLY_DELAY
+                    <= diff
+                    <= config.ENV.TASK_MQ_ASSEMBLY_DELAY + 1
+                )
                 return dict(try_again_later=True)
-            # deny B
+            # retry: deny B
             case 5:
                 assert task_directive["task_id"] == "B2"
+                assert (
+                    config.ENV.TASK_MQ_ASSEMBLY_DELAY
+                    <= diff
+                    <= config.ENV.TASK_MQ_ASSEMBLY_DELAY + 1
+                )
                 return dict(try_again_later=True)
-            # deny E
+            # retry: deny E
             case 6:
                 assert task_directive["task_id"] == "E5"
+                assert (
+                    config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    <= diff
+                    <= config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT + 1
+                )
                 return dict(try_again_later=True)
-            # deny B
+            # retry: deny B
             case 7:
                 assert task_directive["task_id"] == "B2"
+                assert (
+                    config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    <= diff
+                    <= config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT + 1
+                )
                 return dict(try_again_later=True)
-            # accept E
+            # retry: accept E
             case 8:
                 assert task_directive["task_id"] == "E5"
+                assert (
+                    config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    <= diff
+                    <= config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT + 1
+                )
                 return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
                         dict(mqid=f"200-{MQSRESTCalls.call_ct}"),
                     ]
                 )
-            # deny B
+            # retry: deny B
             case 9:
                 assert task_directive["task_id"] == "B2"
+                assert (
+                    config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    <= diff
+                    <= config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT + 1
+                )
                 return dict(try_again_later=True)
-            # accept B
+            # retry: accept B
             case 10:
                 assert task_directive["task_id"] == "B2"
+                assert (
+                    config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    <= diff
+                    <= config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT + 1
+                )
                 return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{MQSRESTCalls.call_ct}"),
