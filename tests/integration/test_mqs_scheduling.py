@@ -71,8 +71,7 @@ class MQSRESTCalls:
     call_ct = -1  # class var
 
     @staticmethod
-    def request_to_mqs(mqs_rc: Any, task_directive: dict) -> dict:
-        assert mqs_rc
+    def request_to_mqs(_: Any, task_directive: dict) -> dict:
         assert task_directive
         MQSRESTCalls.call_ct += 1
         match MQSRESTCalls.call_ct:
