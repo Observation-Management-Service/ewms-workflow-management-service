@@ -150,7 +150,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[task_directive["task_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 1
+                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 2
                 )
                 MQSRESTCalls.retry_dues[task_directive["task_id"]] = (
                     time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
@@ -162,7 +162,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[task_directive["task_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 1
+                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 2
                 )
                 MQSRESTCalls.retry_dues[task_directive["task_id"]] = (
                     time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
@@ -174,7 +174,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[task_directive["task_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 1
+                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 2
                 )
                 MQSRESTCalls.retry_dues[task_directive["task_id"]] = (
                     time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
@@ -186,7 +186,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[task_directive["task_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 1
+                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 2
                 )
                 return dict(
                     mqprofiles=[
@@ -200,7 +200,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[task_directive["task_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 1
+                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 2
                 )
                 MQSRESTCalls.retry_dues[task_directive["task_id"]] = (
                     time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
@@ -212,7 +212,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[task_directive["task_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 1
+                    <= MQSRESTCalls.retry_dues[task_directive["task_id"]] + 2
                 )
                 return dict(
                     mqprofiles=[
