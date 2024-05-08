@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.9 (2024-05-08)
+
+### Other
+
+* MQS "Not Now" Response Logic ([#23](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/23)) ([`7306ec9`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/7306ec92b2391e0f7609e75d00346bafa86fa7e4))
+
 ## v0.1.8 (2024-05-03)
 
 ### Other
