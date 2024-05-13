@@ -21,11 +21,11 @@
                                         "task_args": {
                                             "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                         },
-                                        "input_queues": {
-                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/input_queues"
+                                        "input_queue_aliases": {
+                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/input_queue_aliases"
                                         },
-                                        "output_queues": {
-                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/output_queues"
+                                        "output_queue_aliases": {
+                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/output_queue_aliases"
                                         },
                                         "n_workers": {
                                             "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"

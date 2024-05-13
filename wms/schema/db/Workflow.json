@@ -1,0 +1,35 @@
+{
+    "type": "object",
+    "properties": {
+        "workflow_id": {
+            "type": "string"
+        },
+        "queues": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "alias": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "is_public": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "alias",
+                    "id",
+                    "is_public"
+                ],
+                "additionalProperties": false
+            },
+            "minItems": 0
+        }
+    },
+    "required": [
+    ],
+    "additionalProperties": false
+}

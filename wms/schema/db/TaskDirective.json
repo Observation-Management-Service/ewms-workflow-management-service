@@ -26,53 +26,19 @@
         "priority": {
             "type": "integer"
         },
-        "input_queues": {
+        "input_queue_aliases": {
             "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "alias": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "is_public": {
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "alias",
-                    "id",
-                    "is_public"
-                ],
-                "additionalProperties": false
+                "type": "str"
             },
-            "minItems": 1
+            "minItems": 0
         },
-        "output_queues": {
+        "output_queue_aliases": {
             "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "alias": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "is_public": {
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "alias",
-                    "id",
-                    "is_public"
-                ],
-                "additionalProperties": false
+                "type": "str"
             },
-            "minItems": 1
+            "minItems": 0
         },
         "_mqs_retry_at_ts": {
             "type": "number"

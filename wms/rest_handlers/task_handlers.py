@@ -10,7 +10,7 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
-from ..database.client import DocumentNotFoundException
+from ..database.client import DocumentNotFoundException, WMSMongoClient
 from ..schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
@@ -19,16 +19,33 @@ LOGGER = logging.getLogger(__name__)
 # ----------------------------------------------------------------------------
 
 
+def aliases_to_queue_objs(
+    queue_aliases: list[str],
+    public_queue_aliases: list[str],
+) -> list[dict]:
+    return [
+        dict(
+            alias=a,
+            id=None,
+            is_public=bool(a in public_queue_aliases),
+        )
+        for a in queue_aliases
+    ]
+
+
 async def create_task_directive(
-    task_directives_client,
-    taskforces_client,
-    cluster_locations,
-    task_image,
-    task_args,
-    worker_config,
-    n_workers,
-    environment,
-    input_files,
+    task_directives_client: WMSMongoClient,
+    taskforces_client: WMSMongoClient,
+    cluster_locations: list[str],
+    task_image: str,
+    task_args: list[str],
+    input_queue_aliases: list[str],
+    output_queue_aliases: list[str],
+    public_queue_aliases: list[str],
+    worker_config: dict,
+    n_workers: int,
+    environment: dict,
+    input_files: list[str],
 ) -> dict:
     """Create a new task directive."""
     task_directive = dict(
@@ -39,8 +56,10 @@ async def create_task_directive(
         timestamp=int(time.time()),
         priority=worker_config["priority"],
         #
-        n_queues=2,  # TODO: make user configurable?
-        queues=[],  # values determined by mqs, updated by task_mq_assembly
+        # ids determined by mqs, updated by task_mq_assembly
+        input_queues=aliases_to_queue_objs(input_queue_aliases, public_queue_aliases),
+        output_queues=aliases_to_queue_objs(output_queue_aliases, public_queue_aliases),
+        #
         _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by task_mq_assembly
         #
         aborted=False,
