@@ -40,7 +40,13 @@
                     "is_public": {
                         "type": "boolean"
                     }
-                }
+                },
+                "required": [
+                    "alias",
+                    "id",
+                    "is_public"
+                ],
+                "additionalProperties": false
             },
             "minItems": 1
         },
@@ -58,7 +64,13 @@
                     "is_public": {
                         "type": "boolean"
                     }
-                }
+                },
+                "required": [
+                    "alias",
+                    "id",
+                    "is_public"
+                ],
+                "additionalProperties": false
             },
             "minItems": 1
         },
@@ -77,8 +89,8 @@
         "task_args",
         "timestamp",
         "priority",
-        "n_queues",
-        "queues",
+        "input_queues",
+        "output_queues",
         "_mqs_retry_at_ts",
         "aborted"
     ],

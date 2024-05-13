@@ -56,13 +56,15 @@
                                 "type": "array",
                                 "items": {
                                     "type": "string"
-                                }
+                                },
+                                "minItems": 0
                             }
                         },
                         "required": [
                             "tasks",
                             "public_queues"
-                        ]
+                        ],
+                        "additionalProperties": false
                     }
                 }
             }
@@ -76,7 +78,8 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/TaskDirectiveObject"
-                            }
+                            },
+                            "minItems": 0
                         }
                     }
                 }

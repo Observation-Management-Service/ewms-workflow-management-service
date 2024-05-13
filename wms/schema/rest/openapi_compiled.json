@@ -73,17 +73,53 @@
                     "priority": {
                         "type": "integer"
                     },
-                    "n_queues": {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 2
-                    },
-                    "queues": {
+                    "input_queues": {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "type": "object",
+                            "properties": {
+                                "alias": {
+                                    "type": "string"
+                                },
+                                "id": {
+                                    "type": "string"
+                                },
+                                "is_public": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "alias",
+                                "id",
+                                "is_public"
+                            ],
+                            "additionalProperties": false
                         },
-                        "minItems": 0
+                        "minItems": 1
+                    },
+                    "output_queues": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "alias": {
+                                    "type": "string"
+                                },
+                                "id": {
+                                    "type": "string"
+                                },
+                                "is_public": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "alias",
+                                "id",
+                                "is_public"
+                            ],
+                            "additionalProperties": false
+                        },
+                        "minItems": 1
                     },
                     "_mqs_retry_at_ts": {
                         "type": "number"
@@ -351,87 +387,6 @@
                                     "type": "object",
                                     "properties": {},
                                     "additionalProperties": true
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/task/directive": {
-            "parameters": [],
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "cluster_locations": {
-                                        "$ref": "#/components/schemas/TaskDirectiveObject/properties/cluster_locations"
-                                    },
-                                    "task_image": {
-                                        "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_image"
-                                    },
-                                    "task_args": {
-                                        "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
-                                    },
-                                    "n_workers": {
-                                        "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"
-                                    },
-                                    "worker_config": {
-                                        "$ref": "#/components/schemas/TaskforceObject/properties/worker_config"
-                                    },
-                                    "environment": {
-                                        "$ref": "#/components/schemas/TaskforceObject/properties/container_config/properties/environment"
-                                    },
-                                    "input_files": {
-                                        "$ref": "#/components/schemas/TaskforceObject/properties/container_config/properties/input_files"
-                                    }
-                                },
-                                "required": [
-                                    "cluster_locations",
-                                    "task_image",
-                                    "task_args",
-                                    "worker_config"
-                                ],
-                                "additionalProperties": false
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "the matching task directive",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TaskDirectiveObject"
                                 }
                             }
                         }
@@ -1294,6 +1249,120 @@
                                         "results"
                                     ],
                                     "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/workflow": {
+            "parameters": [],
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "tasks": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "cluster_locations": {
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/cluster_locations"
+                                                },
+                                                "task_image": {
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_image"
+                                                },
+                                                "task_args": {
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
+                                                },
+                                                "input_queues": {
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/input_queues"
+                                                },
+                                                "output_queues": {
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/output_queues"
+                                                },
+                                                "n_workers": {
+                                                    "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"
+                                                },
+                                                "worker_config": {
+                                                    "$ref": "#/components/schemas/TaskforceObject/properties/worker_config"
+                                                },
+                                                "environment": {
+                                                    "$ref": "#/components/schemas/TaskforceObject/properties/container_config/properties/environment"
+                                                },
+                                                "input_files": {
+                                                    "$ref": "#/components/schemas/TaskforceObject/properties/container_config/properties/input_files"
+                                                }
+                                            },
+                                            "required": [
+                                                "cluster_locations",
+                                                "task_image",
+                                                "task_args",
+                                                "input_queues",
+                                                "output_queues",
+                                                "worker_config"
+                                            ],
+                                            "additionalProperties": false
+                                        },
+                                        "minItems": 1
+                                    },
+                                    "public_queues": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "minItems": 0
+                                    }
+                                },
+                                "required": [
+                                    "tasks",
+                                    "public_queues"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "a list of the created task directives",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TaskDirectiveObject"
+                                    },
+                                    "minItems": 0
                                 }
                             }
                         }
