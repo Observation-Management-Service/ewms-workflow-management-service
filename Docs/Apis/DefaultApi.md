@@ -6,7 +6,6 @@ All URIs are relative to *http://localhost*
 |------------- | ------------- | -------------|
 | [**rootGet**](DefaultApi.md#rootGet) | **GET** / |  |
 | [**schemaOpenapiGet**](DefaultApi.md#schemaOpenapiGet) | **GET** /schema/openapi |  |
-| [**taskDirectivePost**](DefaultApi.md#taskDirectivePost) | **POST** /task/directive |  |
 | [**taskDirectiveTaskIdDelete**](DefaultApi.md#taskDirectiveTaskIdDelete) | **DELETE** /task/directive/{task_id} |  |
 | [**taskDirectiveTaskIdGet**](DefaultApi.md#taskDirectiveTaskIdGet) | **GET** /task/directive/{task_id} |  |
 | [**taskDirectivesFindPost**](DefaultApi.md#taskDirectivesFindPost) | **POST** /task/directives/find |  |
@@ -18,6 +17,7 @@ All URIs are relative to *http://localhost*
 | [**taskforceTmsCondorCompleteTaskforceUuidPost**](DefaultApi.md#taskforceTmsCondorCompleteTaskforceUuidPost) | **POST** /taskforce/tms/condor-complete/{taskforce_uuid} |  |
 | [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost) | **POST** /taskforces/find |  |
 | [**taskforcesTmsStatusPost**](DefaultApi.md#taskforcesTmsStatusPost) | **POST** /taskforces/tms/status |  |
+| [**workflowPost**](DefaultApi.md#workflowPost) | **POST** /workflow |  |
 
 
 <a name="rootGet"></a>
@@ -60,30 +60,6 @@ This endpoint does not need any parameter.
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: application/json
-
-<a name="taskDirectivePost"></a>
-# **taskDirectivePost**
-> TaskDirectiveObject taskDirectivePost(\_task\_directive\_post\_request)
-
-
-
-### Parameters
-
-|Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **\_task\_directive\_post\_request** | [**_task_directive_post_request**](../Models/_task_directive_post_request.md)|  | [optional] |
-
-### Return type
-
-[**TaskDirectiveObject**](../Models/TaskDirectiveObject.md)
-
-### Authorization
-
-
-### HTTP request headers
-
-- **Content-Type**: application/json
 - **Accept**: application/json
 
 <a name="taskDirectiveTaskIdDelete"></a>
@@ -345,6 +321,30 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**_taskforces_tms_status_post_200_response**](../Models/_taskforces_tms_status_post_200_response.md)
+
+### Authorization
+
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+<a name="workflowPost"></a>
+# **workflowPost**
+> List workflowPost(\_workflow\_post\_request)
+
+
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **\_workflow\_post\_request** | [**_workflow_post_request**](../Models/_workflow_post_request.md)|  | [optional] |
+
+### Return type
+
+[**List**](../Models/TaskDirectiveObject.md)
 
 ### Authorization
 
