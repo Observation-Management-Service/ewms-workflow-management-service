@@ -19,29 +19,19 @@ LOGGER = logging.getLogger(__name__)
 # ----------------------------------------------------------------------------
 
 
-def aliases_to_queue_objs(
-    queue_aliases: list[str],
-    public_queue_aliases: list[str],
-) -> list[dict]:
-    return [
-        dict(
-            alias=a,
-            id=None,
-            is_public=bool(a in public_queue_aliases),
-        )
-        for a in queue_aliases
-    ]
-
-
 async def create_task_directive(
     task_directives_client: WMSMongoClient,
     taskforces_client: WMSMongoClient,
+    #
+    workflow_id: str,
+    #
     cluster_locations: list[str],
     task_image: str,
     task_args: list[str],
+    #
     input_queue_aliases: list[str],
     output_queue_aliases: list[str],
-    public_queue_aliases: list[str],
+    #
     worker_config: dict,
     n_workers: int,
     environment: dict,
@@ -50,15 +40,17 @@ async def create_task_directive(
     """Create a new task directive."""
     task_directive = dict(
         task_id=uuid.uuid4().hex,
+        workflow_id=workflow_id,
+        #
         cluster_locations=cluster_locations,
         task_image=task_image,
         task_args=task_args,
         timestamp=int(time.time()),
         priority=worker_config["priority"],
         #
-        # ids determined by mqs, updated by task_mq_assembly
-        input_queues=aliases_to_queue_objs(input_queue_aliases, public_queue_aliases),
-        output_queues=aliases_to_queue_objs(output_queue_aliases, public_queue_aliases),
+        # ids stored in workflow obj (determined by mqs, updated by task_mq_assembly)
+        input_queue_aliases=input_queue_aliases,
+        output_queue_aliases=output_queue_aliases,
         #
         _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by task_mq_assembly
         #
