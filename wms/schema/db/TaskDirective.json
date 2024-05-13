@@ -55,8 +55,8 @@
         "task_args",
         "timestamp",
         "priority",
-        "input_queues",
-        "output_queues",
+        "input_queue_aliases",
+        "output_queue_aliases",
         "_mqs_retry_at_ts",
         "aborted"
     ],

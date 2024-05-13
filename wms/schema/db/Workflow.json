@@ -30,6 +30,8 @@
         }
     },
     "required": [
+        "workflow_id",
+        "queues"
     ],
     "additionalProperties": false
 }
