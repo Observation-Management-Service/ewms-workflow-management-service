@@ -26,17 +26,41 @@
         "priority": {
             "type": "integer"
         },
-        "n_queues": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 2
-        },
-        "queues": {
+        "input_queues": {
             "type": "array",
             "items": {
-                "type": "string"
+                "type": "object",
+                "properties": {
+                    "alias": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "is_public": {
+                        "type": "boolean"
+                    }
+                }
             },
-            "minItems": 0
+            "minItems": 1
+        },
+        "output_queues": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "alias": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "is_public": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "minItems": 1
         },
         "_mqs_retry_at_ts": {
             "type": "number"
