@@ -27,8 +27,6 @@
 
  - [FindObject](./Models/FindObject.md)
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
- - [TaskDirectiveObject_input_queues_inner](./Models/TaskDirectiveObject_input_queues_inner.md)
- - [TaskDirectiveObject_output_queues_inner](./Models/TaskDirectiveObject_output_queues_inner.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
  - [TaskforceObject_container_config](./Models/TaskforceObject_container_config.md)
  - [TaskforceObject_container_config_environment_value](./Models/TaskforceObject_container_config_environment_value.md)

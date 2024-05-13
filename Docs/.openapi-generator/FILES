@@ -2,8 +2,6 @@
 Apis/DefaultApi.md
 Models/FindObject.md
 Models/TaskDirectiveObject.md
-Models/TaskDirectiveObject_input_queues_inner.md
-Models/TaskDirectiveObject_output_queues_inner.md
 Models/TaskforceObject.md
 Models/TaskforceObject_container_config.md
 Models/TaskforceObject_container_config_environment_value.md
