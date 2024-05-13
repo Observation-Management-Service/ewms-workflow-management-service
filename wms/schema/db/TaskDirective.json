@@ -47,6 +47,7 @@
     },
     "required": [
         "task_id",
+        "workflow_id",
         "cluster_locations",
         "task_image",
         "task_args",
