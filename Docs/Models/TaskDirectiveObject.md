@@ -4,6 +4,7 @@
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
 | **task\_id** | **String** |  | [optional] [default to null] |
+| **workflow\_id** | **String** |  | [optional] [default to null] |
 | **cluster\_locations** | **List** |  | [optional] [default to null] |
 | **task\_image** | **String** |  | [optional] [default to null] |
 | **task\_args** | **String** |  | [optional] [default to null] |
