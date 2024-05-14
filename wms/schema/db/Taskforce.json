@@ -170,6 +170,7 @@
     "required": [
         "taskforce_uuid",
         "task_id",
+        "workflow_id",
         "timestamp",
         "collector",
         "schedd",
