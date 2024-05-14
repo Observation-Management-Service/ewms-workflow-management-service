@@ -76,6 +76,21 @@ class WMSMongoClient:
         self.logger.debug(f"updated one ({query}): {doc}")
         return doc  # type: ignore[no-any-return]
 
+    async def insert_many(self, docs: list[dict]) -> list[dict]:
+        """Insert multiple docs."""
+        self.logger.debug(f"inserting many: {docs}")
+
+        for doc in docs:
+            web_jsonschema_validate(doc, self._schema)
+
+        await self._collection.insert_many(docs)
+        # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
+        for doc in docs:
+            doc.pop("_id")
+
+        self.logger.debug(f"inserted many: {docs}")
+        return docs
+
     async def update_set_many(self, query: dict, set_update: dict) -> int:
         """Update all matching docs."""
         self.logger.debug(f"update many with query: {query}")
