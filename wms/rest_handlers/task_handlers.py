@@ -36,6 +36,8 @@ async def create_task_directive(
 ) -> tuple[dict, list[dict]]:
     """Create new task directive and taskforces."""
     task_directive = dict(
+        # IMMUTABLE
+        # ids
         task_id=uuid.uuid4().hex,
         workflow_id=workflow_id,
         #
@@ -45,12 +47,13 @@ async def create_task_directive(
         timestamp=int(time.time()),
         priority=worker_config["priority"],
         #
-        # ids stored in workflow obj (determined by mqs, updated by task_mq_assembly)
+        # NOTE: queue ids stored in workflow obj ()
         input_queue_aliases=input_queue_aliases,
         output_queue_aliases=output_queue_aliases,
         #
-        _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by task_mq_assembly
         #
+        # MUTABLE
+        _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by task_mq_assembly
         aborted=False,
     )
 
@@ -67,7 +70,8 @@ async def create_task_directive(
     for location in task_directive["cluster_locations"]:
         taskforces.append(
             dict(
-                # STATIC
+                # IMMUTABLE
+                #
                 taskforce_uuid=uuid.uuid4().hex,
                 task_id=task_directive["task_id"],
                 workflow_id=workflow_id,
@@ -85,6 +89,8 @@ async def create_task_directive(
                     input_files=input_files,
                 ),
                 worker_config=worker_config,
+                #
+                # MUTABLE
                 #
                 # set ONCE by tms via /taskforce/tms-action/condor-submit/<id>
                 cluster_id=None,

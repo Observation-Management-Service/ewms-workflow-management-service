@@ -41,12 +41,18 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         # make workflow object, put in db
         workflow = dict(
+            # IMMUTABLE
             workflow_id=str(uuid.uuid4()),
+            #
+            # semi-MUTABLE
             queues=[
                 dict(
+                    # IMMUTABLE
                     alias=a,
-                    id=None,
                     is_public=bool(a in self.get_argument("public_queues")),
+                    #
+                    # MUTABLE
+                    id=None,  # determined by mqs, updated by task_mq_assembly
                 )
                 for a in _get_all_queues(self.get_argument("tasks"))
             ],
