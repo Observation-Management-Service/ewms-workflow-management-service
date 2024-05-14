@@ -10,7 +10,7 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
-from ..database.client import DocumentNotFoundException, WMSMongoClient
+from ..database.client import DocumentNotFoundException
 from ..schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
@@ -20,9 +20,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 async def create_task_directive(
-    task_directives_client: WMSMongoClient,
-    taskforces_client: WMSMongoClient,
-    #
     workflow_id: str,
     #
     cluster_locations: list[str],
@@ -36,8 +33,8 @@ async def create_task_directive(
     n_workers: int,
     environment: dict,
     input_files: list[str],
-) -> dict:
-    """Create a new task directive."""
+) -> tuple[dict, list[dict]]:
+    """Create new task directive and taskforces."""
     task_directive = dict(
         task_id=uuid.uuid4().hex,
         workflow_id=workflow_id,
@@ -65,12 +62,10 @@ async def create_task_directive(
                 reason=f"condor location not found: {location}",  # to client
             )
 
-    # next, insert
-    task_directive = await task_directives_client.insert_one(task_directive)
-
     # now, create Taskforce entries (important to do now so removals are handled easily--think dangling pointers)
+    taskforces = []
     for location in task_directive["cluster_locations"]:
-        await taskforces_client.insert_one(
+        taskforces.append(
             dict(
                 # STATIC
                 taskforce_uuid=uuid.uuid4().hex,
@@ -107,7 +102,7 @@ async def create_task_directive(
             )
         )
 
-    return task_directive
+    return task_directive, taskforces
 
 
 # ----------------------------------------------------------------------------
