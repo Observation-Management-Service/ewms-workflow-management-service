@@ -14,6 +14,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 _DB_NAME = "WMS_DB"
+WORKFLOWS_COLL_NAME = "WorkflowColl"
 TASK_DIRECTIVES_COLL_NAME = "TaskDirectiveColl"
 TASKFORCES_COLL_NAME = "TaskforceColl"
 
@@ -52,6 +53,9 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
             unique=unique,
             background=True,
         )
+
+    # WORKFLOWS
+    await make_index(WORKFLOWS_COLL_NAME, "workflow_id", unique=True)
 
     # TASK_DIRECTIVES
     await make_index(TASK_DIRECTIVES_COLL_NAME, "task_id", unique=True)

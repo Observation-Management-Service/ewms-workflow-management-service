@@ -26,6 +26,10 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
         """Initialize a BaseWMSHandler object."""
         super().initialize(*args, **kwargs)  # type: ignore[no-untyped-call]
         # pylint: disable=W0201
+        self.workflows_client = db.client.WMSMongoClient(
+            mongo_client,
+            db.utils.WORKFLOWS_COLL_NAME,
+        )
         self.task_directives_client = db.client.WMSMongoClient(
             mongo_client,
             db.utils.TASK_DIRECTIVES_COLL_NAME,
