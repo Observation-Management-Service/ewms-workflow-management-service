@@ -52,7 +52,8 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
                     is_public=bool(a in self.get_argument("public_queues")),
                     #
                     # MUTABLE
-                    id=None,  # determined by mqs, updated by task_mq_assembly
+                    # set ONCE -- determined by mqs, updated by task_mq_assembly
+                    id=None,
                 )
                 for a in _get_all_queues(self.get_argument("tasks"))
             ],
