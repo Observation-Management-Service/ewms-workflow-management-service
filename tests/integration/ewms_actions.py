@@ -58,22 +58,35 @@ async def user_requests_new_task(
     # USER...
     # requests new task
     #
-    task_directive = await request_and_validate(
+    workflow_resp = await request_and_validate(
         rc,
         openapi_spec,
         "POST",
-        "/task/directive",
-        {
-            "cluster_locations": list(condor_locations.keys()),
-            "task_image": task_image,
-            "task_args": task_args,
-            #
-            "n_workers": n_workers,
-            "worker_config": worker_config,
-            # "environment": environment,  # empty
-            # "input_files": input_files,  # empty
-        },
+        "/workflow",
+        dict(
+            tasks=[
+                dict(
+                    cluster_locations=list(condor_locations.keys()),
+                    task_image=task_image,
+                    task_args=task_args,
+                    input_queue_aliases=["qfoo"],
+                    output_queue_aliases=["qbar"],
+                    #
+                    n_workers=n_workers,
+                    worker_config=worker_config,
+                    # environment=environment,  # empty
+                    # input_files=input_files,  # empty
+                )
+            ],
+            public_queues=["qfoo", "qbar"],
+        ),
     )
+    # TODO - update asserts when/if testing multi-task workflows
+    assert len(workflow_resp["task_directives"]) == 1
+    assert len(workflow_resp["taskforces"]) == 2
+
+    # query about task directive & its taskforces
+    task_directive = workflow_resp["task_directives"][0]
     task_id = task_directive["task_id"]
     resp = await request_and_validate(
         rc,
