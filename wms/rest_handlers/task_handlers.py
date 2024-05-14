@@ -70,6 +70,7 @@ async def create_task_directive(
                 # STATIC
                 taskforce_uuid=uuid.uuid4().hex,
                 task_id=task_directive["task_id"],
+                workflow_id=workflow_id,
                 timestamp=int(time.time()),
                 collector=config.KNOWN_CLUSTERS[location]["collector"],
                 schedd=config.KNOWN_CLUSTERS[location]["schedd"],

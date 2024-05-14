@@ -71,15 +71,30 @@
         },
         "responses": {
             "200": {
-                "description": "a list of the created task directives",
+                "description": "a list of the created database objects",
                 "content": {
                     "application/json": {
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/components/schemas/TaskDirectiveObject"
-                            },
-                            "minItems": 0
+                            "type": "object",
+                            "properties": {
+                                "workflow": {
+                                    "$ref": "#/components/schemas/WorkflowObject"
+                                },
+                                "task_directives": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TaskDirectiveObject"
+                                    },
+                                    "minItems": 0
+                                },
+                                "taskforces": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TaskforceObject"
+                                    },
+                                    "minItems": 0
+                                }
+                            }
                         }
                     }
                 }

@@ -80,6 +80,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
         # finish up
         self.write(
             dict(
+                workflow=workflow,
                 task_directives=task_directives,
                 taskforces=taskforces,
             )
@@ -124,7 +125,6 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         """
 
         # TASKS
-        n_tds_updated = 0  # in case of exception
         try:
             n_tds_updated = await self.task_directives_client.update_set_many(
                 {
@@ -143,7 +143,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         # TASKFORCES
         # set all corresponding taskforces to pending-stopper
-        n_tfs_updated = 0  # in case of exception
+        n_tfs_updated = 0  # in no taskforces to stop (excepted exception)
         try:
             n_tfs_updated = await self.taskforces_client.update_set_many(
                 {
