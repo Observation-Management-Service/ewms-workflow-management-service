@@ -1,6 +1,5 @@
 """Root python script for WMS REST API server interface."""
 
-
 import logging
 from typing import Any
 
@@ -17,7 +16,9 @@ HANDLERS = [
     #
     rest_handlers.schema_handlers.SchemaHandler,
     #
-    rest_handlers.task_handlers.TaskDirectiveHandler,
+    rest_handlers.workflow_handlers.WorkflowHandler,
+    rest_handlers.workflow_handlers.WorkflowIDHandler,
+    #
     rest_handlers.task_handlers.TaskDirectiveIDHandler,
     rest_handlers.task_handlers.TaskDirectivesFindHandler,
     #
