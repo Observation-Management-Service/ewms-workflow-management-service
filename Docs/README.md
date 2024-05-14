@@ -8,7 +8,6 @@
 |------------ | ------------- | ------------- | -------------|
 | *DefaultApi* | [**rootGet**](Apis/DefaultApi.md#rootget) | **GET** / |  |
 *DefaultApi* | [**schemaOpenapiGet**](Apis/DefaultApi.md#schemaopenapiget) | **GET** /schema/openapi |  |
-*DefaultApi* | [**taskDirectiveTaskIdDelete**](Apis/DefaultApi.md#taskdirectivetaskiddelete) | **DELETE** /task/directive/{task_id} |  |
 *DefaultApi* | [**taskDirectiveTaskIdGet**](Apis/DefaultApi.md#taskdirectivetaskidget) | **GET** /task/directive/{task_id} |  |
 *DefaultApi* | [**taskDirectivesFindPost**](Apis/DefaultApi.md#taskdirectivesfindpost) | **POST** /task/directives/find |  |
 *DefaultApi* | [**taskforceTaskforceUuidGet**](Apis/DefaultApi.md#taskforcetaskforceuuidget) | **GET** /taskforce/{taskforce_uuid} |  |
@@ -20,6 +19,8 @@
 *DefaultApi* | [**taskforcesFindPost**](Apis/DefaultApi.md#taskforcesfindpost) | **POST** /taskforces/find |  |
 *DefaultApi* | [**taskforcesTmsStatusPost**](Apis/DefaultApi.md#taskforcestmsstatuspost) | **POST** /taskforces/tms/status |  |
 *DefaultApi* | [**workflowPost**](Apis/DefaultApi.md#workflowpost) | **POST** /workflow |  |
+*DefaultApi* | [**workflowWorkflowIdDelete**](Apis/DefaultApi.md#workflowworkflowiddelete) | **DELETE** /workflow/{workflow_id} |  |
+*DefaultApi* | [**workflowWorkflowIdGet**](Apis/DefaultApi.md#workflowworkflowidget) | **GET** /workflow/{workflow_id} |  |
 
 
 <a name="documentation-for-models"></a>
@@ -33,9 +34,10 @@
  - [TaskforceObject_n_workers](./Models/TaskforceObject_n_workers.md)
  - [TaskforceObject_worker_config](./Models/TaskforceObject_worker_config.md)
  - [TaskforceUUIDObject](./Models/TaskforceUUIDObject.md)
+ - [WorkflowObject](./Models/WorkflowObject.md)
+ - [WorkflowObject_queues_inner](./Models/WorkflowObject_queues_inner.md)
  - [__get_400_response](./Models/__get_400_response.md)
  - [_schema_openapi_get_400_response](./Models/_schema_openapi_get_400_response.md)
- - [_task_directive__task_id__delete_200_response](./Models/_task_directive__task_id__delete_200_response.md)
  - [_task_directives_find_post_200_response](./Models/_task_directives_find_post_200_response.md)
  - [_taskforce_tms_action_pending_starter_get_200_response](./Models/_taskforce_tms_action_pending_starter_get_200_response.md)
  - [_taskforce_tms_condor_complete__taskforce_uuid__post_request](./Models/_taskforce_tms_condor_complete__taskforce_uuid__post_request.md)
@@ -45,6 +47,7 @@
  - [_taskforces_tms_status_post_207_response](./Models/_taskforces_tms_status_post_207_response.md)
  - [_taskforces_tms_status_post_207_response_results_inner](./Models/_taskforces_tms_status_post_207_response_results_inner.md)
  - [_taskforces_tms_status_post_request](./Models/_taskforces_tms_status_post_request.md)
+ - [_workflow__workflow_id__delete_200_response](./Models/_workflow__workflow_id__delete_200_response.md)
  - [_workflow_post_request](./Models/_workflow_post_request.md)
  - [_workflow_post_request_tasks_inner](./Models/_workflow_post_request_tasks_inner.md)
  - [worker_config](./Models/worker_config.md)

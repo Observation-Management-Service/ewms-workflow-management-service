@@ -1,10 +1,11 @@
-# _task_directive__task_id__delete_200_response
+# WorkflowObject_queues_inner
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **task\_id** | **String** | the task id | [default to null] |
-| **n\_taskforces** | **Integer** | number of updated taskforces | [default to null] |
+| **alias** | **String** |  | [default to null] |
+| **id** | **String** |  | [default to null] |
+| **is\_public** | **Boolean** |  | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

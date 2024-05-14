@@ -6,7 +6,6 @@ All URIs are relative to *http://localhost*
 |------------- | ------------- | -------------|
 | [**rootGet**](DefaultApi.md#rootGet) | **GET** / |  |
 | [**schemaOpenapiGet**](DefaultApi.md#schemaOpenapiGet) | **GET** /schema/openapi |  |
-| [**taskDirectiveTaskIdDelete**](DefaultApi.md#taskDirectiveTaskIdDelete) | **DELETE** /task/directive/{task_id} |  |
 | [**taskDirectiveTaskIdGet**](DefaultApi.md#taskDirectiveTaskIdGet) | **GET** /task/directive/{task_id} |  |
 | [**taskDirectivesFindPost**](DefaultApi.md#taskDirectivesFindPost) | **POST** /task/directives/find |  |
 | [**taskforceTaskforceUuidGet**](DefaultApi.md#taskforceTaskforceUuidGet) | **GET** /taskforce/{taskforce_uuid} |  |
@@ -18,6 +17,8 @@ All URIs are relative to *http://localhost*
 | [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost) | **POST** /taskforces/find |  |
 | [**taskforcesTmsStatusPost**](DefaultApi.md#taskforcesTmsStatusPost) | **POST** /taskforces/tms/status |  |
 | [**workflowPost**](DefaultApi.md#workflowPost) | **POST** /workflow |  |
+| [**workflowWorkflowIdDelete**](DefaultApi.md#workflowWorkflowIdDelete) | **DELETE** /workflow/{workflow_id} |  |
+| [**workflowWorkflowIdGet**](DefaultApi.md#workflowWorkflowIdGet) | **GET** /workflow/{workflow_id} |  |
 
 
 <a name="rootGet"></a>
@@ -53,30 +54,6 @@ This endpoint does not need any parameter.
 ### Return type
 
 **Object**
-
-### Authorization
-
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-<a name="taskDirectiveTaskIdDelete"></a>
-# **taskDirectiveTaskIdDelete**
-> _task_directive__task_id__delete_200_response taskDirectiveTaskIdDelete(task\_id)
-
-
-
-### Parameters
-
-|Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **task\_id** | **String**| the id of the task directive | [default to null] |
-
-### Return type
-
-[**_task_directive__task_id__delete_200_response**](../Models/_task_directive__task_id__delete_200_response.md)
 
 ### Authorization
 
@@ -352,5 +329,53 @@ This endpoint does not need any parameter.
 ### HTTP request headers
 
 - **Content-Type**: application/json
+- **Accept**: application/json
+
+<a name="workflowWorkflowIdDelete"></a>
+# **workflowWorkflowIdDelete**
+> _workflow__workflow_id__delete_200_response workflowWorkflowIdDelete(workflow\_id)
+
+
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **workflow\_id** | **String**| the id of the workflow object | [default to null] |
+
+### Return type
+
+[**_workflow__workflow_id__delete_200_response**](../Models/_workflow__workflow_id__delete_200_response.md)
+
+### Authorization
+
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+<a name="workflowWorkflowIdGet"></a>
+# **workflowWorkflowIdGet**
+> WorkflowObject workflowWorkflowIdGet(workflow\_id)
+
+
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **workflow\_id** | **String**| the id of the workflow object | [default to null] |
+
+### Return type
+
+[**WorkflowObject**](../Models/WorkflowObject.md)
+
+### Authorization
+
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
 - **Accept**: application/json
 
