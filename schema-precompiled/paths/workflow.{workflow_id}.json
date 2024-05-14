@@ -1,0 +1,161 @@
+{
+    "parameters": [
+        {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "description": "the id of the workflow object",
+            "schema": {
+                "type": "string"
+            }
+        }
+    ],
+    "get": {
+        "responses": {
+            "200": {
+                "description": "the matching workflow object",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/WorkflowObject"
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "delete": {
+        "responses": {
+            "200": {
+                "description": "the matching workflow object",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "workflow_id": {
+                                    "description": "the workflow id",
+                                    "type": "string"
+                                },
+                                "n_task_directives": {
+                                    "description": "number of updated task directives",
+                                    "type": "integer"
+                                },
+                                "n_taskforces": {
+                                    "description": "number of updated taskforces",
+                                    "type": "integer"
+                                }
+                            },
+                            "required": [
+                                "workflow_id",
+                                "n_task_directives",
+                                "n_taskforces"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

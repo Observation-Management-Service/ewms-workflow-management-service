@@ -139,64 +139,6 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         self.write(task_directive)
 
-    @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
-    async def delete(self, task_id: str) -> None:
-        """Handle DELETE.
-
-        Abort a task.
-        """
-        try:
-            await self.task_directives_client.find_one_and_update(
-                {
-                    "task_id": task_id,
-                    "aborted": {"$nin": [True]},  # "not in"
-                },
-                {
-                    "aborted": True,
-                },
-            )
-        except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no non-aborted task found with id: {task_id}",  # to client
-            ) from e
-
-        # set all corresponding taskforces to pending-stopper
-        n_updated = 0  # in case of exception
-        try:
-            n_updated = await self.taskforces_client.update_set_many(
-                {
-                    "task_id": task_id,
-                    "$and": [
-                        # not already aborted
-                        # NOTE - we don't care whether the taskforce has started up (see /taskforce/tms-action/pending-stopper)
-                        {
-                            "phase": {
-                                "$nin": [
-                                    TaskforcePhase.PENDING_STOPPER,
-                                    TaskforcePhase.CONDOR_RM,
-                                ]
-                            },  # "not in"
-                        },
-                        # AND
-                        # not condor-completed
-                        {
-                            "condor_complete_ts": None,  # int -> condor-completed
-                        },
-                    ],
-                },
-                {
-                    "phase": TaskforcePhase.PENDING_STOPPER,
-                },
-            )
-        except DocumentNotFoundException:
-            LOGGER.info(
-                "okay scenario: task aborted but no taskforces needed to be stopped"
-            )
-
-        self.write({"task_id": task_id, "n_taskforces": n_updated})
-
 
 # ----------------------------------------------------------------------------
 

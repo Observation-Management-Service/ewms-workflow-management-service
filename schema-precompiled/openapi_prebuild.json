@@ -45,6 +45,7 @@
             }
         },
         "schemas": {
+            "WorkflowObject": "GHA_CI_INGEST_FILE_CONTENTS ../wms/schema/db/Workflow.json required=[]",
             "TaskDirectiveObject": "GHA_CI_INGEST_FILE_CONTENTS ../wms/schema/db/TaskDirective.json required=[]",
             "TaskforceObject": "GHA_CI_INGEST_FILE_CONTENTS ../wms/schema/db/Taskforce.json required=[]",
             "FindObject": {
