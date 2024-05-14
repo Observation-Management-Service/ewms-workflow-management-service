@@ -350,11 +350,23 @@ async def user_aborts_task(
     resp = await request_and_validate(
         rc,
         openapi_spec,
+        "POST",
+        "/workflow/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": ["workflow_id"],
+        },
+    )
+    workflow_id = resp["workflow_id"]
+    resp = await request_and_validate(
+        rc,
+        openapi_spec,
         "DELETE",
-        f"/task/directive/{task_id}",
+        f"/workflow/{workflow_id}",
     )
     assert resp == {
-        "task_id": task_id,
+        "workflow_id": workflow_id,
+        "n_task_directives": 1,
         "n_taskforces": len(condor_locations) if not aborted_after_condor else 0,
     }
     resp = await request_and_validate(
