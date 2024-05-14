@@ -309,7 +309,7 @@ This endpoint does not need any parameter.
 
 <a name="workflowPost"></a>
 # **workflowPost**
-> List workflowPost(\_workflow\_post\_request)
+> _workflow_post_200_response workflowPost(\_workflow\_post\_request)
 
 
 
@@ -321,7 +321,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**List**](../Models/TaskDirectiveObject.md)
+[**_workflow_post_200_response**](../Models/_workflow_post_200_response.md)
 
 ### Authorization
 
