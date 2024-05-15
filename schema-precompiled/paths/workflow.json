@@ -24,14 +24,14 @@
                                         "input_queue_aliases": {
                                             "type": "array",
                                             "items": {
-                                                "type": "str"
+                                                "type": "string"
                                             },
                                             "minItems": 0
                                         },
                                         "output_queue_aliases": {
                                             "type": "array",
                                             "items": {
-                                                "type": "str"
+                                                "type": "string"
                                             },
                                             "minItems": 0
                                         },

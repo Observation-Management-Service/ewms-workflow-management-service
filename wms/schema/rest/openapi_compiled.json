@@ -98,14 +98,14 @@
                     "input_queues": {
                         "type": "array",
                         "items": {
-                            "type": "str"
+                            "type": "string"
                         },
                         "minItems": 0
                     },
                     "output_queues": {
                         "type": "array",
                         "items": {
-                            "type": "str"
+                            "type": "string"
                         },
                         "minItems": 0
                     }
@@ -1213,14 +1213,14 @@
                                                 "input_queue_aliases": {
                                                     "type": "array",
                                                     "items": {
-                                                        "type": "str"
+                                                        "type": "string"
                                                     },
                                                     "minItems": 0
                                                 },
                                                 "output_queue_aliases": {
                                                     "type": "array",
                                                     "items": {
-                                                        "type": "str"
+                                                        "type": "string"
                                                     },
                                                     "minItems": 0
                                                 },
