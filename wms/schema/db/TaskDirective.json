@@ -23,9 +23,6 @@
         "timestamp": {
             "type": "integer"
         },
-        "priority": {
-            "type": "integer"
-        },
         "input_queue_aliases": {
             "type": "array",
             "items": {
@@ -39,9 +36,6 @@
                 "type": "str"
             },
             "minItems": 0
-        },
-        "_mqs_retry_at_ts": {
-            "type": "number"
         },
         "aborted": {
             "type": "boolean"

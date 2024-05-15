@@ -56,18 +56,18 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
 
     # WORKFLOWS
     await make_index(WORKFLOWS_COLL_NAME, "workflow_id", unique=True)
+    await make_index(WORKFLOWS_COLL_NAME, "timestamp")
+    await make_index(WORKFLOWS_COLL_NAME, "priority")
+    await make_index(WORKFLOWS_COLL_NAME, "_mqs_retry_at_ts")
 
     # TASK_DIRECTIVES
-    await make_index(TASK_DIRECTIVES_COLL_NAME, "task_id", unique=True)
+    await make_index(TASK_DIRECTIVES_COLL_NAME, "workflow_id", unique=True)
     await make_index(TASK_DIRECTIVES_COLL_NAME, "workflow_id")
-    await make_index(TASK_DIRECTIVES_COLL_NAME, "queues")
     await make_index(TASK_DIRECTIVES_COLL_NAME, "timestamp")
-    await make_index(TASK_DIRECTIVES_COLL_NAME, "priority")
-    await make_index(TASK_DIRECTIVES_COLL_NAME, "_mqs_retry_at_ts")
 
     # TASKFORCES
     await make_index(TASKFORCES_COLL_NAME, "taskforce_uuid", unique=True)
-    await make_index(TASKFORCES_COLL_NAME, "task_id")
+    await make_index(TASKFORCES_COLL_NAME, "workflow_id")
     await make_index(TASKFORCES_COLL_NAME, "phase")
     await make_index(TASKFORCES_COLL_NAME, "timestamp")
     await make_index(TASKFORCES_COLL_NAME, "worker_config.priority")

@@ -4,6 +4,12 @@
         "workflow_id": {
             "type": "string"
         },
+        "timestamp": {
+            "type": "integer"
+        },
+        "priority": {
+            "type": "integer"
+        },
         "queues": {
             "type": "array",
             "items": {
@@ -27,6 +33,9 @@
                 "additionalProperties": false
             },
             "minItems": 0
+        },
+        "_mqs_retry_at_ts": {
+            "type": "number"
         }
     },
     "required": [
