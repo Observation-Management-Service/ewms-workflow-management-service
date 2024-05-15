@@ -6,8 +6,8 @@
 | **cluster\_locations** | **List** |  | [default to null] |
 | **task\_image** | **String** |  | [default to null] |
 | **task\_args** | **String** |  | [default to null] |
-| **input\_queue\_aliases** | [**List**](str.md) |  | [optional] [default to null] |
-| **output\_queue\_aliases** | [**List**](str.md) |  | [optional] [default to null] |
+| **input\_queue\_aliases** | **List** |  | [optional] [default to null] |
+| **output\_queue\_aliases** | **List** |  | [optional] [default to null] |
 | **n\_workers** | **Integer** |  | [optional] [default to null] |
 | **worker\_config** | [**TaskforceObject_worker_config**](TaskforceObject_worker_config.md) |  | [default to null] |
 | **environment** | [**Object**](.md) |  | [optional] [default to null] |
