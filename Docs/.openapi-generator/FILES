@@ -9,7 +9,6 @@ Models/TaskforceObject_n_workers.md
 Models/TaskforceObject_worker_config.md
 Models/TaskforceUUIDObject.md
 Models/WorkflowObject.md
-Models/WorkflowObject_queues_inner.md
 Models/__get_400_response.md
 Models/_schema_openapi_get_400_response.md
 Models/_task_directives_find_post_200_response.md

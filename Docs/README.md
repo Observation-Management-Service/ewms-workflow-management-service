@@ -35,7 +35,6 @@
  - [TaskforceObject_worker_config](./Models/TaskforceObject_worker_config.md)
  - [TaskforceUUIDObject](./Models/TaskforceUUIDObject.md)
  - [WorkflowObject](./Models/WorkflowObject.md)
- - [WorkflowObject_queues_inner](./Models/WorkflowObject_queues_inner.md)
  - [__get_400_response](./Models/__get_400_response.md)
  - [_schema_openapi_get_400_response](./Models/_schema_openapi_get_400_response.md)
  - [_task_directives_find_post_200_response](./Models/_task_directives_find_post_200_response.md)
