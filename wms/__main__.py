@@ -3,7 +3,7 @@
 import asyncio
 import logging
 
-from . import database, server, taskforce_launch_control
+from . import database, server, taskforce_launch_control, workflow_mq_activator
 from .config import ENV, config_logging
 
 LOGGER = logging.getLogger(__package__)
