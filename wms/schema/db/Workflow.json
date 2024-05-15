@@ -15,6 +15,9 @@
         },
         "_mqs_retry_at_ts": {
             "type": "number"
+        },
+        "aborted": {
+            "type": "boolean"
         }
     },
     "required": [

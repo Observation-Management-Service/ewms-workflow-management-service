@@ -49,6 +49,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
             # MUTABLE
             mq_activated_ts=None,  # updated by task_mq_assembly
             _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by task_mq_assembly,
+            aborted=False,
         )
         workflow = await self.workflows_client.insert_one(workflow)
 
@@ -142,9 +143,9 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         Abort all tasks in workflow.
         """
 
-        # TASKS
+        # WORKFLOW
         try:
-            n_tds_updated = await self.task_directives_client.update_set_many(
+            await self.workflows_client.find_one_and_update(
                 {
                     "workflow_id": workflow_id,
                     "aborted": {"$nin": [True]},  # "not in"
@@ -156,7 +157,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         except DocumentNotFoundException as e:
             raise web.HTTPError(
                 status_code=404,
-                reason=f"no non-aborted tasks found with {workflow_id=}",  # to client
+                reason=f"no non-aborted workflow found with {workflow_id=}",  # to client
             ) from e
 
         # TASKFORCES
@@ -196,7 +197,6 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         self.write(
             {
                 "workflow_id": workflow_id,
-                "n_task_directives": n_tds_updated,
                 "n_taskforces": n_tfs_updated,
             }
         )

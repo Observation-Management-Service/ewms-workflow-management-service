@@ -38,6 +38,7 @@ async def create_task_directive(
 
     task_directive = dict(
         # IMMUTABLE
+        #
         task_id=uuid.uuid4().hex,
         workflow_id=workflow_id,
         timestamp=int(time.time()),
@@ -49,9 +50,7 @@ async def create_task_directive(
         input_queues=input_queues,
         output_queues=output_queues,
         #
-        #
         # MUTABLE
-        aborted=False,
     )
 
     # first, check that locations are legit

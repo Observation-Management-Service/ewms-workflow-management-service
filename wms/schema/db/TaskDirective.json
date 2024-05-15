@@ -36,9 +36,6 @@
                 "type": "str"
             },
             "minItems": 0
-        },
-        "aborted": {
-            "type": "boolean"
         }
     },
     "required": [
