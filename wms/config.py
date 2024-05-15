@@ -134,7 +134,7 @@ def config_logging() -> None:
     if not ENV.CI and ENV.LOG_LEVEL.upper() == "DEBUG":
         demoted_first_parties = {
             "wms.taskforce_launch_control": "INFO",
-            "wms.task_mq_assembly": "INFO",
+            "wms.workflow_mq_activator": "INFO",
         }
     else:
         demoted_first_parties = {}

@@ -12,7 +12,7 @@ from unittest.mock import patch, MagicMock, AsyncMock
 import pytest
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from wms import task_mq_assembly, database, config, schema
+from wms import database, config, schema
 
 logging.getLogger("pymongo").setLevel(logging.INFO)
 

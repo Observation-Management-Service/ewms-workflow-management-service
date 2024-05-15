@@ -99,7 +99,7 @@ async def set_mqs_retry_at_ts(
 
 async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
     """Start up the daemon task."""
-    LOGGER.info("Starting up task_mq_assembly...")
+    LOGGER.info("Starting up workflow_mq_activator...")
 
     # database clients
     workflows_client = db.client.WMSMongoClient(
