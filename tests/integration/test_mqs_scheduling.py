@@ -1,4 +1,4 @@
-"""Test the MQS scheduling logic with the task_mq_assembly module/daemon.
+"""Test the MQS scheduling logic with the workflow_mq_activator module/daemon.
 
 Runs everything in main process and thread. Uses a real mongo database
 and mock/patched MQS REST calls."""
@@ -240,8 +240,8 @@ def _make_post_mqs_loop_taskforce(task_directive: dict, location: str, i: int) -
     return taskforce
 
 
-@patch("wms.task_mq_assembly.request_to_mqs", new_callable=AsyncMock)
-@patch("wms.task_mq_assembly.RestClient", new=MagicMock)  # it's a from-import
+@patch("wms.workflow_mq_activator.request_to_mqs", new_callable=AsyncMock)
+@patch("wms.workflow_mq_activator.RestClient", new=MagicMock)  # it's a from-import
 async def test_000(mock_req_to_mqs: AsyncMock) -> None:
     """Test the MQS scheduling with several tasks and requests."""
     mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
@@ -266,7 +266,7 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
     # go!
     with pytest.raises(asyncio.TimeoutError):
         # use asyncio's timeout to artificially stop loop, otherwise it'd go forever
-        await asyncio.wait_for(task_mq_assembly.startup(mongo_client), timeout=60)
+        await asyncio.wait_for(workflow_mq_activator.startup(mongo_client), timeout=60)
 
     # check mongo db state
     tds_in_db = [t async for t in task_directives_client.find_all({}, [])]
