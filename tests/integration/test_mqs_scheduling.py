@@ -74,7 +74,7 @@ class MQSRESTCalls:
     retry_dues: dict[str, float] = {}
 
     @staticmethod
-    def request_to_mqs(_: Any, task_directive: dict) -> dict:
+    def request_activation_to_mqs(_: Any, task_directive: dict) -> dict:
         assert task_directive
 
         diff = time.time() - MQSRESTCalls.last_ts
@@ -240,9 +240,9 @@ def _make_post_mqs_loop_taskforce(task_directive: dict, location: str, i: int) -
     return taskforce
 
 
-@patch("wms.workflow_mq_activator.request_to_mqs", new_callable=AsyncMock)
+@patch("wms.workflow_mq_activator.request_activation_to_mqs", new_callable=AsyncMock)
 @patch("wms.workflow_mq_activator.RestClient", new=MagicMock)  # it's a from-import
-async def test_000(mock_req_to_mqs: AsyncMock) -> None:
+async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     """Test the MQS scheduling with several tasks and requests."""
     mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
     task_directives_client = database.client.WMSMongoClient(
@@ -261,7 +261,7 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
             await taskforces_client.insert_one(_make_test_taskforce(td_db, location, i))
 
     # pre-patch all the REST calls to MQS
-    mock_req_to_mqs.side_effect = MQSRESTCalls.request_to_mqs
+    mock_req_act_to_mqs.side_effect = MQSRESTCalls.request_activation_to_mqs
 
     # go!
     with pytest.raises(asyncio.TimeoutError):
@@ -277,7 +277,7 @@ async def test_000(mock_req_to_mqs: AsyncMock) -> None:
         src = next(  # using 'next' gives shorter debug than w/ 'in'
             t for t in TEST_TASK_DIRECTIVES if t["task_id"] == td_db["task_id"]
         )
-        # ignore the '_mqs_retry_at_ts' key, it's functionality is tested by MQSRESTCalls.request_to_mqs
+        # ignore the '_mqs_retry_at_ts' key, it's functionality is tested by MQSRESTCalls.request_activation_to_mqs
         assert {k: v for k, v in td_db.items() if k != "_mqs_retry_at_ts"} == {
             **{k: v for k, v in src.items() if k != "_mqs_retry_at_ts"},
             "queues": [f"100-{td_db['task_id']}", f"200-{td_db['task_id']}"],
