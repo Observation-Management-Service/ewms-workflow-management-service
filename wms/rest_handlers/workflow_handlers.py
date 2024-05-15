@@ -1,6 +1,7 @@
 """REST handlers for workflow-related routes."""
 
 import logging
+import time
 import uuid
 
 from rest_tools.server import validate_request
@@ -43,22 +44,24 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
         workflow = dict(
             # IMMUTABLE
             workflow_id=str(uuid.uuid4()),
-            #
-            # semi-MUTABLE
-            queues=[
-                dict(
-                    # IMMUTABLE
-                    alias=a,
-                    is_public=bool(a in self.get_argument("public_queues")),
-                    #
-                    # MUTABLE
-                    # set ONCE -- determined by mqs, updated by task_mq_assembly
-                    id=None,
-                )
-                for a in _get_all_queues(self.get_argument("tasks"))
-            ],
+            timestamp=int(time.time()),
+            priority=10,  # TODO
+            # MUTABLE
+            mq_activated_ts=None,  # updated by task_mq_assembly
+            _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by task_mq_assembly,
         )
         workflow = await self.workflows_client.insert_one(workflow)
+
+        # Reserve queues with MQS -- map to aliases
+        resp = await self.mqs_rc.request(
+            "POST",
+            "/mq-group/reserve",
+            {
+                "queue_aliases": _get_all_queues(self.get_argument("tasks")),
+                "public": self.get_argument("public_queues"),
+            },
+        )
+        mqprofiles = resp["mqprofiles"]
 
         # Add task directives (and taskforces)
         task_directives = []
@@ -71,8 +74,16 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
                 task_input["task_image"],
                 task_input["task_args"],
                 #
-                task_input["input_queue_aliases"],
-                task_input["output_queue_aliases"],
+                [  # map aliases to ids
+                    p["id"]
+                    for p in mqprofiles
+                    if p["alias"] in resp["input_queue_aliases"]
+                ],
+                [  # map aliases to ids
+                    p["id"]
+                    for p in mqprofiles
+                    if p["alias"] in resp["output_queue_aliases"]
+                ],
                 #
                 task_input["worker_config"],
                 task_input["n_workers"],

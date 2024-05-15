@@ -69,8 +69,8 @@ async def user_requests_new_task(
                     cluster_locations=list(condor_locations.keys()),
                     task_image=task_image,
                     task_args=task_args,
-                    input_queue_aliases=["qfoo"],
-                    output_queue_aliases=["qbar"],
+                    input_queues=["qfoo"],
+                    output_queues=["qbar"],
                     #
                     n_workers=n_workers,
                     worker_config=worker_config,

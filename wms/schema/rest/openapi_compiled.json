@@ -107,14 +107,14 @@
                     "priority": {
                         "type": "integer"
                     },
-                    "input_queue_aliases": {
+                    "input_queues": {
                         "type": "array",
                         "items": {
                             "type": "str"
                         },
                         "minItems": 0
                     },
-                    "output_queue_aliases": {
+                    "output_queues": {
                         "type": "array",
                         "items": {
                             "type": "str"
@@ -1228,11 +1228,11 @@
                                                 "task_args": {
                                                     "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                                 },
-                                                "input_queue_aliases": {
-                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/input_queue_aliases"
+                                                "input_queues": {
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/input_queues"
                                                 },
-                                                "output_queue_aliases": {
-                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/output_queue_aliases"
+                                                "output_queues": {
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/output_queues"
                                                 },
                                                 "n_workers": {
                                                     "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"

@@ -7,11 +7,12 @@ import time
 import requests
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING, DESCENDING
-from rest_tools.client import ClientCredentialsAuth, RestClient
+from rest_tools.client import RestClient
 
 from . import database as db
 from .config import ENV, MQS_RETRY_AT_TS_DEFAULT_VALUE, TASK_MQ_ASSEMBLY_SHORTEST_SLEEP
 from .schema.enums import TaskforcePhase
+from .utils import get_mqs_connection
 
 LOGGER = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ async def get_next_workflow(
     """Grab the next workflow from db."""
     return await workflows_client.find_one(
         {
-            "queues": [],  # has no queues
+            "mq_activated_ts": None,
             "$or": [
                 # A: normal entries not needing a retry ('inf' indicates n/a)
                 #    using 'inf' helps with sorting correctly, see 'sort' below
@@ -39,68 +40,44 @@ async def get_next_workflow(
     )
 
 
-async def request_to_mqs(mqs_rc: RestClient, workflow: dict) -> dict:
-    """Send request to MQS for queues."""
+async def request_activation_to_mqs(mqs_rc: RestClient, workflow: dict) -> dict:
+    """Send request to MQS to activate workflow's queues."""
     return await mqs_rc.request(
         "POST",
-        "/mq-group",
+        "/mq-group/activate",
         dict(
             workflow_id=workflow["workflow_id"],
             criteria=dict(
                 priority=workflow["priority"],
-                n_queues=len(workflow["queues"]),
+                # TODO (future PR) - add other fields
             ),
         ),
     )
 
 
-async def update_db(
-    workflows_client: db.client.WMSMongoClient,
-    task_directives_client: db.client.WMSMongoClient,
+async def advance_taskforce_phases(
     taskforces_client: db.client.WMSMongoClient,
     workflow_id: str,
-    queues: list[str],
 ) -> None:
-    """Update the database with queues and advance taskforces' phases."""
-
-    # update workflow -- insert queue ids
-    # TODO - UPDATE QIDS
-    await workflows_client.find_one_and_update(
+    """Update the database taskforces' phases with TaskforcePhase.PRE_LAUNCH."""
+    await taskforces_client.update_set_many(
         dict(workflow_id=workflow_id),
-        dict(queues=queues),
+        dict(phase=TaskforcePhase.PRE_LAUNCH),
     )
-    LOGGER.info(f"ASSEMBLED {len(queues)} queues ({workflow_id=})")
-
-    # get queues from task directive
-    async for resp in task_directives_client.find_all(
-        dict(workflow_id=workflow_id),
-        projection=["task_id", "input_queue_aliases", "output_queue_aliases"],
-    ):
-        # update taskforces -- advance phase & insert queue ids
-        environment_updates = {
-            f"container_config.environment.EWMS_PILOT_QUEUE_INCOMING": ";".join(
-                # map aliases to ids
-                qinfo["id"]
-                for qinfo in resp["input_queues"]
-                if qinfo["alias"] in resp["input_queue_aliases"]
-            ),
-            f"container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": ";".join(
-                # map aliases to ids
-                qinfo["id"]
-                for qinfo in resp["output_queues"]
-                if qinfo["alias"] in resp["output_queue_aliases"]
-            ),
-        }
-        await taskforces_client.update_set_many(
-            dict(task_id=resp["task_id"]),
-            dict(
-                phase=TaskforcePhase.PRE_LAUNCH,
-                **environment_updates,
-            ),
-        )
 
     LOGGER.info(
         f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({workflow_id=})"
+    )
+
+
+async def set_mq_activated_ts(
+    workflows_client: db.client.WMSMongoClient,
+    workflow_id: str,
+) -> None:
+    """Set mq_activated_ts in db."""
+    await workflows_client.find_one_and_update(
+        dict(workflow_id=workflow_id),
+        dict(mq_activated_ts=int(time.time())),
     )
 
 
@@ -109,7 +86,7 @@ async def set_mqs_retry_at_ts(
     workflow_id: str,
 ) -> None:
     """Set _mqs_retry_at_ts and place back on "backlog"."""
-    retry_at = int(time.time()) + ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+    retry_at = time.time() + ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
     LOGGER.warning(
         f"MQS responded w/ 'not now' signal, will try workflow "
         f"{workflow_id} after {retry_at} ({time.ctime(retry_at)})"
@@ -130,31 +107,13 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         db.utils.WORKFLOWS_COLL_NAME,
         parent_logger=LOGGER,
     )
-    task_directives_client = db.client.WMSMongoClient(
-        mongo_client,
-        db.utils.TASK_DIRECTIVES_COLL_NAME,
-        parent_logger=LOGGER,
-    )
     taskforces_client = db.client.WMSMongoClient(
         mongo_client,
         db.utils.TASKFORCES_COLL_NAME,
         parent_logger=LOGGER,
     )
-
-    # connect to mqs
-    if ENV.CI:
-        mqs_rc = RestClient(
-            ENV.MQS_ADDRESS,
-            logger=logging.getLogger(f"{LOGGER.name}.mqs"),
-        )
-    else:
-        mqs_rc = ClientCredentialsAuth(
-            ENV.MQS_ADDRESS,
-            ENV.MQS_TOKEN_URL,
-            ENV.MQS_CLIENT_ID,
-            ENV.MQS_CLIENT_SECRET,
-            logger=logging.getLogger(f"{LOGGER.name}.mqs"),
-        )
+    # rest client
+    mqs_rc = get_mqs_connection(logging.getLogger(f"{LOGGER.name}.mqs"))
 
     # main loop
     short_sleep = False
@@ -175,23 +134,24 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
 
         # request to mqs
         LOGGER.info(
-            f"REQUESTING {len(workflow['queues'])} queues (workflow_id={workflow['workflow_id']})..."
+            f"REQUESTING ACTIVATION for {len(workflow['queues'])} queues (workflow_id={workflow['workflow_id']})..."
         )
         try:
-            resp = await request_to_mqs(mqs_rc, workflow)
+            resp = await request_activation_to_mqs(mqs_rc, workflow)
         except requests.exceptions.HTTPError as e:
             LOGGER.exception(e)
             continue
+        # update db workflow w/ result
         if resp.get("try_again_later"):
             await set_mqs_retry_at_ts(workflows_client, workflow["workflow_id"])
             short_sleep = True  # want to give other tasks a chance to start up
             continue
+        else:
+            await set_mq_activated_ts(workflows_client, workflow["workflow_id"])
 
-        # update db
-        await update_db(
-            workflows_client,
-            task_directives_client,
-            taskforces_client,
-            workflow["workflow_id"],
-            [p["mqid"] for p in resp["mqprofiles"]],
+        LOGGER.info(
+            f"ACTIVATED {len(resp['mqprofiles'])} queues (workflow_id={workflow['workflow_id']})"
         )
+
+        # update db -- taskforces
+        await advance_taskforce_phases(taskforces_client, workflow["workflow_id"])

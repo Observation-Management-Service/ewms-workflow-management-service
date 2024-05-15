@@ -10,6 +10,7 @@ from rest_tools.server import validate_request
 from . import auth
 from .. import config
 from .. import database as db
+from ..utils import get_mqs_connection
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,6 +38,9 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
         self.taskforces_client = db.client.WMSMongoClient(
             mongo_client,
             db.utils.TASKFORCES_COLL_NAME,
+        )
+        self.mqs_rc = get_mqs_connection(
+            logging.getLogger(f"{LOGGER.name.split('.', maxsplit=1)[0]}.mqs")
         )
 
 

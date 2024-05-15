@@ -10,29 +10,8 @@
         "priority": {
             "type": "integer"
         },
-        "queues": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "alias": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "is_public": {
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "alias",
-                    "id",
-                    "is_public"
-                ],
-                "additionalProperties": false
-            },
-            "minItems": 0
+        "mq_activated_ts": {
+            "type": "number"
         },
         "_mqs_retry_at_ts": {
             "type": "number"

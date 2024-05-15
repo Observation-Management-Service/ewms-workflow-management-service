@@ -23,14 +23,14 @@
         "timestamp": {
             "type": "integer"
         },
-        "input_queue_aliases": {
+        "input_queues": {
             "type": "array",
             "items": {
                 "type": "str"
             },
             "minItems": 0
         },
-        "output_queue_aliases": {
+        "output_queues": {
             "type": "array",
             "items": {
                 "type": "str"
@@ -49,8 +49,8 @@
         "task_args",
         "timestamp",
         "priority",
-        "input_queue_aliases",
-        "output_queue_aliases",
+        "input_queues",
+        "output_queues",
         "_mqs_retry_at_ts",
         "aborted"
     ],

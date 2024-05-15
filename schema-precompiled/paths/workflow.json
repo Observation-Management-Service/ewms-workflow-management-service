@@ -22,10 +22,18 @@
                                             "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                         },
                                         "input_queue_aliases": {
-                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/input_queue_aliases"
+                                            "type": "array",
+                                            "items": {
+                                                "type": "str"
+                                            },
+                                            "minItems": 0
                                         },
                                         "output_queue_aliases": {
-                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/output_queue_aliases"
+                                            "type": "array",
+                                            "items": {
+                                                "type": "str"
+                                            },
+                                            "minItems": 0
                                         },
                                         "n_workers": {
                                             "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"

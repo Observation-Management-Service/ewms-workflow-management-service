@@ -26,8 +26,8 @@ async def create_task_directive(
     task_image: str,
     task_args: list[str],
     #
-    input_queue_aliases: list[str],
-    output_queue_aliases: list[str],
+    input_queues: list[str],
+    output_queues: list[str],
     #
     worker_config: dict,
     n_workers: int,
@@ -35,30 +35,27 @@ async def create_task_directive(
     input_files: list[str],
 ) -> tuple[dict, list[dict]]:
     """Create new task directive and taskforces."""
+
     task_directive = dict(
         # IMMUTABLE
-        # ids
         task_id=uuid.uuid4().hex,
         workflow_id=workflow_id,
+        timestamp=int(time.time()),
         #
         cluster_locations=cluster_locations,
         task_image=task_image,
         task_args=task_args,
-        timestamp=int(time.time()),
-        priority=worker_config["priority"],
         #
-        # NOTE: queue ids stored in workflow obj ()
-        input_queue_aliases=input_queue_aliases,
-        output_queue_aliases=output_queue_aliases,
+        input_queues=input_queues,
+        output_queues=output_queues,
         #
         #
         # MUTABLE
-        _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by task_mq_assembly
         aborted=False,
     )
 
     # first, check that locations are legit
-    for location in task_directive["cluster_locations"]:
+    for location in cluster_locations:
         if location not in config.KNOWN_CLUSTERS:
             raise web.HTTPError(
                 status_code=400,
@@ -67,7 +64,7 @@ async def create_task_directive(
 
     # now, create Taskforce entries (important to do now so removals are handled easily--think dangling pointers)
     taskforces = []
-    for location in task_directive["cluster_locations"]:
+    for location in cluster_locations:
         taskforces.append(
             dict(
                 # IMMUTABLE
@@ -85,7 +82,15 @@ async def create_task_directive(
                 container_config=dict(
                     image=task_directive["task_image"],
                     arguments=task_directive["task_args"],
-                    environment=environment,
+                    environment={
+                        **environment,
+                        f"container_config.environment.EWMS_PILOT_QUEUE_INCOMING": ";".join(
+                            input_queues
+                        ),
+                        f"container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": ";".join(
+                            output_queues
+                        ),
+                    },
                     input_files=input_files,
                 ),
                 worker_config=worker_config,
