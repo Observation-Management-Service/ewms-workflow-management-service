@@ -83,10 +83,10 @@ async def create_task_directive(
                     arguments=task_directive["task_args"],
                     environment={
                         **environment,
-                        f"container_config.environment.EWMS_PILOT_QUEUE_INCOMING": ";".join(
+                        "container_config.environment.EWMS_PILOT_QUEUE_INCOMING": ";".join(
                             input_queues
                         ),
-                        f"container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": ";".join(
+                        "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": ";".join(
                             output_queues
                         ),
                     },
