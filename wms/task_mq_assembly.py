@@ -77,22 +77,18 @@ async def update_db(
         projection=["task_id", "input_queue_aliases", "output_queue_aliases"],
     ):
         # update taskforces -- advance phase & insert queue ids
-        input_queue_ids = [  # map aliases to ids
-            qinfo["id"]
-            for qinfo in resp["input_queues"]
-            if qinfo["alias"] in resp["input_queue_aliases"]
-        ]
-        output_queue_ids = [  # map aliases to ids
-            qinfo["id"]
-            for qinfo in resp["output_queues"]
-            if qinfo["alias"] in resp["output_queue_aliases"]
-        ]
         environment_updates = {
-            f"container_config.environment.EWMS_PILOT_QUEUE_INCOMING": " ".join(
-                input_queue_ids
+            f"container_config.environment.EWMS_PILOT_QUEUE_INCOMING": ";".join(
+                # map aliases to ids
+                qinfo["id"]
+                for qinfo in resp["input_queues"]
+                if qinfo["alias"] in resp["input_queue_aliases"]
             ),
-            f"container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": " ".join(
-                output_queue_ids
+            f"container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": ";".join(
+                # map aliases to ids
+                qinfo["id"]
+                for qinfo in resp["output_queues"]
+                if qinfo["alias"] in resp["output_queue_aliases"]
             ),
         }
         await taskforces_client.update_set_many(
