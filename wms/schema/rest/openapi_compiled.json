@@ -51,29 +51,20 @@
                     "workflow_id": {
                         "type": "string"
                     },
-                    "queues": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "alias": {
-                                    "type": "string"
-                                },
-                                "id": {
-                                    "type": "string"
-                                },
-                                "is_public": {
-                                    "type": "boolean"
-                                }
-                            },
-                            "required": [
-                                "alias",
-                                "id",
-                                "is_public"
-                            ],
-                            "additionalProperties": false
-                        },
-                        "minItems": 0
+                    "timestamp": {
+                        "type": "integer"
+                    },
+                    "priority": {
+                        "type": "integer"
+                    },
+                    "mq_activated_ts": {
+                        "type": "number"
+                    },
+                    "_mqs_retry_at_ts": {
+                        "type": "number"
+                    },
+                    "aborted": {
+                        "type": "boolean"
                     }
                 },
                 "required": [],
@@ -104,9 +95,6 @@
                     "timestamp": {
                         "type": "integer"
                     },
-                    "priority": {
-                        "type": "integer"
-                    },
                     "input_queues": {
                         "type": "array",
                         "items": {
@@ -120,12 +108,6 @@
                             "type": "str"
                         },
                         "minItems": 0
-                    },
-                    "_mqs_retry_at_ts": {
-                        "type": "number"
-                    },
-                    "aborted": {
-                        "type": "boolean"
                     }
                 },
                 "required": [],
@@ -1228,11 +1210,19 @@
                                                 "task_args": {
                                                     "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                                 },
-                                                "input_queues": {
-                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/input_queues"
+                                                "input_queue_aliases": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "str"
+                                                    },
+                                                    "minItems": 0
                                                 },
-                                                "output_queues": {
-                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/output_queues"
+                                                "output_queue_aliases": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "str"
+                                                    },
+                                                    "minItems": 0
                                                 },
                                                 "n_workers": {
                                                     "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"

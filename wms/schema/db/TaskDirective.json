@@ -45,11 +45,8 @@
         "task_image",
         "task_args",
         "timestamp",
-        "priority",
         "input_queues",
-        "output_queues",
-        "_mqs_retry_at_ts",
-        "aborted"
+        "output_queues"
     ],
     "additionalProperties": false
 }

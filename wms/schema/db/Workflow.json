@@ -22,7 +22,11 @@
     },
     "required": [
         "workflow_id",
-        "queues"
+        "timestamp",
+        "priority",
+        "mq_activated_ts",
+        "_mqs_retry_at_ts",
+        "aborted"
     ],
     "additionalProperties": false
 }
