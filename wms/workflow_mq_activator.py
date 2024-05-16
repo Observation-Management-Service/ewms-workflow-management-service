@@ -122,7 +122,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             await asyncio.sleep(TASK_MQ_ASSEMBLY_SHORTEST_SLEEP)
             short_sleep = False
         else:
-            await asyncio.sleep(ENV.TASK_MQ_ASSEMBLY_DELAY)
+            await asyncio.sleep(ENV.WORKFLOW_MQ_ACTIVATOR_DELAY)
         LOGGER.debug("Looking at next task directive without queues...")
 
         # find

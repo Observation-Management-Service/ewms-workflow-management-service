@@ -96,7 +96,7 @@ class MQSRESTCalls:
             # accept A
             case 0:
                 assert workflow["workflow_id"] == "A1"
-                # assert config.ENV.TASK_MQ_ASSEMBLY_DELAY <= diff <= config.ENV.TASK_MQ_ASSEMBLY_DELAY+1  # check won't work for first call
+                # assert config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY <= diff <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY+1  # check won't work for first call
                 return dict(
                     mqprofiles=[
                         dict(mqid=f"100-{workflow['task_id']}"),
@@ -107,9 +107,9 @@ class MQSRESTCalls:
             case 1:
                 assert workflow["workflow_id"] == "B2"
                 assert (
-                    config.ENV.TASK_MQ_ASSEMBLY_DELAY
+                    config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY
                     <= diff
-                    <= config.ENV.TASK_MQ_ASSEMBLY_DELAY + 1
+                    <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY + 1
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
@@ -133,9 +133,9 @@ class MQSRESTCalls:
             case 3:
                 assert workflow["workflow_id"] == "D4"
                 assert (
-                    config.ENV.TASK_MQ_ASSEMBLY_DELAY
+                    config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY
                     <= diff
-                    <= config.ENV.TASK_MQ_ASSEMBLY_DELAY + 1
+                    <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY + 1
                 )
                 return dict(
                     mqprofiles=[
@@ -147,9 +147,9 @@ class MQSRESTCalls:
             case 4:
                 assert workflow["workflow_id"] == "E5"
                 assert (
-                    config.ENV.TASK_MQ_ASSEMBLY_DELAY
+                    config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY
                     <= diff
-                    <= config.ENV.TASK_MQ_ASSEMBLY_DELAY + 1
+                    <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY + 1
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
