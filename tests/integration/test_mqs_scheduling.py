@@ -294,11 +294,11 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         await asyncio.wait_for(workflow_mq_activator.startup(mongo_client), timeout=60)
 
     # check mongo db state
-    wfs_in_db = [t async for t in workflows_client.find_all({}, [])]
-    # look at workflows
-    assert len(wfs_in_db) == len(TEST_WORKFLOWS)
-    # now, individually
-    for wf_db in wfs_in_db:
+    assert len([w async for w in workflows_client.find_all({}, [])]) == len(
+        TEST_WORKFLOWS
+    )
+    # look at workflows, individually
+    async for wf_db in workflows_client.find_all({}, []):
         exp = next(  # using 'next' gives shorter debug than w/ 'in'
             w for w in TEST_WORKFLOWS if w["workflow_id"] == wf_db["workflow_id"]
         )
@@ -308,13 +308,27 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
             k: v for k, v in exp.items() if k not in ignore
         }
         # look at taskforces
-        tfs_in_db = [
-            t
-            async for t in taskforces_client.find_all(
-                dict(workflow_id=wf_db["workflow_id"]), []
-            )
-        ]
-        assert tfs_in_db == [  # type: ignore
-            _make_post_mqs_loop_taskforce(wf_db, location, i)
-            for i, location in enumerate(wf_db["cluster_locations"])  # type: ignore
-        ]
+        n_asserted = 0
+        async for td_db in task_directives_client.find_all(
+            {"workflow_id": wf_db["workflow_id"]}, []
+        ):
+            expected_tfs = [  # type: ignore
+                _make_post_mqs_loop_taskforce(td_db, location, i)
+                for i, location in enumerate(td_db["cluster_locations"])  # type: ignore
+            ]
+            assert [
+                t
+                async for t in taskforces_client.find_all(
+                    dict(task_id=td_db["task_id"]), []
+                )
+            ] == expected_tfs
+            n_asserted += len(expected_tfs)
+        # sanity check by querying another way
+        assert n_asserted == len(
+            [
+                t
+                async for t in taskforces_client.find_all(
+                    dict(workflow_id=wf_db["workflow_id"]), []
+                )
+            ]
+        )
