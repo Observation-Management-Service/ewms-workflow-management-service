@@ -18,21 +18,21 @@ logging.getLogger("pymongo").setLevel(logging.INFO)
 
 TEST_WORKFLOWS = [
     dict(
-        workflow_id="XYZ",
+        workflow_id=workflow_id,
         timestamp=1 + i,
         priority=10,
         mq_activated_ts=None,
         _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,
         aborted=False,
     )
-    for i, task_id in enumerate(["A1", "B2", "C3", "D4", "E5"])
+    for i, workflow_id in enumerate(["A1", "B2", "C3", "D4", "E5"])
 ]
 
 
 def _make_test_task_directives(workflow: dict, n_tds: int) -> Iterator[dict]:
     for n in range(n_tds + 1):
         yield dict(
-            task_id=workflow["task_id"],
+            task_id=f"td-{n}",
             workflow_id=workflow["workflow_id"],
             #
             cluster_locations=["foo", "bar"],
@@ -40,8 +40,8 @@ def _make_test_task_directives(workflow: dict, n_tds: int) -> Iterator[dict]:
             task_args="--baz bat",
             timestamp=1 + n,
             #
-            input_queues=[f"q{task_id}-in"],
-            output_queues=[f"q{task_id}-out"],
+            input_queues=[f"q-td-{n}-in"],
+            output_queues=[f"q-td-{n}-out"],
         )
 
 
