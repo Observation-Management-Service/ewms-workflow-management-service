@@ -43,7 +43,7 @@ def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
     return dict(
         taskforce_uuid=f"{task_directive['task_id']}-{i}",
         task_id=task_directive["task_id"],
-        workflow_id=TEST_WORKFLOW["workflow_id"],
+        workflow_id=task_directive["workflow_id"],
         #
         timestamp=task_directive["timestamp"],
         collector=f"collector-{location}",
