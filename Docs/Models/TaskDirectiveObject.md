@@ -8,7 +8,7 @@
 | **cluster\_locations** | **List** |  | [optional] [default to null] |
 | **task\_image** | **String** |  | [optional] [default to null] |
 | **task\_args** | **String** |  | [optional] [default to null] |
-| **timestamp** | **Integer** |  | [optional] [default to null] |
+| **timestamp** | **BigDecimal** |  | [optional] [default to null] |
 | **input\_queues** | **List** |  | [optional] [default to null] |
 | **output\_queues** | **List** |  | [optional] [default to null] |
 

@@ -6,7 +6,7 @@
 | **taskforce\_uuid** | **String** |  | [optional] [default to null] |
 | **task\_id** | **String** |  | [optional] [default to null] |
 | **workflow\_id** | **String** |  | [optional] [default to null] |
-| **timestamp** | **Integer** |  | [optional] [default to null] |
+| **timestamp** | **BigDecimal** |  | [optional] [default to null] |
 | **collector** | **String** |  | [optional] [default to null] |
 | **schedd** | **String** |  | [optional] [default to null] |
 | **n\_workers** | [**TaskforceObject_n_workers**](TaskforceObject_n_workers.md) |  | [optional] [default to null] |
