@@ -5,13 +5,20 @@
             "type": "string"
         },
         "timestamp": {
-            "type": "integer"
+            "type": "number"
         },
         "priority": {
             "type": "integer"
         },
         "mq_activated_ts": {
-            "type": "number"
+            "anyOf": [
+                {
+                    "type": "number"
+                },
+                {
+                    "type": "null"
+                }
+            ]
         },
         "_mqs_retry_at_ts": {
             "type": "number"

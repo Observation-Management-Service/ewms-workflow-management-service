@@ -11,7 +11,7 @@
             "type": "string"
         },
         "timestamp": {
-            "type": "integer"
+            "type": "number"
         },
         "collector": {
             "type": "string"

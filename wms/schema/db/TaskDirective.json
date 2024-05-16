@@ -21,7 +21,7 @@
             "type": "string"
         },
         "timestamp": {
-            "type": "integer"
+            "type": "number"
         },
         "input_queues": {
             "type": "array",
