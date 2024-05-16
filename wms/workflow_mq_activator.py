@@ -134,7 +134,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
 
         # request to mqs
         LOGGER.info(
-            f"REQUESTING ACTIVATION for {len(workflow['queues'])} queues (workflow_id={workflow['workflow_id']})..."
+            f"REQUESTING ACTIVATION for workflow_id={workflow['workflow_id']} queues..."
         )
         try:
             resp = await request_activation_to_mqs(mqs_rc, workflow)
