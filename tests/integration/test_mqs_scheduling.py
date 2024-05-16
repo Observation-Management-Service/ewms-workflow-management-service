@@ -4,6 +4,7 @@ Runs everything in main process and thread. Uses a real mongo database
 and mock/patched MQS REST calls."""
 
 import asyncio
+import itertools
 import logging
 import time
 from typing import Any, Iterator
@@ -25,12 +26,15 @@ TEST_WORKFLOWS = [
         _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,
         aborted=False,
     )
-    for i, workflow_id in enumerate(["A1", "B2", "C3", "D4", "E5"])
+    for i, workflow_id in enumerate(
+        # NOTE: naming format matters for _make_test_task_directives()
+        ["A1", "B2", "C3", "D4", "E5"]
+    )
 ]
 
 
-def _make_test_task_directives(workflow: dict, n_tds: int) -> Iterator[dict]:
-    for n in range(n_tds + 1):
+def _make_test_task_directives(workflow: dict) -> Iterator[dict]:
+    for n in range(int(workflow["workflow_id"][1])):
         yield dict(
             task_id=f"td-{n}",
             workflow_id=workflow["workflow_id"],
@@ -99,8 +103,10 @@ class MQSRESTCalls:
                 # assert config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY <= diff <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY+1  # check won't work for first call
                 return dict(
                     mqprofiles=[
-                        dict(mqid=f"100-{workflow['task_id']}"),
-                        dict(mqid=f"200-{workflow['task_id']}"),
+                        itertools.chain.from_iterable(
+                            (td["input_queues"] + td["output_queues"])
+                            for td in _make_test_task_directives(workflow)
+                        )
                     ]
                 )
             # deny B
@@ -125,8 +131,10 @@ class MQSRESTCalls:
                 )
                 return dict(
                     mqprofiles=[
-                        dict(mqid=f"100-{workflow['task_id']}"),
-                        dict(mqid=f"200-{workflow['task_id']}"),
+                        itertools.chain.from_iterable(
+                            (td["input_queues"] + td["output_queues"])
+                            for td in _make_test_task_directives(workflow)
+                        )
                     ]
                 )
             # accept D
@@ -139,8 +147,10 @@ class MQSRESTCalls:
                 )
                 return dict(
                     mqprofiles=[
-                        dict(mqid=f"100-{workflow['task_id']}"),
-                        dict(mqid=f"200-{workflow['task_id']}"),
+                        itertools.chain.from_iterable(
+                            (td["input_queues"] + td["output_queues"])
+                            for td in _make_test_task_directives(workflow)
+                        )
                     ]
                 )
             # deny E
@@ -201,8 +211,10 @@ class MQSRESTCalls:
                 )
                 return dict(
                     mqprofiles=[
-                        dict(mqid=f"100-{workflow['task_id']}"),
-                        dict(mqid=f"200-{workflow['task_id']}"),
+                        itertools.chain.from_iterable(
+                            (td["input_queues"] + td["output_queues"])
+                            for td in _make_test_task_directives(workflow)
+                        )
                     ]
                 )
             # retry: re-deny B
@@ -227,8 +239,10 @@ class MQSRESTCalls:
                 )
                 return dict(
                     mqprofiles=[
-                        dict(mqid=f"100-{workflow['task_id']}"),
-                        dict(mqid=f"200-{workflow['task_id']}"),
+                        itertools.chain.from_iterable(
+                            (td["input_queues"] + td["output_queues"])
+                            for td in _make_test_task_directives(workflow)
+                        )
                     ]
                 )
             # ???
@@ -270,13 +284,13 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     )
 
     # ingest data into mongo as if REST user did so
-    for i, wf in enumerate(TEST_WORKFLOWS):
+    for wf in TEST_WORKFLOWS:
         await workflows_client.insert_one(wf)
-        for td in _make_test_task_directives(wf, i):
+        for td in _make_test_task_directives(wf):
             await task_directives_client.insert_one(td)
-            for j, location in enumerate(td["cluster_locations"]):  # type: ignore
+            for i, location in enumerate(td["cluster_locations"]):  # type: ignore
                 await taskforces_client.insert_one(
-                    _make_test_taskforce(td, location, j)
+                    _make_test_taskforce(td, location, i)
                 )
 
     # pre-patch all the REST calls to MQS
