@@ -52,8 +52,8 @@
                                         "cluster_locations",
                                         "task_image",
                                         "task_args",
-                                        "input_queues",
-                                        "output_queues",
+                                        "input_queue_aliases",
+                                        "output_queue_aliases",
                                         "worker_config"
                                     ],
                                     "additionalProperties": false
