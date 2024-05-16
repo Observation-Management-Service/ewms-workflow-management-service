@@ -19,7 +19,7 @@ LOGGER = logging.getLogger(__name__)
 # ----------------------------------------------------------------------------
 
 
-async def create_task_directive(
+async def create_task_directive_and_taskforces(
     workflow_id: str,
     #
     cluster_locations: list[str],

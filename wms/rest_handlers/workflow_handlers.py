@@ -9,7 +9,7 @@ from tornado import web
 
 from . import auth
 from .base_handlers import BaseWMSHandler
-from .task_handlers import create_task_directive
+from .task_handlers import create_task_directive_and_taskforces
 from .. import config
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TaskforcePhase
@@ -69,7 +69,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
         task_directives = []
         taskforces = []
         for task_input in self.get_argument("tasks"):
-            td, tfs = await create_task_directive(
+            td, tfs = await create_task_directive_and_taskforces(
                 workflow["workflow_id"],  # type: ignore
                 #
                 task_input["cluster_locations"],
