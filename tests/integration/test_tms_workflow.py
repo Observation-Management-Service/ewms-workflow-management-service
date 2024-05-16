@@ -81,7 +81,7 @@ async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    task_id = await ewms_actions.user_requests_new_task(
+    task_id = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
@@ -166,7 +166,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     """Aborted workflow."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    task_id = await ewms_actions.user_requests_new_task(
+    task_id = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
@@ -179,7 +179,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     )
 
     # ABORT!
-    await ewms_actions.user_aborts_task(
+    await ewms_actions.user_aborts_workflow(
         rc,
         openapi_spec,
         task_id,
@@ -286,14 +286,14 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
     """Aborted workflow."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    task_id = await ewms_actions.user_requests_new_task(
+    task_id = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
     )
 
     # ABORT!
-    await ewms_actions.user_aborts_task(
+    await ewms_actions.user_aborts_workflow(
         rc,
         openapi_spec,
         task_id,
@@ -407,7 +407,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     """Aborted workflow."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    task_id = await ewms_actions.user_requests_new_task(
+    task_id = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
@@ -438,7 +438,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # ABORT!
-    await ewms_actions.user_aborts_task(
+    await ewms_actions.user_aborts_workflow(
         rc,
         openapi_spec,
         task_id,
@@ -508,7 +508,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
     """Aborted workflow."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    task_id = await ewms_actions.user_requests_new_task(
+    task_id = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
@@ -555,7 +555,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # ABORT!
-    await ewms_actions.user_aborts_task(
+    await ewms_actions.user_aborts_workflow(
         rc,
         openapi_spec,
         task_id,
@@ -607,7 +607,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
     """Aborted workflow."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    task_id = await ewms_actions.user_requests_new_task(
+    task_id = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
@@ -672,7 +672,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
     # fmt: on
 
     # ABORT!
-    await ewms_actions.user_aborts_task(
+    await ewms_actions.user_aborts_workflow(
         rc,
         openapi_spec,
         task_id,

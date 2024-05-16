@@ -35,7 +35,7 @@ async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
     return openapi_spec
 
 
-async def user_requests_new_task(
+async def user_requests_new_workflow(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     condor_locations: dict,
@@ -336,7 +336,7 @@ async def tms_watcher_sends_status_update(
         # fmt: on
 
 
-async def user_aborts_task(
+async def user_aborts_workflow(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
