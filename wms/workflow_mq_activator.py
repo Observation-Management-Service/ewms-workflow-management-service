@@ -10,7 +10,7 @@ from pymongo import ASCENDING, DESCENDING
 from rest_tools.client import RestClient
 
 from . import database as db
-from .config import ENV, MQS_RETRY_AT_TS_DEFAULT_VALUE, TASK_MQ_ASSEMBLY_SHORTEST_SLEEP
+from .config import ENV, MQS_RETRY_AT_TS_DEFAULT_VALUE, TASK_MQ_ACTIVATOR_SHORTEST_SLEEP
 from .schema.enums import TaskforcePhase
 from .utils import get_mqs_connection
 
@@ -86,7 +86,7 @@ async def set_mqs_retry_at_ts(
     workflow_id: str,
 ) -> None:
     """Set _mqs_retry_at_ts and place back on "backlog"."""
-    retry_at = time.time() + ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+    retry_at = time.time() + ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
     LOGGER.warning(
         f"MQS responded w/ 'not now' signal, will try workflow "
         f"{workflow_id} after {retry_at} ({time.ctime(retry_at)})"
@@ -119,7 +119,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
     short_sleep = False
     while True:
         if short_sleep:
-            await asyncio.sleep(TASK_MQ_ASSEMBLY_SHORTEST_SLEEP)
+            await asyncio.sleep(TASK_MQ_ACTIVATOR_SHORTEST_SLEEP)
             short_sleep = False
         else:
             await asyncio.sleep(ENV.WORKFLOW_MQ_ACTIVATOR_DELAY)
@@ -129,7 +129,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         try:
             workflow = await get_next_workflow(workflows_client)
         except db.client.DocumentNotFoundException:
-            LOGGER.debug("NOTHING FOR TASK_MQ_ASSEMBLY TO START UP")
+            LOGGER.debug("NOTHING FOR TASK_MQ_ACTIVATOR TO START UP")
             continue
 
         # request to mqs

@@ -105,7 +105,7 @@ async def create_task_directive(
                 #
                 # updated by taskforce_launch_control, tms
                 # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)
-                phase=TaskforcePhase.PRE_MQ_ASSEMBLY,
+                phase=TaskforcePhase.PRE_MQ_ACTIVATOR,
                 #
                 # updated by tms SEVERAL times
                 compound_statuses={},

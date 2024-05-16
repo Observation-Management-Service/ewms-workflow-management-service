@@ -73,7 +73,7 @@ def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
         submit_dict={},
         job_event_log_fpath="",
         condor_complete_ts=None,
-        phase=schema.enums.TaskforcePhase.PRE_MQ_ASSEMBLY,
+        phase=schema.enums.TaskforcePhase.PRE_MQ_ACTIVATOR,
         compound_statuses={},
         top_task_errors={},
     )
@@ -112,16 +112,16 @@ class MQSRESTCalls:
                     <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY + 1
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
-                    time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
                 return dict(try_again_later=True)
             # accept C
             case 2:
                 assert workflow["workflow_id"] == "C3"
                 assert (  # prev was denied AND this one was accepted, so this was a short sleep
-                    config.TASK_MQ_ASSEMBLY_SHORTEST_SLEEP
+                    config.TASK_MQ_ACTIVATOR_SHORTEST_SLEEP
                     <= diff
-                    <= config.TASK_MQ_ASSEMBLY_SHORTEST_SLEEP + 1
+                    <= config.TASK_MQ_ACTIVATOR_SHORTEST_SLEEP + 1
                 )
                 return dict(
                     mqprofiles=[
@@ -152,7 +152,7 @@ class MQSRESTCalls:
                     <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY + 1
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
-                    time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
                 return dict(try_again_later=True)
             # retry: re-deny B
@@ -164,7 +164,7 @@ class MQSRESTCalls:
                     <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
-                    time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
                 return dict(try_again_later=True)
             # retry: re-deny E
@@ -176,7 +176,7 @@ class MQSRESTCalls:
                     <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
-                    time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
                 return dict(try_again_later=True)
             # retry: re-deny B
@@ -188,7 +188,7 @@ class MQSRESTCalls:
                     <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
-                    time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
                 return dict(try_again_later=True)
             # retry: accept E
@@ -214,7 +214,7 @@ class MQSRESTCalls:
                     <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
-                    time.time() + config.ENV.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT
+                    time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
                 return dict(try_again_later=True)
             # retry: accept B
