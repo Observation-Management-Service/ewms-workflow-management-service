@@ -254,10 +254,10 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         mongo_client,
         database.utils.WORKFLOWS_COLL_NAME,
     )
-    task_directives_client = database.client.WMSMongoClient(
-        mongo_client,
-        database.utils.TASK_DIRECTIVES_COLL_NAME,
-    )
+    # task_directives_client = database.client.WMSMongoClient(
+    #     mongo_client,
+    #     database.utils.TASK_DIRECTIVES_COLL_NAME,
+    # )
     taskforces_client = database.client.WMSMongoClient(
         mongo_client,
         database.utils.TASKFORCES_COLL_NAME,
@@ -265,7 +265,7 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
 
     # ingest data into mongo as if REST user did so
     for wf_db in TEST_WORKFLOWS:
-        await task_directives_client.insert_one(wf_db)
+        await workflows_client.insert_one(wf_db)
         for i, location in enumerate(wf_db["cluster_locations"]):  # type: ignore
             await taskforces_client.insert_one(_make_test_taskforce(wf_db, location, i))
 
@@ -278,18 +278,18 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         await asyncio.wait_for(workflow_mq_activator.startup(mongo_client), timeout=60)
 
     # check mongo db state
-    tds_in_db = [t async for t in task_directives_client.find_all({}, [])]
-    # look at task directives
-    assert len(tds_in_db) == len(TEST_TASK_DIRECTIVES)
+    wfs_in_db = [t async for t in workflows_client.find_all({}, [])]
+    # look at workflows
+    assert len(wfs_in_db) == len(TEST_WORKFLOWS)
     # now, individually
-    for wf_db in tds_in_db:
+    for wf_db in wfs_in_db:
         src = next(  # using 'next' gives shorter debug than w/ 'in'
-            t for t in TEST_TASK_DIRECTIVES if t["task_id"] == wf_db["task_id"]
+            wf for wf in TEST_WORKFLOWS if wf["workflow_id"] == wf_db["workflow_id"]
         )
         # ignore the '_mqs_retry_at_ts' key, it's functionality is tested by MQSRESTCalls.request_activation_to_mqs
         assert {k: v for k, v in wf_db.items() if k != "_mqs_retry_at_ts"} == {
             **{k: v for k, v in src.items() if k != "_mqs_retry_at_ts"},
-            "queues": [f"100-{wf_db['task_id']}", f"200-{wf_db['task_id']}"],
+            "queues": [f"100-{wf_db['workflow_id']}", f"200-{wf_db['workflow_id']}"],
         }
         # look at taskforces
         tfs_in_db = [
