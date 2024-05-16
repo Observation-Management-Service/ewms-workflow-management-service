@@ -274,7 +274,7 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         await workflows_client.insert_one(wf)
         for td in _make_test_task_directives(wf, i):
             await task_directives_client.insert_one(td)
-            for j, location in enumerate(wf["cluster_locations"]):  # type: ignore
+            for j, location in enumerate(td["cluster_locations"]):  # type: ignore
                 await taskforces_client.insert_one(
                     _make_test_taskforce(td, location, j)
                 )
