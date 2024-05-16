@@ -1,4 +1,4 @@
-"""The daemon task that 'assembles' message queues via the MQS."""
+"""The daemon task that activates message queues via the MQS."""
 
 import asyncio
 import logging
