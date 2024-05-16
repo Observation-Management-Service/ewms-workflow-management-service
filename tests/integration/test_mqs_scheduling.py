@@ -253,14 +253,6 @@ class MQSRESTCalls:
 
 def _make_post_mqs_loop_taskforce(task_directive: dict, location: str, i: int) -> dict:
     taskforce = _make_test_taskforce(task_directive, location, i)
-    taskforce["container_config"].update(
-        {
-            "environment": {
-                "EWMS_PILOT_QUEUE_INCOMING": f"100-{task_directive['task_id']}",
-                "EWMS_PILOT_QUEUE_OUTGOING": f"200-{task_directive['task_id']}",
-            }
-        }
-    )
     taskforce["phase"] = str(schema.enums.TaskforcePhase.PRE_LAUNCH)
     return taskforce
 
@@ -313,8 +305,7 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         # ignore the mq keys -- functionality is tested by MQSRESTCalls.request_activation_to_mqs
         ignore = ["mq_activated_ts", "_mq_activation_retry_at_ts"]
         assert {k: v for k, v in wf_db.items() if k not in ignore} == {
-            **{k: v for k, v in exp.items() if k not in ignore},
-            "queues": [f"100-{wf_db['workflow_id']}", f"200-{wf_db['workflow_id']}"],
+            k: v for k, v in exp.items() if k not in ignore
         }
         # look at taskforces
         tfs_in_db = [
