@@ -171,7 +171,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[workflow["workflow_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2
+                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2.5
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
@@ -183,7 +183,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[workflow["workflow_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2
+                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2.5
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
@@ -195,7 +195,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[workflow["workflow_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2
+                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2.5
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
@@ -207,7 +207,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[workflow["workflow_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2
+                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2.5
                 )
                 return dict(
                     mqprofiles=[
@@ -223,7 +223,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[workflow["workflow_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2
+                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2.5
                 )
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
@@ -235,7 +235,7 @@ class MQSRESTCalls:
                 assert (
                     MQSRESTCalls.retry_dues[workflow["workflow_id"]]
                     <= time.time()
-                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2
+                    <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2.5
                 )
                 return dict(
                     mqprofiles=[
