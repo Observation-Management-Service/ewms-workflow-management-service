@@ -18,10 +18,10 @@ LOGGER = logging.getLogger(__name__)
 
 
 def _get_all_queues(tasks: list[dict]) -> list[str]:
-    all_queues: set[str] = set()
-    all_queues.update(td["input_queue_aliases"] for td in tasks)
-    all_queues.update(td["output_queue_aliases"] for td in tasks)
-    return list(all_queues)
+    all_queues: list[str] = []
+    all_queues.extend(td["input_queue_aliases"] for td in tasks)
+    all_queues.extend(td["output_queue_aliases"] for td in tasks)
+    return list(set(all_queues))
 
 
 # ----------------------------------------------------------------------------
