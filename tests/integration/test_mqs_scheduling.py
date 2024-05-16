@@ -284,9 +284,9 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     )
 
     # ingest data into mongo as if REST user did so
-    for wf in TEST_WORKFLOWS:
-        await workflows_client.insert_one(wf)
-        for td in _make_test_task_directives(wf):
+    for wf_db in TEST_WORKFLOWS:
+        await workflows_client.insert_one(wf_db)
+        for td in _make_test_task_directives(wf_db):
             await task_directives_client.insert_one(td)
             for i, location in enumerate(td["cluster_locations"]):  # type: ignore
                 await taskforces_client.insert_one(
@@ -306,21 +306,24 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     # look at workflows
     assert len(wfs_in_db) == len(TEST_WORKFLOWS)
     # now, individually
-    for wf in wfs_in_db:
-        src = next(  # using 'next' gives shorter debug than w/ 'in'
-            wf for wf in TEST_WORKFLOWS if wf["workflow_id"] == wf["workflow_id"]
+    for wf_db in wfs_in_db:
+        exp = next(  # using 'next' gives shorter debug than w/ 'in'
+            w for w in TEST_WORKFLOWS if w["workflow_id"] == wf_db["workflow_id"]
         )
         # ignore the mq keys -- functionality is tested by MQSRESTCalls.request_activation_to_mqs
         ignore = ["mq_activated_ts", "_mq_activation_retry_at_ts"]
-        assert {k: v for k, v in wf.items() if k not in ignore} == {
-            **{k: v for k, v in src.items() if k not in ignore},
-            "queues": [f"100-{wf['workflow_id']}", f"200-{wf['workflow_id']}"],
+        assert {k: v for k, v in wf_db.items() if k not in ignore} == {
+            **{k: v for k, v in exp.items() if k not in ignore},
+            "queues": [f"100-{wf_db['workflow_id']}", f"200-{wf_db['workflow_id']}"],
         }
         # look at taskforces
         tfs_in_db = [
-            t async for t in taskforces_client.find_all(dict(task_id=wf["task_id"]), [])
+            t
+            async for t in taskforces_client.find_all(
+                dict(workflow_id=wf_db["workflow_id"]), []
+            )
         ]
         assert tfs_in_db == [  # type: ignore
-            _make_post_mqs_loop_taskforce(wf, location, i)
-            for i, location in enumerate(wf["cluster_locations"])  # type: ignore
+            _make_post_mqs_loop_taskforce(wf_db, location, i)
+            for i, location in enumerate(wf_db["cluster_locations"])  # type: ignore
         ]
