@@ -40,6 +40,7 @@ async def user_requests_new_workflow(
     openapi_spec: openapi_core.OpenAPI,
     condor_locations: dict,
 ) -> str:
+    """Return task id."""
     task_image = "icecube/earthpilot"
     task_args = "aaa bbb --ccc 123"
     n_workers = 99
@@ -69,8 +70,8 @@ async def user_requests_new_workflow(
                     cluster_locations=list(condor_locations.keys()),
                     task_image=task_image,
                     task_args=task_args,
-                    input_queues=["qfoo"],
-                    output_queues=["qbar"],
+                    input_queue_aliases=["qfoo"],
+                    output_queue_aliases=["qbar"],
                     #
                     n_workers=n_workers,
                     worker_config=worker_config,
