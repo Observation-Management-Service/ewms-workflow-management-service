@@ -40,7 +40,7 @@ async def alist(async_iterator: AsyncIterator) -> list:
 def _make_test_task_directives(workflow: dict) -> Iterator[dict]:
     for n in range(int(workflow["workflow_id"][1])):
         yield dict(
-            task_id=f"td-{n}",
+            task_id=f"td-{workflow['workflow_id']}-{n}",
             workflow_id=workflow["workflow_id"],
             #
             cluster_locations=["foo", "bar"],
