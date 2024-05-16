@@ -16,20 +16,23 @@ from wms import database, config, schema, workflow_mq_activator
 
 logging.getLogger("pymongo").setLevel(logging.INFO)
 
-
-TEST_TASK_DIRECTIVES = [
+TEST_WORKFLOWS = [
     dict(
-        task_id=task_id,
-        cluster_locations=["foo", "bar"],
-        task_image="bap",
-        task_args="--baz bat",
+        # task_id=task_id,
+        # workflow_id=TEST_WORKFLOW["workflow_id"],
+        # cluster_locations=["foo", "bar"],
+        # task_image="bap",
+        # task_args="--baz bat",
+        # timestamp=1 + i,
+        # #
+        # input_queues=[f"q{task_id}-in"],
+        # output_queues=[f"q{task_id}-out"],
+        #
+        workflow_id="XYZ",
         timestamp=1 + i,
         priority=10,
-        #
-        n_queues=2,
-        queues=[],
+        mq_activated_ts=None,
         _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,
-        #
         aborted=False,
     )
     for i, task_id in enumerate(["A1", "B2", "C3", "D4", "E5"])
@@ -40,6 +43,8 @@ def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
     return dict(
         taskforce_uuid=f"{task_directive['task_id']}-{i}",
         task_id=task_directive["task_id"],
+        workflow_id=TEST_WORKFLOW["workflow_id"],
+        #
         timestamp=task_directive["timestamp"],
         collector=f"collector-{location}",
         schedd=f"schedd-{location}",
@@ -245,6 +250,10 @@ def _make_post_mqs_loop_taskforce(task_directive: dict, location: str, i: int) -
 async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     """Test the MQS scheduling with several tasks and requests."""
     mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
+    workflows_client = database.client.WMSMongoClient(
+        mongo_client,
+        database.utils.WORKFLOWS_COLL_NAME,
+    )
     task_directives_client = database.client.WMSMongoClient(
         mongo_client,
         database.utils.TASK_DIRECTIVES_COLL_NAME,
@@ -255,10 +264,10 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     )
 
     # ingest data into mongo as if REST user did so
-    for td_db in TEST_TASK_DIRECTIVES:
-        await task_directives_client.insert_one(td_db)
-        for i, location in enumerate(td_db["cluster_locations"]):  # type: ignore
-            await taskforces_client.insert_one(_make_test_taskforce(td_db, location, i))
+    for wf_db in TEST_WORKFLOWS:
+        await task_directives_client.insert_one(wf_db)
+        for i, location in enumerate(wf_db["cluster_locations"]):  # type: ignore
+            await taskforces_client.insert_one(_make_test_taskforce(wf_db, location, i))
 
     # pre-patch all the REST calls to MQS
     mock_req_act_to_mqs.side_effect = MQSRESTCalls.request_activation_to_mqs
@@ -273,23 +282,23 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     # look at task directives
     assert len(tds_in_db) == len(TEST_TASK_DIRECTIVES)
     # now, individually
-    for td_db in tds_in_db:
+    for wf_db in tds_in_db:
         src = next(  # using 'next' gives shorter debug than w/ 'in'
-            t for t in TEST_TASK_DIRECTIVES if t["task_id"] == td_db["task_id"]
+            t for t in TEST_TASK_DIRECTIVES if t["task_id"] == wf_db["task_id"]
         )
         # ignore the '_mqs_retry_at_ts' key, it's functionality is tested by MQSRESTCalls.request_activation_to_mqs
-        assert {k: v for k, v in td_db.items() if k != "_mqs_retry_at_ts"} == {
+        assert {k: v for k, v in wf_db.items() if k != "_mqs_retry_at_ts"} == {
             **{k: v for k, v in src.items() if k != "_mqs_retry_at_ts"},
-            "queues": [f"100-{td_db['task_id']}", f"200-{td_db['task_id']}"],
+            "queues": [f"100-{wf_db['task_id']}", f"200-{wf_db['task_id']}"],
         }
         # look at taskforces
         tfs_in_db = [
             t
             async for t in taskforces_client.find_all(
-                dict(task_id=td_db["task_id"]), []
+                dict(task_id=wf_db["task_id"]), []
             )
         ]
         assert tfs_in_db == [  # type: ignore
-            _make_post_mqs_loop_taskforce(td_db, location, i)
-            for i, location in enumerate(td_db["cluster_locations"])  # type: ignore
+            _make_post_mqs_loop_taskforce(wf_db, location, i)
+            for i, location in enumerate(wf_db["cluster_locations"])  # type: ignore
         ]
