@@ -44,7 +44,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
         workflow = dict(
             # IMMUTABLE
             workflow_id=str(uuid.uuid4()),
-            timestamp=int(time.time()),
+            timestamp=time.time(),
             priority=10,  # TODO
             # MUTABLE
             mq_activated_ts=None,  # updated by workflow_mq_activator

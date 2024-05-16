@@ -29,7 +29,7 @@ async def get_next_workflow(
                 #    using 'inf' helps with sorting correctly, see 'sort' below
                 {"_mqs_retry_at_ts": MQS_RETRY_AT_TS_DEFAULT_VALUE},
                 # or B: any with an 'at time' that is due
-                {"_mqs_retry_at_ts": {"$lte": int(time.time())}},
+                {"_mqs_retry_at_ts": {"$lte": time.time()}},
             ],
         },
         sort=[
@@ -77,7 +77,7 @@ async def set_mq_activated_ts(
     """Set mq_activated_ts in db."""
     await workflows_client.find_one_and_update(
         dict(workflow_id=workflow_id),
-        dict(mq_activated_ts=int(time.time())),
+        dict(mq_activated_ts=time.time()),
     )
 
 

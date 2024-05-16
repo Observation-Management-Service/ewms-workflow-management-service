@@ -1,6 +1,5 @@
 """A dummy MQS server for testing."""
 
-
 import os
 import time
 
@@ -12,7 +11,7 @@ app = Flask(__name__)
 @app.route("/mq-group", methods=["POST"])
 def dummy_mq_group_post():
     mqgroup_id = "test-mq-group"
-    now = int(time.time())
+    now = time.time()
 
     return jsonify(
         dict(

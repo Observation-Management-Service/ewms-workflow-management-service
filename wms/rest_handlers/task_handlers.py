@@ -41,7 +41,7 @@ async def create_task_directive(
         #
         task_id=uuid.uuid4().hex,
         workflow_id=workflow_id,
-        timestamp=int(time.time()),
+        timestamp=time.time(),
         #
         cluster_locations=cluster_locations,
         task_image=task_image,
@@ -71,7 +71,7 @@ async def create_task_directive(
                 taskforce_uuid=uuid.uuid4().hex,
                 task_id=task_directive["task_id"],
                 workflow_id=workflow_id,
-                timestamp=int(time.time()),
+                timestamp=time.time(),
                 collector=config.KNOWN_CLUSTERS[location]["collector"],
                 schedd=config.KNOWN_CLUSTERS[location]["schedd"],
                 #
