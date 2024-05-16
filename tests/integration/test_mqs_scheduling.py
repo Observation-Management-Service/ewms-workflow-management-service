@@ -255,12 +255,6 @@ class MQSRESTCalls:
                 assert 0
 
 
-def _make_post_mqs_loop_taskforce(task_directive: dict, location: str, i: int) -> dict:
-    taskforce = _make_test_taskforce(task_directive, location, i)
-    taskforce["phase"] = str(schema.enums.TaskforcePhase.PRE_LAUNCH)
-    return taskforce
-
-
 @patch("wms.workflow_mq_activator.request_activation_to_mqs", new_callable=AsyncMock)
 @patch("wms.workflow_mq_activator.RestClient", new=MagicMock)  # it's a from-import
 async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
@@ -314,10 +308,11 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         async for td_db in task_directives_client.find_all(
             {"workflow_id": wf_db["workflow_id"]}, []
         ):
-            expected_tfs = [  # type: ignore
-                _make_post_mqs_loop_taskforce(td_db, location, i)
-                for i, location in enumerate(td_db["cluster_locations"])  # type: ignore
-            ]
+            expected_tfs = []  # type: ignore
+            for i, location in enumerate(td_db["cluster_locations"]):
+                tf = _make_test_taskforce(td_db, location, i)
+                tf["phase"] = str(schema.enums.TaskforcePhase.PRE_LAUNCH)
+                expected_tfs.append(tf)
             assert (
                 await alist(
                     taskforces_client.find_all(dict(task_id=td_db["task_id"]), [])
