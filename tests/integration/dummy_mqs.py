@@ -8,8 +8,8 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 
-@app.route("/mq-group", methods=["POST"])
-def dummy_mq_group_post():
+@app.route("/mq-group/reserve", methods=["POST"])
+def dummy_mq_group_reserve_post():
     mqgroup_id = "test-mq-group"
     now = time.time()
 
@@ -18,16 +18,18 @@ def dummy_mq_group_post():
             mqgroup=dict(
                 mqgroup_id=mqgroup_id,
                 timestamp=now,
-                criteria={},
+                criteria={},  # updated on activation
             ),
             mqprofiles=[
                 dict(
-                    mqid=f"t{i}",
+                    mqid=f"123{alias}",
                     mqgroup_id=mqgroup_id,
                     timestamp=now,
-                    nickname=f"mq-{mqgroup_id}-{i}",
+                    alias=alias,
+                    is_public=alias in request.get_json()["public"],
+                    is_activated=False,
                 )
-                for i in range(request.get_json()["criteria"]["n_queues"])
+                for alias in request.get_json()["queue_aliases"]
             ],
         )
     )
