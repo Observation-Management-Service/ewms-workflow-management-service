@@ -154,9 +154,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         else:
             await set_mq_activated_ts(workflows_client, workflow["workflow_id"])
 
-        LOGGER.info(
-            f"ACTIVATED {len(resp['mqprofiles'])} queues (workflow_id={workflow['workflow_id']})"
-        )
+        LOGGER.info(f"ACTIVATED queues for workflow_id={workflow['workflow_id']}")
 
         # update db -- taskforces
         await advance_taskforce_phases(taskforces_client, workflow["workflow_id"])

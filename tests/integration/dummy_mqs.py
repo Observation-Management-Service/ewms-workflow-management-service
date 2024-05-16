@@ -35,6 +35,12 @@ def dummy_mq_group_reserve_post():
     )
 
 
+@app.route("/mq-group/activate", methods=["POST"])
+def dummy_mq_group_activate_post():
+    # in the real mqs, there's a bunch of db logic, etc.
+    return jsonify(dict(activated=True))
+
+
 if __name__ == "__main__":
     app.run(
         debug=True,
