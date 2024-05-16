@@ -6,7 +6,7 @@ and mock/patched MQS REST calls."""
 import asyncio
 import logging
 import time
-from typing import Any
+from typing import Any, Iterator
 from unittest.mock import patch, MagicMock, AsyncMock
 
 import pytest
@@ -18,16 +18,6 @@ logging.getLogger("pymongo").setLevel(logging.INFO)
 
 TEST_WORKFLOWS = [
     dict(
-        # task_id=task_id,
-        # workflow_id=TEST_WORKFLOW["workflow_id"],
-        # cluster_locations=["foo", "bar"],
-        # task_image="bap",
-        # task_args="--baz bat",
-        # timestamp=1 + i,
-        # #
-        # input_queues=[f"q{task_id}-in"],
-        # output_queues=[f"q{task_id}-out"],
-        #
         workflow_id="XYZ",
         timestamp=1 + i,
         priority=10,
@@ -37,6 +27,22 @@ TEST_WORKFLOWS = [
     )
     for i, task_id in enumerate(["A1", "B2", "C3", "D4", "E5"])
 ]
+
+
+def _make_test_task_directives(workflow: dict, n_tds: int) -> Iterator[dict]:
+    for n in range(n_tds + 1):
+        yield dict(
+            task_id=workflow["task_id"],
+            workflow_id=workflow["workflow_id"],
+            #
+            cluster_locations=["foo", "bar"],
+            task_image="bap",
+            task_args="--baz bat",
+            timestamp=1 + n,
+            #
+            input_queues=[f"q{task_id}-in"],
+            output_queues=[f"q{task_id}-out"],
+        )
 
 
 def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
@@ -254,20 +260,24 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         mongo_client,
         database.utils.WORKFLOWS_COLL_NAME,
     )
-    # task_directives_client = database.client.WMSMongoClient(
-    #     mongo_client,
-    #     database.utils.TASK_DIRECTIVES_COLL_NAME,
-    # )
+    task_directives_client = database.client.WMSMongoClient(
+        mongo_client,
+        database.utils.TASK_DIRECTIVES_COLL_NAME,
+    )
     taskforces_client = database.client.WMSMongoClient(
         mongo_client,
         database.utils.TASKFORCES_COLL_NAME,
     )
 
     # ingest data into mongo as if REST user did so
-    for wf_db in TEST_WORKFLOWS:
-        await workflows_client.insert_one(wf_db)
-        for i, location in enumerate(wf_db["cluster_locations"]):  # type: ignore
-            await taskforces_client.insert_one(_make_test_taskforce(wf_db, location, i))
+    for i, wf in enumerate(TEST_WORKFLOWS):
+        await workflows_client.insert_one(wf)
+        for td in _make_test_task_directives(wf, i):
+            await task_directives_client.insert_one(td)
+            for j, location in enumerate(wf["cluster_locations"]):  # type: ignore
+                await taskforces_client.insert_one(
+                    _make_test_taskforce(td, location, j)
+                )
 
     # pre-patch all the REST calls to MQS
     mock_req_act_to_mqs.side_effect = MQSRESTCalls.request_activation_to_mqs
@@ -282,23 +292,20 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     # look at workflows
     assert len(wfs_in_db) == len(TEST_WORKFLOWS)
     # now, individually
-    for wf_db in wfs_in_db:
+    for wf in wfs_in_db:
         src = next(  # using 'next' gives shorter debug than w/ 'in'
-            wf for wf in TEST_WORKFLOWS if wf["workflow_id"] == wf_db["workflow_id"]
+            wf for wf in TEST_WORKFLOWS if wf["workflow_id"] == wf["workflow_id"]
         )
         # ignore the '_mqs_retry_at_ts' key, it's functionality is tested by MQSRESTCalls.request_activation_to_mqs
-        assert {k: v for k, v in wf_db.items() if k != "_mqs_retry_at_ts"} == {
+        assert {k: v for k, v in wf.items() if k != "_mqs_retry_at_ts"} == {
             **{k: v for k, v in src.items() if k != "_mqs_retry_at_ts"},
-            "queues": [f"100-{wf_db['workflow_id']}", f"200-{wf_db['workflow_id']}"],
+            "queues": [f"100-{wf['workflow_id']}", f"200-{wf['workflow_id']}"],
         }
         # look at taskforces
         tfs_in_db = [
-            t
-            async for t in taskforces_client.find_all(
-                dict(task_id=wf_db["task_id"]), []
-            )
+            t async for t in taskforces_client.find_all(dict(task_id=wf["task_id"]), [])
         ]
         assert tfs_in_db == [  # type: ignore
-            _make_post_mqs_loop_taskforce(wf_db, location, i)
-            for i, location in enumerate(wf_db["cluster_locations"])  # type: ignore
+            _make_post_mqs_loop_taskforce(wf, location, i)
+            for i, location in enumerate(wf["cluster_locations"])  # type: ignore
         ]
