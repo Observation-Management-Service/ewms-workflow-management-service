@@ -4,7 +4,7 @@
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
 | **workflow\_id** | **String** |  | [optional] [default to null] |
-| **timestamp** | **Integer** |  | [optional] [default to null] |
+| **timestamp** | **BigDecimal** |  | [optional] [default to null] |
 | **priority** | **Integer** |  | [optional] [default to null] |
 | **mq\_activated\_ts** | **BigDecimal** |  | [optional] [default to null] |
 | **\_mqs\_retry\_at\_ts** | **BigDecimal** |  | [optional] [default to null] |
