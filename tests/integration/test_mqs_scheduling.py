@@ -303,16 +303,18 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         assert {k: v for k, v in wf_db.items() if k not in ignore} == {
             k: v for k, v in exp.items() if k not in ignore
         }
-        # look at taskforces
+        # look at task_directives by workflow_id
         n_asserted = 0
         async for td_db in task_directives_client.find_all(
             {"workflow_id": wf_db["workflow_id"]}, []
         ):
+            # assemble list of expected taskforces
             expected_tfs = []  # type: ignore
             for i, location in enumerate(td_db["cluster_locations"]):
                 tf = _make_test_taskforce(td_db, location, i)
                 tf["phase"] = str(schema.enums.TaskforcePhase.PRE_LAUNCH)
                 expected_tfs.append(tf)
+            # get all taskforces for task_id
             assert (
                 await alist(
                     taskforces_client.find_all(dict(task_id=td_db["task_id"]), [])
@@ -320,7 +322,7 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
                 == expected_tfs
             )
             n_asserted += len(expected_tfs)
-        # sanity check by querying another way
+        # sanity check by querying w/ workflow_id
         assert n_asserted == len(
             await alist(
                 taskforces_client.find_all(dict(workflow_id=wf_db["workflow_id"]), [])
