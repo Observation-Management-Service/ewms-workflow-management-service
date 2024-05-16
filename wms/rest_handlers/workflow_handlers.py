@@ -48,7 +48,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
             priority=10,  # TODO
             # MUTABLE
             mq_activated_ts=None,  # updated by workflow_mq_activator
-            _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by workflow_mq_activator,
+            _mq_activation_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by workflow_mq_activator,
             aborted=False,
         )
         workflow = await self.workflows_client.insert_one(workflow)

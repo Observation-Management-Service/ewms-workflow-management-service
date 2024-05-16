@@ -27,13 +27,16 @@ async def get_next_workflow(
             "$or": [
                 # A: normal entries not needing a retry ('inf' indicates n/a)
                 #    using 'inf' helps with sorting correctly, see 'sort' below
-                {"_mqs_retry_at_ts": MQS_RETRY_AT_TS_DEFAULT_VALUE},
+                {"_mq_activation_retry_at_ts": MQS_RETRY_AT_TS_DEFAULT_VALUE},
                 # or B: any with an 'at time' that is due
-                {"_mqs_retry_at_ts": {"$lte": time.time()}},
+                {"_mq_activation_retry_at_ts": {"$lte": time.time()}},
             ],
         },
         sort=[
-            ("_mqs_retry_at_ts", ASCENDING),  # any w/ mqs-retry due (inf last)
+            (
+                "_mq_activation_retry_at_ts",
+                ASCENDING,
+            ),  # any w/ mqs-retry due (inf last)
             ("priority", DESCENDING),  # then, highest priority
             ("timestamp", ASCENDING),  # then, oldest
         ],
@@ -81,11 +84,11 @@ async def set_mq_activated_ts(
     )
 
 
-async def set_mqs_retry_at_ts(
+async def set_mq_activation_retry_at_ts(
     workflows_client: db.client.WMSMongoClient,
     workflow_id: str,
 ) -> None:
-    """Set _mqs_retry_at_ts and place back on "backlog"."""
+    """Set _mq_activation_retry_at_ts and place back on "backlog"."""
     retry_at = time.time() + ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
     LOGGER.warning(
         f"MQS responded w/ 'not now' signal, will try workflow "
@@ -93,7 +96,7 @@ async def set_mqs_retry_at_ts(
     )
     await workflows_client.find_one_and_update(
         dict(workflow_id=workflow_id),
-        dict(_mqs_retry_at_ts=retry_at),
+        dict(_mq_activation_retry_at_ts=retry_at),
     )
 
 
@@ -143,7 +146,9 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             continue
         # update db workflow w/ result
         if resp.get("try_again_later"):
-            await set_mqs_retry_at_ts(workflows_client, workflow["workflow_id"])
+            await set_mq_activation_retry_at_ts(
+                workflows_client, workflow["workflow_id"]
+            )
             short_sleep = True  # want to give other tasks a chance to start up
             continue
         else:

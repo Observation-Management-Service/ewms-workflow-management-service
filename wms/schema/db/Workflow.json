@@ -20,7 +20,7 @@
                 }
             ]
         },
-        "_mqs_retry_at_ts": {
+        "_mq_activation_retry_at_ts": {
             "type": "number"
         },
         "aborted": {
@@ -32,7 +32,7 @@
         "timestamp",
         "priority",
         "mq_activated_ts",
-        "_mqs_retry_at_ts",
+        "_mq_activation_retry_at_ts",
         "aborted"
     ],
     "additionalProperties": false

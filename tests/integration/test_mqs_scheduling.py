@@ -23,7 +23,7 @@ TEST_WORKFLOWS = [
         timestamp=1 + i,
         priority=10,
         mq_activated_ts=None,
-        _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,
+        _mq_activation_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,
         aborted=False,
     )
     for i, workflow_id in enumerate(
@@ -310,9 +310,10 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         src = next(  # using 'next' gives shorter debug than w/ 'in'
             wf for wf in TEST_WORKFLOWS if wf["workflow_id"] == wf["workflow_id"]
         )
-        # ignore the '_mqs_retry_at_ts' key, it's functionality is tested by MQSRESTCalls.request_activation_to_mqs
-        assert {k: v for k, v in wf.items() if k != "_mqs_retry_at_ts"} == {
-            **{k: v for k, v in src.items() if k != "_mqs_retry_at_ts"},
+        # ignore the mq keys -- functionality is tested by MQSRESTCalls.request_activation_to_mqs
+        ignore = ["mq_activated_ts", "_mq_activation_retry_at_ts"]
+        assert {k: v for k, v in wf.items() if k not in ignore} == {
+            **{k: v for k, v in src.items() if k not in ignore},
             "queues": [f"100-{wf['workflow_id']}", f"200-{wf['workflow_id']}"],
         }
         # look at taskforces
