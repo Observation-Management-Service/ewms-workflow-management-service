@@ -1256,7 +1256,7 @@
                                         },
                                         "minItems": 1
                                     },
-                                    "public_queues": {
+                                    "public_queue_aliases": {
                                         "type": "array",
                                         "items": {
                                             "type": "string"
@@ -1266,7 +1266,7 @@
                                 },
                                 "required": [
                                     "tasks",
-                                    "public_queues"
+                                    "public_queue_aliases"
                                 ],
                                 "additionalProperties": false
                             }

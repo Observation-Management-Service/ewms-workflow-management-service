@@ -79,7 +79,7 @@ async def user_requests_new_workflow(
                     # input_files=input_files,  # empty
                 )
             ],
-            public_queues=["qfoo", "qbar"],
+            public_queue_aliases=["qfoo", "qbar"],
         ),
     )
     # TODO - update asserts when/if testing multi-task workflows

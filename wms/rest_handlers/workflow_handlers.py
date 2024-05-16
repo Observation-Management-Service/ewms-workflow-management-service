@@ -59,7 +59,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
             "/mq-group/reserve",
             {
                 "queue_aliases": _get_all_queues(self.get_argument("tasks")),
-                "public": self.get_argument("public_queues"),
+                "public": self.get_argument("public_queue_aliases"),
             },
         )
         mqprofiles = resp["mqprofiles"]
