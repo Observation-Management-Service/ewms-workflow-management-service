@@ -21,6 +21,7 @@
 *DefaultApi* | [**workflowPost**](Apis/DefaultApi.md#workflowpost) | **POST** /workflow |  |
 *DefaultApi* | [**workflowWorkflowIdDelete**](Apis/DefaultApi.md#workflowworkflowiddelete) | **DELETE** /workflow/{workflow_id} |  |
 *DefaultApi* | [**workflowWorkflowIdGet**](Apis/DefaultApi.md#workflowworkflowidget) | **GET** /workflow/{workflow_id} |  |
+*DefaultApi* | [**workflowsFindPost**](Apis/DefaultApi.md#workflowsfindpost) | **POST** /workflows/find |  |
 
 
 <a name="documentation-for-models"></a>
@@ -50,6 +51,7 @@
  - [_workflow_post_200_response](./Models/_workflow_post_200_response.md)
  - [_workflow_post_request](./Models/_workflow_post_request.md)
  - [_workflow_post_request_tasks_inner](./Models/_workflow_post_request_tasks_inner.md)
+ - [_workflows_find_post_200_response](./Models/_workflows_find_post_200_response.md)
  - [worker_config](./Models/worker_config.md)
 
 

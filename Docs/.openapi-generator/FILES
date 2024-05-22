@@ -24,5 +24,6 @@ Models/_workflow__workflow_id__delete_200_response.md
 Models/_workflow_post_200_response.md
 Models/_workflow_post_request.md
 Models/_workflow_post_request_tasks_inner.md
+Models/_workflows_find_post_200_response.md
 Models/worker_config.md
 README.md

@@ -19,6 +19,7 @@ All URIs are relative to *http://localhost*
 | [**workflowPost**](DefaultApi.md#workflowPost) | **POST** /workflow |  |
 | [**workflowWorkflowIdDelete**](DefaultApi.md#workflowWorkflowIdDelete) | **DELETE** /workflow/{workflow_id} |  |
 | [**workflowWorkflowIdGet**](DefaultApi.md#workflowWorkflowIdGet) | **GET** /workflow/{workflow_id} |  |
+| [**workflowsFindPost**](DefaultApi.md#workflowsFindPost) | **POST** /workflows/find |  |
 
 
 <a name="rootGet"></a>
@@ -377,5 +378,29 @@ This endpoint does not need any parameter.
 ### HTTP request headers
 
 - **Content-Type**: Not defined
+- **Accept**: application/json
+
+<a name="workflowsFindPost"></a>
+# **workflowsFindPost**
+> _workflows_find_post_200_response workflowsFindPost(FindObject)
+
+
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **FindObject** | [**FindObject**](../Models/FindObject.md)|  | [optional] |
+
+### Return type
+
+[**_workflows_find_post_200_response**](../Models/_workflows_find_post_200_response.md)
+
+### Authorization
+
+
+### HTTP request headers
+
+- **Content-Type**: application/json
 - **Accept**: application/json
 
