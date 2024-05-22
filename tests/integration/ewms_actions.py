@@ -39,8 +39,8 @@ async def user_requests_new_workflow(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     condor_locations: dict,
-) -> str:
-    """Return task id."""
+) -> tuple[str, str]:
+    """Return workflow and task ids."""
     task_image = "icecube/earthpilot"
     task_args = "aaa bbb --ccc 123"
     n_workers = 99
@@ -148,7 +148,7 @@ async def user_requests_new_workflow(
         for tf in resp["taskforces"]
     )
 
-    return task_id
+    return workflow_resp["workflow_id"], task_id
 
 
 async def taskforce_launch_control_marks_taskforces_pending_starter(
@@ -378,7 +378,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "GET",
-        f"/task/directive/{task_id}",
+        f"/workflow/{workflow_id}",
     )
     assert resp["aborted"] is True
 
