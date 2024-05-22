@@ -83,12 +83,8 @@ async def create_task_directive_and_taskforces(
                     arguments=task_directive["task_args"],
                     environment={
                         **environment,
-                        "container_config.environment.EWMS_PILOT_QUEUE_INCOMING": ";".join(
-                            input_queues
-                        ),
-                        "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": ";".join(
-                            output_queues
-                        ),
+                        "EWMS_PILOT_QUEUE_INCOMING": ";".join(input_queues),
+                        "EWMS_PILOT_QUEUE_OUTGOING": ";".join(output_queues),
                     },
                     input_files=input_files,
                 ),

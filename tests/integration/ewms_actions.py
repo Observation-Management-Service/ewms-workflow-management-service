@@ -138,7 +138,11 @@ async def user_requests_new_workflow(
         == dict(
             image=task_image,
             arguments=task_args,
-            environment=environment,
+            environment={
+                **environment,
+                "EWMS_PILOT_QUEUE_INCOMING": "123qfoo",
+                "EWMS_PILOT_QUEUE_OUTGOING": "123qbar",
+            },
             input_files=input_files,
         )
         for tf in resp["taskforces"]
