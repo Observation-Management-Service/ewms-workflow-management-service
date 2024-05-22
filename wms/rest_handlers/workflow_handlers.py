@@ -77,12 +77,12 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
                 task_input["task_args"],
                 #
                 [  # map aliases to ids
-                    p["id"]
+                    p["mqid"]
                     for p in mqprofiles
                     if p["alias"] in task_input["input_queue_aliases"]
                 ],
                 [  # map aliases to ids
-                    p["id"]
+                    p["mqid"]
                     for p in mqprofiles
                     if p["alias"] in task_input["output_queue_aliases"]
                 ],
