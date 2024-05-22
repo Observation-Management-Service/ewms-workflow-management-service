@@ -204,3 +204,28 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 
 
 # ----------------------------------------------------------------------------
+
+
+class WorkflowsFindHandler(BaseWMSHandler):  # pylint: disable=W0223
+    """Handle actions for finding workflows."""
+
+    ROUTE = r"/workflows/find$"
+
+    @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    async def post(self) -> None:
+        """Handle POST.
+
+        Search for workflows matching given query.
+        """
+        matches = []
+        async for m in self.workflows_client.find_all(
+            self.get_argument("query"),
+            self.get_argument("projection", []),
+        ):
+            matches.append(m)
+
+        self.write({"workflows": matches})
+
+
+# ----------------------------------------------------------------------------

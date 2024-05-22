@@ -18,6 +18,7 @@ HANDLERS = [
     #
     rest_handlers.workflow_handlers.WorkflowHandler,
     rest_handlers.workflow_handlers.WorkflowIDHandler,
+    rest_handlers.workflow_handlers.WorkflowsFindHandler,
     #
     rest_handlers.task_handlers.TaskDirectiveIDHandler,
     rest_handlers.task_handlers.TaskDirectivesFindHandler,
