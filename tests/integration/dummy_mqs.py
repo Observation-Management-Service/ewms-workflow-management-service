@@ -8,8 +8,8 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 
-@app.route("/mq-group/reserve", methods=["POST"])
-def dummy_mq_group_reserve_post():
+@app.route("/v0/mq-group/reservation", methods=["POST"])
+def dummy_mq_group_reservation_post():
     mqgroup_id = "test-mq-group"
     now = time.time()
 
@@ -35,8 +35,8 @@ def dummy_mq_group_reserve_post():
     )
 
 
-@app.route("/mq-group/activate", methods=["POST"])
-def dummy_mq_group_activate_post():
+@app.route("/v0/mq-group/activation", methods=["POST"])
+def dummy_mq_group_activation_post():
     # in the real mqs, there's a bunch of db logic, etc.
     return jsonify(dict(activated=True))
 
