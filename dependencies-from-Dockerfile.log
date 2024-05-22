@@ -63,7 +63,7 @@ urllib3==2.2.1
 Werkzeug==3.0.3
 wheel==0.43.0
 wipac-dev-tools==1.9.1
-wipac-rest-tools==1.7.4
+wipac-rest-tools==1.7.5
 wipac-telemetry==0.3.0
 wrapt==1.16.0
 zipp==3.18.2
@@ -271,7 +271,7 @@ wms
 │   │   ├── idna [required: >=2.5,<4, installed: 3.7]
 │   │   └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
 │   └── typing_extensions [required: Any, installed: 4.11.0]
-└── wipac-rest-tools [required: Any, installed: 1.7.4]
+└── wipac-rest-tools [required: Any, installed: 1.7.5]
     ├── cachetools [required: Any, installed: 5.3.3]
     ├── PyJWT [required: !=2.6.0, installed: 2.8.0]
     ├── qrcode [required: Any, installed: 7.4.2]
