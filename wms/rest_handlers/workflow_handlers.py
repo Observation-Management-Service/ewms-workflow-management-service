@@ -44,7 +44,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
         # make workflow object, put in db
         workflow = dict(
             # IMMUTABLE
-            workflow_id=str(uuid.uuid4()),
+            workflow_id=uuid.uuid4().hex,
             timestamp=time.time(),
             priority=10,  # TODO
             # MUTABLE
@@ -131,7 +131,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         except DocumentNotFoundException as e:
             raise web.HTTPError(
                 status_code=404,
-                reason=f"no task found with id: {workflow_id}",  # to client
+                reason=f"no workflow found with id: {workflow_id}",  # to client
             ) from e
 
         self.write(workflow)
