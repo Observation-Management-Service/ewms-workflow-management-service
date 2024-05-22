@@ -148,7 +148,7 @@ async def user_requests_new_workflow(
         for tf in resp["taskforces"]
     )
 
-    return workflow_resp["workflow_id"], task_id
+    return workflow_resp["workflow"]["workflow_id"], task_id
 
 
 async def taskforce_launch_control_marks_taskforces_pending_starter(
