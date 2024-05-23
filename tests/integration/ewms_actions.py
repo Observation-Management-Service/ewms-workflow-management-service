@@ -334,7 +334,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "POST",
-        "/tasks/find",
+        "/task/directives/find",
         {
             "query": {"task_id": task_id},
             "projection": ["workflow_id"],
