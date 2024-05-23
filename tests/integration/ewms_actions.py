@@ -340,8 +340,8 @@ async def user_aborts_workflow(
             "projection": ["workflow_id"],
         },
     )
-    assert len(resp["tasks"]) == 1
-    workflow_id = resp["tasks"][0]["workflow_id"]
+    assert len(resp["task_directives"]) == 1
+    workflow_id = resp["task_directives"][0]["workflow_id"]
     resp = await request_and_validate(
         rc,
         openapi_spec,
