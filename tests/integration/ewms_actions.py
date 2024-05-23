@@ -350,7 +350,6 @@ async def user_aborts_workflow(
     )
     assert resp == {
         "workflow_id": workflow_id,
-        "n_task_directives": 1,
         "n_taskforces": len(condor_locations) if not aborted_after_condor else 0,
     }
     resp = await request_and_validate(

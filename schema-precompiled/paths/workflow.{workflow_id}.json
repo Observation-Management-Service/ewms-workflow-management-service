@@ -94,7 +94,6 @@
                             },
                             "required": [
                                 "workflow_id",
-                                "n_task_directives",
                                 "n_taskforces"
                             ],
                             "additionalProperties": false
