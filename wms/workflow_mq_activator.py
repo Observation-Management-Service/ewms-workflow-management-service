@@ -128,6 +128,11 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             await asyncio.sleep(ENV.WORKFLOW_MQ_ACTIVATOR_DELAY)
         LOGGER.debug("Looking at next task directive without queues...")
 
+        # NOTE - WE DO NOT NEED TO GRAB server.py's 'asyncio.Lock', because
+        #        all the db attributes looked at here are either
+        #        (1) static (priority, timestamp, etc.) or
+        #        (2) only touched by this component (mq activator)
+
         # find
         try:
             workflow = await get_next_workflow(workflows_client)
