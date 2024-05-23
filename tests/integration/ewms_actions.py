@@ -57,7 +57,7 @@ async def user_requests_new_workflow(
 
     #
     # USER...
-    # requests new task
+    # requests new workflow
     #
     workflow_resp = await request_and_validate(
         rc,
@@ -83,10 +83,41 @@ async def user_requests_new_workflow(
         ),
     )
     # TODO - update asserts when/if testing multi-task workflows
+    assert workflow_resp["workflow"]
     assert len(workflow_resp["task_directives"]) == 1
     assert len(workflow_resp["taskforces"]) == 2
+    # taskforce checks
+    assert all(tf["phase"] == "pre-mq-activation" for tf in workflow_resp["taskforces"])
+    assert len(workflow_resp["taskforces"]) == len(condor_locations)
+    assert sorted(  # check locations were translated correctly to collector+schedd
+        (tf["collector"], tf["schedd"]) for tf in workflow_resp["taskforces"]
+    ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
+    assert all(tf["phase"] == "pre-mq-activation" for tf in workflow_resp["taskforces"])
+    assert all(
+        tf["worker_config"] == worker_config for tf in workflow_resp["taskforces"]
+    )
+    assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
+    assert all(
+        tf["container_config"]
+        == dict(
+            image=task_image,
+            arguments=task_args,
+            environment={
+                **environment,
+                "EWMS_PILOT_QUEUE_INCOMING": "123qfoo",
+                "EWMS_PILOT_QUEUE_OUTGOING": "123qbar",
+            },
+            input_files=input_files,
+        )
+        for tf in workflow_resp["taskforces"]
+    )
 
-    # query about task directive & its taskforces
+    ###########################
+    # ...mq activator runs... #
+    ###########################
+    await asyncio.sleep(int(os.environ["WORKFLOW_MQ_ACTIVATOR_DELAY"]) * 2)
+
+    # query about task directive
     task_directive = workflow_resp["task_directives"][0]
     task_id = task_directive["task_id"]
     resp = await request_and_validate(
@@ -101,12 +132,7 @@ async def user_requests_new_workflow(
         openapi_spec,
         "POST",
         "/task/directives/find",
-        {
-            "query": {
-                "task_image": "icecube/earthpilot",
-                "task_args": "aaa bbb --ccc 123",
-            }
-        },
+        {"query": {"task_id": task_id}},
     )
     assert len(resp["task_directives"]) == 1
     assert resp["task_directives"][0] == task_directive
@@ -118,35 +144,10 @@ async def user_requests_new_workflow(
         "POST",
         "/taskforces/find",
         {
-            "query": {
-                "task_id": task_id,
-            },
+            "query": {"task_id": task_id},
         },
     )
-    assert len(resp["taskforces"]) == len(condor_locations)
-    # check locations were translated correctly to collector+schedd
-    assert sorted(
-        (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
-    ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
-
     assert all(tf["phase"] == "pre-mq-activation" for tf in resp["taskforces"])
-
-    assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
-    assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])
-    assert all(
-        tf["container_config"]
-        == dict(
-            image=task_image,
-            arguments=task_args,
-            environment={
-                **environment,
-                "EWMS_PILOT_QUEUE_INCOMING": "123qfoo",
-                "EWMS_PILOT_QUEUE_OUTGOING": "123qbar",
-            },
-            input_files=input_files,
-        )
-        for tf in resp["taskforces"]
-    )
 
     return workflow_resp["workflow"]["workflow_id"], task_id
 
