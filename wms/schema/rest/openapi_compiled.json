@@ -1421,10 +1421,6 @@
                                             "description": "the workflow id",
                                             "type": "string"
                                         },
-                                        "n_task_directives": {
-                                            "description": "number of updated task directives",
-                                            "type": "integer"
-                                        },
                                         "n_taskforces": {
                                             "description": "number of updated taskforces",
                                             "type": "integer"
