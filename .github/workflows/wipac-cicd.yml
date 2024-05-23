@@ -181,7 +181,7 @@ jobs:
         image: bitnami/mongodb:4
         ports:
           - 27017:27017
-        environment:
+        env:
           MONGODB_REPLICA_SET_MODE: primary
     steps:
       - uses: actions/checkout@v3
@@ -239,7 +239,7 @@ jobs:
         image: bitnami/mongodb:4
         ports:
           - 27017:27017
-        environment:
+        env:
           MONGODB_REPLICA_SET_MODE: primary
     steps:
       - uses: actions/checkout@v3
