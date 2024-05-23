@@ -289,10 +289,7 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     # go!
     with pytest.raises(asyncio.TimeoutError):
         # use asyncio's timeout to artificially stop loop, otherwise it'd go forever
-        await asyncio.wait_for(
-            workflow_mq_activator.startup(mongo_client, asyncio.Lock()),
-            timeout=60,
-        )
+        await asyncio.wait_for(workflow_mq_activator.startup(mongo_client), timeout=60)
 
     # check mongo db state
     assert len(await alist(workflows_client.find_all({}, []))) == len(TEST_WORKFLOWS)
