@@ -350,20 +350,20 @@ async def user_aborts_workflow(
 ) -> None:
     #
     # USER...
-    # stop task
+    # stop workflow
     #
     resp = await request_and_validate(
         rc,
         openapi_spec,
         "POST",
-        "/workflows/find",
+        "/tasks/find",
         {
             "query": {"task_id": task_id},
             "projection": ["workflow_id"],
         },
     )
-    assert len(resp["workflows"]) == 1
-    workflow_id = resp["workflows"][0]["workflow_id"]
+    assert len(resp["tasks"]) == 1
+    workflow_id = resp["tasks"][0]["workflow_id"]
     resp = await request_and_validate(
         rc,
         openapi_spec,
