@@ -260,15 +260,15 @@ class MQSRESTCalls:
 async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     """Test the MQS scheduling with several tasks and requests."""
     mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
-    workflows_client = database.client.WMSMongoClient(
+    workflows_client = database.client.MongoValidatedCollection(
         mongo_client,
         database.utils.WORKFLOWS_COLL_NAME,
     )
-    task_directives_client = database.client.WMSMongoClient(
+    task_directives_client = database.client.MongoValidatedCollection(
         mongo_client,
         database.utils.TASK_DIRECTIVES_COLL_NAME,
     )
-    taskforces_client = database.client.WMSMongoClient(
+    taskforces_client = database.client.MongoValidatedCollection(
         mongo_client,
         database.utils.TASKFORCES_COLL_NAME,
     )

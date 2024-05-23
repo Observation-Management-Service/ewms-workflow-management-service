@@ -17,7 +17,9 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
     """Start up the daemon task."""
     LOGGER.info("Starting up taskforce_launch_control...")
 
-    wms_db = database.client.WMSMongoDB(mongo_client, parent_logger=LOGGER)
+    wms_db = database.client.WMSMongoValidatedDatabase(
+        mongo_client, parent_logger=LOGGER
+    )
 
     while True:
         await asyncio.sleep(ENV.TASKFORCE_LAUNCH_CONTROL_DELAY)

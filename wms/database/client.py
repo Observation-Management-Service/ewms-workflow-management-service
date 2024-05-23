@@ -17,8 +17,8 @@ from .utils import (
 from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
 
 
-class WMSMongoDB:
-    """Wraps a MongoDB client and collection clients."""
+class WMSMongoValidatedDatabase:
+    """Wraps a MongoDB client and collection clients with json schema validation."""
 
     def __init__(
         self,
@@ -26,17 +26,17 @@ class WMSMongoDB:
         parent_logger: logging.Logger | None = None,
     ):
         self.mongo_client = mongo_client
-        self.workflows_collection = _WMSMongoCollection(
+        self.workflows_collection = MongoValidatedCollection(
             mongo_client,
             WORKFLOWS_COLL_NAME,
             parent_logger,
         )
-        self.task_directives_collection = _WMSMongoCollection(
+        self.task_directives_collection = MongoValidatedCollection(
             mongo_client,
             TASK_DIRECTIVES_COLL_NAME,
             parent_logger,
         )
-        self.taskforces_collection = _WMSMongoCollection(
+        self.taskforces_collection = MongoValidatedCollection(
             mongo_client,
             TASKFORCES_COLL_NAME,
             parent_logger,
@@ -47,8 +47,8 @@ class DocumentNotFoundException(Exception):
     """Raised when document is not found for a particular query."""
 
 
-class _WMSMongoCollection:
-    """A generic client for interacting with mongo collections."""
+class MongoValidatedCollection:
+    """For interacting with a mongo collection using json schema validation."""
 
     def __init__(
         self,

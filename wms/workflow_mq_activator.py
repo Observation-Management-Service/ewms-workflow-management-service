@@ -18,7 +18,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 async def get_next_workflow(
-    workflows_client: database.client.WMSMongoClient,
+    workflows_client: database.client.MongoValidatedCollection,
 ) -> dict:
     """Grab the next workflow from db."""
     return await workflows_client.find_one(
@@ -59,7 +59,7 @@ async def request_activation_to_mqs(mqs_rc: RestClient, workflow: dict) -> dict:
 
 
 async def advance_taskforce_phases(
-    taskforces_client: database.client.WMSMongoClient,
+    taskforces_client: database.client.MongoValidatedCollection,
     workflow_id: str,
 ) -> None:
     """Update the database taskforces' phases with TaskforcePhase.PRE_LAUNCH."""
@@ -74,7 +74,7 @@ async def advance_taskforce_phases(
 
 
 async def set_mq_activated_ts(
-    workflows_client: database.client.WMSMongoClient,
+    workflows_client: database.client.MongoValidatedCollection,
     workflow_id: str,
 ) -> None:
     """Set mq_activated_ts in db."""
@@ -85,7 +85,7 @@ async def set_mq_activated_ts(
 
 
 async def set_mq_activation_retry_at_ts(
-    workflows_client: database.client.WMSMongoClient,
+    workflows_client: database.client.MongoValidatedCollection,
     workflow_id: str,
 ) -> None:
     """Set _mq_activation_retry_at_ts and place back on "backlog"."""
@@ -108,7 +108,9 @@ async def startup(
     LOGGER.info("Starting up workflow_mq_activator...")
 
     # database client
-    wms_db = database.client.WMSMongoDB(mongo_client, parent_logger=LOGGER)
+    wms_db = database.client.WMSMongoValidatedDatabase(
+        mongo_client, parent_logger=LOGGER
+    )
     # rest client
     mqs_rc = get_mqs_connection(logging.getLogger(f"{LOGGER.name}.mqs"))
 

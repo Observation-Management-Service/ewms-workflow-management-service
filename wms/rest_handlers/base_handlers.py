@@ -28,7 +28,7 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
     ) -> None:
         """Initialize a BaseWMSHandler object."""
         super().initialize(*args, **kwargs)  # type: ignore[no-untyped-call]
-        self.wms_db = database.client.WMSMongoDB(mongo_client)
+        self.wms_db = database.client.WMSMongoValidatedDatabase(mongo_client)
         self.mqs_rc = get_mqs_connection(
             logging.getLogger(f"{LOGGER.name.split('.', maxsplit=1)[0]}.mqs")
         )
