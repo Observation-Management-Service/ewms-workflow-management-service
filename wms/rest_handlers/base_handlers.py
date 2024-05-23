@@ -1,6 +1,5 @@
 """Base REST handlers for the WMS REST API server interface."""
 
-import asyncio
 import logging
 from typing import Any
 
@@ -22,7 +21,6 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
     def initialize(  # type: ignore  # pylint: disable=W0221
         self,
         mongo_client: AsyncIOMotorClient,
-        multiupdate_db_lock: asyncio.Lock,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -32,7 +30,6 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
         self.mqs_rc = get_mqs_connection(
             logging.getLogger(f"{LOGGER.name.split('.', maxsplit=1)[0]}.mqs")
         )
-        self.multiupdate_db_lock = multiupdate_db_lock
 
 
 # ----------------------------------------------------------------------------

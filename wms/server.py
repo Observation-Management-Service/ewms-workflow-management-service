@@ -1,6 +1,5 @@
 """Root python script for WMS REST API server interface."""
 
-import asyncio
 import logging
 from typing import Any
 
@@ -36,10 +35,7 @@ HANDLERS = [
 ]
 
 
-async def make(
-    mongo_client: AsyncIOMotorClient,
-    multiupdate_db_lock: asyncio.Lock,
-) -> RestServer:
+async def make(mongo_client: AsyncIOMotorClient) -> RestServer:
     """Make a WMS REST service (does not start up automatically)."""
     rhs_config: dict[str, Any] = {"debug": ENV.CI}
     if ENV.AUTH_OPENID_URL:
@@ -52,7 +48,6 @@ async def make(
     #
     # Setup clients/apis
     args["mongo_client"] = mongo_client
-    args["multiupdate_db_lock"] = multiupdate_db_lock
 
     # Configure REST Routes
     rs = RestServer(debug=ENV.CI)

@@ -47,26 +47,30 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
         not_founds = []
 
         # put in db
-        async with self.multiupdate_db_lock:  # grab lock so taskforces can't be updated in the meantime
-            for uuid in all_uuids:
-                update = {}
-                if uuid in top_task_errors_by_taskforce:
-                    # value could be falsy -- that's ok
-                    update["top_task_errors"] = top_task_errors_by_taskforce[uuid]
-                if uuid in compound_statuses_by_taskforce:
-                    # value could be falsy -- that's ok
-                    update["compound_statuses"] = compound_statuses_by_taskforce[uuid]
-                try:
-                    await self.wms_db.taskforces_collection.find_one_and_update(
-                        {
-                            "taskforce_uuid": uuid,
-                            # we don't care what the 'phase' is
-                        },
-                        update,
-                    )
-                except DocumentNotFoundException:
-                    LOGGER.warning(f"no taskforce found with uuid: {uuid}")
-                    not_founds.append(uuid)
+        async with await self.wms_db.mongo_client.start_session() as s:
+            async with s.start_transaction():
+                for uuid in all_uuids:
+                    update = {}
+                    if uuid in top_task_errors_by_taskforce:
+                        # value could be falsy -- that's ok
+                        update["top_task_errors"] = top_task_errors_by_taskforce[uuid]
+                    if uuid in compound_statuses_by_taskforce:
+                        # value could be falsy -- that's ok
+                        update["compound_statuses"] = compound_statuses_by_taskforce[
+                            uuid
+                        ]
+                    try:
+                        await self.wms_db.taskforces_collection.find_one_and_update(
+                            {
+                                "taskforce_uuid": uuid,
+                                # we don't care what the 'phase' is
+                            },
+                            update,
+                            session=s,
+                        )
+                    except DocumentNotFoundException:
+                        LOGGER.warning(f"no taskforce found with uuid: {uuid}")
+                        not_founds.append(uuid)
 
         # respond
         if not_founds:

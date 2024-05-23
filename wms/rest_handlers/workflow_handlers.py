@@ -92,13 +92,23 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
             task_directives.append(td)
             taskforces.extend(tfs)
 
-        # put all into db
-        async with self.multiupdate_db_lock:  # grab lock so workflow/taskforces can't be updated in the meantime
-            workflow = await self.workflows_client.insert_one(workflow)
-            task_directives = await self.task_directives_client.insert_many(
-                task_directives
-            )
-            taskforces = await self.taskforces_client.insert_many(taskforces)
+        # put all into db -- atomically
+        async with await self.wms_db.mongo_client.start_session() as s:
+            async with s.start_transaction():
+                workflow = await self.wms_db.workflows_collection.insert_one(
+                    workflow,
+                    session=s,
+                )
+                task_directives = (
+                    await self.wms_db.task_directives_collection.insert_many(
+                        task_directives,
+                        session=s,
+                    )
+                )
+                taskforces = await self.wms_db.taskforces_collection.insert_many(
+                    taskforces,
+                    session=s,
+                )
 
         # Finish up
         self.write(
@@ -146,58 +156,60 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         Abort all tasks in workflow.
         """
-        async with self.multiupdate_db_lock:  # grab lock so taskforces can't be updated in the meantime
+        async with await self.wms_db.mongo_client.start_session() as s:
+            async with s.start_transaction():
+                # WORKFLOW
+                try:
+                    await self.wms_db.workflows_collection.find_one_and_update(
+                        {
+                            "workflow_id": workflow_id,
+                            "aborted": {"$nin": [True]},  # "not in"
+                        },
+                        {
+                            "aborted": True,
+                        },
+                        session=s,
+                    )
+                except DocumentNotFoundException as e:
+                    raise web.HTTPError(
+                        status_code=404,
+                        reason=f"no non-aborted workflow found with {workflow_id=}",  # to client
+                    ) from e
 
-            # WORKFLOW
-            try:
-                await self.wms_db.workflows_collection.find_one_and_update(
-                    {
-                        "workflow_id": workflow_id,
-                        "aborted": {"$nin": [True]},  # "not in"
-                    },
-                    {
-                        "aborted": True,
-                    },
-                )
-            except DocumentNotFoundException as e:
-                raise web.HTTPError(
-                    status_code=404,
-                    reason=f"no non-aborted workflow found with {workflow_id=}",  # to client
-                ) from e
-
-            # TASKFORCES
-            # set all corresponding taskforces to pending-stopper
-            n_tfs_updated = 0  # in no taskforces to stop (excepted exception)
-            try:
-                n_tfs_updated = await self.wms_db.taskforces_collection.update_set_many(
-                    {
-                        "workflow_id": workflow_id,
-                        "$and": [
-                            # not already aborted
-                            # NOTE - we don't care whether the taskforce has started up (see /taskforce/tms-action/pending-stopper)
-                            {
-                                "phase": {
-                                    "$nin": [
-                                        TaskforcePhase.PENDING_STOPPER,
-                                        TaskforcePhase.CONDOR_RM,
-                                    ]
-                                },  # "not in"
-                            },
-                            # AND
-                            # not condor-completed
-                            {
-                                "condor_complete_ts": None,  # int -> condor-completed
-                            },
-                        ],
-                    },
-                    {
-                        "phase": TaskforcePhase.PENDING_STOPPER,
-                    },
-                )
-            except DocumentNotFoundException:
-                LOGGER.info(
-                    "okay scenario: workflow's tasks aborted but no taskforces needed to be stopped"
-                )
+                # TASKFORCES
+                # set all corresponding taskforces to pending-stopper
+                n_tfs_updated = 0  # in no taskforces to stop (excepted exception)
+                try:
+                    n_tfs_updated = await self.wms_db.taskforces_collection.update_set_many(
+                        {
+                            "workflow_id": workflow_id,
+                            "$and": [
+                                # not already aborted
+                                # NOTE - we don't care whether the taskforce has started up (see /taskforce/tms-action/pending-stopper)
+                                {
+                                    "phase": {
+                                        "$nin": [
+                                            TaskforcePhase.PENDING_STOPPER,
+                                            TaskforcePhase.CONDOR_RM,
+                                        ]
+                                    },  # "not in"
+                                },
+                                # AND
+                                # not condor-completed
+                                {
+                                    "condor_complete_ts": None,  # int -> condor-completed
+                                },
+                            ],
+                        },
+                        {
+                            "phase": TaskforcePhase.PENDING_STOPPER,
+                        },
+                        session=s,
+                    )
+                except DocumentNotFoundException:
+                    LOGGER.info(
+                        "okay scenario: workflow's tasks aborted but no taskforces needed to be stopped"
+                    )
 
         self.write(
             {

@@ -75,12 +75,12 @@ class MongoValidatedCollection:
     # WRITES
     ####################################################################
 
-    async def insert_one(self, doc: dict) -> dict:
+    async def insert_one(self, doc: dict, **kwargs: Any) -> dict:
         """Insert the doc (dict)."""
         self.logger.debug(f"inserting one: {doc}")
 
         web_jsonschema_validate(doc, self._schema)
-        await self._collection.insert_one(doc)
+        await self._collection.insert_one(doc, **kwargs)
         # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
         doc.pop("_id")
 
@@ -109,14 +109,14 @@ class MongoValidatedCollection:
         self.logger.debug(f"updated one ({query}): {doc}")
         return doc  # type: ignore[no-any-return]
 
-    async def insert_many(self, docs: list[dict]) -> list[dict]:
+    async def insert_many(self, docs: list[dict], **kwargs: Any) -> list[dict]:
         """Insert multiple docs."""
         self.logger.debug(f"inserting many: {docs}")
 
         for doc in docs:
             web_jsonschema_validate(doc, self._schema)
 
-        await self._collection.insert_many(docs)
+        await self._collection.insert_many(docs, **kwargs)
         # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
         for doc in docs:
             doc.pop("_id")
@@ -124,12 +124,17 @@ class MongoValidatedCollection:
         self.logger.debug(f"inserted many: {docs}")
         return docs
 
-    async def update_set_many(self, query: dict, set_update: dict) -> int:
+    async def update_set_many(
+        self,
+        query: dict,
+        set_update: dict,
+        **kwargs: Any,
+    ) -> int:
         """Update all matching docs."""
         self.logger.debug(f"update many with query: {query}")
 
         web_jsonschema_validate(set_update, self._schema, allow_partial_update=True)
-        res = await self._collection.update_many(query, {"$set": set_update})
+        res = await self._collection.update_many(query, {"$set": set_update}, **kwargs)
         if not res.matched_count:
             raise DocumentNotFoundException()
 
@@ -153,12 +158,17 @@ class MongoValidatedCollection:
         self.logger.debug(f"found one: {doc}")
         return doc  # type: ignore[no-any-return]
 
-    async def find_all(self, query: dict, projection: list) -> AsyncIterator[dict]:
+    async def find_all(
+        self,
+        query: dict,
+        projection: list,
+        **kwargs: Any,
+    ) -> AsyncIterator[dict]:
         """Find all matching the query."""
         self.logger.debug(f"finding with query: {query}")
 
         doc = {}
-        async for doc in self._collection.find(query, projection):
+        async for doc in self._collection.find(query, projection, **kwargs):
             # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
             doc.pop("_id")
             self.logger.debug(f"found {doc}")

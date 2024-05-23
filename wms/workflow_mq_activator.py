@@ -100,10 +100,7 @@ async def set_mq_activation_retry_at_ts(
     )
 
 
-async def startup(
-    mongo_client: AsyncIOMotorClient,
-    multiupdate_db_lock: asyncio.Lock,
-) -> None:  # type: ignore[valid-type]
+async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
     """Start up the daemon task."""
     LOGGER.info("Starting up workflow_mq_activator...")
 
@@ -124,40 +121,37 @@ async def startup(
             await asyncio.sleep(ENV.WORKFLOW_MQ_ACTIVATOR_DELAY)
         LOGGER.debug("Looking at next task directive without queues...")
 
-        # grab lock so workflow/taskforces can't be updated in the meantime
-        async with multiupdate_db_lock:
+        # find
+        try:
+            workflow = await get_next_workflow(wms_db.workflows_collection)
+        except database.client.DocumentNotFoundException:
+            LOGGER.debug("NOTHING FOR TASK_MQ_ACTIVATOR TO START UP")
+            continue
 
-            # find
-            try:
-                workflow = await get_next_workflow(wms_db.workflows_collection)
-            except database.client.DocumentNotFoundException:
-                LOGGER.debug("NOTHING FOR TASK_MQ_ACTIVATOR TO START UP")
-                continue
-
-            # request to mqs
-            LOGGER.info(
-                f"REQUESTING ACTIVATION for workflow_id={workflow['workflow_id']} queues..."
+        # request to mqs
+        LOGGER.info(
+            f"REQUESTING ACTIVATION for workflow_id={workflow['workflow_id']} queues..."
+        )
+        try:
+            resp = await request_activation_to_mqs(mqs_rc, workflow)
+        except requests.exceptions.HTTPError as e:
+            LOGGER.exception(e)
+            continue
+        # update db workflow w/ result
+        if resp.get("try_again_later"):
+            await set_mq_activation_retry_at_ts(
+                wms_db.workflows_collection, workflow["workflow_id"]
             )
-            try:
-                resp = await request_activation_to_mqs(mqs_rc, workflow)
-            except requests.exceptions.HTTPError as e:
-                LOGGER.exception(e)
-                continue
-            # update db workflow w/ result
-            if resp.get("try_again_later"):
-                await set_mq_activation_retry_at_ts(
-                    wms_db.workflows_collection, workflow["workflow_id"]
-                )
-                short_sleep = True  # want to give other tasks a chance to start up
-                continue
-            else:
-                await set_mq_activated_ts(
-                    wms_db.workflows_collection, workflow["workflow_id"]
-                )
-
-            LOGGER.info(f"ACTIVATED queues for workflow_id={workflow['workflow_id']}")
-
-            # update db -- taskforces
-            await advance_taskforce_phases(
-                wms_db.taskforces_collection, workflow["workflow_id"]
+            short_sleep = True  # want to give other tasks a chance to start up
+            continue
+        else:
+            await set_mq_activated_ts(
+                wms_db.workflows_collection, workflow["workflow_id"]
             )
+
+        LOGGER.info(f"ACTIVATED queues for workflow_id={workflow['workflow_id']}")
+
+        # update db -- taskforces
+        await advance_taskforce_phases(
+            wms_db.taskforces_collection, workflow["workflow_id"]
+        )

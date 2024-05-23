@@ -18,9 +18,6 @@ async def main() -> None:
     await database.utils.ensure_indexes(mongo_client)
     LOGGER.info("Mongo client connected.")
 
-    # Make lock for updating disjoint resources (eg: 2 mongo collections)
-    multiupdate_db_lock = asyncio.Lock()
-
     async with asyncio.TaskGroup() as tg:
         # taskforce_launch_control
         LOGGER.info("Starting taskforce_launch_control in background...")
@@ -28,11 +25,11 @@ async def main() -> None:
 
         # workflow_mq_activator
         LOGGER.info("Starting workflow_mq_activator in background...")
-        tg.create_task(workflow_mq_activator.startup(mongo_client, multiupdate_db_lock))
+        tg.create_task(workflow_mq_activator.startup(mongo_client))
 
         # REST Server
         LOGGER.info("Setting up REST server...")
-        rs = await server.make(mongo_client, multiupdate_db_lock)
+        rs = await server.make(mongo_client)
         rs.startup(address=ENV.REST_HOST, port=ENV.REST_PORT)  # type: ignore[no-untyped-call]
         tg.create_task(asyncio.Event().wait())
 
