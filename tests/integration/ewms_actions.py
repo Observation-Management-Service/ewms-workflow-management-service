@@ -92,7 +92,6 @@ async def user_requests_new_workflow(
     assert sorted(  # check locations were translated correctly to collector+schedd
         (tf["collector"], tf["schedd"]) for tf in workflow_resp["taskforces"]
     ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
-    assert all(tf["phase"] == "pre-mq-activation" for tf in workflow_resp["taskforces"])
     assert all(
         tf["worker_config"] == worker_config for tf in workflow_resp["taskforces"]
     )
@@ -112,10 +111,16 @@ async def user_requests_new_workflow(
         for tf in workflow_resp["taskforces"]
     )
 
-    ###########################
-    # ...mq activator runs... #
-    ###########################
-    await asyncio.sleep(int(os.environ["WORKFLOW_MQ_ACTIVATOR_DELAY"]) * 2)
+    ############################################
+    # mq activator & launch control runs...
+    #   it's going to be unreliable to try to intercept the middle phase, "pre-launch",
+    #   so just wait till both run
+    ############################################
+    await asyncio.sleep(int(os.environ["WORKFLOW_MQ_ACTIVATOR_DELAY"]) * 2)  # pad
+    await asyncio.sleep(
+        int(os.environ["TASKFORCE_LAUNCH_CONTROL_DELAY"])
+        * len(workflow_resp["taskforces"])
+    )
 
     # query about task directive
     task_directive = workflow_resp["task_directives"][0]
@@ -147,37 +152,9 @@ async def user_requests_new_workflow(
             "query": {"task_id": task_id},
         },
     )
-    assert all(tf["phase"] == "pre-mq-activation" for tf in resp["taskforces"])
+    assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
 
     return workflow_resp["workflow"]["workflow_id"], task_id
-
-
-async def taskforce_launch_control_marks_taskforces_pending_starter(
-    rc: RestClient,
-    openapi_spec: openapi_core.OpenAPI,
-    task_id: str,
-    n_locations: int,
-) -> None:
-    """Wait expected time for taskforce_launch_control to set taskforces as 'pending-
-    starter'."""
-    await asyncio.sleep(int(os.environ["WORKFLOW_MQ_ACTIVATOR_DELAY"]))
-    await asyncio.sleep(int(os.environ["TASKFORCE_LAUNCH_CONTROL_DELAY"]) * n_locations)
-
-    resp = await request_and_validate(
-        rc,
-        openapi_spec,
-        "POST",
-        "/taskforces/find",
-        {
-            "query": {
-                "task_id": task_id,
-            },
-            "projection": ["phase"],
-        },
-    )
-    assert len(resp["taskforces"]) == n_locations
-    LOGGER.debug(resp["taskforces"])
-    assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
 
 
 async def tms_starter(

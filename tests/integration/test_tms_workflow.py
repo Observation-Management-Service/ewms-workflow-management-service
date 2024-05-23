@@ -86,12 +86,6 @@ async def test_000(rc: RestClient) -> None:
         openapi_spec,
         CONDOR_LOCATIONS,
     )
-    await ewms_actions.taskforce_launch_control_marks_taskforces_pending_starter(
-        rc,
-        openapi_spec,
-        task_id,
-        len(CONDOR_LOCATIONS),
-    )
 
     # TMS STARTS TASKFORCES!
     condor_locs_w_jel = await ewms_actions.tms_starter(
@@ -170,12 +164,6 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
-    )
-    await ewms_actions.taskforce_launch_control_marks_taskforces_pending_starter(
-        rc,
-        openapi_spec,
-        task_id,
-        len(CONDOR_LOCATIONS),
     )
 
     # ABORT!
@@ -419,12 +407,6 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         openapi_spec,
         CONDOR_LOCATIONS,
     )
-    await ewms_actions.taskforce_launch_control_marks_taskforces_pending_starter(
-        rc,
-        openapi_spec,
-        task_id,
-        len(CONDOR_LOCATIONS),
-    )
 
     # TMS STARTS TASKFORCES!
     condor_locs_w_jel = await ewms_actions.tms_starter(
@@ -527,12 +509,6 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         openapi_spec,
         CONDOR_LOCATIONS,
     )
-    await ewms_actions.taskforce_launch_control_marks_taskforces_pending_starter(
-        rc,
-        openapi_spec,
-        task_id,
-        len(CONDOR_LOCATIONS),
-    )
 
     # TMS STARTS TASKFORCES!
     condor_locs_w_jel = await ewms_actions.tms_starter(
@@ -632,12 +608,6 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         CONDOR_LOCATIONS,
-    )
-    await ewms_actions.taskforce_launch_control_marks_taskforces_pending_starter(
-        rc,
-        openapi_spec,
-        task_id,
-        len(CONDOR_LOCATIONS),
     )
 
     # TMS STARTS TASKFORCES!
