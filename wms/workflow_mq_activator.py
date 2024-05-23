@@ -131,7 +131,9 @@ async def startup(
             await asyncio.sleep(ENV.WORKFLOW_MQ_ACTIVATOR_DELAY)
         LOGGER.debug("Looking at next task directive without queues...")
 
+        # grab lock so workflow/taskforces can't be updated in the meantime
         async with multiupdate_db_lock:
+
             # find
             try:
                 workflow = await get_next_workflow(workflows_client)
