@@ -57,7 +57,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                     # value could be falsy -- that's ok
                     update["compound_statuses"] = compound_statuses_by_taskforce[uuid]
                 try:
-                    await self.taskforces_client.find_one_and_update(
+                    await self.wms_db.taskforces_collection.find_one_and_update(
                         {
                             "taskforce_uuid": uuid,
                             # we don't care what the 'phase' is
@@ -109,7 +109,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         Search for taskforces matching given query.
         """
         matches = []
-        async for m in self.taskforces_client.find_all(
+        async for m in self.wms_db.taskforces_collection.find_all(
             self.get_argument("query"),
             self.get_argument("projection", []),
         ):
@@ -134,7 +134,7 @@ class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
         Get the next taskforce to START for the given condor location.
         """
         try:
-            taskforce = await self.taskforces_client.find_one(
+            taskforce = await self.wms_db.taskforces_collection.find_one(
                 dict(
                     collector=self.get_argument("collector"),
                     schedd=self.get_argument("schedd"),
@@ -168,7 +168,7 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         runtime info.
         """
         try:
-            await self.taskforces_client.find_one_and_update(
+            await self.wms_db.taskforces_collection.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
                     "phase": {"$in": [TaskforcePhase.PENDING_STARTER]},
@@ -210,7 +210,7 @@ class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
         Get the next taskforce to STOP for the given condor location.
         """
         try:
-            taskforce = await self.taskforces_client.find_one(
+            taskforce = await self.wms_db.taskforces_collection.find_one(
                 {
                     "collector": self.get_argument("collector"),
                     "schedd": self.get_argument("schedd"),
@@ -244,7 +244,7 @@ class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         invoked).
         """
         try:
-            await self.taskforces_client.find_one_and_update(
+            await self.wms_db.taskforces_collection.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
                     # NOTE: any taskforce can be marked as 'condor-rm' regardless of state
@@ -283,7 +283,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         finished, regardless if it ended in success or failure.
         """
         try:
-            await self.taskforces_client.find_one_and_update(
+            await self.wms_db.taskforces_collection.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
                     "condor_complete_ts": None,
@@ -321,7 +321,7 @@ class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         Get an existing taskforce object.
         """
         try:
-            taskforce = await self.taskforces_client.find_one(
+            taskforce = await self.wms_db.taskforces_collection.find_one(
                 {
                     "taskforce_uuid": taskforce_uuid,
                 }

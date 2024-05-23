@@ -128,7 +128,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         Get an existing task directive.
         """
         try:
-            task_directive = await self.task_directives_client.find_one(
+            task_directive = await self.wms_db.task_directives_collection.find_one(
                 {
                     "task_id": task_id,
                 }
@@ -158,7 +158,7 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         Search for task directives matching given query.
         """
         matches = []
-        async for m in self.task_directives_client.find_all(
+        async for m in self.wms_db.task_directives_collection.find_all(
             self.get_argument("query"),
             self.get_argument("projection", []),
         ):

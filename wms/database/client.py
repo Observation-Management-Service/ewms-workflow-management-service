@@ -6,15 +6,48 @@ from typing import Any, AsyncIterator
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from pymongo import ReturnDocument
 
-from .utils import _DB_NAME, get_jsonschema_spec_name, web_jsonschema_validate
+from .utils import (
+    _DB_NAME,
+    get_jsonschema_spec_name,
+    web_jsonschema_validate,
+    WORKFLOWS_COLL_NAME,
+    TASK_DIRECTIVES_COLL_NAME,
+    TASKFORCES_COLL_NAME,
+)
 from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
+
+
+class WMSMongoDB:
+    """Wraps a MongoDB client and collection clients."""
+
+    def __init__(
+        self,
+        mongo_client: AsyncIOMotorClient,
+        parent_logger: logging.Logger | None = None,
+    ):
+        self.mongo_client = mongo_client
+        self.workflows_collection = _WMSMongoCollection(
+            mongo_client,
+            WORKFLOWS_COLL_NAME,
+            parent_logger,
+        )
+        self.task_directives_collection = _WMSMongoCollection(
+            mongo_client,
+            TASK_DIRECTIVES_COLL_NAME,
+            parent_logger,
+        )
+        self.taskforces_collection = _WMSMongoCollection(
+            mongo_client,
+            TASKFORCES_COLL_NAME,
+            parent_logger,
+        )
 
 
 class DocumentNotFoundException(Exception):
     """Raised when document is not found for a particular query."""
 
 
-class WMSMongoClient:
+class _WMSMongoCollection:
     """A generic client for interacting with mongo collections."""
 
     def __init__(

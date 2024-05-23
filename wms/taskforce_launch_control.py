@@ -6,7 +6,7 @@ import logging
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING, DESCENDING
 
-from . import database as db
+from . import database
 from .config import ENV
 from .schema.enums import TaskforcePhase
 
@@ -17,11 +17,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
     """Start up the daemon task."""
     LOGGER.info("Starting up taskforce_launch_control...")
 
-    taskforces_client = db.client.WMSMongoClient(
-        mongo_client,
-        db.utils.TASKFORCES_COLL_NAME,
-        parent_logger=LOGGER,
-    )
+    wms_db = database.client.WMSMongoDB(mongo_client, parent_logger=LOGGER)
 
     while True:
         await asyncio.sleep(ENV.TASKFORCE_LAUNCH_CONTROL_DELAY)
@@ -29,7 +25,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
 
         # find & advance phase
         try:
-            taskforce = await taskforces_client.find_one_and_update(
+            taskforce = await wms_db.taskforces_collection.find_one_and_update(
                 dict(phase=TaskforcePhase.PRE_LAUNCH),
                 dict(phase=TaskforcePhase.PENDING_STARTER),
                 sort=[
@@ -37,7 +33,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                     ("timestamp", ASCENDING),  # then, oldest
                 ],
             )
-        except db.client.DocumentNotFoundException:
+        except database.client.DocumentNotFoundException:
             LOGGER.debug("NOTHING FOR TASKFORCE_LAUNCH_CONTROL TO START UP")
         else:
             LOGGER.info(

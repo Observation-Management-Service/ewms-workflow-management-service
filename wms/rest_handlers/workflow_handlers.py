@@ -126,7 +126,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         Get an existing workflow.
         """
         try:
-            workflow = await self.workflows_client.find_one(
+            workflow = await self.wms_db.workflows_collection.find_one(
                 {
                     "workflow_id": workflow_id,
                 }
@@ -150,7 +150,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 
             # WORKFLOW
             try:
-                await self.workflows_client.find_one_and_update(
+                await self.wms_db.workflows_collection.find_one_and_update(
                     {
                         "workflow_id": workflow_id,
                         "aborted": {"$nin": [True]},  # "not in"
@@ -169,7 +169,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
             # set all corresponding taskforces to pending-stopper
             n_tfs_updated = 0  # in no taskforces to stop (excepted exception)
             try:
-                n_tfs_updated = await self.taskforces_client.update_set_many(
+                n_tfs_updated = await self.wms_db.taskforces_collection.update_set_many(
                     {
                         "workflow_id": workflow_id,
                         "$and": [
@@ -223,7 +223,7 @@ class WorkflowsFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         Search for workflows matching given query.
         """
         matches = []
-        async for m in self.workflows_client.find_all(
+        async for m in self.wms_db.workflows_collection.find_all(
             self.get_argument("query"),
             self.get_argument("projection", []),
         ):
