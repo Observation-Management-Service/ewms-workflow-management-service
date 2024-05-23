@@ -48,7 +48,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         # put in db
         async with await self.wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():
+            async with s.start_transaction():  # atomic
                 for uuid in all_uuids:
                     update = {}
                     if uuid in top_task_errors_by_taskforce:

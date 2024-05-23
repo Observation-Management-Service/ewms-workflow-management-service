@@ -94,7 +94,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         # put all into db -- atomically
         async with await self.wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():
+            async with s.start_transaction():  # atomic
                 workflow = await self.wms_db.workflows_collection.insert_one(
                     workflow,
                     session=s,
@@ -157,7 +157,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         Abort all tasks in workflow.
         """
         async with await self.wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():
+            async with s.start_transaction():  # atomic
                 # WORKFLOW
                 try:
                     await self.wms_db.workflows_collection.find_one_and_update(

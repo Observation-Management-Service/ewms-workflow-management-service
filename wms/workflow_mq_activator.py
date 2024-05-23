@@ -58,29 +58,27 @@ async def request_activation_to_mqs(mqs_rc: RestClient, workflow: dict) -> dict:
     )
 
 
-async def advance_taskforce_phases(
-    taskforces_client: database.client.MongoValidatedCollection,
+async def advance_database(
+    wms_db: database.client.WMSMongoValidatedDatabase,
     workflow_id: str,
 ) -> None:
-    """Update the database taskforces' phases with TaskforcePhase.PRE_LAUNCH."""
-    await taskforces_client.update_set_many(
-        dict(workflow_id=workflow_id),
-        dict(phase=TaskforcePhase.PRE_LAUNCH),
-    )
+    """Update the database with (1) mq_activated_ts and (2) taskforces' phases with TaskforcePhase.PRE_LAUNCH."""
+    async with await wms_db.mongo_client.start_session() as s:
+        async with s.start_transaction():
+            await wms_db.workflows_collection.find_one_and_update(
+                dict(workflow_id=workflow_id),
+                dict(mq_activated_ts=time.time()),
+                session=s,
+            )
+            await wms_db.taskforces_collection.update_set_many(
+                dict(workflow_id=workflow_id),
+                dict(phase=TaskforcePhase.PRE_LAUNCH),
+                session=s,
+            )
 
+    LOGGER.info(f"ACTIVATED queues for workflow_id={workflow_id}")
     LOGGER.info(
         f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({workflow_id=})"
-    )
-
-
-async def set_mq_activated_ts(
-    workflows_client: database.client.MongoValidatedCollection,
-    workflow_id: str,
-) -> None:
-    """Set mq_activated_ts in db."""
-    await workflows_client.find_one_and_update(
-        dict(workflow_id=workflow_id),
-        dict(mq_activated_ts=time.time()),
     )
 
 
@@ -137,7 +135,7 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         except requests.exceptions.HTTPError as e:
             LOGGER.exception(e)
             continue
-        # update db workflow w/ result
+        # update database per result
         if resp.get("try_again_later"):
             await set_mq_activation_retry_at_ts(
                 wms_db.workflows_collection, workflow["workflow_id"]
@@ -145,13 +143,4 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             short_sleep = True  # want to give other tasks a chance to start up
             continue
         else:
-            await set_mq_activated_ts(
-                wms_db.workflows_collection, workflow["workflow_id"]
-            )
-
-        LOGGER.info(f"ACTIVATED queues for workflow_id={workflow['workflow_id']}")
-
-        # update db -- taskforces
-        await advance_taskforce_phases(
-            wms_db.taskforces_collection, workflow["workflow_id"]
-        )
+            await advance_database(wms_db, workflow["workflow_id"])
