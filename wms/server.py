@@ -38,7 +38,7 @@ HANDLERS = [
 
 async def make(
     mongo_client: AsyncIOMotorClient,
-    global_asyncio_lock: asyncio.Lock,
+    multiupdate_db_lock: asyncio.Lock,
 ) -> RestServer:
     """Make a WMS REST service (does not start up automatically)."""
     rhs_config: dict[str, Any] = {"debug": ENV.CI}
@@ -52,7 +52,7 @@ async def make(
     #
     # Setup clients/apis
     args["mongo_client"] = mongo_client
-    args["global_asyncio_lock"] = global_asyncio_lock
+    args["multiupdate_db_lock"] = multiupdate_db_lock
 
     # Configure REST Routes
     rs = RestServer(debug=ENV.CI)

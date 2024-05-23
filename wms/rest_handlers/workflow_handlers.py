@@ -93,7 +93,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
             taskforces.extend(tfs)
 
         # put all into db
-        async with self.global_asyncio_lock:
+        async with self.multiupdate_db_lock:
             workflow = await self.workflows_client.insert_one(workflow)
             task_directives = await self.task_directives_client.insert_many(
                 task_directives
@@ -146,7 +146,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         Abort all tasks in workflow.
         """
-        async with self.global_asyncio_lock:
+        async with self.multiupdate_db_lock:
 
             # WORKFLOW
             try:

@@ -22,7 +22,7 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
     def initialize(  # type: ignore  # pylint: disable=W0221
         self,
         mongo_client: AsyncIOMotorClient,
-        global_asyncio_lock: asyncio.Lock,
+        multiupdate_db_lock: asyncio.Lock,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -44,7 +44,7 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
         self.mqs_rc = get_mqs_connection(
             logging.getLogger(f"{LOGGER.name.split('.', maxsplit=1)[0]}.mqs")
         )
-        self.global_asyncio_lock = global_asyncio_lock
+        self.multiupdate_db_lock = multiupdate_db_lock
 
 
 # ----------------------------------------------------------------------------
