@@ -1332,7 +1332,7 @@
                 }
             }
         },
-        "/workflow/{workflow_id}": {
+        "/workflows/{workflow_id}": {
             "parameters": [
                 {
                     "name": "workflow_id",

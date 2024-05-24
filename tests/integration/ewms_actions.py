@@ -346,7 +346,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "DELETE",
-        f"/workflow/{workflow_id}",
+        f"/workflows/{workflow_id}",
     )
     assert resp == {
         "workflow_id": workflow_id,
@@ -356,7 +356,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "GET",
-        f"/workflow/{workflow_id}",
+        f"/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
 

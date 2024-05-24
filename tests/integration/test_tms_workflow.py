@@ -148,7 +148,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "GET",
-        f"/workflow/{workflow_id}",
+        f"/workflows/{workflow_id}",
     )
     assert resp["aborted"] is False
 
@@ -393,7 +393,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "GET",
-        f"/workflow/{workflow_id}",
+        f"/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
 
@@ -495,7 +495,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "GET",
-        f"/workflow/{workflow_id}",
+        f"/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
 
@@ -595,7 +595,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "GET",
-        f"/workflow/{workflow_id}",
+        f"/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
 
@@ -710,6 +710,6 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "GET",
-        f"/workflow/{workflow_id}",
+        f"/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
