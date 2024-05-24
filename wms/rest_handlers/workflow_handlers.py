@@ -31,7 +31,7 @@ def _get_all_queues(tasks: list[dict]) -> list[str]:
 class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for adding a workflow."""
 
-    ROUTE = r"/workflow$"
+    ROUTE = r"/workflows$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
