@@ -1,4 +1,4 @@
-# _workflow_post_200_response
+# _workflows_post_200_response
 ## Properties
 
 | Name | Type | Description | Notes |

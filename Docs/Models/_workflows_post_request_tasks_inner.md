@@ -1,4 +1,4 @@
-# _workflow_post_request_tasks_inner
+# _workflows_post_request_tasks_inner
 ## Properties
 
 | Name | Type | Description | Notes |
