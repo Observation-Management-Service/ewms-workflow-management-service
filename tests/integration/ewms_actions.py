@@ -63,7 +63,7 @@ async def user_requests_new_workflow(
         rc,
         openapi_spec,
         "POST",
-        "/workflow",
+        "/workflows",
         dict(
             tasks=[
                 dict(
