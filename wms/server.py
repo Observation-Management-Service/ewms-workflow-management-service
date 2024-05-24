@@ -17,21 +17,21 @@ HANDLERS = [
     rest_handlers.schema_handlers.SchemaHandler,
     #
     rest_handlers.workflow_handlers.WorkflowHandler,
-    rest_handlers.workflow_handlers.WorkflowIDHandler,
-    rest_handlers.workflow_handlers.WorkflowsFindHandler,
+    rest_handlers.workflow_handlers.WorkflowsFindHandler,  # must be before ID handler for regex
+    rest_handlers.workflow_handlers.WorkflowIDHandler,  # ^^^
     #
-    rest_handlers.task_handlers.TaskDirectiveIDHandler,
-    rest_handlers.task_handlers.TaskDirectivesFindHandler,
+    rest_handlers.task_handlers.TaskDirectivesFindHandler,  # must be before ID handler for regex
+    rest_handlers.task_handlers.TaskDirectiveIDHandler,  # ^^^
     #
     rest_handlers.taskforce_handlers.TaskforcesReportHandler,
-    rest_handlers.taskforce_handlers.TaskforcesFindHandler,
+    rest_handlers.taskforce_handlers.TaskforcesFindHandler,  # must be before ID handler for regex
+    rest_handlers.taskforce_handlers.TaskforceUUIDHandler,  # ^^^
     #
     rest_handlers.taskforce_handlers.TaskforcePendingStarterHandler,
     rest_handlers.taskforce_handlers.TaskforceCondorSubmitUUIDHandler,
     rest_handlers.taskforce_handlers.TaskforcePendingStopperHandler,
     rest_handlers.taskforce_handlers.TaskforcePendingStopperUUIDHandler,
     rest_handlers.taskforce_handlers.TaskforceCondorCompleteUUIDHandler,
-    rest_handlers.taskforce_handlers.TaskforceUUIDHandler,
 ]
 
 
