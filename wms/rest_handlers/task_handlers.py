@@ -36,22 +36,22 @@ async def create_task_directive_and_taskforces(
 ) -> tuple[dict, list[dict]]:
     """Create new task directive and taskforces."""
 
-    task_directive = dict(
+    task_directive = {
         # IMMUTABLE
         #
-        task_id=uuid.uuid4().hex,
-        workflow_id=workflow_id,
-        timestamp=time.time(),
+        "task_id": uuid.uuid4().hex,
+        "workflow_id": workflow_id,
+        "timestamp": time.time(),
         #
-        cluster_locations=cluster_locations,
-        task_image=task_image,
-        task_args=task_args,
+        "cluster_locations": cluster_locations,
+        "task_image": task_image,
+        "task_args": task_args,
         #
-        input_queues=input_queues,
-        output_queues=output_queues,
+        "input_queues": input_queues,
+        "output_queues": output_queues,
         #
         # MUTABLE
-    )
+    }
 
     # first, check that locations are legit
     for location in cluster_locations:
@@ -65,48 +65,48 @@ async def create_task_directive_and_taskforces(
     taskforces = []
     for location in cluster_locations:
         taskforces.append(
-            dict(
+            {
                 # IMMUTABLE
                 #
-                taskforce_uuid=uuid.uuid4().hex,
-                task_id=task_directive["task_id"],
-                workflow_id=workflow_id,
-                timestamp=time.time(),
-                collector=config.KNOWN_CLUSTERS[location]["collector"],
-                schedd=config.KNOWN_CLUSTERS[location]["schedd"],
+                "taskforce_uuid": uuid.uuid4().hex,
+                "task_id": task_directive["task_id"],
+                "workflow_id": workflow_id,
+                "timestamp": time.time(),
+                "collector": config.KNOWN_CLUSTERS[location]["collector"],
+                "schedd": config.KNOWN_CLUSTERS[location]["schedd"],
                 #
                 # TODO: make optional/smart
-                n_workers=n_workers,
+                "n_workers": n_workers,
                 #
-                container_config=dict(
-                    image=task_directive["task_image"],
-                    arguments=task_directive["task_args"],
-                    environment={
+                "container_config": {
+                    "image": task_directive["task_image"],
+                    "arguments": task_directive["task_args"],
+                    "environment": {
                         **environment,
                         "EWMS_PILOT_QUEUE_INCOMING": ";".join(input_queues),
                         "EWMS_PILOT_QUEUE_OUTGOING": ";".join(output_queues),
                     },
-                    input_files=input_files,
-                ),
-                worker_config=worker_config,
+                    "input_files": input_files,
+                },
+                "worker_config": worker_config,
                 #
                 # MUTABLE
                 #
                 # set ONCE by tms via /taskforce/tms-action/condor-submit/<id>
-                cluster_id=None,
-                submit_dict={},
-                job_event_log_fpath="",
+                "cluster_id": None,
+                "submit_dict": {},
+                "job_event_log_fpath": "",
                 # set ONCE by tms's watcher
-                condor_complete_ts=None,
+                "condor_complete_ts": None,
                 #
                 # updated by taskforce_launch_control, tms
                 # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)
-                phase=TaskforcePhase.PRE_MQ_ACTIVATOR,
+                "phase": TaskforcePhase.PRE_MQ_ACTIVATOR,
                 #
                 # updated by tms SEVERAL times
-                compound_statuses={},
-                top_task_errors={},
-            )
+                "compound_statuses": {},
+                "top_task_errors": {},
+            }
         )
 
     return task_directive, taskforces

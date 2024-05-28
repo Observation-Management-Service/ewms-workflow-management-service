@@ -139,11 +139,11 @@ class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
         """
         try:
             taskforce = await self.wms_db.taskforces_collection.find_one(
-                dict(
-                    collector=self.get_argument("collector"),
-                    schedd=self.get_argument("schedd"),
-                    phase=TaskforcePhase.PENDING_STARTER,
-                ),
+                {
+                    "collector": self.get_argument("collector"),
+                    "schedd": self.get_argument("schedd"),
+                    "phase": TaskforcePhase.PENDING_STARTER,
+                },
                 sort=[
                     ("worker_config.priority", DESCENDING),  # first, highest priority
                     ("timestamp", ASCENDING),  # then, oldest
@@ -177,13 +177,13 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     "taskforce_uuid": taskforce_uuid,
                     "phase": {"$in": [TaskforcePhase.PENDING_STARTER]},
                 },
-                dict(
-                    cluster_id=self.get_argument("cluster_id"),
-                    n_workers=self.get_argument("n_workers"),
-                    submit_dict=self.get_argument("submit_dict"),
-                    job_event_log_fpath=self.get_argument("job_event_log_fpath"),
-                    phase=TaskforcePhase.CONDOR_SUBMIT,
-                ),
+                {
+                    "cluster_id": self.get_argument("cluster_id"),
+                    "n_workers": self.get_argument("n_workers"),
+                    "submit_dict": self.get_argument("submit_dict"),
+                    "job_event_log_fpath": self.get_argument("job_event_log_fpath"),
+                    "phase": TaskforcePhase.CONDOR_SUBMIT,
+                },
             )
         except DocumentNotFoundException as e:
             raise web.HTTPError(

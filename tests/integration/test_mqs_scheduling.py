@@ -18,14 +18,14 @@ from wms import database, config, schema, workflow_mq_activator
 logging.getLogger("pymongo").setLevel(logging.INFO)
 
 TEST_WORKFLOWS = [
-    dict(
-        workflow_id=workflow_id,
-        timestamp=1 + i,
-        priority=10,
-        mq_activated_ts=None,
-        _mq_activation_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,
-        aborted=False,
-    )
+    {
+        "workflow_id": workflow_id,
+        "timestamp": 1 + i,
+        "priority": 10,
+        "mq_activated_ts": None,
+        "_mq_activation_retry_at_ts": config.MQS_RETRY_AT_TS_DEFAULT_VALUE,
+        "aborted": False,
+    }
     for i, workflow_id in enumerate(
         # NOTE: naming format matters for _make_test_task_directives()
         ["A1", "B2", "C3", "D4", "E5"]
@@ -39,52 +39,52 @@ async def alist(async_iterator: AsyncIterator) -> list:
 
 def _make_test_task_directives(workflow: dict) -> Iterator[dict]:
     for n in range(int(workflow["workflow_id"][1])):
-        yield dict(
-            task_id=f"td-{workflow['workflow_id']}-{n}",
-            workflow_id=workflow["workflow_id"],
+        yield {
+            "task_id": f"td-{workflow['workflow_id']}-{n}",
+            "workflow_id": workflow["workflow_id"],
             #
-            cluster_locations=["foo", "bar"],
-            task_image="bap",
-            task_args="--baz bat",
-            timestamp=1 + n,
+            "cluster_locations": ["foo", "bar"],
+            "task_image": "bap",
+            "task_args": "--baz bat",
+            "timestamp": 1 + n,
             #
-            input_queues=[f"q-td-{n}-in"],
-            output_queues=[f"q-td-{n}-out"],
-        )
+            "input_queues": [f"q-td-{n}-in"],
+            "output_queues": [f"q-td-{n}-out"],
+        }
 
 
 def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
-    return dict(
-        taskforce_uuid=f"{task_directive['task_id']}-{i}",
-        task_id=task_directive["task_id"],
-        workflow_id=task_directive["workflow_id"],
+    return {
+        "taskforce_uuid": f"{task_directive['task_id']}-{i}",
+        "task_id": task_directive["task_id"],
+        "workflow_id": task_directive["workflow_id"],
         #
-        timestamp=task_directive["timestamp"],
-        collector=f"collector-{location}",
-        schedd=f"schedd-{location}",
-        n_workers=100,
-        container_config=dict(
-            image=task_directive["task_image"],
-            arguments=task_directive["task_args"],
-            environment={},
-            input_files=[],
-        ),
-        worker_config=dict(
-            do_transfer_worker_stdouterr=True,
-            max_worker_runtime=60 * 10,
-            n_cores=1,
-            priority=99,
-            worker_disk="512M",
-            worker_memory="512M",
-        ),
-        cluster_id=None,
-        submit_dict={},
-        job_event_log_fpath="",
-        condor_complete_ts=None,
-        phase=schema.enums.TaskforcePhase.PRE_MQ_ACTIVATOR,
-        compound_statuses={},
-        top_task_errors={},
-    )
+        "timestamp": task_directive["timestamp"],
+        "collector": f"collector-{location}",
+        "schedd": f"schedd-{location}",
+        "n_workers": 100,
+        "container_config": {
+            "image": task_directive["task_image"],
+            "arguments": task_directive["task_args"],
+            "environment": {},
+            "input_files": [],
+        },
+        "worker_config": {
+            "do_transfer_worker_stdouterr": True,
+            "max_worker_runtime": 60 * 10,
+            "n_cores": 1,
+            "priority": 99,
+            "worker_disk": "512M",
+            "worker_memory": "512M",
+        },
+        "cluster_id": None,
+        "submit_dict": {},
+        "job_event_log_fpath": "",
+        "condor_complete_ts": None,
+        "phase": schema.enums.TaskforcePhase.PRE_MQ_ACTIVATOR,
+        "compound_statuses": {},
+        "top_task_errors": {},
+    }
 
 
 class MQSRESTCalls:
@@ -105,14 +105,14 @@ class MQSRESTCalls:
             case 0:
                 assert workflow["workflow_id"] == "A1"
                 # assert config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY <= diff <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY+1  # check won't work for first call
-                return dict(
-                    mqprofiles=[
+                return {
+                    "mqprofiles": [
                         itertools.chain.from_iterable(
                             (td["input_queues"] + td["output_queues"])
                             for td in _make_test_task_directives(workflow)
                         )
                     ]
-                )
+                }
             # deny B
             case 1:
                 assert workflow["workflow_id"] == "B2"
@@ -124,7 +124,7 @@ class MQSRESTCalls:
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
-                return dict(try_again_later=True)
+                return {"try_again_later": True}
             # accept C
             case 2:
                 assert workflow["workflow_id"] == "C3"
@@ -133,14 +133,14 @@ class MQSRESTCalls:
                     <= diff
                     <= config.TASK_MQ_ACTIVATOR_SHORTEST_SLEEP + 1
                 )
-                return dict(
-                    mqprofiles=[
+                return {
+                    "mqprofiles": [
                         itertools.chain.from_iterable(
                             (td["input_queues"] + td["output_queues"])
                             for td in _make_test_task_directives(workflow)
                         )
                     ]
-                )
+                }
             # accept D
             case 3:
                 assert workflow["workflow_id"] == "D4"
@@ -149,14 +149,14 @@ class MQSRESTCalls:
                     <= diff
                     <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY + 1
                 )
-                return dict(
-                    mqprofiles=[
+                return {
+                    "mqprofiles": [
                         itertools.chain.from_iterable(
                             (td["input_queues"] + td["output_queues"])
                             for td in _make_test_task_directives(workflow)
                         )
                     ]
-                )
+                }
             # deny E
             case 4:
                 assert workflow["workflow_id"] == "E5"
@@ -168,7 +168,7 @@ class MQSRESTCalls:
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
-                return dict(try_again_later=True)
+                return {"try_again_later": True}
             # retry: re-deny B
             case 5:
                 assert workflow["workflow_id"] == "B2"
@@ -180,7 +180,7 @@ class MQSRESTCalls:
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
-                return dict(try_again_later=True)
+                return {"try_again_later": True}
             # retry: re-deny E
             case 6:
                 assert workflow["workflow_id"] == "E5"
@@ -192,7 +192,7 @@ class MQSRESTCalls:
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
-                return dict(try_again_later=True)
+                return {"try_again_later": True}
             # retry: re-deny B
             case 7:
                 assert workflow["workflow_id"] == "B2"
@@ -204,7 +204,7 @@ class MQSRESTCalls:
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
-                return dict(try_again_later=True)
+                return {"try_again_later": True}
             # retry: accept E
             case 8:
                 assert workflow["workflow_id"] == "E5"
@@ -213,14 +213,14 @@ class MQSRESTCalls:
                     <= time.time()
                     <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2.5
                 )
-                return dict(
-                    mqprofiles=[
+                return {
+                    "mqprofiles": [
                         itertools.chain.from_iterable(
                             (td["input_queues"] + td["output_queues"])
                             for td in _make_test_task_directives(workflow)
                         )
                     ]
-                )
+                }
             # retry: re-deny B
             case 9:
                 assert workflow["workflow_id"] == "B2"
@@ -232,7 +232,7 @@ class MQSRESTCalls:
                 MQSRESTCalls.retry_dues[workflow["workflow_id"]] = (
                     time.time() + config.ENV.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT
                 )
-                return dict(try_again_later=True)
+                return {"try_again_later": True}
             # retry: accept B
             case 10:
                 assert workflow["workflow_id"] == "B2"
@@ -241,14 +241,14 @@ class MQSRESTCalls:
                     <= time.time()
                     <= MQSRESTCalls.retry_dues[workflow["workflow_id"]] + 2.5
                 )
-                return dict(
-                    mqprofiles=[
+                return {
+                    "mqprofiles": [
                         itertools.chain.from_iterable(
                             (td["input_queues"] + td["output_queues"])
                             for td in _make_test_task_directives(workflow)
                         )
                     ]
-                )
+                }
             # ???
             case other:
                 print(other)
@@ -317,7 +317,7 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
             # get all taskforces for task_id
             assert (
                 await alist(
-                    taskforces_client.find_all(dict(task_id=td_db["task_id"]), [])
+                    taskforces_client.find_all({"task_id": td_db["task_id"]}, [])
                 )
                 == expected_tfs
             )
@@ -325,6 +325,6 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         # sanity check by querying w/ workflow_id
         assert n_asserted == len(
             await alist(
-                taskforces_client.find_all(dict(workflow_id=wf_db["workflow_id"]), [])
+                taskforces_client.find_all({"workflow_id": wf_db["workflow_id"]}, [])
             )
         )

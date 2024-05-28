@@ -48,13 +48,13 @@ async def request_activation_to_mqs(mqs_rc: RestClient, workflow: dict) -> dict:
     return await mqs_rc.request(
         "POST",
         "/v0/mq-group/activation",
-        dict(
-            workflow_id=workflow["workflow_id"],
-            criteria=dict(
-                priority=workflow["priority"],
+        {
+            "workflow_id": workflow["workflow_id"],
+            "criteria": {
+                "priority": workflow["priority"],
                 # TODO (future PR) - add other fields
-            ),
-        ),
+            },
+        },
     )
 
 
@@ -66,13 +66,13 @@ async def advance_database(
     async with await wms_db.mongo_client.start_session() as s:
         async with s.start_transaction():
             await wms_db.workflows_collection.find_one_and_update(
-                dict(workflow_id=workflow_id),
-                dict(mq_activated_ts=time.time()),
+                {"workflow_id": workflow_id},
+                {"mq_activated_ts": time.time()},
                 session=s,
             )
             await wms_db.taskforces_collection.update_set_many(
-                dict(workflow_id=workflow_id),
-                dict(phase=TaskforcePhase.PRE_LAUNCH),
+                {"workflow_id": workflow_id},
+                {"phase": TaskforcePhase.PRE_LAUNCH},
                 session=s,
             )
 
@@ -93,8 +93,8 @@ async def set_mq_activation_retry_at_ts(
         f"{workflow_id} after {retry_at} ({time.ctime(retry_at)})"
     )
     await workflows_client.find_one_and_update(
-        dict(workflow_id=workflow_id),
-        dict(_mq_activation_retry_at_ts=retry_at),
+        {"workflow_id": workflow_id},
+        {"_mq_activation_retry_at_ts": retry_at},
     )
 
 

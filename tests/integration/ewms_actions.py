@@ -64,23 +64,23 @@ async def user_requests_new_workflow(
         openapi_spec,
         "POST",
         "/workflows",
-        dict(
-            tasks=[
-                dict(
-                    cluster_locations=list(condor_locations.keys()),
-                    task_image=task_image,
-                    task_args=task_args,
-                    input_queue_aliases=["qfoo"],
-                    output_queue_aliases=["qbar"],
+        {
+            "tasks": [
+                {
+                    "cluster_locations": list(condor_locations.keys()),
+                    "task_image": task_image,
+                    "task_args": task_args,
+                    "input_queue_aliases": ["qfoo"],
+                    "output_queue_aliases": ["qbar"],
                     #
-                    n_workers=n_workers,
-                    worker_config=worker_config,
+                    "n_workers": n_workers,
+                    "worker_config": worker_config,
                     # environment=environment,  # empty
                     # input_files=input_files,  # empty
-                )
+                }
             ],
-            public_queue_aliases=["qfoo", "qbar"],
-        ),
+            "public_queue_aliases": ["qfoo", "qbar"],
+        },
     )
     # TODO - update asserts when/if testing multi-task workflows
     assert workflow_resp["workflow"]
@@ -98,16 +98,16 @@ async def user_requests_new_workflow(
     assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
     assert all(
         tf["container_config"]
-        == dict(
-            image=task_image,
-            arguments=task_args,
-            environment={
+        == {
+            "image": task_image,
+            "arguments": task_args,
+            "environment": {
                 **environment,
                 "EWMS_PILOT_QUEUE_INCOMING": "123qfoo",
                 "EWMS_PILOT_QUEUE_OUTGOING": "123qbar",
             },
-            input_files=input_files,
-        )
+            "input_files": input_files,
+        }
         for tf in workflow_resp["taskforces"]
     )
 
