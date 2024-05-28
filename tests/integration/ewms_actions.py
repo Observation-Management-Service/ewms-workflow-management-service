@@ -136,7 +136,7 @@ async def user_requests_new_workflow(
         rc,
         openapi_spec,
         "POST",
-        "/task-directives/find",
+        "/query/task-directives",
         {"query": {"task_id": task_id}},
     )
     assert len(resp["task_directives"]) == 1
@@ -334,7 +334,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "POST",
-        "/task-directives/find",
+        "/query/task-directives",
         {
             "query": {"task_id": task_id},
             "projection": ["workflow_id"],

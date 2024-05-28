@@ -488,7 +488,7 @@
                 }
             }
         },
-        "/task-directives/find": {
+        "/query/task-directives": {
             "parameters": [],
             "post": {
                 "requestBody": {

@@ -148,7 +148,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for finding task directives."""
 
-    ROUTE = r"/task-directives/find$"
+    ROUTE = r"/query/task-directives$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
