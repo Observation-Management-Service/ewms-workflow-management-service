@@ -1,9 +1,10 @@
-# _tms_statuses_taskforces_post_200_response
+# _v0_workflows_post_request
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **results** | [**List**](_tms_statuses_taskforces_post_200_response_results_inner.md) |  | [default to null] |
+| **tasks** | [**List**](_v0_workflows_post_request_tasks_inner.md) |  | [default to null] |
+| **public\_queue\_aliases** | **List** |  | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

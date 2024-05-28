@@ -1,9 +1,9 @@
-# _tms_condor_complete_taskforces__taskforce_uuid__post_request
+# _v0_query_task_directives_post_200_response
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **condor\_complete\_ts** | **Integer** | the time that the taskforce&#39;s condor cluster was ended/terminated/aborted | [default to null] |
+| **task\_directives** | [**List**](TaskDirectiveObject.md) | a list of task directive objects | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

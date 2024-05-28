@@ -1,10 +1,9 @@
-# _tms_statuses_taskforces_post_200_response_results_inner
+# _v0_tms_condor_complete_taskforces__taskforce_uuid__post_request
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **uuid** | **String** |  | [default to null] |
-| **status** | **String** |  | [default to null] |
+| **condor\_complete\_ts** | **Integer** | the time that the taskforce&#39;s condor cluster was ended/terminated/aborted | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
