@@ -128,7 +128,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a pending taskforce."""
 
-    ROUTE = r"/taskforces/tms-action/pending-starter$"
+    ROUTE = r"/tms-action/pending-starter/taskforces$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

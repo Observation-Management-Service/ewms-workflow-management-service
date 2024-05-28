@@ -633,7 +633,7 @@
                 }
             }
         },
-        "/taskforces/tms-action/pending-starter": {
+        "/tms-action/pending-starter/taskforces": {
             "parameters": [],
             "get": {
                 "parameters": [
