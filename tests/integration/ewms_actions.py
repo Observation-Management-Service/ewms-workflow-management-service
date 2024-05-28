@@ -439,7 +439,7 @@ async def tms_condor_clusters_done(
             rc,
             openapi_spec,
             "POST",
-            f"/taskforces/tms/condor-complete/{resp['taskforces'][0]['taskforce_uuid']}",
+            f"/tms/condor-complete/taskforces/{resp['taskforces'][0]['taskforce_uuid']}",
             {
                 "condor_complete_ts": (
                     # NOTE: need a unique timestamp that we don't need to rely on the timing of this test

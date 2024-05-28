@@ -820,7 +820,7 @@
                 }
             }
         },
-        "/taskforces/tms/condor-complete/{taskforce_uuid}": {
+        "/tms/condor-complete/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"

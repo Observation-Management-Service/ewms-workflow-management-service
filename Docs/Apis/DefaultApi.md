@@ -13,7 +13,7 @@ All URIs are relative to *http://localhost*
 | [**taskforceTmsActionPendingStarterGet**](DefaultApi.md#taskforceTmsActionPendingStarterGet)                                 | **GET** /tms/pending-starter/taskforces                     |             |
 | [**taskforceTmsActionPendingStopperGet**](DefaultApi.md#taskforceTmsActionPendingStopperGet)                                 | **GET** /tms/pending-stopper/taskforces                     |             |
 | [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](DefaultApi.md#taskforceTmsActionPendingStopperTaskforceUuidDelete) | **DELETE** /tms/pending-stopper/taskforces/{taskforce_uuid} |             |
-| [**taskforceTmsCondorCompleteTaskforceUuidPost**](DefaultApi.md#taskforceTmsCondorCompleteTaskforceUuidPost)                 | **POST** /taskforces/tms/condor-complete/{taskforce_uuid}   |             |
+| [**taskforceTmsCondorCompleteTaskforceUuidPost**](DefaultApi.md#taskforceTmsCondorCompleteTaskforceUuidPost)                 | **POST** /tms/condor-complete/taskforces/{taskforce_uuid}   |             |
 | [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost)                                                                   | **POST** /taskforces/find                                   |             |
 | [**taskforcesTmsStatusPost**](DefaultApi.md#taskforcesTmsStatusPost)                                                         | **POST** /taskforces/tms/status                             |             |
 | [**workflowsFindPost**](DefaultApi.md#workflowsFindPost)                                                                     | **POST** /workflows/find                                    |             |
