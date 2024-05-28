@@ -15,7 +15,7 @@ All URIs are relative to *http://localhost*
 | [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](DefaultApi.md#taskforceTmsActionPendingStopperTaskforceUuidDelete) | **DELETE** /tms/pending-stopper/taskforces/{taskforce_uuid} |             |
 | [**taskforceTmsCondorCompleteTaskforceUuidPost**](DefaultApi.md#taskforceTmsCondorCompleteTaskforceUuidPost)                 | **POST** /tms/condor-complete/taskforces/{taskforce_uuid}   |             |
 | [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost)                                                                   | **POST** /taskforces/find                                   |             |
-| [**taskforcesTmsStatusPost**](DefaultApi.md#taskforcesTmsStatusPost)                                                         | **POST** /taskforces/tms/status                             |             |
+| [**taskforcesTmsStatusPost**](DefaultApi.md#taskforcesTmsStatusPost)                                                         | **POST** /tms/taskforces/statuses                           |             |
 | [**workflowsFindPost**](DefaultApi.md#workflowsFindPost)                                                                     | **POST** /workflows/find                                    |             |
 | [**workflowsPost**](DefaultApi.md#workflowsPost)                                                                             | **POST** /workflows                                         |             |
 | [**workflowsWorkflowIdDelete**](DefaultApi.md#workflowsWorkflowIdDelete)                                                     | **DELETE** /workflows/{workflow_id}                         |             |

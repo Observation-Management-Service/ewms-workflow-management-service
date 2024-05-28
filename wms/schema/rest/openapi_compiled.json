@@ -1046,7 +1046,7 @@
                 }
             }
         },
-        "/taskforces/tms/status": {
+        "/tms/taskforces/statuses": {
             "parameters": [],
             "post": {
                 "requestBody": {
