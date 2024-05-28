@@ -92,7 +92,7 @@ async def create_task_directive_and_taskforces(
                 #
                 # MUTABLE
                 #
-                # set ONCE by tms via /taskforces/tms-action/condor-submit/<id>
+                # set ONCE by tms via /taskforces/<id>/tms-action/condor-submit
                 cluster_id=None,
                 submit_dict={},
                 job_event_log_fpath="",

@@ -9,7 +9,7 @@ All URIs are relative to *http://localhost*
 | [**taskDirectiveTaskIdGet**](DefaultApi.md#taskDirectiveTaskIdGet)                                                           | **GET** /task-directives/{task_id}                                 |             |
 | [**taskDirectivesFindPost**](DefaultApi.md#taskDirectivesFindPost)                                                           | **POST** /task-directives/find                                     |             |
 | [**taskforceTaskforceUuidGet**](DefaultApi.md#taskforceTaskforceUuidGet)                                                     | **GET** /taskforces/{taskforce_uuid}                               |             |
-| [**taskforceTmsActionCondorSubmitTaskforceUuidPost**](DefaultApi.md#taskforceTmsActionCondorSubmitTaskforceUuidPost)         | **POST** /taskforces/tms-action/condor-submit/{taskforce_uuid}     |             |
+| [**taskforceTmsActionCondorSubmitTaskforceUuidPost**](DefaultApi.md#taskforceTmsActionCondorSubmitTaskforceUuidPost)         | **POST** /taskforces/{taskforce_uuid}/tms-action/condor-submit     |             |
 | [**taskforceTmsActionPendingStarterGet**](DefaultApi.md#taskforceTmsActionPendingStarterGet)                                 | **GET** /taskforces/tms-action/pending-starter                     |             |
 | [**taskforceTmsActionPendingStopperGet**](DefaultApi.md#taskforceTmsActionPendingStopperGet)                                 | **GET** /taskforces/tms-action/pending-stopper                     |             |
 | [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](DefaultApi.md#taskforceTmsActionPendingStopperTaskforceUuidDelete) | **DELETE** /taskforces/tms-action/pending-stopper/{taskforce_uuid} |             |
