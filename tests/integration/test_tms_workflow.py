@@ -189,7 +189,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms-action/pending-starter/taskforces",
+            "/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -198,7 +198,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms-action/pending-stopper/taskforces",
+            "/tms/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -207,7 +207,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms-action/pending-starter/taskforces",
+            "/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
 
@@ -303,7 +303,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms-action/pending-starter/taskforces",
+            "/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -312,7 +312,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms-action/pending-stopper/taskforces",
+            "/tms/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -321,7 +321,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms-action/pending-starter/taskforces",
+            "/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
 
@@ -686,7 +686,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/tms-action/pending-stopper/taskforces",
+            "/tms/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert not taskforce

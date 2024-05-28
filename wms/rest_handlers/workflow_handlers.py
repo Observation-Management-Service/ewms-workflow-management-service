@@ -185,7 +185,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                             "workflow_id": workflow_id,
                             "$and": [
                                 # not already aborted
-                                # NOTE - we don't care whether the taskforce has started up (see /tms-action/pending-stopper/taskforces)
+                                # NOTE - we don't care whether the taskforce has started up (see /tms/pending-stopper/taskforces)
                                 {
                                     "phase": {
                                         "$nin": [

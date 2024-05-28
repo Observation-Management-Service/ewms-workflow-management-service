@@ -553,7 +553,7 @@
                 }
             }
         },
-        "/taskforces/{taskforce_uuid}/tms-action/condor-submit": {
+        "/taskforces/{taskforce_uuid}/tms/condor-submit": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
@@ -633,7 +633,7 @@
                 }
             }
         },
-        "/tms-action/pending-starter/taskforces": {
+        "/tms/pending-starter/taskforces": {
             "parameters": [],
             "get": {
                 "parameters": [
@@ -691,7 +691,7 @@
                 }
             }
         },
-        "/tms-action/pending-stopper/taskforces": {
+        "/tms/pending-stopper/taskforces": {
             "parameters": [],
             "get": {
                 "parameters": [
@@ -749,7 +749,7 @@
                 }
             }
         },
-        "/tms-action/pending-stopper/taskforces/{taskforce_uuid}": {
+        "/tms/pending-stopper/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"

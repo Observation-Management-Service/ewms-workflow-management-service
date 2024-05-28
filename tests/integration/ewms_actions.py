@@ -174,7 +174,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            "/tms-action/pending-starter/taskforces",
+            "/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -193,7 +193,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "POST",
-            f"/taskforces/{taskforce_uuid}/tms-action/condor-submit",
+            f"/taskforces/{taskforce_uuid}/tms/condor-submit",
             {
                 "cluster_id": 123456,
                 "n_workers": 5600,
@@ -377,7 +377,7 @@ async def tms_stopper(
             rc,
             openapi_spec,
             "GET",
-            "/tms-action/pending-stopper/taskforces",
+            "/tms/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -386,7 +386,7 @@ async def tms_stopper(
             rc,
             openapi_spec,
             "DELETE",
-            f"/tms-action/pending-stopper/taskforces/{taskforce['taskforce_uuid']}",
+            f"/tms/pending-stopper/taskforces/{taskforce['taskforce_uuid']}",
         )
 
     #
