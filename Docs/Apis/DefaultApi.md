@@ -7,7 +7,7 @@ All URIs are relative to *http://localhost*
 | [**rootGet**](DefaultApi.md#rootGet)                                                                                         | **GET** /                                                         |             |
 | [**schemaOpenapiGet**](DefaultApi.md#schemaOpenapiGet)                                                                       | **GET** /schema/openapi                                           |             |
 | [**taskDirectiveTaskIdGet**](DefaultApi.md#taskDirectiveTaskIdGet)                                                           | **GET** /task-directives/{task_id}                                |             |
-| [**taskDirectivesFindPost**](DefaultApi.md#taskDirectivesFindPost)                                                           | **POST** /task-directivess/find                                   |             |
+| [**taskDirectivesFindPost**](DefaultApi.md#taskDirectivesFindPost)                                                           | **POST** /task-directives/find                                    |             |
 | [**taskforceTaskforceUuidGet**](DefaultApi.md#taskforceTaskforceUuidGet)                                                     | **GET** /taskforce/{taskforce_uuid}                               |             |
 | [**taskforceTmsActionCondorSubmitTaskforceUuidPost**](DefaultApi.md#taskforceTmsActionCondorSubmitTaskforceUuidPost)         | **POST** /taskforce/tms-action/condor-submit/{taskforce_uuid}     |             |
 | [**taskforceTmsActionPendingStarterGet**](DefaultApi.md#taskforceTmsActionPendingStarterGet)                                 | **GET** /taskforce/tms-action/pending-starter                     |             |
