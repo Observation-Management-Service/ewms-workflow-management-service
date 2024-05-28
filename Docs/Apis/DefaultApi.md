@@ -14,9 +14,9 @@ All URIs are relative to *http://localhost*
 | [**taskforceTmsActionPendingStopperGet**](DefaultApi.md#taskforceTmsActionPendingStopperGet)                                 | **GET** /tms/pending-stopper/taskforces                     |             |
 | [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](DefaultApi.md#taskforceTmsActionPendingStopperTaskforceUuidDelete) | **DELETE** /tms/pending-stopper/taskforces/{taskforce_uuid} |             |
 | [**taskforceTmsCondorCompleteTaskforceUuidPost**](DefaultApi.md#taskforceTmsCondorCompleteTaskforceUuidPost)                 | **POST** /tms/condor-complete/taskforces/{taskforce_uuid}   |             |
-| [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost)                                                                   | **POST** /taskforces/find                                   |             |
+| [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost)                                                                   | **POST** /query/taskforces                                  |             |
 | [**taskforcesTmsStatusPost**](DefaultApi.md#taskforcesTmsStatusPost)                                                         | **POST** /tms/taskforces/statuses                           |             |
-| [**workflowsFindPost**](DefaultApi.md#workflowsFindPost)                                                                     | **POST** /workflows/find                                    |             |
+| [**workflowsFindPost**](DefaultApi.md#workflowsFindPost)                                                                     | **POST** /query/workflows                                   |             |
 | [**workflowsPost**](DefaultApi.md#workflowsPost)                                                                             | **POST** /workflows                                         |             |
 | [**workflowsWorkflowIdDelete**](DefaultApi.md#workflowsWorkflowIdDelete)                                                     | **DELETE** /workflows/{workflow_id}                         |             |
 | [**workflowsWorkflowIdGet**](DefaultApi.md#workflowsWorkflowIdGet)                                                           | **GET** /workflows/{workflow_id}                            |             |

@@ -182,13 +182,13 @@ def monitor_wms(rc: RestClient, task_id: str) -> None:
         if i == 0:
             taskforces = rc.request_seq(
                 "POST",
-                "/taskforces/find",
+                "/query/taskforces",
                 {"query": {"task_id": task_id}},
             )
         else:
             taskforces = rc.request_seq(
                 "POST",
-                "/taskforces/find",
+                "/query/taskforces",
                 {
                     "query": {"task_id": task_id},
                     "projection": [

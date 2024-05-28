@@ -103,7 +103,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for finding taskforces."""
 
-    ROUTE = r"/taskforces/find$"
+    ROUTE = r"/query/taskforces$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
