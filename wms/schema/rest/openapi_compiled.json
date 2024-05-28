@@ -329,7 +329,7 @@
         }
     },
     "paths": {
-        "/": {
+        "/v0/": {
             "parameters": [],
             "get": {
                 "responses": {
@@ -367,7 +367,7 @@
                 }
             }
         },
-        "/query/task-directives": {
+        "/v0/query/task-directives": {
             "parameters": [],
             "post": {
                 "requestBody": {
@@ -432,7 +432,7 @@
                 }
             }
         },
-        "/query/taskforces": {
+        "/v0/query/taskforces": {
             "parameters": [],
             "post": {
                 "requestBody": {
@@ -497,7 +497,7 @@
                 }
             }
         },
-        "/query/workflows": {
+        "/v0/query/workflows": {
             "parameters": [],
             "post": {
                 "requestBody": {
@@ -562,7 +562,7 @@
                 }
             }
         },
-        "/schema/openapi": {
+        "/v0/schema/openapi": {
             "parameters": [],
             "get": {
                 "responses": {
@@ -606,7 +606,7 @@
                 }
             }
         },
-        "/task-directives/{task_id}": {
+        "/v0/task-directives/{task_id}": {
             "parameters": [
                 {
                     "name": "task_id",
@@ -683,7 +683,7 @@
                 }
             }
         },
-        "/taskforces/{taskforce_uuid}": {
+        "/v0/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
@@ -754,7 +754,7 @@
                 }
             }
         },
-        "/tms/condor-complete/taskforces/{taskforce_uuid}": {
+        "/v0/tms/condor-complete/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
@@ -844,7 +844,7 @@
                 }
             }
         },
-        "/tms/condor-submit/taskforces/{taskforce_uuid}": {
+        "/v0/tms/condor-submit/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
@@ -924,7 +924,7 @@
                 }
             }
         },
-        "/tms/pending-starter/taskforces": {
+        "/v0/tms/pending-starter/taskforces": {
             "parameters": [],
             "get": {
                 "parameters": [
@@ -982,7 +982,7 @@
                 }
             }
         },
-        "/tms/pending-stopper/taskforces": {
+        "/v0/tms/pending-stopper/taskforces": {
             "parameters": [],
             "get": {
                 "parameters": [
@@ -1040,7 +1040,7 @@
                 }
             }
         },
-        "/tms/pending-stopper/taskforces/{taskforce_uuid}": {
+        "/v0/tms/pending-stopper/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
@@ -1111,7 +1111,7 @@
                 }
             }
         },
-        "/tms/statuses/taskforces": {
+        "/v0/tms/statuses/taskforces": {
             "parameters": [],
             "post": {
                 "requestBody": {
@@ -1259,7 +1259,7 @@
                 }
             }
         },
-        "/workflows": {
+        "/v0/workflows": {
             "parameters": [],
             "post": {
                 "requestBody": {
@@ -1397,7 +1397,7 @@
                 }
             }
         },
-        "/workflows/{workflow_id}": {
+        "/v0/workflows/{workflow_id}": {
             "parameters": [
                 {
                     "name": "workflow_id",
