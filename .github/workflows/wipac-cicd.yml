@@ -109,6 +109,7 @@ jobs:
           fi
           
           # use literal dict syntax
+          pip install ruff
           ruff check --select C408 --fix . --unsafe-fixes
           
           # push
