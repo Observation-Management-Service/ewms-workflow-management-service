@@ -4,6 +4,9 @@
         "task_id": {
             "type": "string"
         },
+        "workflow_id": {
+            "type": "string"
+        },
         "cluster_locations": {
             "type": "array",
             "items": {
@@ -18,41 +21,32 @@
             "type": "string"
         },
         "timestamp": {
-            "type": "integer"
+            "type": "number"
         },
-        "priority": {
-            "type": "integer"
-        },
-        "n_queues": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 2
-        },
-        "queues": {
+        "input_queues": {
             "type": "array",
             "items": {
                 "type": "string"
             },
             "minItems": 0
         },
-        "_mqs_retry_at_ts": {
-            "type": "number"
-        },
-        "aborted": {
-            "type": "boolean"
+        "output_queues": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 0
         }
     },
     "required": [
         "task_id",
+        "workflow_id",
         "cluster_locations",
         "task_image",
         "task_args",
         "timestamp",
-        "priority",
-        "n_queues",
-        "queues",
-        "_mqs_retry_at_ts",
-        "aborted"
+        "input_queues",
+        "output_queues"
     ],
     "additionalProperties": false
 }

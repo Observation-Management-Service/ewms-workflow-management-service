@@ -15,8 +15,8 @@ env:
   REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
   DB_JSONSCHEMA_DIR: "schema/db"
   #
-  TASK_MQ_ASSEMBLY_DELAY: 2  # need to define for pytests
-  TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT: 10  # ''
+  WORKFLOW_MQ_ACTIVATOR_DELAY: 2  # need to define for pytests
+  WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT: 10  # ''
   TASKFORCE_LAUNCH_CONTROL_DELAY: 2  # ''
 
 
@@ -181,6 +181,8 @@ jobs:
         image: bitnami/mongodb:4
         ports:
           - 27017:27017
+        env:
+          MONGODB_REPLICA_SET_MODE: primary
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -210,8 +212,8 @@ jobs:
             --env REST_OPENAPI_SPEC_FPATH="${{ env.REST_OPENAPI_SPEC_FPATH }}" \
             --env DB_JSONSCHEMA_DIR="${{ env.DB_JSONSCHEMA_DIR }}" \
             --env TASKFORCE_LAUNCH_CONTROL_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_DELAY }}" \
-            --env TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT="${{ env.TASK_MQ_ASSEMBLY_MQS_RETRY_WAIT }}" \
-            --env TASK_MQ_ASSEMBLY_DELAY="${{ env.TASK_MQ_ASSEMBLY_DELAY }}" \
+            --env WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT="${{ env.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT }}" \
+            --env WORKFLOW_MQ_ACTIVATOR_DELAY="${{ env.WORKFLOW_MQ_ACTIVATOR_DELAY }}" \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
           
@@ -237,6 +239,8 @@ jobs:
         image: bitnami/mongodb:4
         ports:
           - 27017:27017
+        env:
+          MONGODB_REPLICA_SET_MODE: primary
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -244,7 +248,7 @@ jobs:
           python-version: ${{ matrix.py3 }}
       - run: |
           pip install .[tests]
-      - name: test (run servers in background)
+      - name: test (no rest server)
         run: |
           pytest -vvv --exitfirst tests/integration/test_mqs_scheduling.py
 

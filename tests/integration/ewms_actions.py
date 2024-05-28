@@ -35,11 +35,12 @@ async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
     return openapi_spec
 
 
-async def user_requests_new_task(
+async def user_requests_new_workflow(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     condor_locations: dict,
-) -> str:
+) -> tuple[str, str]:
+    """Return workflow and task ids."""
     task_image = "icecube/earthpilot"
     task_args = "aaa bbb --ccc 123"
     n_workers = 99
@@ -56,24 +57,73 @@ async def user_requests_new_task(
 
     #
     # USER...
-    # requests new task
+    # requests new workflow
     #
-    task_directive = await request_and_validate(
+    workflow_resp = await request_and_validate(
         rc,
         openapi_spec,
         "POST",
-        "/task/directive",
-        {
-            "cluster_locations": list(condor_locations.keys()),
-            "task_image": task_image,
-            "task_args": task_args,
-            #
-            "n_workers": n_workers,
-            "worker_config": worker_config,
-            # "environment": environment,  # empty
-            # "input_files": input_files,  # empty
-        },
+        "/workflows",
+        dict(
+            tasks=[
+                dict(
+                    cluster_locations=list(condor_locations.keys()),
+                    task_image=task_image,
+                    task_args=task_args,
+                    input_queue_aliases=["qfoo"],
+                    output_queue_aliases=["qbar"],
+                    #
+                    n_workers=n_workers,
+                    worker_config=worker_config,
+                    # environment=environment,  # empty
+                    # input_files=input_files,  # empty
+                )
+            ],
+            public_queue_aliases=["qfoo", "qbar"],
+        ),
     )
+    # TODO - update asserts when/if testing multi-task workflows
+    assert workflow_resp["workflow"]
+    assert len(workflow_resp["task_directives"]) == 1
+    assert len(workflow_resp["taskforces"]) == 2
+    # taskforce checks
+    assert all(tf["phase"] == "pre-mq-activation" for tf in workflow_resp["taskforces"])
+    assert len(workflow_resp["taskforces"]) == len(condor_locations)
+    assert sorted(  # check locations were translated correctly to collector+schedd
+        (tf["collector"], tf["schedd"]) for tf in workflow_resp["taskforces"]
+    ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
+    assert all(
+        tf["worker_config"] == worker_config for tf in workflow_resp["taskforces"]
+    )
+    assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
+    assert all(
+        tf["container_config"]
+        == dict(
+            image=task_image,
+            arguments=task_args,
+            environment={
+                **environment,
+                "EWMS_PILOT_QUEUE_INCOMING": "123qfoo",
+                "EWMS_PILOT_QUEUE_OUTGOING": "123qbar",
+            },
+            input_files=input_files,
+        )
+        for tf in workflow_resp["taskforces"]
+    )
+
+    ############################################
+    # mq activator & launch control runs...
+    #   it's going to be unreliable to try to intercept the middle phase, "pre-launch",
+    #   so just wait till both run
+    ############################################
+    await asyncio.sleep(int(os.environ["WORKFLOW_MQ_ACTIVATOR_DELAY"]) * 2)  # pad
+    await asyncio.sleep(
+        int(os.environ["TASKFORCE_LAUNCH_CONTROL_DELAY"])
+        * len(workflow_resp["taskforces"])
+    )
+
+    # query about task directive
+    task_directive = workflow_resp["task_directives"][0]
     task_id = task_directive["task_id"]
     resp = await request_and_validate(
         rc,
@@ -87,12 +137,7 @@ async def user_requests_new_task(
         openapi_spec,
         "POST",
         "/task/directives/find",
-        {
-            "query": {
-                "task_image": "icecube/earthpilot",
-                "task_args": "aaa bbb --ccc 123",
-            }
-        },
+        {"query": {"task_id": task_id}},
     )
     assert len(resp["task_directives"]) == 1
     assert resp["task_directives"][0] == task_directive
@@ -104,61 +149,12 @@ async def user_requests_new_task(
         "POST",
         "/taskforces/find",
         {
-            "query": {
-                "task_id": task_id,
-            },
+            "query": {"task_id": task_id},
         },
     )
-    assert len(resp["taskforces"]) == len(condor_locations)
-    # check locations were translated correctly to collector+schedd
-    assert sorted(
-        (tf["collector"], tf["schedd"]) for tf in resp["taskforces"]
-    ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
-
-    assert all(tf["phase"] == "pre-mq-assembly" for tf in resp["taskforces"])
-
-    assert all(tf["worker_config"] == worker_config for tf in resp["taskforces"])
-    assert all(tf["n_workers"] == n_workers for tf in resp["taskforces"])
-    assert all(
-        tf["container_config"]
-        == dict(
-            image=task_image,
-            arguments=task_args,
-            environment=environment,
-            input_files=input_files,
-        )
-        for tf in resp["taskforces"]
-    )
-
-    return task_id
-
-
-async def taskforce_launch_control_marks_taskforces_pending_starter(
-    rc: RestClient,
-    openapi_spec: openapi_core.OpenAPI,
-    task_id: str,
-    n_locations: int,
-) -> None:
-    """Wait expected time for taskforce_launch_control to set taskforces as 'pending-
-    starter'."""
-    await asyncio.sleep(int(os.environ["TASK_MQ_ASSEMBLY_DELAY"]))
-    await asyncio.sleep(int(os.environ["TASKFORCE_LAUNCH_CONTROL_DELAY"]) * n_locations)
-
-    resp = await request_and_validate(
-        rc,
-        openapi_spec,
-        "POST",
-        "/taskforces/find",
-        {
-            "query": {
-                "task_id": task_id,
-            },
-            "projection": ["phase"],
-        },
-    )
-    assert len(resp["taskforces"]) == n_locations
-    LOGGER.debug(resp["taskforces"])
     assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
+
+    return workflow_resp["workflow"]["workflow_id"], task_id
 
 
 async def tms_starter(
@@ -323,7 +319,7 @@ async def tms_watcher_sends_status_update(
         # fmt: on
 
 
-async def user_aborts_task(
+async def user_aborts_workflow(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
@@ -332,23 +328,35 @@ async def user_aborts_task(
 ) -> None:
     #
     # USER...
-    # stop task
+    # stop workflow
     #
     resp = await request_and_validate(
         rc,
         openapi_spec,
+        "POST",
+        "/task/directives/find",
+        {
+            "query": {"task_id": task_id},
+            "projection": ["workflow_id"],
+        },
+    )
+    assert len(resp["task_directives"]) == 1
+    workflow_id = resp["task_directives"][0]["workflow_id"]
+    resp = await request_and_validate(
+        rc,
+        openapi_spec,
         "DELETE",
-        f"/task/directive/{task_id}",
+        f"/workflows/{workflow_id}",
     )
     assert resp == {
-        "task_id": task_id,
+        "workflow_id": workflow_id,
         "n_taskforces": len(condor_locations) if not aborted_after_condor else 0,
     }
     resp = await request_and_validate(
         rc,
         openapi_spec,
         "GET",
-        f"/task/directive/{task_id}",
+        f"/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
 

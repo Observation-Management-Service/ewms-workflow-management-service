@@ -1,6 +1,5 @@
 """A dummy MQS server for testing."""
 
-
 import os
 import time
 
@@ -9,29 +8,37 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 
-@app.route("/mq-group", methods=["POST"])
-def dummy_mq_group_post():
+@app.route("/v0/mq-group/reservation", methods=["POST"])
+def dummy_mq_group_reservation_post():
     mqgroup_id = "test-mq-group"
-    now = int(time.time())
+    now = time.time()
 
     return jsonify(
         dict(
             mqgroup=dict(
                 mqgroup_id=mqgroup_id,
                 timestamp=now,
-                criteria={},
+                criteria={},  # updated on activation
             ),
             mqprofiles=[
                 dict(
-                    mqid=f"t{i}",
+                    mqid=f"123{alias}",
                     mqgroup_id=mqgroup_id,
                     timestamp=now,
-                    nickname=f"mq-{mqgroup_id}-{i}",
+                    alias=alias,
+                    is_public=alias in request.get_json()["public"],
+                    is_activated=False,
                 )
-                for i in range(request.get_json()["criteria"]["n_queues"])
+                for alias in request.get_json()["queue_aliases"]
             ],
         )
     )
+
+
+@app.route("/v0/mq-group/activation", methods=["POST"])
+def dummy_mq_group_activation_post():
+    # in the real mqs, there's a bunch of db logic, etc.
+    return jsonify(dict(activated=True))
 
 
 if __name__ == "__main__":

@@ -7,8 +7,11 @@
         "task_id": {
             "type": "string"
         },
+        "workflow_id": {
+            "type": "string"
+        },
         "timestamp": {
-            "type": "integer"
+            "type": "number"
         },
         "collector": {
             "type": "string"
@@ -137,7 +140,7 @@
         "phase": {
             "type": "string",
             "enum": [
-                "pre-mq-assembly",
+                "pre-mq-activation",
                 "pre-launch",
                 "pending-starter",
                 "condor-submit",
@@ -167,6 +170,7 @@
     "required": [
         "taskforce_uuid",
         "task_id",
+        "workflow_id",
         "timestamp",
         "collector",
         "schedd",

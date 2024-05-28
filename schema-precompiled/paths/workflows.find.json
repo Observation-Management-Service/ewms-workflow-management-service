@@ -1,54 +1,42 @@
 {
-    "parameters": [
-        {
-            "name": "task_id",
-            "in": "path",
-            "required": true,
-            "description": "the id of the task directive",
-            "schema": {
-                "type": "string"
-            }
-        }
-    ],
-    "get": {
-        "responses": {
-            "200": {
-                "description": "the matching task directive",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "$ref": "#/components/schemas/TaskDirectiveObject"
-                        }
+    "parameters": [],
+    "post": {
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/FindObject"
                     }
                 }
-            },
-            "400": {
-                "description": "invalid request arguments",
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "TODO",
                 "content": {
                     "application/json": {
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "code": {
-                                    "description": "http error code",
-                                    "type": "integer"
-                                },
-                                "error": {
-                                    "description": "http error reason",
-                                    "type": "string"
+                                "workflows": {
+                                    "description": "a list of workflow objects",
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WorkflowObject"
+                                    },
+                                    "minItems": 0
                                 }
                             },
                             "required": [
-                                "code",
-                                "error"
+                                "workflows"
                             ],
                             "additionalProperties": false
                         }
                     }
                 }
             },
-            "404": {
-                "description": "not found",
+            "400": {
+                "description": "invalid request arguments",
                 "content": {
                     "application/json": {
                         "schema": {

@@ -1,0 +1,39 @@
+{
+    "type": "object",
+    "properties": {
+        "workflow_id": {
+            "type": "string"
+        },
+        "timestamp": {
+            "type": "number"
+        },
+        "priority": {
+            "type": "integer"
+        },
+        "mq_activated_ts": {
+            "anyOf": [
+                {
+                    "type": "number"
+                },
+                {
+                    "type": "null"
+                }
+            ]
+        },
+        "_mq_activation_retry_at_ts": {
+            "type": "number"
+        },
+        "aborted": {
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "workflow_id",
+        "timestamp",
+        "priority",
+        "mq_activated_ts",
+        "_mq_activation_retry_at_ts",
+        "aborted"
+    ],
+    "additionalProperties": false
+}

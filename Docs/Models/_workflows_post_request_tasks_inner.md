@@ -1,4 +1,4 @@
-# _task_directive_post_request
+# _workflows_post_request_tasks_inner
 ## Properties
 
 | Name | Type | Description | Notes |
@@ -6,6 +6,8 @@
 | **cluster\_locations** | **List** |  | [default to null] |
 | **task\_image** | **String** |  | [default to null] |
 | **task\_args** | **String** |  | [default to null] |
+| **input\_queue\_aliases** | **List** |  | [default to null] |
+| **output\_queue\_aliases** | **List** |  | [default to null] |
 | **n\_workers** | **Integer** |  | [optional] [default to null] |
 | **worker\_config** | [**TaskforceObject_worker_config**](TaskforceObject_worker_config.md) |  | [default to null] |
 | **environment** | [**Object**](.md) |  | [optional] [default to null] |

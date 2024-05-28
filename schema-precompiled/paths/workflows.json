@@ -1,0 +1,138 @@
+{
+    "parameters": [],
+    "post": {
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "tasks": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "cluster_locations": {
+                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/cluster_locations"
+                                        },
+                                        "task_image": {
+                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_image"
+                                        },
+                                        "task_args": {
+                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
+                                        },
+                                        "input_queue_aliases": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "minItems": 0
+                                        },
+                                        "output_queue_aliases": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "minItems": 0
+                                        },
+                                        "n_workers": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"
+                                        },
+                                        "worker_config": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/worker_config"
+                                        },
+                                        "environment": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/container_config/properties/environment"
+                                        },
+                                        "input_files": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/container_config/properties/input_files"
+                                        }
+                                    },
+                                    "required": [
+                                        "cluster_locations",
+                                        "task_image",
+                                        "task_args",
+                                        "input_queue_aliases",
+                                        "output_queue_aliases",
+                                        "worker_config"
+                                    ],
+                                    "additionalProperties": false
+                                },
+                                "minItems": 1
+                            },
+                            "public_queue_aliases": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "minItems": 0
+                            }
+                        },
+                        "required": [
+                            "tasks",
+                            "public_queue_aliases"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "a list of the created database objects",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "workflow": {
+                                    "$ref": "#/components/schemas/WorkflowObject"
+                                },
+                                "task_directives": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TaskDirectiveObject"
+                                    },
+                                    "minItems": 0
+                                },
+                                "taskforces": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TaskforceObject"
+                                    },
+                                    "minItems": 0
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

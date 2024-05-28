@@ -1,6 +1,5 @@
 """Test openapi routes."""
 
-
 import inspect
 import logging
 import os
@@ -11,6 +10,7 @@ import openapi_core
 import tornado
 from jsonschema_path import SchemaPath
 from openapi_core.templating.paths.finders import APICallPathFinder
+
 from wms import server
 
 LOGGER = logging.getLogger(__name__)
@@ -58,5 +58,5 @@ def test_census_routes() -> None:
 
     # log at end so these are easy to find
     for missed in missing:
-        LOGGER.critical(f"not found in openapi schema: {missed}")
+        LOGGER.critical(f"rest route not found in openapi schema: {missed}")
     assert not missing

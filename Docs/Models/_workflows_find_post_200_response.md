@@ -1,10 +1,9 @@
-# _task_directive__task_id__delete_200_response
+# _workflows_find_post_200_response
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **task\_id** | **String** | the task id | [default to null] |
-| **n\_taskforces** | **Integer** | number of updated taskforces | [default to null] |
+| **workflows** | [**List**](WorkflowObject.md) | a list of workflow objects | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

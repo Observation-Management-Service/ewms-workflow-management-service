@@ -5,14 +5,15 @@
 |------------ | ------------- | ------------- | -------------|
 | **taskforce\_uuid** | **String** |  | [optional] [default to null] |
 | **task\_id** | **String** |  | [optional] [default to null] |
-| **timestamp** | **Integer** |  | [optional] [default to null] |
+| **workflow\_id** | **String** |  | [optional] [default to null] |
+| **timestamp** | **BigDecimal** |  | [optional] [default to null] |
 | **collector** | **String** |  | [optional] [default to null] |
 | **schedd** | **String** |  | [optional] [default to null] |
 | **n\_workers** | [**TaskforceObject_n_workers**](TaskforceObject_n_workers.md) |  | [optional] [default to null] |
 | **container\_config** | [**TaskforceObject_container_config**](TaskforceObject_container_config.md) |  | [optional] [default to null] |
 | **worker\_config** | [**TaskforceObject_worker_config**](TaskforceObject_worker_config.md) |  | [optional] [default to null] |
 | **cluster\_id** | [**TaskforceObject_n_workers**](TaskforceObject_n_workers.md) |  | [optional] [default to null] |
-| **submit\_dict** | [**Map**](TaskforceObject_container_config_environment_value.md) |  | [optional] [default to null] |
+| **submit\_dict** | [**Object**](.md) |  | [optional] [default to null] |
 | **job\_event\_log\_fpath** | **String** |  | [optional] [default to null] |
 | **condor\_complete\_ts** | [**TaskforceObject_n_workers**](TaskforceObject_n_workers.md) |  | [optional] [default to null] |
 | **phase** | **String** |  | [optional] [default to null] |

@@ -1,10 +1,9 @@
 """Start server as application."""
 
-
 import asyncio
 import logging
 
-from . import database, server, taskforce_launch_control, task_mq_assembly
+from . import database, server, taskforce_launch_control, workflow_mq_activator
 from .config import ENV, config_logging
 
 LOGGER = logging.getLogger(__package__)
@@ -24,9 +23,9 @@ async def main() -> None:
         LOGGER.info("Starting taskforce_launch_control in background...")
         tg.create_task(taskforce_launch_control.startup(mongo_client))
 
-        # task_mq_assembly
-        LOGGER.info("Starting task_mq_assembly in background...")
-        tg.create_task(task_mq_assembly.startup(mongo_client))
+        # workflow_mq_activator
+        LOGGER.info("Starting workflow_mq_activator in background...")
+        tg.create_task(workflow_mq_activator.startup(mongo_client))
 
         # REST Server
         LOGGER.info("Setting up REST server...")

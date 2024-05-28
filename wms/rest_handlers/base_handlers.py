@@ -9,7 +9,8 @@ from rest_tools.server import validate_request
 
 from . import auth
 from .. import config
-from .. import database as db
+from .. import database
+from ..utils import get_mqs_connection
 
 LOGGER = logging.getLogger(__name__)
 
@@ -19,20 +20,15 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
 
     def initialize(  # type: ignore  # pylint: disable=W0221
         self,
-        mongo_client: AsyncIOMotorClient,  # type: ignore[valid-type]
+        mongo_client: AsyncIOMotorClient,
         *args: Any,
         **kwargs: Any,
     ) -> None:
         """Initialize a BaseWMSHandler object."""
         super().initialize(*args, **kwargs)  # type: ignore[no-untyped-call]
-        # pylint: disable=W0201
-        self.task_directives_client = db.client.WMSMongoClient(
-            mongo_client,
-            db.utils.TASK_DIRECTIVES_COLL_NAME,
-        )
-        self.taskforces_client = db.client.WMSMongoClient(
-            mongo_client,
-            db.utils.TASKFORCES_COLL_NAME,
+        self.wms_db = database.client.WMSMongoValidatedDatabase(mongo_client)
+        self.mqs_rc = get_mqs_connection(
+            logging.getLogger(f"{LOGGER.name.split('.', maxsplit=1)[0]}.mqs")
         )
 
 

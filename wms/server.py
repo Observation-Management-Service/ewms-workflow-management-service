@@ -1,6 +1,5 @@
 """Root python script for WMS REST API server interface."""
 
-
 import logging
 from typing import Any
 
@@ -17,23 +16,26 @@ HANDLERS = [
     #
     rest_handlers.schema_handlers.SchemaHandler,
     #
-    rest_handlers.task_handlers.TaskDirectiveHandler,
-    rest_handlers.task_handlers.TaskDirectiveIDHandler,
-    rest_handlers.task_handlers.TaskDirectivesFindHandler,
+    rest_handlers.workflow_handlers.WorkflowHandler,
+    rest_handlers.workflow_handlers.WorkflowsFindHandler,  # must be before ID handler for regex
+    rest_handlers.workflow_handlers.WorkflowIDHandler,  # ^^^
+    #
+    rest_handlers.task_handlers.TaskDirectivesFindHandler,  # must be before ID handler for regex
+    rest_handlers.task_handlers.TaskDirectiveIDHandler,  # ^^^
     #
     rest_handlers.taskforce_handlers.TaskforcesReportHandler,
-    rest_handlers.taskforce_handlers.TaskforcesFindHandler,
+    rest_handlers.taskforce_handlers.TaskforcesFindHandler,  # must be before ID handler for regex
+    rest_handlers.taskforce_handlers.TaskforceUUIDHandler,  # ^^^
     #
     rest_handlers.taskforce_handlers.TaskforcePendingStarterHandler,
     rest_handlers.taskforce_handlers.TaskforceCondorSubmitUUIDHandler,
     rest_handlers.taskforce_handlers.TaskforcePendingStopperHandler,
     rest_handlers.taskforce_handlers.TaskforcePendingStopperUUIDHandler,
     rest_handlers.taskforce_handlers.TaskforceCondorCompleteUUIDHandler,
-    rest_handlers.taskforce_handlers.TaskforceUUIDHandler,
 ]
 
 
-async def make(mongo_client: AsyncIOMotorClient) -> RestServer:  # type: ignore[valid-type]
+async def make(mongo_client: AsyncIOMotorClient) -> RestServer:
     """Make a WMS REST service (does not start up automatically)."""
     rhs_config: dict[str, Any] = {"debug": ENV.CI}
     if ENV.AUTH_OPENID_URL:

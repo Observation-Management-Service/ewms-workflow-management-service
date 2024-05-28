@@ -19,84 +19,97 @@ LOGGER = logging.getLogger(__name__)
 # ----------------------------------------------------------------------------
 
 
-class TaskDirectiveHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions for adding a task directive (initiating a task)."""
+async def create_task_directive_and_taskforces(
+    workflow_id: str,
+    #
+    cluster_locations: list[str],
+    task_image: str,
+    task_args: list[str],
+    #
+    input_queues: list[str],
+    output_queues: list[str],
+    #
+    worker_config: dict,
+    n_workers: int,
+    environment: dict,
+    input_files: list[str],
+) -> tuple[dict, list[dict]]:
+    """Create new task directive and taskforces."""
 
-    ROUTE = r"/task/directive$"
+    task_directive = dict(
+        # IMMUTABLE
+        #
+        task_id=uuid.uuid4().hex,
+        workflow_id=workflow_id,
+        timestamp=time.time(),
+        #
+        cluster_locations=cluster_locations,
+        task_image=task_image,
+        task_args=task_args,
+        #
+        input_queues=input_queues,
+        output_queues=output_queues,
+        #
+        # MUTABLE
+    )
 
-    @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
-    async def post(self) -> None:
-        """Handle POST.
-
-        Create a new task directive.
-        """
-        task_directive = dict(
-            task_id=uuid.uuid4().hex,
-            cluster_locations=self.get_argument("cluster_locations"),
-            task_image=self.get_argument("task_image"),
-            task_args=self.get_argument("task_args"),
-            timestamp=int(time.time()),
-            priority=self.get_argument("worker_config")["priority"],
-            #
-            n_queues=2,  # TODO: make user configurable?
-            queues=[],  # values determined by mqs, updated by task_mq_assembly
-            _mqs_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by task_mq_assembly
-            #
-            aborted=False,
-        )
-
-        # first, check that locations are legit
-        for location in task_directive["cluster_locations"]:
-            if location not in config.KNOWN_CLUSTERS:
-                raise web.HTTPError(
-                    status_code=400,
-                    reason=f"condor location not found: {location}",  # to client
-                )
-
-        # next, insert
-        task_directive = await self.task_directives_client.insert_one(task_directive)
-
-        # now, create Taskforce entries (important to do now so removals are handled easily--think dangling pointers)
-        for location in task_directive["cluster_locations"]:
-            await self.taskforces_client.insert_one(
-                dict(
-                    # STATIC
-                    taskforce_uuid=uuid.uuid4().hex,
-                    task_id=task_directive["task_id"],
-                    timestamp=int(time.time()),
-                    collector=config.KNOWN_CLUSTERS[location]["collector"],
-                    schedd=config.KNOWN_CLUSTERS[location]["schedd"],
-                    #
-                    # TODO: make optional/smart
-                    n_workers=self.get_argument("n_workers"),
-                    #
-                    container_config=dict(
-                        image=task_directive["task_image"],
-                        arguments=task_directive["task_args"],
-                        environment=self.get_argument("environment", {}),
-                        input_files=self.get_argument("input_files", []),
-                    ),
-                    worker_config=self.get_argument("worker_config"),
-                    #
-                    # set ONCE by tms via /taskforce/tms-action/condor-submit/<id>
-                    cluster_id=None,
-                    submit_dict={},
-                    job_event_log_fpath="",
-                    # set ONCE by tms's watcher
-                    condor_complete_ts=None,
-                    #
-                    # updated by taskforce_launch_control, tms
-                    # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)
-                    phase=TaskforcePhase.PRE_MQ_ASSEMBLY,
-                    #
-                    # updated by tms SEVERAL times
-                    compound_statuses={},
-                    top_task_errors={},
-                )
+    # first, check that locations are legit
+    for location in cluster_locations:
+        if location not in config.KNOWN_CLUSTERS:
+            raise web.HTTPError(
+                status_code=400,
+                reason=f"condor location not found: {location}",  # to client
             )
 
-        self.write(task_directive)
+    # now, create Taskforce entries (important to do now so removals are handled easily--think dangling pointers)
+    taskforces = []
+    for location in cluster_locations:
+        taskforces.append(
+            dict(
+                # IMMUTABLE
+                #
+                taskforce_uuid=uuid.uuid4().hex,
+                task_id=task_directive["task_id"],
+                workflow_id=workflow_id,
+                timestamp=time.time(),
+                collector=config.KNOWN_CLUSTERS[location]["collector"],
+                schedd=config.KNOWN_CLUSTERS[location]["schedd"],
+                #
+                # TODO: make optional/smart
+                n_workers=n_workers,
+                #
+                container_config=dict(
+                    image=task_directive["task_image"],
+                    arguments=task_directive["task_args"],
+                    environment={
+                        **environment,
+                        "EWMS_PILOT_QUEUE_INCOMING": ";".join(input_queues),
+                        "EWMS_PILOT_QUEUE_OUTGOING": ";".join(output_queues),
+                    },
+                    input_files=input_files,
+                ),
+                worker_config=worker_config,
+                #
+                # MUTABLE
+                #
+                # set ONCE by tms via /taskforce/tms-action/condor-submit/<id>
+                cluster_id=None,
+                submit_dict={},
+                job_event_log_fpath="",
+                # set ONCE by tms's watcher
+                condor_complete_ts=None,
+                #
+                # updated by taskforce_launch_control, tms
+                # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)
+                phase=TaskforcePhase.PRE_MQ_ACTIVATOR,
+                #
+                # updated by tms SEVERAL times
+                compound_statuses={},
+                top_task_errors={},
+            )
+        )
+
+    return task_directive, taskforces
 
 
 # ----------------------------------------------------------------------------
@@ -115,7 +128,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         Get an existing task directive.
         """
         try:
-            task_directive = await self.task_directives_client.find_one(
+            task_directive = await self.wms_db.task_directives_collection.find_one(
                 {
                     "task_id": task_id,
                 }
@@ -127,64 +140,6 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
             ) from e
 
         self.write(task_directive)
-
-    @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
-    async def delete(self, task_id: str) -> None:
-        """Handle DELETE.
-
-        Abort a task.
-        """
-        try:
-            await self.task_directives_client.find_one_and_update(
-                {
-                    "task_id": task_id,
-                    "aborted": {"$nin": [True]},  # "not in"
-                },
-                {
-                    "aborted": True,
-                },
-            )
-        except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no non-aborted task found with id: {task_id}",  # to client
-            ) from e
-
-        # set all corresponding taskforces to pending-stopper
-        n_updated = 0  # in case of exception
-        try:
-            n_updated = await self.taskforces_client.update_set_many(
-                {
-                    "task_id": task_id,
-                    "$and": [
-                        # not already aborted
-                        # NOTE - we don't care whether the taskforce has started up (see /taskforce/tms-action/pending-stopper)
-                        {
-                            "phase": {
-                                "$nin": [
-                                    TaskforcePhase.PENDING_STOPPER,
-                                    TaskforcePhase.CONDOR_RM,
-                                ]
-                            },  # "not in"
-                        },
-                        # AND
-                        # not condor-completed
-                        {
-                            "condor_complete_ts": None,  # int -> condor-completed
-                        },
-                    ],
-                },
-                {
-                    "phase": TaskforcePhase.PENDING_STOPPER,
-                },
-            )
-        except DocumentNotFoundException:
-            LOGGER.info(
-                "okay scenario: task aborted but no taskforces needed to be stopped"
-            )
-
-        self.write({"task_id": task_id, "n_taskforces": n_updated})
 
 
 # ----------------------------------------------------------------------------
@@ -203,7 +158,7 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         Search for task directives matching given query.
         """
         matches = []
-        async for m in self.task_directives_client.find_all(
+        async for m in self.wms_db.task_directives_collection.find_all(
             self.get_argument("query"),
             self.get_argument("projection", []),
         ):
