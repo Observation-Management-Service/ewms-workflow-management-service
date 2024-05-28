@@ -64,7 +64,7 @@ async def user_requests_new_workflow(
         rc,
         openapi_spec,
         "POST",
-        "/workflows",
+        f"/{config.ROUTE_VERSION_PREFIX}/workflows",
         dict(
             tasks=[
                 dict(
@@ -347,7 +347,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "DELETE",
-        f"/workflows/{workflow_id}",
+        f"/{config.ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp == {
         "workflow_id": workflow_id,
@@ -357,7 +357,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "GET",
-        f"/workflows/{workflow_id}",
+        f"/{config.ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
 
