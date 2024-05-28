@@ -40,16 +40,16 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         Create a new workflow.
         """
-        workflow = dict(
+        workflow = {
             # IMMUTABLE
-            workflow_id=uuid.uuid4().hex,
-            timestamp=time.time(),
-            priority=10,  # TODO
+            "workflow_id": uuid.uuid4().hex,
+            "timestamp": time.time(),
+            "priority": 10,  # TODO
             # MUTABLE
-            mq_activated_ts=None,  # updated by workflow_mq_activator
-            _mq_activation_retry_at_ts=config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by workflow_mq_activator,
-            aborted=False,
-        )
+            "mq_activated_ts": None,  # updated by workflow_mq_activator
+            "_mq_activation_retry_at_ts": config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by workflow_mq_activator,
+            "aborted": False,
+        }
 
         # Reserve queues with MQS -- map to aliases
         resp = await self.mqs_rc.request(
@@ -112,11 +112,11 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         # Finish up
         self.write(
-            dict(
-                workflow=workflow,
-                task_directives=task_directives,
-                taskforces=taskforces,
-            )
+            {
+                "workflow": workflow,
+                "task_directives": task_directives,
+                "taskforces": taskforces,
+            }
         )
 
 

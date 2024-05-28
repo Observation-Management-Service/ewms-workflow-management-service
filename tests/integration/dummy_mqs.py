@@ -14,31 +14,31 @@ def dummy_mq_group_reservation_post():
     now = time.time()
 
     return jsonify(
-        dict(
-            mqgroup=dict(
-                mqgroup_id=mqgroup_id,
-                timestamp=now,
-                criteria={},  # updated on activation
-            ),
-            mqprofiles=[
-                dict(
-                    mqid=f"123{alias}",
-                    mqgroup_id=mqgroup_id,
-                    timestamp=now,
-                    alias=alias,
-                    is_public=alias in request.get_json()["public"],
-                    is_activated=False,
-                )
+        {
+            "mqgroup": {
+                "mqgroup_id": mqgroup_id,
+                "timestamp": now,
+                "criteria": {},  # updated on activation
+            },
+            "mqprofiles": [
+                {
+                    "mqid": f"123{alias}",
+                    "mqgroup_id": mqgroup_id,
+                    "timestamp": now,
+                    "alias": alias,
+                    "is_public": alias in request.get_json()["public"],
+                    "is_activated": False,
+                }
                 for alias in request.get_json()["queue_aliases"]
             ],
-        )
+        }
     )
 
 
 @app.route("/v0/mq-group/activation", methods=["POST"])
 def dummy_mq_group_activation_post():
     # in the real mqs, there's a bunch of db logic, etc.
-    return jsonify(dict(activated=True))
+    return jsonify({"activated": True})
 
 
 if __name__ == "__main__":
