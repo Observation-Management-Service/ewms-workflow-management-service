@@ -54,7 +54,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
         # Reserve queues with MQS -- map to aliases
         resp = await self.mqs_rc.request(
             "POST",
-            "/v0/mq-group/reservation",
+            f"/{config.ROUTE_VERSION_PREFIX}/mq-group/reservation",
             {
                 "queue_aliases": _get_all_queues(self.get_argument("tasks")),
                 "public": self.get_argument("public_queue_aliases"),
@@ -225,7 +225,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 class WorkflowsFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for finding workflows."""
 
-    ROUTE = r"/v0/query/workflows$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/query/workflows$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

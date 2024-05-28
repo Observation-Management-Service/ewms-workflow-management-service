@@ -86,6 +86,9 @@ def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
 
 
 REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(REST_OPENAPI_SPEC_FPATH)
+ROUTE_VERSION_PREFIX = (  # ex: v0
+    "v" + REST_OPENAPI_SPEC.spec.contents()["info"]["version"].split(maxsplit=1)[0]
+)
 
 
 # --------------------------------------------------------------------------------------
