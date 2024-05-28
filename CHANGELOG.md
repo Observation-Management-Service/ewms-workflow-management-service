@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.1 (2024-05-28)
+
+### Other
+
+* <bot> update README.md ([`67d8933`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/67d89331a6890afee9747134dfd9e3804c9f4841))
+* Update README (for argocd bump bug) ([`ce9d136`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/ce9d136fcfbbca1450f7062061c0f0e0981c3142))
+
 ## v0.2.0 (2024-05-28)
 
 ### Other
