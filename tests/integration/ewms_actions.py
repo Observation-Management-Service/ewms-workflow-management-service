@@ -174,7 +174,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-starter",
+            "/taskforces/tms-action/pending-starter",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -184,7 +184,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            f"/taskforce/{taskforce_uuid}",
+            f"/taskforces/{taskforce_uuid}",
         )
         assert resp["phase"] == "pending-starter"
         # confirm it has started
@@ -193,7 +193,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "POST",
-            f"/taskforce/tms-action/condor-submit/{taskforce_uuid}",
+            f"/taskforces/tms-action/condor-submit/{taskforce_uuid}",
             {
                 "cluster_id": 123456,
                 "n_workers": 5600,
@@ -377,7 +377,7 @@ async def tms_stopper(
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-stopper",
+            "/taskforces/tms-action/pending-stopper",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -386,7 +386,7 @@ async def tms_stopper(
             rc,
             openapi_spec,
             "DELETE",
-            f"/taskforce/tms-action/pending-stopper/{taskforce['taskforce_uuid']}",
+            f"/taskforces/tms-action/pending-stopper/{taskforce['taskforce_uuid']}",
         )
 
     #
@@ -439,7 +439,7 @@ async def tms_condor_clusters_done(
             rc,
             openapi_spec,
             "POST",
-            f"/taskforce/tms/condor-complete/{resp['taskforces'][0]['taskforce_uuid']}",
+            f"/taskforces/tms/condor-complete/{resp['taskforces'][0]['taskforce_uuid']}",
             {
                 "condor_complete_ts": (
                     # NOTE: need a unique timestamp that we don't need to rely on the timing of this test

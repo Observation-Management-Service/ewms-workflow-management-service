@@ -2,24 +2,24 @@
 
 All URIs are relative to *http://localhost*
 
-| Method                                                                                                                       | HTTP request                                                      | Description |
-|------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|-------------|
-| [**rootGet**](DefaultApi.md#rootGet)                                                                                         | **GET** /                                                         |             |
-| [**schemaOpenapiGet**](DefaultApi.md#schemaOpenapiGet)                                                                       | **GET** /schema/openapi                                           |             |
-| [**taskDirectiveTaskIdGet**](DefaultApi.md#taskDirectiveTaskIdGet)                                                           | **GET** /task-directives/{task_id}                                |             |
-| [**taskDirectivesFindPost**](DefaultApi.md#taskDirectivesFindPost)                                                           | **POST** /task-directives/find                                    |             |
-| [**taskforceTaskforceUuidGet**](DefaultApi.md#taskforceTaskforceUuidGet)                                                     | **GET** /taskforce/{taskforce_uuid}                               |             |
-| [**taskforceTmsActionCondorSubmitTaskforceUuidPost**](DefaultApi.md#taskforceTmsActionCondorSubmitTaskforceUuidPost)         | **POST** /taskforce/tms-action/condor-submit/{taskforce_uuid}     |             |
-| [**taskforceTmsActionPendingStarterGet**](DefaultApi.md#taskforceTmsActionPendingStarterGet)                                 | **GET** /taskforce/tms-action/pending-starter                     |             |
-| [**taskforceTmsActionPendingStopperGet**](DefaultApi.md#taskforceTmsActionPendingStopperGet)                                 | **GET** /taskforce/tms-action/pending-stopper                     |             |
-| [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](DefaultApi.md#taskforceTmsActionPendingStopperTaskforceUuidDelete) | **DELETE** /taskforce/tms-action/pending-stopper/{taskforce_uuid} |             |
-| [**taskforceTmsCondorCompleteTaskforceUuidPost**](DefaultApi.md#taskforceTmsCondorCompleteTaskforceUuidPost)                 | **POST** /taskforce/tms/condor-complete/{taskforce_uuid}          |             |
-| [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost)                                                                   | **POST** /taskforces/find                                         |             |
-| [**taskforcesTmsStatusPost**](DefaultApi.md#taskforcesTmsStatusPost)                                                         | **POST** /taskforces/tms/status                                   |             |
-| [**workflowsFindPost**](DefaultApi.md#workflowsFindPost)                                                                     | **POST** /workflows/find                                          |             |
-| [**workflowsPost**](DefaultApi.md#workflowsPost)                                                                             | **POST** /workflows                                               |             |
-| [**workflowsWorkflowIdDelete**](DefaultApi.md#workflowsWorkflowIdDelete)                                                     | **DELETE** /workflows/{workflow_id}                               |             |
-| [**workflowsWorkflowIdGet**](DefaultApi.md#workflowsWorkflowIdGet)                                                           | **GET** /workflows/{workflow_id}                                  |             |
+| Method                                                                                                                       | HTTP request                                                       | Description |
+|------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|-------------|
+| [**rootGet**](DefaultApi.md#rootGet)                                                                                         | **GET** /                                                          |             |
+| [**schemaOpenapiGet**](DefaultApi.md#schemaOpenapiGet)                                                                       | **GET** /schema/openapi                                            |             |
+| [**taskDirectiveTaskIdGet**](DefaultApi.md#taskDirectiveTaskIdGet)                                                           | **GET** /task-directives/{task_id}                                 |             |
+| [**taskDirectivesFindPost**](DefaultApi.md#taskDirectivesFindPost)                                                           | **POST** /task-directives/find                                     |             |
+| [**taskforceTaskforceUuidGet**](DefaultApi.md#taskforceTaskforceUuidGet)                                                     | **GET** /taskforces/{taskforce_uuid}                               |             |
+| [**taskforceTmsActionCondorSubmitTaskforceUuidPost**](DefaultApi.md#taskforceTmsActionCondorSubmitTaskforceUuidPost)         | **POST** /taskforces/tms-action/condor-submit/{taskforce_uuid}     |             |
+| [**taskforceTmsActionPendingStarterGet**](DefaultApi.md#taskforceTmsActionPendingStarterGet)                                 | **GET** /taskforces/tms-action/pending-starter                     |             |
+| [**taskforceTmsActionPendingStopperGet**](DefaultApi.md#taskforceTmsActionPendingStopperGet)                                 | **GET** /taskforces/tms-action/pending-stopper                     |             |
+| [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](DefaultApi.md#taskforceTmsActionPendingStopperTaskforceUuidDelete) | **DELETE** /taskforces/tms-action/pending-stopper/{taskforce_uuid} |             |
+| [**taskforceTmsCondorCompleteTaskforceUuidPost**](DefaultApi.md#taskforceTmsCondorCompleteTaskforceUuidPost)                 | **POST** /taskforces/tms/condor-complete/{taskforce_uuid}          |             |
+| [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost)                                                                   | **POST** /taskforces/find                                          |             |
+| [**taskforcesTmsStatusPost**](DefaultApi.md#taskforcesTmsStatusPost)                                                         | **POST** /taskforces/tms/status                                    |             |
+| [**workflowsFindPost**](DefaultApi.md#workflowsFindPost)                                                                     | **POST** /workflows/find                                           |             |
+| [**workflowsPost**](DefaultApi.md#workflowsPost)                                                                             | **POST** /workflows                                                |             |
+| [**workflowsWorkflowIdDelete**](DefaultApi.md#workflowsWorkflowIdDelete)                                                     | **DELETE** /workflows/{workflow_id}                                |             |
+| [**workflowsWorkflowIdGet**](DefaultApi.md#workflowsWorkflowIdGet)                                                           | **GET** /workflows/{workflow_id}                                   |             |
 
 <a name="rootGet"></a>
 

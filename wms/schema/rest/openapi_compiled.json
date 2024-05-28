@@ -553,7 +553,7 @@
                 }
             }
         },
-        "/taskforce/tms-action/condor-submit/{taskforce_uuid}": {
+        "/taskforces/tms-action/condor-submit/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
@@ -633,7 +633,7 @@
                 }
             }
         },
-        "/taskforce/tms-action/pending-starter": {
+        "/taskforces/tms-action/pending-starter": {
             "parameters": [],
             "get": {
                 "parameters": [
@@ -691,7 +691,7 @@
                 }
             }
         },
-        "/taskforce/tms-action/pending-stopper": {
+        "/taskforces/tms-action/pending-stopper": {
             "parameters": [],
             "get": {
                 "parameters": [
@@ -749,7 +749,7 @@
                 }
             }
         },
-        "/taskforce/tms-action/pending-stopper/{taskforce_uuid}": {
+        "/taskforces/tms-action/pending-stopper/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
@@ -820,7 +820,7 @@
                 }
             }
         },
-        "/taskforce/tms/condor-complete/{taskforce_uuid}": {
+        "/taskforces/tms/condor-complete/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
@@ -910,7 +910,7 @@
                 }
             }
         },
-        "/taskforce/{taskforce_uuid}": {
+        "/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
