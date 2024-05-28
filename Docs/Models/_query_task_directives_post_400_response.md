@@ -1,9 +1,10 @@
-# _taskforces_find_post_200_response
+# _query_task_directives_post_400_response
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **taskforces** | [**List**](TaskforceObject.md) | a list of taskforce objects | [default to null] |
+| **code** | **Integer** | http error code | [default to null] |
+| **error** | **String** | http error reason | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
