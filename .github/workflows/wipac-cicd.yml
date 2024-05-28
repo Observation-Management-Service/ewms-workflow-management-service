@@ -108,7 +108,7 @@ jobs:
             exit 0
           fi
           
-          # use literal dict syntax
+          # use literal collection syntax, see https://docs.astral.sh/ruff/rules/unnecessary-collection-call/
           pip install ruff
           ruff check --select C408 --fix . --unsafe-fixes
           
