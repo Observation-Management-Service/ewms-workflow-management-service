@@ -553,7 +553,7 @@
                 }
             }
         },
-        "/taskforces/{taskforce_uuid}/tms/condor-submit": {
+        "/tms/condor-submit/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"
