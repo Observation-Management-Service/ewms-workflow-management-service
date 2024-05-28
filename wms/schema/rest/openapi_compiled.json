@@ -411,7 +411,7 @@
                 }
             }
         },
-        "/task/directive/{task_id}": {
+        "/task-directives/{task_id}": {
             "parameters": [
                 {
                     "name": "task_id",
@@ -488,7 +488,7 @@
                 }
             }
         },
-        "/task/directives/find": {
+        "/task-directivess/find": {
             "parameters": [],
             "post": {
                 "requestBody": {
