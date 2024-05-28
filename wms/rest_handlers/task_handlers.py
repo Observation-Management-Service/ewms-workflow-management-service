@@ -92,7 +92,7 @@ async def create_task_directive_and_taskforces(
                 #
                 # MUTABLE
                 #
-                # set ONCE by tms via /taskforce/tms-action/condor-submit/<id>
+                # set ONCE by tms via /tms/condor-submit/taskforces/<id>
                 cluster_id=None,
                 submit_dict={},
                 job_event_log_fpath="",
@@ -118,7 +118,7 @@ async def create_task_directive_and_taskforces(
 class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for a task's directive."""
 
-    ROUTE = r"/task/directive/(?P<task_id>\w+)$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/task-directives/(?P<task_id>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -148,7 +148,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for finding task directives."""
 
-    ROUTE = r"/task/directives/find$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/query/task-directives$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

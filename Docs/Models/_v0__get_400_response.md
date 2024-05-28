@@ -1,10 +1,10 @@
-# _workflows__workflow_id__delete_200_response
+# _v0__get_400_response
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **workflow\_id** | **String** | the workflow id | [default to null] |
-| **n\_taskforces** | **Integer** | number of updated taskforces | [default to null] |
+| **code** | **Integer** | http error code | [default to null] |
+| **error** | **String** | http error reason | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
