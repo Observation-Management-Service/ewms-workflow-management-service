@@ -109,26 +109,26 @@ async def request(
     """Request EWMS (WMS) to process a task."""
     LOGGER.info("Requesting task to EWMS...")
 
-    post_body = {
-        "cluster_locations": ["sub-2"],
-        "task_image": f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
-        "task_args": "python /app/examples/do_task.py",
-        "environment": {
+    post_body = dict(
+        cluster_locations=["sub-2"],
+        task_image=f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
+        task_args="python /app/examples/do_task.py",
+        environment={
             "EWMS_PILOT_BROKER_ADDRESS": os.environ["EWMS_PILOT_BROKER_ADDRESS"],
             "EWMS_PILOT_BROKER_AUTH_TOKEN": mq_token,
             "EWMS_PILOT_BROKER_CLIENT": EWMS_PILOT_BROKER_CLIENT,
         },
-        "n_workers": n_workers,
-        "worker_config": {
-            "do_transfer_worker_stdouterr": True,
-            "max_worker_runtime": 60 * 10,
-            "n_cores": 1,
-            "priority": 99,
-            "worker_disk": "512M",
-            "worker_memory": "512M",
-        },
-    }
-    task_directive = await rc.request("POST", "/task/directive", post_body)
+        n_workers=n_workers,
+        worker_config=dict(
+            do_transfer_worker_stdouterr=True,
+            max_worker_runtime=60 * 10,
+            n_cores=1,
+            priority=99,
+            worker_disk="512M",
+            worker_memory="512M",
+        ),
+    )
+    task_directive = await rc.request("POST", "/v0/task-directives", post_body)
 
     LOGGER.debug(json.dumps(task_directive))
 
@@ -177,18 +177,18 @@ def monitor_wms(rc: RestClient, task_id: str) -> None:
 
         task_directive = rc.request_seq(
             "GET",
-            f"/task/directive/{task_id}",
+            f"/v0/task-directives/{task_id}",
         )
         if i == 0:
             taskforces = rc.request_seq(
                 "POST",
-                "/taskforces/find",
+                "/v0/query/taskforces",
                 {"query": {"task_id": task_id}},
             )
         else:
             taskforces = rc.request_seq(
                 "POST",
-                "/taskforces/find",
+                "/v0/query/taskforces",
                 {
                     "query": {"task_id": task_id},
                     "projection": [
@@ -270,8 +270,8 @@ async def main() -> None:
         queues = (
             await rc.request(
                 "GET",
-                f"/task/directive/{task_id}",
-                {"projection": ["queues"]},
+                f"/v0/task-directives/{task_id}",
+                dict(projection=["queues"]),
             )
         )["queues"]
     LOGGER.info(f"{queues=}")

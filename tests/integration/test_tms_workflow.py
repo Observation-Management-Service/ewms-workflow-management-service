@@ -9,6 +9,7 @@ import ewms_actions
 
 LOGGER = logging.getLogger(__name__)
 
+ROUTE_VERSION_PREFIX = "v0"
 
 CONDOR_LOCATIONS = {
     "test-alpha": {
@@ -134,7 +135,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": ["phase", "condor_complete_ts"],
@@ -148,7 +149,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "GET",
-        f"/workflows/{workflow_id}",
+        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp["aborted"] is False
 
@@ -177,7 +178,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {"query": {"task_id": task_id}, "projection": ["phase"]},
     )
     # fmt: off
@@ -189,7 +190,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-starter",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -198,7 +199,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-stopper",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -207,7 +208,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-starter",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
 
@@ -258,7 +259,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": ["phase", "condor_complete_ts"],
@@ -291,7 +292,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {"query": {"task_id": task_id}, "projection": ["phase"]},
     )
     # fmt: off
@@ -303,7 +304,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-starter",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -312,7 +313,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-stopper",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
     for loc in CONDOR_LOCATIONS.values():
@@ -321,7 +322,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-starter",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
 
@@ -379,7 +380,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": ["phase", "condor_complete_ts"],
@@ -393,7 +394,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "GET",
-        f"/workflows/{workflow_id}",
+        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
 
@@ -437,7 +438,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {"query": {"task_id": task_id}, "projection": ["phase"]},
     )
     # fmt: off
@@ -481,7 +482,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": ["phase", "condor_complete_ts"],
@@ -495,7 +496,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "GET",
-        f"/workflows/{workflow_id}",
+        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
 
@@ -555,7 +556,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {"query": {"task_id": task_id}, "projection": ["phase"]},
     )
     # fmt: off
@@ -581,7 +582,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": ["phase", "condor_complete_ts"],
@@ -595,7 +596,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "GET",
-        f"/workflows/{workflow_id}",
+        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
 
@@ -655,7 +656,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {"query": {"task_id": task_id}, "projection": ["phase"]},
     )
     # fmt: off
@@ -674,7 +675,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {"query": {"task_id": task_id}, "projection": ["phase"]},
     )
     # fmt: off
@@ -686,7 +687,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-stopper",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert not taskforce
@@ -696,7 +697,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": ["phase", "condor_complete_ts"],
@@ -710,6 +711,6 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         "GET",
-        f"/workflows/{workflow_id}",
+        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True

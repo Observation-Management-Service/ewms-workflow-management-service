@@ -18,6 +18,7 @@ LOGGER = logging.getLogger(__name__)
 _OPENAPI_JSON = (
     Path(__file__).parent / "../../wms/" / os.environ["REST_OPENAPI_SPEC_FPATH"]
 )
+ROUTE_VERSION_PREFIX = "v0"
 
 
 async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
@@ -26,7 +27,7 @@ async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
         # only read json file for this request
         openapi_core.OpenAPI(SchemaPath.from_file_path(str(_OPENAPI_JSON))),
         "GET",
-        "/schema/openapi",
+        f"/{ROUTE_VERSION_PREFIX}/schema/openapi",
     )
     with open(_OPENAPI_JSON, "rb") as f:
         assert json.load(f) == resp
@@ -63,24 +64,24 @@ async def user_requests_new_workflow(
         rc,
         openapi_spec,
         "POST",
-        "/workflows",
-        {
-            "tasks": [
-                {
-                    "cluster_locations": list(condor_locations.keys()),
-                    "task_image": task_image,
-                    "task_args": task_args,
-                    "input_queue_aliases": ["qfoo"],
-                    "output_queue_aliases": ["qbar"],
+        f"/{ROUTE_VERSION_PREFIX}/workflows",
+        dict(
+            tasks=[
+                dict(
+                    cluster_locations=list(condor_locations.keys()),
+                    task_image=task_image,
+                    task_args=task_args,
+                    input_queue_aliases=["qfoo"],
+                    output_queue_aliases=["qbar"],
                     #
-                    "n_workers": n_workers,
-                    "worker_config": worker_config,
+                    n_workers=n_workers,
+                    worker_config=worker_config,
                     # environment=environment,  # empty
                     # input_files=input_files,  # empty
-                }
+                )
             ],
-            "public_queue_aliases": ["qfoo", "qbar"],
-        },
+            public_queue_aliases=["qfoo", "qbar"],
+        ),
     )
     # TODO - update asserts when/if testing multi-task workflows
     assert workflow_resp["workflow"]
@@ -98,16 +99,16 @@ async def user_requests_new_workflow(
     assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
     assert all(
         tf["container_config"]
-        == {
-            "image": task_image,
-            "arguments": task_args,
-            "environment": {
+        == dict(
+            image=task_image,
+            arguments=task_args,
+            environment={
                 **environment,
                 "EWMS_PILOT_QUEUE_INCOMING": "123qfoo",
                 "EWMS_PILOT_QUEUE_OUTGOING": "123qbar",
             },
-            "input_files": input_files,
-        }
+            input_files=input_files,
+        )
         for tf in workflow_resp["taskforces"]
     )
 
@@ -129,14 +130,14 @@ async def user_requests_new_workflow(
         rc,
         openapi_spec,
         "GET",
-        f"/task/directive/{task_id}",
+        f"/{ROUTE_VERSION_PREFIX}/task-directives/{task_id}",
     )
     assert resp == task_directive
     resp = await request_and_validate(
         rc,
         openapi_spec,
         "POST",
-        "/task/directives/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/task-directives",
         {"query": {"task_id": task_id}},
     )
     assert len(resp["task_directives"]) == 1
@@ -147,7 +148,7 @@ async def user_requests_new_workflow(
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
         },
@@ -174,7 +175,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-starter",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -184,7 +185,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            f"/taskforce/{taskforce_uuid}",
+            f"/{ROUTE_VERSION_PREFIX}/taskforces/{taskforce_uuid}",
         )
         assert resp["phase"] == "pending-starter"
         # confirm it has started
@@ -193,7 +194,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "POST",
-            f"/taskforce/tms-action/condor-submit/{taskforce_uuid}",
+            f"/{ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/{taskforce_uuid}",
             {
                 "cluster_id": 123456,
                 "n_workers": 5600,
@@ -209,7 +210,7 @@ async def tms_starter(
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {
                 "task_id": task_id,
@@ -224,7 +225,7 @@ async def tms_starter(
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": ["collector", "schedd"],
@@ -256,7 +257,7 @@ async def tms_watcher_sends_status_update(
             rc,
             openapi_spec,
             "POST",
-            "/taskforces/find",
+            f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
             {
                 "query": {
                     "collector": loc["collector"],
@@ -272,7 +273,7 @@ async def tms_watcher_sends_status_update(
             rc,
             openapi_spec,
             "POST",
-            "/taskforces/tms/status",
+            f"/{ROUTE_VERSION_PREFIX}/tms/statuses/taskforces",
             {
                 "top_task_errors_by_taskforce": {
                     taskforce_uuid: top_task_errors_by_locshortname[shortname],
@@ -292,7 +293,7 @@ async def tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": [
@@ -334,7 +335,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "POST",
-        "/task/directives/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/task-directives",
         {
             "query": {"task_id": task_id},
             "projection": ["workflow_id"],
@@ -346,7 +347,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "DELETE",
-        f"/workflows/{workflow_id}",
+        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp == {
         "workflow_id": workflow_id,
@@ -356,7 +357,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "GET",
-        f"/workflows/{workflow_id}",
+        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
 
@@ -377,7 +378,7 @@ async def tms_stopper(
             rc,
             openapi_spec,
             "GET",
-            "/taskforce/tms-action/pending-stopper",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -386,7 +387,7 @@ async def tms_stopper(
             rc,
             openapi_spec,
             "DELETE",
-            f"/taskforce/tms-action/pending-stopper/{taskforce['taskforce_uuid']}",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces/{taskforce['taskforce_uuid']}",
         )
 
     #
@@ -397,7 +398,7 @@ async def tms_stopper(
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {
                 "task_id": task_id,
@@ -424,7 +425,7 @@ async def tms_condor_clusters_done(
             rc,
             openapi_spec,
             "POST",
-            "/taskforces/find",
+            f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
             {
                 "query": {
                     "collector": loc["collector"],
@@ -439,7 +440,7 @@ async def tms_condor_clusters_done(
             rc,
             openapi_spec,
             "POST",
-            f"/taskforce/tms/condor-complete/{resp['taskforces'][0]['taskforce_uuid']}",
+            f"/{ROUTE_VERSION_PREFIX}/tms/condor-complete/taskforces/{resp['taskforces'][0]['taskforce_uuid']}",
             {
                 "condor_complete_ts": (
                     # NOTE: need a unique timestamp that we don't need to rely on the timing of this test
@@ -457,7 +458,7 @@ async def tms_condor_clusters_done(
         rc,
         openapi_spec,
         "POST",
-        "/taskforces/find",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {
                 "task_id": task_id,
