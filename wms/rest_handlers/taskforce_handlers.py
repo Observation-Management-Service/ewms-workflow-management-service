@@ -204,7 +204,7 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for the top taskforce designated to be stopped."""
 
-    ROUTE = r"/taskforces/tms-action/pending-stopper$"
+    ROUTE = r"/tms-action/pending-stopper/taskforces$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -237,7 +237,7 @@ class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a taskforce designated to be stopped."""
 
-    ROUTE = r"/taskforces/tms-action/pending-stopper/(?P<taskforce_uuid>\w+)$"
+    ROUTE = r"/tms-action/pending-stopper/taskforces/(?P<taskforce_uuid>\w+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

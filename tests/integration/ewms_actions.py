@@ -377,7 +377,7 @@ async def tms_stopper(
             rc,
             openapi_spec,
             "GET",
-            "/taskforces/tms-action/pending-stopper",
+            "/tms-action/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -386,7 +386,7 @@ async def tms_stopper(
             rc,
             openapi_spec,
             "DELETE",
-            f"/taskforces/tms-action/pending-stopper/{taskforce['taskforce_uuid']}",
+            f"/tms-action/pending-stopper/taskforces/{taskforce['taskforce_uuid']}",
         )
 
     #

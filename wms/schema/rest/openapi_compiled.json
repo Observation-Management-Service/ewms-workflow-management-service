@@ -691,7 +691,7 @@
                 }
             }
         },
-        "/taskforces/tms-action/pending-stopper": {
+        "/tms-action/pending-stopper/taskforces": {
             "parameters": [],
             "get": {
                 "parameters": [
@@ -749,7 +749,7 @@
                 }
             }
         },
-        "/taskforces/tms-action/pending-stopper/{taskforce_uuid}": {
+        "/tms-action/pending-stopper/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
                     "$ref": "#/components/parameters/TaskforceUUIDParam"

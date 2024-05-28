@@ -11,8 +11,8 @@ All URIs are relative to *http://localhost*
 | [**taskforceTaskforceUuidGet**](DefaultApi.md#taskforceTaskforceUuidGet)                                                     | **GET** /taskforces/{taskforce_uuid}                               |             |
 | [**taskforceTmsActionCondorSubmitTaskforceUuidPost**](DefaultApi.md#taskforceTmsActionCondorSubmitTaskforceUuidPost)         | **POST** /taskforces/{taskforce_uuid}/tms-action/condor-submit     |             |
 | [**taskforceTmsActionPendingStarterGet**](DefaultApi.md#taskforceTmsActionPendingStarterGet)                                 | **GET** /tms-action/pending-starter/taskforces                     |             |
-| [**taskforceTmsActionPendingStopperGet**](DefaultApi.md#taskforceTmsActionPendingStopperGet)                                 | **GET** /taskforces/tms-action/pending-stopper                     |             |
-| [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](DefaultApi.md#taskforceTmsActionPendingStopperTaskforceUuidDelete) | **DELETE** /taskforces/tms-action/pending-stopper/{taskforce_uuid} |             |
+| [**taskforceTmsActionPendingStopperGet**](DefaultApi.md#taskforceTmsActionPendingStopperGet)                                 | **GET** /tms-action/pending-stopper/taskforces                     |             |
+| [**taskforceTmsActionPendingStopperTaskforceUuidDelete**](DefaultApi.md#taskforceTmsActionPendingStopperTaskforceUuidDelete) | **DELETE** /tms-action/pending-stopper/taskforces/{taskforce_uuid} |             |
 | [**taskforceTmsCondorCompleteTaskforceUuidPost**](DefaultApi.md#taskforceTmsCondorCompleteTaskforceUuidPost)                 | **POST** /taskforces/tms/condor-complete/{taskforce_uuid}          |             |
 | [**taskforcesFindPost**](DefaultApi.md#taskforcesFindPost)                                                                   | **POST** /taskforces/find                                          |             |
 | [**taskforcesTmsStatusPost**](DefaultApi.md#taskforcesTmsStatusPost)                                                         | **POST** /taskforces/tms/status                                    |             |
