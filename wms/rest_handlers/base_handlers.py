@@ -38,7 +38,7 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
 class MainHandler(BaseWMSHandler):  # pylint: disable=W0223
     """MainHandler is a BaseWMSHandler that handles the root route."""
 
-    ROUTE = r"/$"
+    ROUTE = r"/v0/$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

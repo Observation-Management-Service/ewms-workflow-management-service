@@ -26,7 +26,7 @@ async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
         # only read json file for this request
         openapi_core.OpenAPI(SchemaPath.from_file_path(str(_OPENAPI_JSON))),
         "GET",
-        "/schema/openapi",
+        "/v0/schema/openapi",
     )
     with open(_OPENAPI_JSON, "rb") as f:
         assert json.load(f) == resp
@@ -129,14 +129,14 @@ async def user_requests_new_workflow(
         rc,
         openapi_spec,
         "GET",
-        f"/task-directives/{task_id}",
+        f"/v0/task-directives/{task_id}",
     )
     assert resp == task_directive
     resp = await request_and_validate(
         rc,
         openapi_spec,
         "POST",
-        "/query/task-directives",
+        "/v0/query/task-directives",
         {"query": {"task_id": task_id}},
     )
     assert len(resp["task_directives"]) == 1
@@ -147,7 +147,7 @@ async def user_requests_new_workflow(
         rc,
         openapi_spec,
         "POST",
-        "/query/taskforces",
+        "/v0/query/taskforces",
         {
             "query": {"task_id": task_id},
         },
@@ -174,7 +174,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            "/tms/pending-starter/taskforces",
+            "/v0/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -184,7 +184,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "GET",
-            f"/taskforces/{taskforce_uuid}",
+            f"/v0/taskforces/{taskforce_uuid}",
         )
         assert resp["phase"] == "pending-starter"
         # confirm it has started
@@ -193,7 +193,7 @@ async def tms_starter(
             rc,
             openapi_spec,
             "POST",
-            f"/tms/condor-submit/taskforces/{taskforce_uuid}",
+            f"/v0/tms/condor-submit/taskforces/{taskforce_uuid}",
             {
                 "cluster_id": 123456,
                 "n_workers": 5600,
@@ -209,7 +209,7 @@ async def tms_starter(
         rc,
         openapi_spec,
         "POST",
-        "/query/taskforces",
+        "/v0/query/taskforces",
         {
             "query": {
                 "task_id": task_id,
@@ -224,7 +224,7 @@ async def tms_starter(
         rc,
         openapi_spec,
         "POST",
-        "/query/taskforces",
+        "/v0/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": ["collector", "schedd"],
@@ -256,7 +256,7 @@ async def tms_watcher_sends_status_update(
             rc,
             openapi_spec,
             "POST",
-            "/query/taskforces",
+            "/v0/query/taskforces",
             {
                 "query": {
                     "collector": loc["collector"],
@@ -272,7 +272,7 @@ async def tms_watcher_sends_status_update(
             rc,
             openapi_spec,
             "POST",
-            "/tms/statuses/taskforces",
+            "/v0/tms/statuses/taskforces",
             {
                 "top_task_errors_by_taskforce": {
                     taskforce_uuid: top_task_errors_by_locshortname[shortname],
@@ -292,7 +292,7 @@ async def tms_watcher_sends_status_update(
         rc,
         openapi_spec,
         "POST",
-        "/query/taskforces",
+        "/v0/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": [
@@ -334,7 +334,7 @@ async def user_aborts_workflow(
         rc,
         openapi_spec,
         "POST",
-        "/query/task-directives",
+        "/v0/query/task-directives",
         {
             "query": {"task_id": task_id},
             "projection": ["workflow_id"],
@@ -377,7 +377,7 @@ async def tms_stopper(
             rc,
             openapi_spec,
             "GET",
-            "/tms/pending-stopper/taskforces",
+            "/v0/tms/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
         assert taskforce
@@ -386,7 +386,7 @@ async def tms_stopper(
             rc,
             openapi_spec,
             "DELETE",
-            f"/tms/pending-stopper/taskforces/{taskforce['taskforce_uuid']}",
+            f"/v0/tms/pending-stopper/taskforces/{taskforce['taskforce_uuid']}",
         )
 
     #
@@ -397,7 +397,7 @@ async def tms_stopper(
         rc,
         openapi_spec,
         "POST",
-        "/query/taskforces",
+        "/v0/query/taskforces",
         {
             "query": {
                 "task_id": task_id,
@@ -424,7 +424,7 @@ async def tms_condor_clusters_done(
             rc,
             openapi_spec,
             "POST",
-            "/query/taskforces",
+            "/v0/query/taskforces",
             {
                 "query": {
                     "collector": loc["collector"],
@@ -439,7 +439,7 @@ async def tms_condor_clusters_done(
             rc,
             openapi_spec,
             "POST",
-            f"/tms/condor-complete/taskforces/{resp['taskforces'][0]['taskforce_uuid']}",
+            f"/v0/tms/condor-complete/taskforces/{resp['taskforces'][0]['taskforce_uuid']}",
             {
                 "condor_complete_ts": (
                     # NOTE: need a unique timestamp that we don't need to rely on the timing of this test
@@ -457,7 +457,7 @@ async def tms_condor_clusters_done(
         rc,
         openapi_spec,
         "POST",
-        "/query/taskforces",
+        "/v0/query/taskforces",
         {
             "query": {
                 "task_id": task_id,

@@ -128,7 +128,7 @@ async def request(
             worker_memory="512M",
         ),
     )
-    task_directive = await rc.request("POST", "/task-directives", post_body)
+    task_directive = await rc.request("POST", "/v0/task-directives", post_body)
 
     LOGGER.debug(json.dumps(task_directive))
 
@@ -177,18 +177,18 @@ def monitor_wms(rc: RestClient, task_id: str) -> None:
 
         task_directive = rc.request_seq(
             "GET",
-            f"/task-directives/{task_id}",
+            f"/v0/task-directives/{task_id}",
         )
         if i == 0:
             taskforces = rc.request_seq(
                 "POST",
-                "/query/taskforces",
+                "/v0/query/taskforces",
                 {"query": {"task_id": task_id}},
             )
         else:
             taskforces = rc.request_seq(
                 "POST",
-                "/query/taskforces",
+                "/v0/query/taskforces",
                 {
                     "query": {"task_id": task_id},
                     "projection": [
@@ -270,7 +270,7 @@ async def main() -> None:
         queues = (
             await rc.request(
                 "GET",
-                f"/task-directives/{task_id}",
+                f"/v0/task-directives/{task_id}",
                 dict(projection=["queues"]),
             )
         )["queues"]
