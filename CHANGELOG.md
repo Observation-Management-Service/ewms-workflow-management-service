@@ -28,7 +28,9 @@
 ### Other
 
 *
+
 Flake8 ([`8d3eba1`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/8d3eba1a8e8845299e95d53d16dc418fbf909b80))
+
 * Update example
   script ([`d00223e`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/d00223e758b406d716c6485aa9983ddd7fb358b2))
 
@@ -44,6 +46,7 @@ Flake8 ([`8d3eba1`](https://github.com/Observation-Management-Service/ewms-workf
 ### Other
 
 *
+
 Add `LOG_LEVEL_REST_TOOLS` ([`c2b62ea`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/c2b62eab0278c0160322e0d769710991d6a199d9))
 
 ## v0.1.5 (2024-05-01)
@@ -152,7 +155,7 @@ Add `LOG_LEVEL_REST_TOOLS` ([`c2b62ea`](https://github.com/Observation-Managemen
 
 ### Other
 
-* Rename to `/tms/taskforces/statuses` (previously, "
+* Rename to `/tms/statuses/taskforces` (previously, "
   report") ([#12](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/12)) ([`fd51902`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/fd51902ca5b1bbc64f23f71dde3c6b13fb6fee2c))
 
 ## v0.0.8 (2024-03-06)
@@ -212,9 +215,13 @@ Add `LOG_LEVEL_REST_TOOLS` ([`c2b62ea`](https://github.com/Observation-Managemen
   Observation-Management-Service/first ([`cdc625c`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/cdc625cd2eeeedb4fd11b8296fda123c040826dd))
 * <bot> update dependencies*.log files(s) ([`5e46c55`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/5e46c5517c9dbd93f2fdacfeec453b70df5ca70f))
 *
+
 Add `Dockerfile` ([`10b9ee1`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/10b9ee19180245a675f87e90a890f19dc0c301c9))
+
 *
+
 Use `WIPACrepo/wipac-dev-py-setup-action@v2.10` ([`044399d`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/044399db4fc0c401ded5067a734bfa5e15d66223))
+
 * Remove
   need ([`96cb687`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/96cb687b136aa2a0bdd4412ae8a5db9767c3a667))
 * <bot> update dependencies*.log files(s) ([`65a4637`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/65a46379e60c44729676b7e468087650564ae45c))
@@ -223,11 +230,15 @@ Use `WIPACrepo/wipac-dev-py-setup-action@v2.10` ([`044399d`](https://github.com/
 * <bot> update README.md ([`810d967`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/810d9671d7c3960bfd8e01dc32ecb5fee90023ac))
 * <bot> update setup.cfg ([`8e169f7`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/8e169f77a31020aa4f916c166f8bc49240bd36b1))
 *
+
 Try `WIPACrepo/wipac-dev-py-setup-action@python-version-patch` ([`7d29018`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/7d29018b0f434f550eabd4e7cc4f5e239bf44f52))
+
 * Define python version for
   ci ([`e123e68`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/e123e681256392964d06360086cbb47e358c391f))
 *
+
 Trim ([`773d795`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/773d795dadfb981f077db9b180673d00a7d2a89c))
+
 * Add All Setup & CI/CD
   Files ([`4030312`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/40303125427ef026b6816bb7a92c5f8cfe4bba5a))
 * Initial

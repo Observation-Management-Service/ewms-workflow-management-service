@@ -272,7 +272,7 @@ async def tms_watcher_sends_status_update(
             rc,
             openapi_spec,
             "POST",
-            "/tms/taskforces/statuses",
+            "/tms/statuses/taskforces",
             {
                 "top_task_errors_by_taskforce": {
                     taskforce_uuid: top_task_errors_by_locshortname[shortname],

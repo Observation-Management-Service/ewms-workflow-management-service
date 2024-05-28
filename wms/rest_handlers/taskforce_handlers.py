@@ -21,7 +21,7 @@ LOGGER = logging.getLogger(__name__)
 class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with statuses for taskforce(s)."""
 
-    ROUTE = r"/tms/taskforces/statuses$"
+    ROUTE = r"/tms/statuses/taskforces$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
