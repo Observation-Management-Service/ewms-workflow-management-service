@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.1 (2024-05-28)
+
+### Other
+
+* Use `ruff` to Convert to Literal `dict` Syntax ([#31](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/31)) ([`2a175fe`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/2a175fe8c73262f89cab0c5060f1c931b7d1c77a))
+
 ## v0.3.0 (2024-05-28)
 
 
