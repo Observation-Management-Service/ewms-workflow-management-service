@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.2 (2024-05-30)
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`b5b836d`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/b5b836d13258ddcbf793a5fc4b38e7e0747d5561))
+* Update MQS Routes ([#32](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/32)) ([`c51da1d`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/c51da1d9594581ea888e3e6b57bade5826c484a6))
+
 ## v0.3.1 (2024-05-28)
 
 ### Other
