@@ -1,4 +1,4 @@
-"""A simple example script (task) to send to EWMS.
+"""A simple example script (single-task workflow) to send to EWMS.
 
 See https://github.com/Observation-Management-Service/ewms-pilot/blob/main/examples/do_task.py
 """
@@ -100,39 +100,52 @@ async def load_queue(task_in_queue: str, mq_token: str) -> None:
             LOGGER.debug(f"enqueued #{i}: {msg}")
 
 
-async def request(
+async def request_workflow(
     rc: RestClient,
     pilot_cvmfs_image_tag: str,
     mq_token: str,
     n_workers: int,
-) -> str:
-    """Request EWMS (WMS) to process a task."""
-    LOGGER.info("Requesting task to EWMS...")
+) -> tuple[str, str, str]:
+    """Request EWMS (WMS) to process a single-task workflow."""
+    LOGGER.info("Requesting single-task workflow to EWMS...")
 
     post_body = {
-        "cluster_locations": ["sub-2"],
-        "task_image": f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
-        "task_args": "python /app/examples/do_task.py",
-        "environment": {
-            "EWMS_PILOT_BROKER_ADDRESS": os.environ["EWMS_PILOT_BROKER_ADDRESS"],
-            "EWMS_PILOT_BROKER_AUTH_TOKEN": mq_token,
-            "EWMS_PILOT_BROKER_CLIENT": EWMS_PILOT_BROKER_CLIENT,
-        },
-        "n_workers": n_workers,
-        "worker_config": {
-            "do_transfer_worker_stdouterr": True,
-            "max_worker_runtime": 60 * 10,
-            "n_cores": 1,
-            "priority": 99,
-            "worker_disk": "512M",
-            "worker_memory": "512M",
-        },
+        "public_queue_aliases": ["input-queue", "output-queue"],
+        "tasks": [
+            {
+                "cluster_locations": ["sub-2"],
+                "input_queue_aliases": ["input-queue"],
+                "output_queue_aliases": ["output-queue"],
+                "task_image": f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
+                "task_args": "python /app/examples/do_task.py",
+                "environment": {
+                    "EWMS_PILOT_BROKER_ADDRESS": os.environ[
+                        "EWMS_PILOT_BROKER_ADDRESS"
+                    ],
+                    "EWMS_PILOT_BROKER_AUTH_TOKEN": mq_token,
+                    "EWMS_PILOT_BROKER_CLIENT": EWMS_PILOT_BROKER_CLIENT,
+                },
+                "n_workers": n_workers,
+                "worker_config": {
+                    "do_transfer_worker_stdouterr": True,
+                    "max_worker_runtime": 60 * 10,
+                    "n_cores": 1,
+                    "priority": 99,
+                    "worker_disk": "512M",
+                    "worker_memory": "512M",
+                },
+            }
+        ],
     }
-    task_directive = await rc.request("POST", "/v0/task-directives", post_body)
+    resp = await rc.request("POST", "/v0/workflows", post_body)
 
-    LOGGER.debug(json.dumps(task_directive))
+    LOGGER.debug(json.dumps(resp))
 
-    return task_directive["task_id"]  # type: ignore[no-any-return]
+    return (
+        resp["workflow"]["workflow_id"],
+        resp["task_directives"][0]["input_queues"][0],
+        resp["task_directives"][0]["output_queues"][0],
+    )
 
 
 async def read_queue(task_out_queue: str, mq_token: str) -> None:
@@ -164,33 +177,40 @@ async def read_queue(task_out_queue: str, mq_token: str) -> None:
     LOGGER.info("Done reading queue")
 
 
-def monitor_wms(rc: RestClient, task_id: str) -> None:
+def monitor_wms(rc: RestClient, workflow_id: str) -> None:
     """Routinely query WMS."""
     LOGGER.info("Monitoring WMS...")
 
-    prev_task_directive = {}  # type: ignore
+    prev_workflow = {}  # type: ignore
+    prev_task_directives = []  # type: ignore
     prev_taskforces = []  # type: ignore
 
     for i in itertools.count():
         if i > 0:
-            time.sleep(15)
+            time.sleep(15)  # in thread, so ok
 
-        task_directive = rc.request_seq(
+        workflow = rc.request_seq(
             "GET",
-            f"/v0/task-directives/{task_id}",
+            f"/v0/workflows/{workflow_id}",
         )
+        task_directives = rc.request_seq(
+            "POST",
+            "/v0/query/task-directives",
+            {"query": {"workflow_id": workflow_id}},
+        )["task_directives"]
+
         if i == 0:
             taskforces = rc.request_seq(
                 "POST",
                 "/v0/query/taskforces",
-                {"query": {"task_id": task_id}},
-            )
+                {"query": {"workflow_id": workflow_id}},
+            )["taskforces"]
         else:
             taskforces = rc.request_seq(
                 "POST",
                 "/v0/query/taskforces",
                 {
-                    "query": {"task_id": task_id},
+                    "query": {"workflow_id": workflow_id},
                     "projection": [
                         "condor_complete_ts",
                         "phase",
@@ -200,18 +220,27 @@ def monitor_wms(rc: RestClient, task_id: str) -> None:
                         "task_id",
                     ],
                 },
-            )
+            )["taskforces"]
 
-        if task_directive == prev_task_directive and taskforces == prev_taskforces:
+        if (prev_workflow, prev_task_directives, prev_taskforces) == (
+            workflow,
+            task_directives,
+            taskforces,
+        ):
             LOGGER.info("no change")
             continue
-        prev_task_directive = task_directive
-        prev_taskforces = taskforces
+        prev_workflow, prev_task_directives, prev_taskforces = (
+            workflow,
+            task_directives,
+            taskforces,
+        )
 
-        LOGGER.info("TASK DIRECTIVE:")
-        LOGGER.info(json.dumps(task_directive, indent=4))
+        LOGGER.info("WORKFLOW:")
+        LOGGER.info(json.dumps(workflow, indent=4))
+        LOGGER.info("TASK DIRECTIVE(S):")
+        LOGGER.info(json.dumps(task_directives, indent=4))
         LOGGER.info("TASKFORCES:")
-        LOGGER.info(json.dumps(taskforces["taskforces"], indent=4))
+        LOGGER.info(json.dumps(taskforces, indent=4))
 
         LOGGER.info("\n\n\n\n\n\n")
         LOGGER.info("Looking again in 15 seconds...")
@@ -249,8 +278,8 @@ async def main() -> None:
         client_secret=os.environ["KEYCLOAK_CLIENT_SECRET_BROKER"],
     ).make_access_token()
 
-    # request task
-    task_id = await request(
+    # request workflow
+    workflow_id, input_queue, output_queue = await request_workflow(
         rc,
         args.pilot_cvmfs_image_tag,
         mq_token,
@@ -258,27 +287,29 @@ async def main() -> None:
     )
     threading.Thread(
         target=monitor_wms,
-        args=(rc, task_id),
+        args=(rc, workflow_id),
         daemon=True,
     ).start()
 
+    # wait until queues are activated
+    # TODO
     # get queue ids
-    LOGGER.info("getting queues...")
-    queues: list[str] = []
-    while not queues:
-        await asyncio.sleep(10)
-        queues = (
-            await rc.request(
-                "GET",
-                f"/v0/task-directives/{task_id}",
-                {"projection": ["queues"]},
-            )
-        )["queues"]
-    LOGGER.info(f"{queues=}")
+    # LOGGER.info("getting queues...")
+    # queues: list[str] = []
+    # while not queues:
+    #     await asyncio.sleep(10)
+    #     queues = (
+    #         await rc.request(
+    #             "GET",
+    #             f"/v0/task-directives/{task_id}",
+    #             {"projection": ["queues"]},
+    #         )
+    #     )["queues"]
+    # LOGGER.info(f"{queues=}")
 
     # load & read queues
-    await load_queue(queues[0], mq_token)
-    await read_queue(queues[1], mq_token)
+    await load_queue(input_queue, mq_token)
+    await read_queue(output_queue, mq_token)
 
     # wait at end, so monitor thread can get some final updates
     await asyncio.sleep(60)
