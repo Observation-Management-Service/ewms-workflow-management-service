@@ -26,7 +26,7 @@ jsonschema-path==0.3.2
 jsonschema-specifications==2023.12.1
 lazy-object-proxy==1.10.0
 MarkupSafe==2.1.5
-more-itertools==10.2.0
+more-itertools==10.3.0
 motor==3.4.0
 openapi-core==0.19.1
 openapi-schema-validator==0.6.2
@@ -40,7 +40,7 @@ opentelemetry-exporter-otlp-proto-http==1.25.0
 opentelemetry-proto==1.25.0
 opentelemetry-sdk==1.25.0
 opentelemetry-semantic-conventions==0.46b0
-parse==1.20.1
+parse==1.20.2
 pathable==0.4.3
 protobuf==4.25.3
 pycparser==2.22
@@ -54,15 +54,15 @@ requests==2.32.3
 requests-futures==1.0.1
 rfc3339-validator==0.1.4
 rpds-py==0.18.1
-setuptools==69.5.1
+setuptools==70.0.0
 six==1.16.0
 thrift==0.20.0
-tornado==6.4
-typing_extensions==4.12.1
+tornado==6.4.1
+typing_extensions==4.12.2
 urllib3==2.2.1
 Werkzeug==3.0.3
 wheel==0.43.0
-wipac-dev-tools==1.9.1
+wipac-dev-tools==1.10.6
 wipac-rest-tools==1.7.5
 wipac-telemetry==0.3.0
 wrapt==1.16.0
@@ -74,9 +74,9 @@ cryptography==42.0.8
 └── cffi [required: >=1.12, installed: 1.16.0]
     └── pycparser [required: Any, installed: 2.22]
 pipdeptree==2.22.0
-├── packaging [required: >=23.1, installed: 24.0]
+├── packaging [required: >=23.1, installed: 24.1]
 └── pip [required: >=23.1.2, installed: 24.0]
-setuptools==69.5.1
+setuptools==70.0.0
 wheel==0.43.0
 wipac-telemetry==0.3.0
 ├── coloredlogs [required: Any, installed: 15.0.1]
@@ -108,7 +108,7 @@ wipac-telemetry==0.3.0
 │   │       │       │   └── wrapt [required: >=1.10,<2, installed: 1.16.0]
 │   │       │       └── importlib_metadata [required: >=6.0,<=7.1, installed: 7.1.0]
 │   │       │           └── zipp [required: >=0.5, installed: 3.19.2]
-│   │       └── typing_extensions [required: >=3.7.4, installed: 4.12.1]
+│   │       └── typing_extensions [required: >=3.7.4, installed: 4.12.2]
 │   └── opentelemetry-exporter-jaeger-thrift [required: ==1.21.0, installed: 1.21.0]
 │       ├── opentelemetry-api [required: ~=1.3, installed: 1.25.0]
 │       │   ├── Deprecated [required: >=1.2.6, installed: 1.2.14]
@@ -127,7 +127,7 @@ wipac-telemetry==0.3.0
 │       │   │       │   └── wrapt [required: >=1.10,<2, installed: 1.16.0]
 │       │   │       └── importlib_metadata [required: >=6.0,<=7.1, installed: 7.1.0]
 │       │   │           └── zipp [required: >=0.5, installed: 3.19.2]
-│       │   └── typing_extensions [required: >=3.7.4, installed: 4.12.1]
+│       │   └── typing_extensions [required: >=3.7.4, installed: 4.12.2]
 │       └── thrift [required: >=0.10.0, installed: 0.20.0]
 │           └── six [required: >=1.7.2, installed: 1.16.0]
 ├── opentelemetry-exporter-otlp-proto-http [required: Any, installed: 1.25.0]
@@ -157,7 +157,7 @@ wipac-telemetry==0.3.0
 │   │   │       │   └── wrapt [required: >=1.10,<2, installed: 1.16.0]
 │   │   │       └── importlib_metadata [required: >=6.0,<=7.1, installed: 7.1.0]
 │   │   │           └── zipp [required: >=0.5, installed: 3.19.2]
-│   │   └── typing_extensions [required: >=3.7.4, installed: 4.12.1]
+│   │   └── typing_extensions [required: >=3.7.4, installed: 4.12.2]
 │   └── requests [required: ~=2.7, installed: 2.32.3]
 │       ├── certifi [required: >=2017.4.17, installed: 2024.6.2]
 │       ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
@@ -175,16 +175,16 @@ wipac-telemetry==0.3.0
 │   │       │   └── wrapt [required: >=1.10,<2, installed: 1.16.0]
 │   │       └── importlib_metadata [required: >=6.0,<=7.1, installed: 7.1.0]
 │   │           └── zipp [required: >=0.5, installed: 3.19.2]
-│   └── typing_extensions [required: >=3.7.4, installed: 4.12.1]
+│   └── typing_extensions [required: >=3.7.4, installed: 4.12.2]
 ├── protobuf [required: Any, installed: 4.25.3]
-├── typing_extensions [required: Any, installed: 4.12.1]
-└── wipac-dev-tools [required: Any, installed: 1.9.1]
+├── typing_extensions [required: Any, installed: 4.12.2]
+└── wipac-dev-tools [required: Any, installed: 1.10.6]
     ├── requests [required: Any, installed: 2.32.3]
     │   ├── certifi [required: >=2017.4.17, installed: 2024.6.2]
     │   ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
     │   ├── idna [required: >=2.5,<4, installed: 3.7]
     │   └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
-    └── typing_extensions [required: Any, installed: 4.12.1]
+    └── typing_extensions [required: Any, installed: 4.12.2]
 wms
 ├── jsonschema [required: Any, installed: 4.22.0]
 │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
@@ -223,7 +223,7 @@ wms
 │   │       ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
 │   │       ├── idna [required: >=2.5,<4, installed: 3.7]
 │   │       └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
-│   ├── more-itertools [required: Any, installed: 10.2.0]
+│   ├── more-itertools [required: Any, installed: 10.3.0]
 │   ├── openapi-schema-validator [required: >=0.6.0,<0.7.0, installed: 0.6.2]
 │   │   ├── jsonschema [required: >=4.19.1,<5.0.0, installed: 4.22.0]
 │   │   │   ├── attrs [required: >=22.2.0, installed: 23.2.0]
@@ -281,22 +281,22 @@ wms
 │   │       │       └── rpds-py [required: >=0.7.0, installed: 0.18.1]
 │   │       └── rfc3339-validator [required: Any, installed: 0.1.4]
 │   │           └── six [required: Any, installed: 1.16.0]
-│   ├── parse [required: Any, installed: 1.20.1]
+│   ├── parse [required: Any, installed: 1.20.2]
 │   └── Werkzeug [required: Any, installed: 3.0.3]
 │       └── MarkupSafe [required: >=2.1.1, installed: 2.1.5]
-├── wipac-dev-tools [required: Any, installed: 1.9.1]
+├── wipac-dev-tools [required: Any, installed: 1.10.6]
 │   ├── requests [required: Any, installed: 2.32.3]
 │   │   ├── certifi [required: >=2017.4.17, installed: 2024.6.2]
 │   │   ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
 │   │   ├── idna [required: >=2.5,<4, installed: 3.7]
 │   │   └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
-│   └── typing_extensions [required: Any, installed: 4.12.1]
+│   └── typing_extensions [required: Any, installed: 4.12.2]
 └── wipac-rest-tools [required: Any, installed: 1.7.5]
     ├── cachetools [required: Any, installed: 5.3.3]
     ├── PyJWT [required: !=2.6.0, installed: 2.8.0]
     ├── qrcode [required: Any, installed: 7.4.2]
     │   ├── pypng [required: Any, installed: 0.20220715.0]
-    │   └── typing_extensions [required: Any, installed: 4.12.1]
+    │   └── typing_extensions [required: Any, installed: 4.12.2]
     ├── requests [required: Any, installed: 2.32.3]
     │   ├── certifi [required: >=2017.4.17, installed: 2024.6.2]
     │   ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
@@ -308,12 +308,12 @@ wms
     │       ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
     │       ├── idna [required: >=2.5,<4, installed: 3.7]
     │       └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
-    ├── tornado [required: Any, installed: 6.4]
+    ├── tornado [required: Any, installed: 6.4.1]
     ├── urllib3 [required: >=2.0.4, installed: 2.2.1]
-    └── wipac-dev-tools [required: Any, installed: 1.9.1]
+    └── wipac-dev-tools [required: Any, installed: 1.10.6]
         ├── requests [required: Any, installed: 2.32.3]
         │   ├── certifi [required: >=2017.4.17, installed: 2024.6.2]
         │   ├── charset-normalizer [required: >=2,<4, installed: 3.3.2]
         │   ├── idna [required: >=2.5,<4, installed: 3.7]
         │   └── urllib3 [required: >=1.21.1,<3, installed: 2.2.1]
-        └── typing_extensions [required: Any, installed: 4.12.1]
+        └── typing_extensions [required: Any, installed: 4.12.2]
