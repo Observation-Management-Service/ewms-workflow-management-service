@@ -21,7 +21,7 @@ if TYPE_CHECKING:  # not installing dependency just for example script
 else:
     from mqclient import Queue
 
-from rest_tools.client import ClientCredentialsAuth, RestClient, SavedDeviceGrantAuth
+from rest_tools.client import RestClient, SavedDeviceGrantAuth
 
 LOGGER = logging.getLogger(__name__)
 
@@ -103,7 +103,6 @@ async def load_queue(task_in_queue: str, mq_token: str) -> None:
 async def request_workflow(
     rc: RestClient,
     pilot_cvmfs_image_tag: str,
-    mq_token: str,
     n_workers: int,
 ) -> tuple[str, str, str]:
     """Request EWMS (WMS) to process a single-task workflow."""
@@ -122,7 +121,6 @@ async def request_workflow(
                     "EWMS_PILOT_BROKER_ADDRESS": os.environ[
                         "EWMS_PILOT_BROKER_ADDRESS"
                     ],
-                    "EWMS_PILOT_BROKER_AUTH_TOKEN": mq_token,
                     "EWMS_PILOT_BROKER_CLIENT": EWMS_PILOT_BROKER_CLIENT,
                 },
                 "n_workers": n_workers,
@@ -263,7 +261,7 @@ async def main() -> None:
     args = parser.parse_args()
     wipac_dev_tools.logging_tools.log_argparse_args(args)
 
-    rc = SavedDeviceGrantAuth(
+    ewms_rc = SavedDeviceGrantAuth(
         "https://ewms-dev.icecube.aq",
         token_url="https://keycloak.icecube.wisc.edu/auth/realms/IceCube",
         filename=str(Path("~/device-refresh-token").expanduser().resolve()),
@@ -271,45 +269,40 @@ async def main() -> None:
         retries=0,
     )
 
-    mq_token = ClientCredentialsAuth(
-        "",
-        token_url="https://keycloak.icecube.wisc.edu/auth/realms/IceCube",
-        client_id=os.environ["KEYCLOAK_CLIENT_ID_BROKER"],
-        client_secret=os.environ["KEYCLOAK_CLIENT_SECRET_BROKER"],
-    ).make_access_token()
-
     # request workflow
     workflow_id, input_queue, output_queue = await request_workflow(
-        rc,
+        ewms_rc,
         args.pilot_cvmfs_image_tag,
-        mq_token,
         args.n_workers,
     )
     threading.Thread(
         target=monitor_wms,
-        args=(rc, workflow_id),
+        args=(ewms_rc, workflow_id),
         daemon=True,
     ).start()
 
     # wait until queues are activated
-    # TODO
-    # get queue ids
-    # LOGGER.info("getting queues...")
-    # queues: list[str] = []
-    # while not queues:
-    #     await asyncio.sleep(10)
-    #     queues = (
-    #         await rc.request(
-    #             "GET",
-    #             f"/v0/task-directives/{task_id}",
-    #             {"projection": ["queues"]},
-    #         )
-    #     )["queues"]
-    # LOGGER.info(f"{queues=}")
+    LOGGER.info("getting queues...")
+    mqprofiles: list[dict] = []
+    while not mqprofiles:
+        await asyncio.sleep(10)
+        mqprofiles = (
+            await mqs_rc.request(
+                "GET",
+                f"/v0/workflows/{workflow_id}/mq-profiles/public",
+            )
+        )["mqprofiles"]
+    LOGGER.info(f"{mqprofiles=}")
 
     # load & read queues
-    await load_queue(input_queue, mq_token)
-    await read_queue(output_queue, mq_token)
+    await load_queue(
+        input_queue,
+        next(p["auth_token"] for p in mqprofiles if p["mqid"] == input_queue),
+    )
+    await read_queue(
+        output_queue,
+        next(p["auth_token"] for p in mqprofiles if p["mqid"] == output_queue),
+    )
 
     # wait at end, so monitor thread can get some final updates
     await asyncio.sleep(60)
