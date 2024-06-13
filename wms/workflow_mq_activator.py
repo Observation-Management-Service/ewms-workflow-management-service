@@ -47,7 +47,7 @@ async def request_activation_to_mqs(mqs_rc: RestClient, workflow: dict) -> dict:
     """Send request to MQS to activate workflow's queues."""
     return await mqs_rc.request(
         "POST",
-        f"/v0/workflows/{workflow['workflow_id']}/mq-group/activation",
+        f"/v0/mqs/workflows/{workflow['workflow_id']}/mq-group/activation",
         {
             "workflow_id": workflow["workflow_id"],
             "criteria": {
