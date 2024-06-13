@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.4 (2024-06-13)
+
+### Other
+
+* Update MQS URIs ([#35](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/35)) ([`51592fc`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/51592fc9f8aff8a0194bd7ba7257c356fbe0afe7))
+
 ## v0.3.3 (2024-06-05)
 
 ### Other
