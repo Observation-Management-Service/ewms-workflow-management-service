@@ -1,10 +1,9 @@
 """Test patterns for the server's routes."""
 
-
 import logging
 import re
 
-from wms import server
+from wms import server, config
 
 LOGGER = logging.getLogger(__name__)
 
@@ -25,3 +24,10 @@ def test_route_patterns() -> None:
             LOGGER.info(f"applying '{pattern=}' to '{this}'")
             assert not re.match(pattern, this.rstrip("$"))
             LOGGER.info("   -> ok (no match)")
+
+
+def test_route_prefixes() -> None:
+    """Check that all the routes have correct prefixes."""
+    routes = [getattr(h, "ROUTE") for h in server.HANDLERS]
+    for pattern in routes:
+        assert pattern.startswith(f"/{config.ROUTE_VERSION_PREFIX}/")
