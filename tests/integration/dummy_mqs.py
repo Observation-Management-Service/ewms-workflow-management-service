@@ -8,7 +8,7 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 
-@app.route("/v0/workflows/<workflow_id>/mq-group/reservation", methods=["POST"])
+@app.route("/v0/mqs/workflows/<workflow_id>/mq-group/reservation", methods=["POST"])
 def dummy_mq_group_reservation_post(workflow_id: int):
     mqgroup_id = f"test-mq-group-{workflow_id}"
     now = time.time()
@@ -35,7 +35,7 @@ def dummy_mq_group_reservation_post(workflow_id: int):
     )
 
 
-@app.route("/v0/workflows/<workflow_id>/mq-group/activation", methods=["POST"])
+@app.route("/v0/mqs/workflows/<workflow_id>/mq-group/activation", methods=["POST"])
 def dummy_mq_group_activation_post(workflow_id: int):
     # in the real mqs, there's a bunch of db logic, etc.
     return jsonify({"activated": True})
