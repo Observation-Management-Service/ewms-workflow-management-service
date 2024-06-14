@@ -287,9 +287,9 @@ async def main() -> None:
     while not mqprofiles:
         await asyncio.sleep(10)
         mqprofiles = (
-            await mqs_rc.request(
+            await ewms_rc.request(
                 "GET",
-                f"/v0/workflows/{workflow_id}/mq-profiles/public",
+                f"/v0/mqs/workflows/{workflow_id}/mq-profiles/public",
             )
         )["mqprofiles"]
     LOGGER.info(f"{mqprofiles=}")
