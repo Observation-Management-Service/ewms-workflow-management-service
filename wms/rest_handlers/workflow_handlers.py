@@ -54,7 +54,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
         # Reserve queues with MQS -- map to aliases
         resp = await self.mqs_rc.request(
             "POST",
-            f"/{config.ROUTE_VERSION_PREFIX}/workflows/{workflow['workflow_id']}/mq-group/reservation",
+            f"/v0/mqs/workflows/{workflow['workflow_id']}/mq-group/reservation",
             {
                 "queue_aliases": _get_all_queues(self.get_argument("tasks")),
                 "public": self.get_argument("public_queue_aliases"),
