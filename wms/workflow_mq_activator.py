@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import time
+from typing import Any
 
 import requests
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -61,6 +62,7 @@ async def request_activation_to_mqs(mqs_rc: RestClient, workflow: dict) -> dict:
 async def advance_database(
     wms_db: database.client.WMSMongoValidatedDatabase,
     workflow_id: str,
+    mqprofiles: dict[str, Any],
 ) -> None:
     """Update the database with (1) mq_activated_ts and (2) taskforces' phases with TaskforcePhase.PRE_LAUNCH."""
     async with await wms_db.mongo_client.start_session() as s:
@@ -72,7 +74,12 @@ async def advance_database(
             )
             await wms_db.taskforces_collection.update_set_many(
                 {"workflow_id": workflow_id},
-                {"phase": TaskforcePhase.PRE_LAUNCH},
+                {
+                    "phase": TaskforcePhase.PRE_LAUNCH,
+                    # TODO - match taskforces with mqprofiles (N:M)
+                    "container_config.environment.EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": 0,
+                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": 0,
+                },
                 session=s,
             )
 
@@ -131,16 +138,21 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             f"REQUESTING ACTIVATION for workflow_id={workflow['workflow_id']} queues..."
         )
         try:
-            resp = await request_activation_to_mqs(mqs_rc, workflow)
+            mqs_resp = await request_activation_to_mqs(mqs_rc, workflow)
         except requests.exceptions.HTTPError as e:
             LOGGER.exception(e)
             continue
         # update database per result
-        if resp.get("try_again_later"):
+        if mqs_resp.get("try_again_later"):
             await set_mq_activation_retry_at_ts(
-                wms_db.workflows_collection, workflow["workflow_id"]
+                wms_db.workflows_collection,
+                workflow["workflow_id"],
             )
             short_sleep = True  # want to give other tasks a chance to start up
             continue
         else:
-            await advance_database(wms_db, workflow["workflow_id"])
+            await advance_database(
+                wms_db,
+                workflow["workflow_id"],
+                mqs_resp["mqprofiles"],
+            )
