@@ -81,11 +81,7 @@ async def create_task_directive_and_taskforces(
                 "container_config": {
                     "image": task_directive["task_image"],
                     "arguments": task_directive["task_args"],
-                    "environment": {
-                        **environment,
-                        "EWMS_PILOT_QUEUE_INCOMING": ";".join(input_queues),
-                        "EWMS_PILOT_QUEUE_OUTGOING": ";".join(output_queues),
-                    },
+                    "environment": environment,  # appended to by workflow_mq_activator
                     "input_files": input_files,
                 },
                 "worker_config": worker_config,
