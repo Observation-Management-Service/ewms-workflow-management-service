@@ -290,6 +290,12 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         # use asyncio's timeout to artificially stop loop, otherwise it'd go forever
         await asyncio.wait_for(workflow_mq_activator.startup(mongo_client), timeout=60)
 
+    #
+    #
+    # at this point in time, the mq activator will have completed all work to be done
+    #
+    #
+
     # check mongo db state
     assert len(await alist(workflows_client.find_all({}, []))) == len(TEST_WORKFLOWS)
     # look at workflows, individually
@@ -309,9 +315,20 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         ):
             # assemble list of expected taskforces
             expected_tfs = []  # type: ignore
-            for i, location in enumerate(td_db["cluster_locations"]):
+            for i, location in enumerate(td_db["cluster_locations"]):  # 1 tf per loc
                 tf = _make_test_taskforce(td_db, location, i)
+                # update fields that the mq activator should've also done
                 tf["phase"] = str(schema.enums.TaskforcePhase.PRE_LAUNCH)
+                tf["environment"] = {
+                    "EWMS_PILOT_QUEUE_INCOMING": td_db["queue_incoming"],
+                    "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": [
+                        "DUMMY_TOKEN" for _ in td_db["queue_incoming"]
+                    ],
+                    "EWMS_PILOT_QUEUE_OUTGOING": td_db["queue_outgoing"],
+                    "EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": [
+                        "DUMMY_TOKEN" for _ in td_db["queue_outgoing"]
+                    ],
+                }
                 expected_tfs.append(tf)
             # get all taskforces for task_id
             assert (
