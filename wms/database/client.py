@@ -75,6 +75,25 @@ class MongoValidatedCollection:
     # WRITES
     ####################################################################
 
+    def _web_jsonschema_validate_update(self, update: dict[str, Any]) -> None:
+        """Validate the data for each given mongo-syntax update operator."""
+        for operator in update:
+            match operator:
+                case "$set":
+                    web_jsonschema_validate(
+                        update[operator], self._schema, allow_partial_update=True
+                    )
+                case "$push":
+                    web_jsonschema_validate(
+                        # validate each value as if it was the whole field's list -- other wise `str != [str]`
+                        {k: [v] for k, v in update[operator].items()},
+                        self._schema,
+                        allow_partial_update=True,
+                    )
+                # FUTURE: insert more operators here
+                case other:
+                    raise KeyError(f"Unsupported mongo-syntax update operator: {other}")
+
     async def insert_one(self, doc: dict, **kwargs: Any) -> dict:
         """Insert the doc (dict)."""
         self.logger.debug(f"inserting one: {doc}")
@@ -90,16 +109,16 @@ class MongoValidatedCollection:
     async def find_one_and_update(
         self,
         query: dict,
-        set_update: dict,
+        update: dict,
         **kwargs: Any,
     ) -> dict:
         """Update the doc and return updated doc."""
         self.logger.debug(f"update one with query: {query}")
 
-        web_jsonschema_validate(set_update, self._schema, allow_partial_update=True)
+        self._web_jsonschema_validate_update(update)
         doc = await self._collection.find_one_and_update(
             query,
-            {"$set": set_update},
+            update,
             return_document=ReturnDocument.AFTER,
             **kwargs,
         )
@@ -133,20 +152,7 @@ class MongoValidatedCollection:
         """Update all matching docs."""
         self.logger.debug(f"update many with query: {query}")
 
-        # validate
-        if "$set" in update:
-            web_jsonschema_validate(
-                update["$set"], self._schema, allow_partial_update=True
-            )
-        if "$push" in update:
-            web_jsonschema_validate(
-                # validate each value as if it was the whole field's list -- other wise `str != [str]`
-                {k: [v] for k, v in update["$push"].items()},
-                self._schema,
-                allow_partial_update=True,
-            )
-
-        # call mongo
+        self._web_jsonschema_validate_update(update)
         res = await self._collection.update_many(query, update, **kwargs)
         if not res.matched_count:
             raise DocumentNotFoundException()

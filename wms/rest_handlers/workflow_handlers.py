@@ -166,7 +166,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                             "aborted": {"$nin": [True]},  # "not in"
                         },
                         {
-                            "aborted": True,
+                            "$set": {"aborted": True},
                         },
                         session=s,
                     )

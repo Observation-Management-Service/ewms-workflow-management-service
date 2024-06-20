@@ -28,8 +28,12 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
         # find & advance phase
         try:
             taskforce = await wms_db.taskforces_collection.find_one_and_update(
-                {"phase": TaskforcePhase.PRE_LAUNCH},
-                {"phase": TaskforcePhase.PENDING_STARTER},
+                {
+                    "phase": TaskforcePhase.PRE_LAUNCH,
+                },
+                {
+                    "$set": {"phase": TaskforcePhase.PENDING_STARTER},
+                },
                 sort=[
                     ("worker_config.priority", DESCENDING),  # first, highest priority
                     ("timestamp", ASCENDING),  # then, oldest

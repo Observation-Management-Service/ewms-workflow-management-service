@@ -65,7 +65,9 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                                 "taskforce_uuid": uuid,
                                 # we don't care what the 'phase' is
                             },
-                            update,
+                            {
+                                "$set": update,
+                            },
                             session=s,
                         )
                     except DocumentNotFoundException:
@@ -178,11 +180,13 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     "phase": {"$in": [TaskforcePhase.PENDING_STARTER]},
                 },
                 {
-                    "cluster_id": self.get_argument("cluster_id"),
-                    "n_workers": self.get_argument("n_workers"),
-                    "submit_dict": self.get_argument("submit_dict"),
-                    "job_event_log_fpath": self.get_argument("job_event_log_fpath"),
-                    "phase": TaskforcePhase.CONDOR_SUBMIT,
+                    "$set": {
+                        "cluster_id": self.get_argument("cluster_id"),
+                        "n_workers": self.get_argument("n_workers"),
+                        "submit_dict": self.get_argument("submit_dict"),
+                        "job_event_log_fpath": self.get_argument("job_event_log_fpath"),
+                        "phase": TaskforcePhase.CONDOR_SUBMIT,
+                    }
                 },
             )
         except DocumentNotFoundException as e:
@@ -254,7 +258,7 @@ class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
                     # NOTE: any taskforce can be marked as 'condor-rm' regardless of state
                 },
                 {
-                    "phase": TaskforcePhase.CONDOR_RM,
+                    "$set": {"phase": TaskforcePhase.CONDOR_RM},
                 },
             )
         except DocumentNotFoundException as e:
@@ -286,6 +290,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         Supply the timestamp for when the taskforce's condor cluster
         finished, regardless if it ended in success or failure.
         """
+        timestamp = int(self.get_argument("condor_complete_ts"))
         try:
             await self.wms_db.taskforces_collection.find_one_and_update(
                 {
@@ -293,7 +298,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
                     "condor_complete_ts": None,
                 },
                 {
-                    "condor_complete_ts": int(self.get_argument("condor_complete_ts")),
+                    "$set": {"condor_complete_ts": timestamp},
                 },
             )
         except DocumentNotFoundException as e:
