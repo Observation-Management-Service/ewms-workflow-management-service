@@ -47,8 +47,8 @@ def _make_test_task_directives(workflow: dict) -> Iterator[dict]:
             "task_args": "--baz bat",
             "timestamp": 1 + n,
             #
-            "input_queues": [f"q-td-{n}-in"],
-            "output_queues": [f"q-td-{n}-out"],
+            "input_queues": [f"q-td-{n}"],
+            "output_queues": [f"q-td-{n+1}"],  # n+1 to overlap (i.e. a chain of tasks)
         }
 
 
