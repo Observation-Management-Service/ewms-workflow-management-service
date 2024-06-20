@@ -320,13 +320,13 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
                 # update fields that the mq activator should've also done
                 tf["phase"] = str(schema.enums.TaskforcePhase.PRE_LAUNCH)
                 tf["environment"] = {
-                    "EWMS_PILOT_QUEUE_INCOMING": td_db["queue_incoming"],
+                    "EWMS_PILOT_QUEUE_INCOMING": td_db["input_queues"],
                     "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": [
-                        f"DUMMY_TOKEN_{q}" for q in td_db["queue_incoming"]
+                        f"DUMMY_TOKEN_{q}" for q in td_db["input_queues"]
                     ],
-                    "EWMS_PILOT_QUEUE_OUTGOING": td_db["queue_outgoing"],
+                    "EWMS_PILOT_QUEUE_OUTGOING": td_db["output_queues"],
                     "EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": [
-                        f"DUMMY_TOKEN_{q}" for q in td_db["queue_outgoing"]
+                        f"DUMMY_TOKEN_{q}" for q in td_db["output_queues"]
                     ],
                 }
                 expected_tfs.append(tf)
