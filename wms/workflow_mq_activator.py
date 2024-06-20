@@ -72,7 +72,11 @@ async def _update_taskforces_w_mqprofile_info(
 
     # input/incoming
     async for td in wms_db.task_directives_collection.find_all(
-        {"workflow_id": workflow_id, "input_queues": mqprofile["mqid"]}, []
+        {
+            "workflow_id": workflow_id,
+            "input_queues": mqprofile["mqid"],  # mongo-speak for "entry X in list"
+        },
+        [],
     ):
         await wms_db.taskforces_collection.update_many(
             {
@@ -90,7 +94,11 @@ async def _update_taskforces_w_mqprofile_info(
 
     # output/outgoing (same as above but for outgoing queues)
     async for td in wms_db.task_directives_collection.find_all(
-        {"workflow_id": workflow_id, "output_queues": mqprofile["mqid"]}, []
+        {
+            "workflow_id": workflow_id,
+            "output_queues": mqprofile["mqid"],  # mongo-speak for "entry X in list"
+        },
+        [],
     ):
         await wms_db.taskforces_collection.update_many(
             {
