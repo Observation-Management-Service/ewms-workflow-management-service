@@ -124,18 +124,30 @@ class MongoValidatedCollection:
         self.logger.debug(f"inserted many: {docs}")
         return docs
 
-    async def update_set_many(
+    async def update_many(
         self,
         query: dict,
-        set_update: dict,
+        update: dict,
         **kwargs: Any,
     ) -> int:
         """Update all matching docs."""
         self.logger.debug(f"update many with query: {query}")
 
-        if "$push" not in set_update:  # TODO - FIX
-            web_jsonschema_validate(set_update, self._schema, allow_partial_update=True)
-        res = await self._collection.update_many(query, {"$set": set_update}, **kwargs)
+        # validate
+        if "$set" in update:
+            web_jsonschema_validate(
+                update["$set"], self._schema, allow_partial_update=True
+            )
+        if "$push" in update:
+            web_jsonschema_validate(
+                # validate each value as if it was the whole field's list -- other wise `str != [str]`
+                {k: [v] for k, v in update["$push"].items()},
+                self._schema,
+                allow_partial_update=True,
+            )
+
+        # call mongo
+        res = await self._collection.update_many(query, update, **kwargs)
         if not res.matched_count:
             raise DocumentNotFoundException()
 

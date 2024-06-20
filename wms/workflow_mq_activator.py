@@ -59,20 +59,6 @@ async def request_activation_to_mqs(mqs_rc: RestClient, workflow: dict) -> dict:
     )
 
 
-def _get_mq_update_dict_for_taskforce(
-    mqid_attr: str,
-    mqid: str,
-    auth_token_attr: str,
-    auth_token: str,
-) -> dict:
-    return {
-        "$push": {  # mongo appends to list
-            f"container_config.environment.{mqid_attr}": mqid,
-            f"container_config.environment.{auth_token_attr}": auth_token,
-        }
-    }
-
-
 async def advance_database(
     wms_db: database.client.WMSMongoValidatedDatabase,
     workflow_id: str,
@@ -94,43 +80,45 @@ async def advance_database(
             )
             # match mqprofiles with taskforces (N:M)
             for mqprofile in mqprofiles:
+                mqid = mqprofile["mqid"]
+                auth_token = mqprofile["auth_token"]
                 # incoming
                 async for td in wms_db.task_directives_collection.find_all(
                     {"input_queues": mqprofile["mqid"]}, []
                 ):
-                    await wms_db.taskforces_collection.update_set_many(
+                    await wms_db.taskforces_collection.update_many(
                         {
                             "workflow_id": workflow_id,
                             "task_id": td["task_id"],
                         },
-                        _get_mq_update_dict_for_taskforce(
-                            "EWMS_PILOT_QUEUE_INCOMING",
-                            mqprofile["mqid"],
-                            "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN",
-                            mqprofile["auth_token"],
-                        ),
+                        {
+                            "$push": {  # mongo appends to list
+                                "container_config.environment.EWMS_PILOT_QUEUE_INCOMING": mqid,
+                                "container_config.environment.EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": auth_token,
+                            }
+                        },
                         session=s,
                     )
                 # outgoing (same as above but for outgoing queues)
                 async for td in wms_db.task_directives_collection.find_all(
                     {"output_queues": mqprofile["mqid"]}, []
                 ):
-                    await wms_db.taskforces_collection.update_set_many(
+                    await wms_db.taskforces_collection.update_many(
                         {
                             "workflow_id": workflow_id,
                             "task_id": td["task_id"],
                         },
-                        _get_mq_update_dict_for_taskforce(
-                            "EWMS_PILOT_QUEUE_OUTGOING",
-                            mqprofile["mqid"],
-                            "EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN",
-                            mqprofile["auth_token"],
-                        ),
+                        {
+                            "$push": {  # mongo appends to list
+                                "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": mqid,
+                                "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": auth_token,
+                            }
+                        },
                         session=s,
                     )
             # update phase
-            await wms_db.taskforces_collection.update_set_many(
-                {"workflow_id": workflow_id},
+            await wms_db.taskforces_collection.update_many(
+                {"$set": {"workflow_id": workflow_id}},
                 {"phase": TaskforcePhase.PRE_LAUNCH},
                 session=s,
             )
