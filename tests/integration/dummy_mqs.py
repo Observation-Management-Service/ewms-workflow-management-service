@@ -28,6 +28,7 @@ def dummy_mq_group_reservation_post(workflow_id: int):
                     "alias": alias,
                     "is_public": alias in request.get_json()["public"],
                     "is_activated": False,
+                    "auth_token": "DUMMY_TOKEN",
                 }
                 for alias in request.get_json()["queue_aliases"]
             ],
