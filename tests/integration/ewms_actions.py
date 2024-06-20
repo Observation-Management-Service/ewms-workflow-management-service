@@ -154,10 +154,10 @@ async def user_requests_new_workflow(
         tf["container_config"]["environment"]
         == {
             **environment,
-            "EWMS_PILOT_QUEUE_INCOMING": "123qfoo",
-            "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": "DUMMY_TOKEN",
-            "EWMS_PILOT_QUEUE_OUTGOING": "123qbar",
-            "EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": "DUMMY_TOKEN",
+            "EWMS_PILOT_QUEUE_INCOMING": ["123qfoo"],
+            "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": ["DUMMY_TOKEN"],
+            "EWMS_PILOT_QUEUE_OUTGOING": ["123qbar"],
+            "EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": ["DUMMY_TOKEN"],
         }
         for tf in resp["taskforces"]
     )
