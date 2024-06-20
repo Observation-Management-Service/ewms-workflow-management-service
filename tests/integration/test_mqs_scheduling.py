@@ -107,7 +107,7 @@ class MQSRESTCalls:
                 return {
                     "mqprofiles": [
                         # make dummy objs from all queues for all task directives
-                        {"mqid": mqid, "auth_token": "DUMMY_TOKEN"}
+                        {"mqid": mqid, "auth_token": f"DUMMY_TOKEN_{mqid}"}
                         for td in _make_test_task_directives(workflow)
                         for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
                     ]
@@ -135,7 +135,7 @@ class MQSRESTCalls:
                 return {
                     "mqprofiles": [
                         # make dummy objs from all queues for all task directives
-                        {"mqid": mqid, "auth_token": "DUMMY_TOKEN"}
+                        {"mqid": mqid, "auth_token": f"DUMMY_TOKEN_{mqid}"}
                         for td in _make_test_task_directives(workflow)
                         for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
                     ]
@@ -151,7 +151,7 @@ class MQSRESTCalls:
                 return {
                     "mqprofiles": [
                         # make dummy objs from all queues for all task directives
-                        {"mqid": mqid, "auth_token": "DUMMY_TOKEN"}
+                        {"mqid": mqid, "auth_token": f"DUMMY_TOKEN_{mqid}"}
                         for td in _make_test_task_directives(workflow)
                         for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
                     ]
@@ -215,7 +215,7 @@ class MQSRESTCalls:
                 return {
                     "mqprofiles": [
                         # make dummy objs from all queues for all task directives
-                        {"mqid": mqid, "auth_token": "DUMMY_TOKEN"}
+                        {"mqid": mqid, "auth_token": f"DUMMY_TOKEN_{mqid}"}
                         for td in _make_test_task_directives(workflow)
                         for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
                     ]
@@ -243,7 +243,7 @@ class MQSRESTCalls:
                 return {
                     "mqprofiles": [
                         # make dummy objs from all queues for all task directives
-                        {"mqid": mqid, "auth_token": "DUMMY_TOKEN"}
+                        {"mqid": mqid, "auth_token": f"DUMMY_TOKEN_{mqid}"}
                         for td in _make_test_task_directives(workflow)
                         for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
                     ]
@@ -322,11 +322,11 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
                 tf["environment"] = {
                     "EWMS_PILOT_QUEUE_INCOMING": td_db["queue_incoming"],
                     "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": [
-                        "DUMMY_TOKEN" for _ in td_db["queue_incoming"]
+                        f"DUMMY_TOKEN_{q}" for q in td_db["queue_incoming"]
                     ],
                     "EWMS_PILOT_QUEUE_OUTGOING": td_db["queue_outgoing"],
                     "EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": [
-                        "DUMMY_TOKEN" for _ in td_db["queue_outgoing"]
+                        f"DUMMY_TOKEN_{q}" for q in td_db["queue_outgoing"]
                     ],
                 }
                 expected_tfs.append(tf)
