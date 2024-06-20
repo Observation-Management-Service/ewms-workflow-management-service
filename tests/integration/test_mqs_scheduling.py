@@ -319,7 +319,7 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
                 tf = _make_test_taskforce(td_db, location, i)
                 # update fields that the mq activator should've also done
                 tf["phase"] = str(schema.enums.TaskforcePhase.PRE_LAUNCH)
-                tf["environment"] = {
+                tf["container_config"]["environment"] = {
                     "EWMS_PILOT_QUEUE_INCOMING": td_db["input_queues"],
                     "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": [
                         f"DUMMY_TOKEN_{q}" for q in td_db["input_queues"]
