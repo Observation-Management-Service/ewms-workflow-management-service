@@ -4,7 +4,6 @@ Runs everything in main process and thread. Uses a real mongo database
 and mock/patched MQS REST calls."""
 
 import asyncio
-import itertools
 import logging
 import time
 from typing import Any, Iterator, AsyncIterator
@@ -107,10 +106,10 @@ class MQSRESTCalls:
                 # assert config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY <= diff <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY+1  # check won't work for first call
                 return {
                     "mqprofiles": [
-                        itertools.chain.from_iterable(
-                            (td["input_queues"] + td["output_queues"])
-                            for td in _make_test_task_directives(workflow)
-                        )
+                        # make dummy objs from all queues for all task directives
+                        {"mqid": mqid, "auth_token": "DUMMY_TOKEN"}
+                        for td in _make_test_task_directives(workflow)
+                        for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
                     ]
                 }
             # deny B
@@ -135,10 +134,10 @@ class MQSRESTCalls:
                 )
                 return {
                     "mqprofiles": [
-                        itertools.chain.from_iterable(
-                            (td["input_queues"] + td["output_queues"])
-                            for td in _make_test_task_directives(workflow)
-                        )
+                        # make dummy objs from all queues for all task directives
+                        {"mqid": mqid, "auth_token": "DUMMY_TOKEN"}
+                        for td in _make_test_task_directives(workflow)
+                        for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
                     ]
                 }
             # accept D
@@ -151,10 +150,10 @@ class MQSRESTCalls:
                 )
                 return {
                     "mqprofiles": [
-                        itertools.chain.from_iterable(
-                            (td["input_queues"] + td["output_queues"])
-                            for td in _make_test_task_directives(workflow)
-                        )
+                        # make dummy objs from all queues for all task directives
+                        {"mqid": mqid, "auth_token": "DUMMY_TOKEN"}
+                        for td in _make_test_task_directives(workflow)
+                        for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
                     ]
                 }
             # deny E
@@ -215,10 +214,10 @@ class MQSRESTCalls:
                 )
                 return {
                     "mqprofiles": [
-                        itertools.chain.from_iterable(
-                            (td["input_queues"] + td["output_queues"])
-                            for td in _make_test_task_directives(workflow)
-                        )
+                        # make dummy objs from all queues for all task directives
+                        {"mqid": mqid, "auth_token": "DUMMY_TOKEN"}
+                        for td in _make_test_task_directives(workflow)
+                        for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
                     ]
                 }
             # retry: re-deny B
@@ -243,10 +242,10 @@ class MQSRESTCalls:
                 )
                 return {
                     "mqprofiles": [
-                        itertools.chain.from_iterable(
-                            (td["input_queues"] + td["output_queues"])
-                            for td in _make_test_task_directives(workflow)
-                        )
+                        # make dummy objs from all queues for all task directives
+                        {"mqid": mqid, "auth_token": "DUMMY_TOKEN"}
+                        for td in _make_test_task_directives(workflow)
+                        for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
                     ]
                 }
             # ???
