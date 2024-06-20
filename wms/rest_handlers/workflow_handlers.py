@@ -182,30 +182,26 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                 try:
                     n_tfs_updated = await self.wms_db.taskforces_collection.update_many(
                         {
-                            "$set": {
-                                "workflow_id": workflow_id,
-                                "$and": [
-                                    # not already aborted
-                                    # NOTE - we don't care whether the taskforce has started up (see /tms/pending-stopper/taskforces)
-                                    {
-                                        "phase": {
-                                            "$nin": [
-                                                TaskforcePhase.PENDING_STOPPER,
-                                                TaskforcePhase.CONDOR_RM,
-                                            ]
-                                        },  # "not in"
-                                    },
-                                    # AND
-                                    # not condor-completed
-                                    {
-                                        "condor_complete_ts": None,  # int -> condor-completed
-                                    },
-                                ],
-                            }
+                            "workflow_id": workflow_id,
+                            "$and": [
+                                # not already aborted
+                                # NOTE - we don't care whether the taskforce has started up (see /tms/pending-stopper/taskforces)
+                                {
+                                    "phase": {
+                                        "$nin": [
+                                            TaskforcePhase.PENDING_STOPPER,
+                                            TaskforcePhase.CONDOR_RM,
+                                        ]
+                                    },  # "not in"
+                                },
+                                # AND
+                                # not condor-completed
+                                {
+                                    "condor_complete_ts": None,  # int -> condor-completed
+                                },
+                            ],
                         },
-                        {
-                            "phase": TaskforcePhase.PENDING_STOPPER,
-                        },
+                        {"$set": {"phase": TaskforcePhase.PENDING_STOPPER}},
                         session=s,
                     )
                 except DocumentNotFoundException:

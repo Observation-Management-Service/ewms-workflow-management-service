@@ -118,8 +118,8 @@ async def advance_database(
                     )
             # update phase
             await wms_db.taskforces_collection.update_many(
-                {"$set": {"workflow_id": workflow_id}},
-                {"phase": TaskforcePhase.PRE_LAUNCH},
+                {"workflow_id": workflow_id},
+                {"$set": {"phase": TaskforcePhase.PRE_LAUNCH}},
                 session=s,
             )
 
