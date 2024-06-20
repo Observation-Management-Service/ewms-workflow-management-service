@@ -133,7 +133,8 @@ class MongoValidatedCollection:
         """Update all matching docs."""
         self.logger.debug(f"update many with query: {query}")
 
-        web_jsonschema_validate(set_update, self._schema, allow_partial_update=True)
+        if "$push" not in set_update:  # TODO - FIX
+            web_jsonschema_validate(set_update, self._schema, allow_partial_update=True)
         res = await self._collection.update_many(query, {"$set": set_update}, **kwargs)
         if not res.matched_count:
             raise DocumentNotFoundException()

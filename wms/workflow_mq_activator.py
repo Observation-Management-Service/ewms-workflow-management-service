@@ -66,22 +66,10 @@ def _get_mq_update_dict_for_taskforce(
     auth_token: str,
 ) -> dict:
     return {
-        # queue id
-        f"container_config.environment.{mqid_attr}": {
-            "$concat": [
-                # AKA ";".join()
-                mqid + ";",
-                f"$container_config.environment.{mqid_attr}",
-            ]
-        },
-        # queue auth
-        f"container_config.environment.{auth_token_attr}": {
-            "$concat": [
-                # AKA ";".join()
-                auth_token + ";",
-                f"$container_config.environment.{auth_token_attr}",
-            ]
-        },
+        "$push": {  # mongo appends to list
+            f"container_config.environment.{mqid_attr}": mqid,
+            f"container_config.environment.{auth_token_attr}": auth_token,
+        }
     }
 
 
