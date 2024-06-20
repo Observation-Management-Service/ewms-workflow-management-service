@@ -67,6 +67,7 @@ async def _update_taskforces_w_mqprofile_info(
     session: motor.motor_asyncio.AsyncIOMotorClientSession,
 ) -> None:
     """Update all the taskforces with a queue (input or output) matching the mqprofile."""
+    LOGGER.debug(f"Updating taskforces for mqprofile={mqprofile['mqid']}")
     mqid = mqprofile["mqid"]
     auth_token = mqprofile["auth_token"]
 
