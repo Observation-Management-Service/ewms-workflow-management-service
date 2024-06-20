@@ -53,7 +53,7 @@ async def user_requests_new_workflow(
         "worker_disk": "1G",
         "worker_memory": "512M",
     }
-    environment = {}
+    environment: dict[str, str] = {}
     input_files = []
 
     #
