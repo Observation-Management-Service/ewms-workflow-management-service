@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.5 (2024-06-21)
+
+### Other
+
+* Use Per-Queue Auth ([#34](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/34)) ([`08d39c9`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/08d39c9f850dcf1149cdf063630b17c15547bc16))
+
 ## v0.3.4 (2024-06-13)
 
 ### Other
