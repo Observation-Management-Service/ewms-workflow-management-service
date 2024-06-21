@@ -4,6 +4,7 @@ Runs everything in main process and thread. Uses a real mongo database
 and mock/patched MQS REST calls."""
 
 import asyncio
+import itertools
 import logging
 import time
 from typing import Any, Iterator, AsyncIterator
@@ -108,8 +109,12 @@ class MQSRESTCalls:
                     "mqprofiles": [
                         # make dummy objs from all queues for all task directives
                         {"mqid": mqid, "auth_token": f"DUMMY_TOKEN_{mqid}"}
-                        for td in _make_test_task_directives(workflow)
-                        for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
+                        for mqid in set(
+                            itertools.chain.from_iterable(
+                                td["input_queues"] + td["output_queues"]
+                                for td in _make_test_task_directives(workflow)
+                            )
+                        )
                     ]
                 }
             # deny B
@@ -136,8 +141,12 @@ class MQSRESTCalls:
                     "mqprofiles": [
                         # make dummy objs from all queues for all task directives
                         {"mqid": mqid, "auth_token": f"DUMMY_TOKEN_{mqid}"}
-                        for td in _make_test_task_directives(workflow)
-                        for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
+                        for mqid in set(
+                            itertools.chain.from_iterable(
+                                td["input_queues"] + td["output_queues"]
+                                for td in _make_test_task_directives(workflow)
+                            )
+                        )
                     ]
                 }
             # accept D
@@ -152,8 +161,12 @@ class MQSRESTCalls:
                     "mqprofiles": [
                         # make dummy objs from all queues for all task directives
                         {"mqid": mqid, "auth_token": f"DUMMY_TOKEN_{mqid}"}
-                        for td in _make_test_task_directives(workflow)
-                        for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
+                        for mqid in set(
+                            itertools.chain.from_iterable(
+                                td["input_queues"] + td["output_queues"]
+                                for td in _make_test_task_directives(workflow)
+                            )
+                        )
                     ]
                 }
             # deny E
@@ -216,8 +229,12 @@ class MQSRESTCalls:
                     "mqprofiles": [
                         # make dummy objs from all queues for all task directives
                         {"mqid": mqid, "auth_token": f"DUMMY_TOKEN_{mqid}"}
-                        for td in _make_test_task_directives(workflow)
-                        for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
+                        for mqid in set(
+                            itertools.chain.from_iterable(
+                                td["input_queues"] + td["output_queues"]
+                                for td in _make_test_task_directives(workflow)
+                            )
+                        )
                     ]
                 }
             # retry: re-deny B
@@ -244,8 +261,12 @@ class MQSRESTCalls:
                     "mqprofiles": [
                         # make dummy objs from all queues for all task directives
                         {"mqid": mqid, "auth_token": f"DUMMY_TOKEN_{mqid}"}
-                        for td in _make_test_task_directives(workflow)
-                        for mqid in (set(td["input_queues"]) | set(td["output_queues"]))
+                        for mqid in set(
+                            itertools.chain.from_iterable(
+                                td["input_queues"] + td["output_queues"]
+                                for td in _make_test_task_directives(workflow)
+                            )
+                        )
                     ]
                 }
             # ???
