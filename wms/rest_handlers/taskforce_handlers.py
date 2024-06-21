@@ -50,6 +50,7 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
         async with await self.wms_db.mongo_client.start_session() as s:
             async with s.start_transaction():  # atomic
                 for uuid in all_uuids:
+                    # assemble
                     update = {}
                     if uuid in top_task_errors_by_taskforce:
                         # value could be falsy -- that's ok
@@ -59,6 +60,11 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
                         update["compound_statuses"] = compound_statuses_by_taskforce[
                             uuid
                         ]
+                    if not update:
+                        # this shouldn't trigger b/c of how all_uuids is made, but jic
+                        continue
+
+                    # db
                     try:
                         await self.wms_db.taskforces_collection.find_one_and_update(
                             {
