@@ -261,7 +261,7 @@ async def main() -> None:
     args = parser.parse_args()
     wipac_dev_tools.logging_tools.log_argparse_args(args)
 
-    ewms_rc = SavedDeviceGrantAuth(
+    rc = SavedDeviceGrantAuth(
         "https://ewms-dev.icecube.aq",
         token_url="https://keycloak.icecube.wisc.edu/auth/realms/IceCube",
         filename=str(Path("~/device-refresh-token").expanduser().resolve()),
@@ -271,13 +271,13 @@ async def main() -> None:
 
     # request workflow
     workflow_id, input_queue, output_queue = await request_workflow(
-        ewms_rc,
+        rc,
         args.pilot_cvmfs_image_tag,
         args.n_workers,
     )
     threading.Thread(
         target=monitor_wms,
-        args=(ewms_rc, workflow_id),
+        args=(rc, workflow_id),
         daemon=True,
     ).start()
 
@@ -287,7 +287,7 @@ async def main() -> None:
     while not mqprofiles:
         await asyncio.sleep(10)
         mqprofiles = (
-            await ewms_rc.request(
+            await rc.request(
                 "GET",
                 f"/v0/mqs/workflows/{workflow_id}/mq-profiles/public",
             )
