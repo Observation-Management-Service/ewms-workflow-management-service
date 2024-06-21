@@ -75,7 +75,7 @@ class MongoValidatedCollection:
     # WRITES
     ####################################################################
 
-    def _web_jsonschema_validate_update(self, update: dict[str, Any]) -> None:
+    def _web_jsonschema_validate_mongo_update(self, update: dict[str, Any]) -> None:
         """Validate the data for each given mongo-syntax update operator."""
         for operator in update:
             match operator:
@@ -115,7 +115,7 @@ class MongoValidatedCollection:
         """Update the doc and return updated doc."""
         self.logger.debug(f"update one with query: {query}")
 
-        self._web_jsonschema_validate_update(update)
+        self._web_jsonschema_validate_mongo_update(update)
         doc = await self._collection.find_one_and_update(
             query,
             update,
@@ -152,7 +152,7 @@ class MongoValidatedCollection:
         """Update all matching docs."""
         self.logger.debug(f"update many with query: {query}")
 
-        self._web_jsonschema_validate_update(update)
+        self._web_jsonschema_validate_mongo_update(update)
         res = await self._collection.update_many(query, update, **kwargs)
         if not res.matched_count:
             raise DocumentNotFoundException()
