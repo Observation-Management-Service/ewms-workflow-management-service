@@ -8,7 +8,6 @@ import asyncio
 import itertools
 import json
 import logging
-import os
 import threading
 import time
 from pathlib import Path
@@ -25,8 +24,6 @@ from rest_tools.client import RestClient, SavedDeviceGrantAuth
 
 LOGGER = logging.getLogger(__name__)
 
-
-EWMS_PILOT_BROKER_CLIENT = "rabbitmq"
 
 MSGS = set(
     [
@@ -84,16 +81,10 @@ MSGS = set(
 )
 
 
-async def load_queue(task_in_queue: str, mq_token: str) -> None:
+async def load_queue(queue: Queue) -> None:
     """Load the in-queue's with several contents."""
     LOGGER.info("Loading in-queue with messages...")
 
-    queue = Queue(
-        EWMS_PILOT_BROKER_CLIENT,
-        address=os.environ["EWMS_PILOT_BROKER_ADDRESS"],
-        name=task_in_queue,
-        auth_token=mq_token,
-    )
     async with queue.open_pub() as pub:
         for i, msg in enumerate(MSGS):
             await pub.send(msg)
@@ -117,12 +108,7 @@ async def request_workflow(
                 "output_queue_aliases": ["output-queue"],
                 "task_image": f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
                 "task_args": "python /app/examples/do_task.py",
-                "environment": {
-                    "EWMS_PILOT_BROKER_ADDRESS": os.environ[
-                        "EWMS_PILOT_BROKER_ADDRESS"
-                    ],
-                    "EWMS_PILOT_BROKER_CLIENT": EWMS_PILOT_BROKER_CLIENT,
-                },
+                "environment": {},
                 "n_workers": n_workers,
                 "worker_config": {
                     "do_transfer_worker_stdouterr": True,
@@ -146,7 +132,7 @@ async def request_workflow(
     )
 
 
-async def read_queue(task_out_queue: str, mq_token: str) -> None:
+async def read_queue(queue: Queue) -> None:
     """Read and dump the out-queue's contents."""
     LOGGER.info("Reading out-queue messages...")
 
@@ -156,13 +142,6 @@ async def read_queue(task_out_queue: str, mq_token: str) -> None:
     got: set[Any] = set()
     # alternatively, we could adjust the timeout though that requires other assumptions
 
-    queue = Queue(
-        EWMS_PILOT_BROKER_CLIENT,
-        address=os.environ["EWMS_PILOT_BROKER_ADDRESS"],
-        name=task_out_queue,
-        auth_token=mq_token,
-        timeout=60 * 20,
-    )
     async with queue.open_sub() as sub:
         i = 0
         async for msg in sub:
@@ -295,13 +274,24 @@ async def main() -> None:
     LOGGER.info(f"{mqprofiles=}")
 
     # load & read queues
+    input_mqprofile = next(p for p in mqprofiles if p["mqid"] == input_queue)
     await load_queue(
-        input_queue,
-        next(p["auth_token"] for p in mqprofiles if p["mqid"] == input_queue),
+        queue=Queue(
+            input_mqprofile["broker_type"],
+            address=input_mqprofile["broker_address"],
+            name=input_mqprofile["mqid"],
+            auth_token=input_mqprofile["auth_token"],
+        )
     )
+    output_mqprofile = next(p for p in mqprofiles if p["mqid"] == output_queue)
     await read_queue(
-        output_queue,
-        next(p["auth_token"] for p in mqprofiles if p["mqid"] == output_queue),
+        queue=Queue(
+            output_mqprofile["broker_type"],
+            address=output_mqprofile["broker_address"],
+            name=output_mqprofile["mqid"],
+            auth_token=output_mqprofile["auth_token"],
+            timeout=60 * 20,
+        )
     )
 
     # wait at end, so monitor thread can get some final updates

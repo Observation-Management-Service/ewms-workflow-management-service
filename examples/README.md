@@ -8,5 +8,5 @@ serve as an in-production system testing with an active EWMS cluster and TMS.
 Replace the placeholder values, then run this as a one-liner:
 
 ```bash
-export EWMS_PILOT_BROKER_ADDRESS="XXX"  &&  export KEYCLOAK_CLIENT_ID_BROKER="ewms-rabbitmq" &&  export KEYCLOAK_CLIENT_SECRET_BROKER=$(echo YYY | base64 --decode)  &&  python3 request_workflow.py --pilot-cvmfs-image-tag A.B.C
+export KEYCLOAK_CLIENT_ID_BROKER="ewms-rabbitmq" &&  export KEYCLOAK_CLIENT_SECRET_BROKER=$(echo YYY | base64 --decode)  &&  python3 request_workflow.py --pilot-cvmfs-image-tag A.B.C
 ```

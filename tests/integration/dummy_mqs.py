@@ -31,6 +31,8 @@ def dummy_mq_group_reservation_post(workflow_id: str):
                 "is_public": alias in request.get_json()["public"],
                 "is_activated": False,
                 "auth_token": None,
+                "broker_type": None,
+                "broker_address": None,
             }
             for alias in request.get_json()["queue_aliases"]
         ],
@@ -48,6 +50,8 @@ def dummy_mq_group_activation_post(workflow_id: str):
     for mqprofile in stored["mqprofiles"]:
         mqprofile["is_activated"] = True
         mqprofile["auth_token"] = "DUMMY_TOKEN"
+        mqprofile["broker_type"] = "DUMMY_BROKER_TYPE"
+        mqprofile["broker_address"] = "DUMMY_BROKER_ADDRESS"
 
     return jsonify(stored)
 

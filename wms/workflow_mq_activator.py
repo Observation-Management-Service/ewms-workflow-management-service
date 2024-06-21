@@ -70,6 +70,8 @@ async def _update_taskforces_w_mqprofile_info(
     LOGGER.debug(f"Updating taskforces for {workflow_id=} {mqprofile['mqid']=}")
     mqid = mqprofile["mqid"]
     auth_token = mqprofile["auth_token"]
+    broker_type = mqprofile["broker_type"]
+    broker_address = mqprofile["broker_address"]
 
     # input/incoming
     async for td in wms_db.task_directives_collection.find_all(
@@ -88,6 +90,8 @@ async def _update_taskforces_w_mqprofile_info(
                 "$push": {  # mongo appends to list
                     "container_config.environment.EWMS_PILOT_QUEUE_INCOMING": mqid,
                     "container_config.environment.EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": auth_token,
+                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_TYPE": broker_type,
+                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": broker_address,
                 }
             },
             session=session,
@@ -110,6 +114,8 @@ async def _update_taskforces_w_mqprofile_info(
                 "$push": {  # mongo appends to list
                     "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": mqid,
                     "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": auth_token,
+                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_TYPE": broker_type,
+                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": broker_address,
                 }
             },
             session=session,
