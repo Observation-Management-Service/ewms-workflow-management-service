@@ -3,7 +3,9 @@
 import asyncio
 import logging
 import time
+from typing import Any
 
+import motor
 import requests
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING, DESCENDING
@@ -58,21 +60,99 @@ async def request_activation_to_mqs(mqs_rc: RestClient, workflow: dict) -> dict:
     )
 
 
+async def _update_taskforces_w_mqprofile_info(
+    wms_db: database.client.WMSMongoValidatedDatabase,
+    workflow_id: str,
+    mqprofile: dict[str, Any],
+    session: motor.motor_asyncio.AsyncIOMotorClientSession,
+) -> None:
+    """Update all the taskforces with a queue (input or output) matching the mqprofile."""
+    LOGGER.debug(f"Updating taskforces for {workflow_id=} {mqprofile['mqid']=}")
+    mqid = mqprofile["mqid"]
+    auth_token = mqprofile["auth_token"]
+    broker_type = mqprofile["broker_type"]
+    broker_address = mqprofile["broker_address"]
+
+    # input/incoming
+    async for td in wms_db.task_directives_collection.find_all(
+        {
+            "workflow_id": workflow_id,
+            "input_queues": mqprofile["mqid"],  # mongo-speak for "is entry X in list?"
+        },
+        [],
+    ):
+        await wms_db.taskforces_collection.update_many(
+            {
+                "workflow_id": workflow_id,
+                "task_id": td["task_id"],
+            },
+            {
+                "$push": {  # mongo appends to list
+                    "container_config.environment.EWMS_PILOT_QUEUE_INCOMING": mqid,
+                    "container_config.environment.EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": auth_token,
+                    "container_config.environment.EWMS_PILOT_QUEUE_INCOMING_BROKER_TYPE": broker_type,
+                    "container_config.environment.EWMS_PILOT_QUEUE_INCOMING_BROKER_ADDRESS": broker_address,
+                }
+            },
+            session=session,
+        )
+
+    # output/outgoing (same as above but for outgoing queues)
+    async for td in wms_db.task_directives_collection.find_all(
+        {
+            "workflow_id": workflow_id,
+            "output_queues": mqprofile["mqid"],  # mongo-speak for "is entry X in list?"
+        },
+        [],
+    ):
+        await wms_db.taskforces_collection.update_many(
+            {
+                "workflow_id": workflow_id,
+                "task_id": td["task_id"],
+            },
+            {
+                "$push": {  # mongo appends to list
+                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": mqid,
+                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": auth_token,
+                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_TYPE": broker_type,
+                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": broker_address,
+                }
+            },
+            session=session,
+        )
+
+
 async def advance_database(
     wms_db: database.client.WMSMongoValidatedDatabase,
     workflow_id: str,
+    mqprofiles: list[dict[str, Any]],
 ) -> None:
-    """Update the database with (1) mq_activated_ts and (2) taskforces' phases with TaskforcePhase.PRE_LAUNCH."""
+    """Update the database with info regarding queues.
+
+    1. mq_activated_ts
+    2. taskforces' phases with TaskforcePhase.PRE_LAUNCH
+    3. add queue ids and auth tokens to taskforces' env vars
+    """
     async with await wms_db.mongo_client.start_session() as s:
         async with s.start_transaction():
+            # set mq_activated_ts
             await wms_db.workflows_collection.find_one_and_update(
                 {"workflow_id": workflow_id},
-                {"mq_activated_ts": time.time()},
+                {"$set": {"mq_activated_ts": time.time()}},
                 session=s,
             )
-            await wms_db.taskforces_collection.update_set_many(
+            # match mqprofiles with taskforces (N:M)
+            for mqprofile in mqprofiles:
+                await _update_taskforces_w_mqprofile_info(
+                    wms_db,
+                    workflow_id,
+                    mqprofile,
+                    session=s,
+                )
+            # update phase
+            await wms_db.taskforces_collection.update_many(
                 {"workflow_id": workflow_id},
-                {"phase": TaskforcePhase.PRE_LAUNCH},
+                {"$set": {"phase": TaskforcePhase.PRE_LAUNCH}},
                 session=s,
             )
 
@@ -93,8 +173,12 @@ async def set_mq_activation_retry_at_ts(
         f"{workflow_id} after {retry_at} ({time.ctime(retry_at)})"
     )
     await workflows_client.find_one_and_update(
-        {"workflow_id": workflow_id},
-        {"_mq_activation_retry_at_ts": retry_at},
+        {
+            "workflow_id": workflow_id,
+        },
+        {
+            "$set": {"_mq_activation_retry_at_ts": retry_at},
+        },
     )
 
 
@@ -131,16 +215,21 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
             f"REQUESTING ACTIVATION for workflow_id={workflow['workflow_id']} queues..."
         )
         try:
-            resp = await request_activation_to_mqs(mqs_rc, workflow)
+            mqs_resp = await request_activation_to_mqs(mqs_rc, workflow)
         except requests.exceptions.HTTPError as e:
             LOGGER.exception(e)
             continue
         # update database per result
-        if resp.get("try_again_later"):
+        if mqs_resp.get("try_again_later"):
             await set_mq_activation_retry_at_ts(
-                wms_db.workflows_collection, workflow["workflow_id"]
+                wms_db.workflows_collection,
+                workflow["workflow_id"],
             )
             short_sleep = True  # want to give other tasks a chance to start up
             continue
         else:
-            await advance_database(wms_db, workflow["workflow_id"])
+            await advance_database(
+                wms_db,
+                workflow["workflow_id"],
+                mqs_resp["mqprofiles"],
+            )

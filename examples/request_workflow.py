@@ -8,7 +8,6 @@ import asyncio
 import itertools
 import json
 import logging
-import os
 import threading
 import time
 from pathlib import Path
@@ -21,12 +20,10 @@ if TYPE_CHECKING:  # not installing dependency just for example script
 else:
     from mqclient import Queue
 
-from rest_tools.client import ClientCredentialsAuth, RestClient, SavedDeviceGrantAuth
+from rest_tools.client import RestClient, SavedDeviceGrantAuth
 
 LOGGER = logging.getLogger(__name__)
 
-
-EWMS_PILOT_BROKER_CLIENT = "rabbitmq"
 
 MSGS = set(
     [
@@ -84,16 +81,10 @@ MSGS = set(
 )
 
 
-async def load_queue(task_in_queue: str, mq_token: str) -> None:
+async def load_queue(queue: Queue) -> None:
     """Load the in-queue's with several contents."""
     LOGGER.info("Loading in-queue with messages...")
 
-    queue = Queue(
-        EWMS_PILOT_BROKER_CLIENT,
-        address=os.environ["EWMS_PILOT_BROKER_ADDRESS"],
-        name=task_in_queue,
-        auth_token=mq_token,
-    )
     async with queue.open_pub() as pub:
         for i, msg in enumerate(MSGS):
             await pub.send(msg)
@@ -103,7 +94,6 @@ async def load_queue(task_in_queue: str, mq_token: str) -> None:
 async def request_workflow(
     rc: RestClient,
     pilot_cvmfs_image_tag: str,
-    mq_token: str,
     n_workers: int,
 ) -> tuple[str, str, str]:
     """Request EWMS (WMS) to process a single-task workflow."""
@@ -118,13 +108,7 @@ async def request_workflow(
                 "output_queue_aliases": ["output-queue"],
                 "task_image": f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
                 "task_args": "python /app/examples/do_task.py",
-                "environment": {
-                    "EWMS_PILOT_BROKER_ADDRESS": os.environ[
-                        "EWMS_PILOT_BROKER_ADDRESS"
-                    ],
-                    "EWMS_PILOT_BROKER_AUTH_TOKEN": mq_token,
-                    "EWMS_PILOT_BROKER_CLIENT": EWMS_PILOT_BROKER_CLIENT,
-                },
+                "environment": {},
                 "n_workers": n_workers,
                 "worker_config": {
                     "do_transfer_worker_stdouterr": True,
@@ -148,7 +132,7 @@ async def request_workflow(
     )
 
 
-async def read_queue(task_out_queue: str, mq_token: str) -> None:
+async def read_queue(queue: Queue) -> None:
     """Read and dump the out-queue's contents."""
     LOGGER.info("Reading out-queue messages...")
 
@@ -158,13 +142,6 @@ async def read_queue(task_out_queue: str, mq_token: str) -> None:
     got: set[Any] = set()
     # alternatively, we could adjust the timeout though that requires other assumptions
 
-    queue = Queue(
-        EWMS_PILOT_BROKER_CLIENT,
-        address=os.environ["EWMS_PILOT_BROKER_ADDRESS"],
-        name=task_out_queue,
-        auth_token=mq_token,
-        timeout=60 * 20,
-    )
     async with queue.open_sub() as sub:
         i = 0
         async for msg in sub:
@@ -271,18 +248,10 @@ async def main() -> None:
         retries=0,
     )
 
-    mq_token = ClientCredentialsAuth(
-        "",
-        token_url="https://keycloak.icecube.wisc.edu/auth/realms/IceCube",
-        client_id=os.environ["KEYCLOAK_CLIENT_ID_BROKER"],
-        client_secret=os.environ["KEYCLOAK_CLIENT_SECRET_BROKER"],
-    ).make_access_token()
-
     # request workflow
     workflow_id, input_queue, output_queue = await request_workflow(
         rc,
         args.pilot_cvmfs_image_tag,
-        mq_token,
         args.n_workers,
     )
     threading.Thread(
@@ -292,24 +261,38 @@ async def main() -> None:
     ).start()
 
     # wait until queues are activated
-    # TODO
-    # get queue ids
-    # LOGGER.info("getting queues...")
-    # queues: list[str] = []
-    # while not queues:
-    #     await asyncio.sleep(10)
-    #     queues = (
-    #         await rc.request(
-    #             "GET",
-    #             f"/v0/task-directives/{task_id}",
-    #             {"projection": ["queues"]},
-    #         )
-    #     )["queues"]
-    # LOGGER.info(f"{queues=}")
+    LOGGER.info("getting queues...")
+    mqprofiles: list[dict] = []
+    while not mqprofiles:
+        await asyncio.sleep(10)
+        mqprofiles = (
+            await rc.request(
+                "GET",
+                f"/v0/mqs/workflows/{workflow_id}/mq-profiles/public",
+            )
+        )["mqprofiles"]
+    LOGGER.info(f"{mqprofiles=}")
 
     # load & read queues
-    await load_queue(input_queue, mq_token)
-    await read_queue(output_queue, mq_token)
+    input_mqprofile = next(p for p in mqprofiles if p["mqid"] == input_queue)
+    await load_queue(
+        queue=Queue(
+            input_mqprofile["broker_type"],
+            address=input_mqprofile["broker_address"],
+            name=input_mqprofile["mqid"],
+            auth_token=input_mqprofile["auth_token"],
+        )
+    )
+    output_mqprofile = next(p for p in mqprofiles if p["mqid"] == output_queue)
+    await read_queue(
+        queue=Queue(
+            output_mqprofile["broker_type"],
+            address=output_mqprofile["broker_address"],
+            name=output_mqprofile["mqid"],
+            auth_token=output_mqprofile["auth_token"],
+            timeout=60 * 20,
+        )
+    )
 
     # wait at end, so monitor thread can get some final updates
     await asyncio.sleep(60)

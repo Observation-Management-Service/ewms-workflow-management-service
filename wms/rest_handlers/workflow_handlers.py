@@ -166,7 +166,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                             "aborted": {"$nin": [True]},  # "not in"
                         },
                         {
-                            "aborted": True,
+                            "$set": {"aborted": True},
                         },
                         session=s,
                     )
@@ -180,7 +180,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                 # set all corresponding taskforces to pending-stopper
                 n_tfs_updated = 0  # in no taskforces to stop (excepted exception)
                 try:
-                    n_tfs_updated = await self.wms_db.taskforces_collection.update_set_many(
+                    n_tfs_updated = await self.wms_db.taskforces_collection.update_many(
                         {
                             "workflow_id": workflow_id,
                             "$and": [
@@ -201,9 +201,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                                 },
                             ],
                         },
-                        {
-                            "phase": TaskforcePhase.PENDING_STOPPER,
-                        },
+                        {"$set": {"phase": TaskforcePhase.PENDING_STOPPER}},
                         session=s,
                     )
                 except DocumentNotFoundException:

@@ -48,8 +48,8 @@ def _make_test_task_directives(workflow: dict) -> Iterator[dict]:
             "task_args": "--baz bat",
             "timestamp": 1 + n,
             #
-            "input_queues": [f"q-td-{n}-in"],
-            "output_queues": [f"q-td-{n}-out"],
+            "input_queues": [f"q-td-{n}"],
+            "output_queues": [f"q-td-{n+1}"],  # n+1 to overlap (i.e. a chain of tasks)
         }
 
 
@@ -107,9 +107,18 @@ class MQSRESTCalls:
                 # assert config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY <= diff <= config.ENV.WORKFLOW_MQ_ACTIVATOR_DELAY+1  # check won't work for first call
                 return {
                     "mqprofiles": [
-                        itertools.chain.from_iterable(
-                            (td["input_queues"] + td["output_queues"])
-                            for td in _make_test_task_directives(workflow)
+                        # make dummy objs from all queues for all task directives
+                        {
+                            "mqid": mqid,
+                            "auth_token": f"DUMMY_TOKEN_{mqid}",
+                            "broker_type": f"DUMMY_BROKER_TYPE_{mqid}",
+                            "broker_address": f"DUMMY_BROKER_ADDRESS_{mqid}",
+                        }
+                        for mqid in set(
+                            itertools.chain.from_iterable(
+                                td["input_queues"] + td["output_queues"]
+                                for td in _make_test_task_directives(workflow)
+                            )
                         )
                     ]
                 }
@@ -135,9 +144,18 @@ class MQSRESTCalls:
                 )
                 return {
                     "mqprofiles": [
-                        itertools.chain.from_iterable(
-                            (td["input_queues"] + td["output_queues"])
-                            for td in _make_test_task_directives(workflow)
+                        # make dummy objs from all queues for all task directives
+                        {
+                            "mqid": mqid,
+                            "auth_token": f"DUMMY_TOKEN_{mqid}",
+                            "broker_type": f"DUMMY_BROKER_TYPE_{mqid}",
+                            "broker_address": f"DUMMY_BROKER_ADDRESS_{mqid}",
+                        }
+                        for mqid in set(
+                            itertools.chain.from_iterable(
+                                td["input_queues"] + td["output_queues"]
+                                for td in _make_test_task_directives(workflow)
+                            )
                         )
                     ]
                 }
@@ -151,9 +169,18 @@ class MQSRESTCalls:
                 )
                 return {
                     "mqprofiles": [
-                        itertools.chain.from_iterable(
-                            (td["input_queues"] + td["output_queues"])
-                            for td in _make_test_task_directives(workflow)
+                        # make dummy objs from all queues for all task directives
+                        {
+                            "mqid": mqid,
+                            "auth_token": f"DUMMY_TOKEN_{mqid}",
+                            "broker_type": f"DUMMY_BROKER_TYPE_{mqid}",
+                            "broker_address": f"DUMMY_BROKER_ADDRESS_{mqid}",
+                        }
+                        for mqid in set(
+                            itertools.chain.from_iterable(
+                                td["input_queues"] + td["output_queues"]
+                                for td in _make_test_task_directives(workflow)
+                            )
                         )
                     ]
                 }
@@ -215,9 +242,18 @@ class MQSRESTCalls:
                 )
                 return {
                     "mqprofiles": [
-                        itertools.chain.from_iterable(
-                            (td["input_queues"] + td["output_queues"])
-                            for td in _make_test_task_directives(workflow)
+                        # make dummy objs from all queues for all task directives
+                        {
+                            "mqid": mqid,
+                            "auth_token": f"DUMMY_TOKEN_{mqid}",
+                            "broker_type": f"DUMMY_BROKER_TYPE_{mqid}",
+                            "broker_address": f"DUMMY_BROKER_ADDRESS_{mqid}",
+                        }
+                        for mqid in set(
+                            itertools.chain.from_iterable(
+                                td["input_queues"] + td["output_queues"]
+                                for td in _make_test_task_directives(workflow)
+                            )
                         )
                     ]
                 }
@@ -243,9 +279,18 @@ class MQSRESTCalls:
                 )
                 return {
                     "mqprofiles": [
-                        itertools.chain.from_iterable(
-                            (td["input_queues"] + td["output_queues"])
-                            for td in _make_test_task_directives(workflow)
+                        # make dummy objs from all queues for all task directives
+                        {
+                            "mqid": mqid,
+                            "auth_token": f"DUMMY_TOKEN_{mqid}",
+                            "broker_type": f"DUMMY_BROKER_TYPE_{mqid}",
+                            "broker_address": f"DUMMY_BROKER_ADDRESS_{mqid}",
+                        }
+                        for mqid in set(
+                            itertools.chain.from_iterable(
+                                td["input_queues"] + td["output_queues"]
+                                for td in _make_test_task_directives(workflow)
+                            )
                         )
                     ]
                 }
@@ -291,6 +336,12 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         # use asyncio's timeout to artificially stop loop, otherwise it'd go forever
         await asyncio.wait_for(workflow_mq_activator.startup(mongo_client), timeout=60)
 
+    #
+    #
+    # at this point in time, the mq activator will have completed all work to be done
+    #
+    #
+
     # check mongo db state
     assert len(await alist(workflows_client.find_all({}, []))) == len(TEST_WORKFLOWS)
     # look at workflows, individually
@@ -310,9 +361,34 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
         ):
             # assemble list of expected taskforces
             expected_tfs = []  # type: ignore
-            for i, location in enumerate(td_db["cluster_locations"]):
+            for i, location in enumerate(td_db["cluster_locations"]):  # 1 tf per loc
                 tf = _make_test_taskforce(td_db, location, i)
+                # update fields that the mq activator should've also done
                 tf["phase"] = str(schema.enums.TaskforcePhase.PRE_LAUNCH)
+                tf["container_config"]["environment"] = {
+                    # input
+                    "EWMS_PILOT_QUEUE_INCOMING": td_db["input_queues"],
+                    "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": [
+                        f"DUMMY_TOKEN_{q}" for q in td_db["input_queues"]
+                    ],
+                    "EWMS_PILOT_QUEUE_INCOMING_BROKER_TYPE": [
+                        f"DUMMY_BROKER_TYPE_{q}" for q in td_db["input_queues"]
+                    ],
+                    "EWMS_PILOT_QUEUE_INCOMING_BROKER_ADDRESS": [
+                        f"DUMMY_BROKER_ADDRESS_{q}" for q in td_db["input_queues"]
+                    ],
+                    # output
+                    "EWMS_PILOT_QUEUE_OUTGOING": td_db["output_queues"],
+                    "EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": [
+                        f"DUMMY_TOKEN_{q}" for q in td_db["output_queues"]
+                    ],
+                    "EWMS_PILOT_QUEUE_OUTGOING_BROKER_TYPE": [
+                        f"DUMMY_BROKER_TYPE_{q}" for q in td_db["output_queues"]
+                    ],
+                    "EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": [
+                        f"DUMMY_BROKER_ADDRESS_{q}" for q in td_db["output_queues"]
+                    ],
+                }
                 expected_tfs.append(tf)
             # get all taskforces for task_id
             assert (

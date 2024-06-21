@@ -6,6 +6,7 @@ Models/TaskforceObject.md
 Models/TaskforceObject_container_config.md
 Models/TaskforceObject_container_config_environment_value.md
 Models/TaskforceObject_n_workers.md
+Models/TaskforceObject_submit_dict_value.md
 Models/TaskforceObject_worker_config.md
 Models/TaskforceUUIDObject.md
 Models/WorkflowObject.md

@@ -53,7 +53,7 @@ async def user_requests_new_workflow(
         "worker_disk": "1G",
         "worker_memory": "512M",
     }
-    environment = {}
+    environment: dict[str, str] = {}
     input_files = []
 
     #
@@ -102,11 +102,7 @@ async def user_requests_new_workflow(
         == {
             "image": task_image,
             "arguments": task_args,
-            "environment": {
-                **environment,
-                "EWMS_PILOT_QUEUE_INCOMING": "123qfoo",
-                "EWMS_PILOT_QUEUE_OUTGOING": "123qbar",
-            },
+            "environment": environment,
             "input_files": input_files,
         }
         for tf in workflow_resp["taskforces"]
@@ -154,6 +150,23 @@ async def user_requests_new_workflow(
         },
     )
     assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
+    assert all(
+        tf["container_config"]["environment"]
+        == {
+            **environment,
+            #
+            "EWMS_PILOT_QUEUE_INCOMING": ["123qfoo"],
+            "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": ["DUMMY_TOKEN"],
+            "EWMS_PILOT_QUEUE_INCOMING_BROKER_ADDRESS": ["DUMMY_BROKER_ADDRESS"],
+            "EWMS_PILOT_QUEUE_INCOMING_BROKER_TYPE": ["DUMMY_BROKER_TYPE"],
+            #
+            "EWMS_PILOT_QUEUE_OUTGOING": ["123qbar"],
+            "EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": ["DUMMY_TOKEN"],
+            "EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": ["DUMMY_BROKER_ADDRESS"],
+            "EWMS_PILOT_QUEUE_OUTGOING_BROKER_TYPE": ["DUMMY_BROKER_TYPE"],
+        }
+        for tf in resp["taskforces"]
+    )
 
     return workflow_resp["workflow"]["workflow_id"], task_id
 

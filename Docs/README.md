@@ -33,6 +33,7 @@
  - [TaskforceObject_container_config](./Models/TaskforceObject_container_config.md)
  - [TaskforceObject_container_config_environment_value](./Models/TaskforceObject_container_config_environment_value.md)
  - [TaskforceObject_n_workers](./Models/TaskforceObject_n_workers.md)
+ - [TaskforceObject_submit_dict_value](./Models/TaskforceObject_submit_dict_value.md)
  - [TaskforceObject_worker_config](./Models/TaskforceObject_worker_config.md)
  - [TaskforceUUIDObject](./Models/TaskforceUUIDObject.md)
  - [WorkflowObject](./Models/WorkflowObject.md)
