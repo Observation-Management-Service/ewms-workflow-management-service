@@ -83,6 +83,8 @@ jobs:
       - if: github.actor != 'dependabot[bot]'
         run: |
           set -x
+          podman --version
+          exit 1
           docker build --tag "built-dockerfile:py-dep-this" .
           docker system prune --force  # save disk space
       - if: github.actor != 'dependabot[bot]'
