@@ -263,7 +263,7 @@ async def main() -> None:
     # wait until queues are activated
     LOGGER.info("getting queues...")
     mqprofiles: list[dict] = []
-    while not mqprofiles:
+    while not (mqprofiles and all(m["is_activated"] for m in mqprofiles)):
         await asyncio.sleep(10)
         mqprofiles = (
             await rc.request(
