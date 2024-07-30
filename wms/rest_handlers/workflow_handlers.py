@@ -84,7 +84,10 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
                     if p["alias"] in task_input["output_queue_aliases"]
                 ],
                 #
-                task_input.get("pilot_config", {}),
+                task_input.get(
+                    "pilot_config",
+                    {"image": config.get_pilot_image()},
+                ),
                 task_input["worker_config"],
                 task_input["n_workers"],
             )
