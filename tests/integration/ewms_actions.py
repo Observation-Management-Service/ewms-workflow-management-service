@@ -158,6 +158,9 @@ async def user_requests_new_workflow(
         == {
             **environment,
             #
+            "EWMS_PILOT_TASK_IMAGE": task_image,
+            "EWMS_PILOT_TASK_ARGS": task_args,
+            #
             "EWMS_PILOT_QUEUE_INCOMING": ["123qfoo"],
             "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": ["DUMMY_TOKEN"],
             "EWMS_PILOT_QUEUE_INCOMING_BROKER_ADDRESS": ["DUMMY_BROKER_ADDRESS"],
