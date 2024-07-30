@@ -103,8 +103,8 @@ async def user_requests_new_workflow(
             "image": "/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:0.23.0",
             "environment": {
                 **environment,
-                "task_image": task_image,
-                "task_args": task_args,
+                "EWMS_PILOT_TASK_IMAGE": task_image,
+                "EWMS_PILOT_TASK_ARGS": task_args,
             },
             "input_files": input_files,
         }
