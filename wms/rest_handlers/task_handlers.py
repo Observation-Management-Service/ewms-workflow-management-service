@@ -51,6 +51,10 @@ async def create_task_directive_and_taskforces(
         #
         # MUTABLE
     }
+
+    # add to env vars
+    if "environment" not in pilot_config:
+        pilot_config["environment"] = {}
     pilot_config["environment"].update(
         {
             "EWMS_PILOT_TASK_IMAGE": task_image,
