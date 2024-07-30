@@ -35,9 +35,6 @@
                 "image": {
                     "type": "string"
                 },
-                "arguments": {
-                    "type": "string"
-                },
                 "environment": {
                     "type": "object",
                     "additionalProperties": {

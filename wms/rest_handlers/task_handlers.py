@@ -29,10 +29,9 @@ async def create_task_directive_and_taskforces(
     input_queues: list[str],
     output_queues: list[str],
     #
+    pilot_config: dict,
     worker_config: dict,
     n_workers: int,
-    environment: dict,
-    input_files: list[str],
 ) -> tuple[dict, list[dict]]:
     """Create new task directive and taskforces."""
 
@@ -52,6 +51,12 @@ async def create_task_directive_and_taskforces(
         #
         # MUTABLE
     }
+    pilot_config["environment"].update(
+        {
+            "EWMS_PILOT_TASK_IMAGE": task_image,
+            "EWMS_PILOT_TASK_ARGUMENTS": task_args,
+        }
+    )
 
     # first, check that locations are legit
     for location in cluster_locations:
@@ -78,15 +83,12 @@ async def create_task_directive_and_taskforces(
                 # TODO: make optional/smart
                 "n_workers": n_workers,
                 #
-                "pilot_config": {
-                    "image": task_directive["task_image"],
-                    "arguments": task_directive["task_args"],
-                    "environment": environment,  # appended to by workflow_mq_activator
-                    "input_files": input_files,
-                },
                 "worker_config": worker_config,
                 #
                 # MUTABLE
+                #
+                # 'pilot_config.environment' is appended to by workflow_mq_activator
+                "pilot_config": pilot_config,
                 #
                 # set ONCE by tms via /tms/condor-submit/taskforces/<id>
                 "cluster_id": None,
