@@ -92,7 +92,11 @@ async def create_task_directive_and_taskforces(
                 # MUTABLE
                 #
                 # 'pilot_config.environment' is appended to by workflow_mq_activator
-                "pilot_config": pilot_config,
+                "pilot_config": {
+                    **pilot_config,  # image + environment
+                    # add default if missing:
+                    "input_files": pilot_config.get("input_files", []),
+                },
                 #
                 # set ONCE by tms via /tms/condor-submit/taskforces/<id>
                 "cluster_id": None,
