@@ -67,7 +67,6 @@
             "additionalProperties": true,
             "required": [
                 "image",
-                "arguments",
                 "environment",
                 "input_files"
             ]
