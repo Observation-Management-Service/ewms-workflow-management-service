@@ -100,9 +100,12 @@ async def user_requests_new_workflow(
     assert all(
         tf["pilot_config"]
         == {
-            "image": task_image,
-            "arguments": task_args,
-            "environment": environment,
+            "image": "/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:0.23.0",
+            "environment": {
+                **environment,
+                "task_image": task_image,
+                "task_args": task_args,
+            },
             "input_files": input_files,
         }
         for tf in workflow_resp["taskforces"]
