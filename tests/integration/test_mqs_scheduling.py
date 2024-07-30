@@ -304,7 +304,7 @@ class MQSRESTCalls:
 @patch("wms.workflow_mq_activator.RestClient", new=MagicMock)  # it's a from-import
 async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     """Test the MQS scheduling with several tasks and requests."""
-    mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
+    mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")  # type: ignore[var-annotated]
     workflows_client = database.client.MongoValidatedCollection(
         mongo_client,
         database.utils.WORKFLOWS_COLL_NAME,
