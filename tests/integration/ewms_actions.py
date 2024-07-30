@@ -98,11 +98,14 @@ async def user_requests_new_workflow(
     )
     assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
     assert all(
-        tf["container_config"]
+        tf["pilot_config"]
         == {
-            "image": task_image,
-            "arguments": task_args,
-            "environment": environment,
+            "image": "/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:0.23.0",
+            "environment": {
+                **environment,
+                "EWMS_PILOT_TASK_IMAGE": task_image,
+                "EWMS_PILOT_TASK_ARGS": task_args,
+            },
             "input_files": input_files,
         }
         for tf in workflow_resp["taskforces"]
@@ -151,9 +154,12 @@ async def user_requests_new_workflow(
     )
     assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
     assert all(
-        tf["container_config"]["environment"]
+        tf["pilot_config"]["environment"]
         == {
             **environment,
+            #
+            "EWMS_PILOT_TASK_IMAGE": task_image,
+            "EWMS_PILOT_TASK_ARGS": task_args,
             #
             "EWMS_PILOT_QUEUE_INCOMING": ["123qfoo"],
             "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": ["DUMMY_TOKEN"],

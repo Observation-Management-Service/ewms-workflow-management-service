@@ -7,13 +7,13 @@ import asyncio
 import itertools
 import logging
 import time
-from typing import Any, Iterator, AsyncIterator
-from unittest.mock import patch, MagicMock, AsyncMock
+from typing import Any, AsyncIterator, Iterator
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from wms import database, config, schema, workflow_mq_activator
+from wms import config, database, schema, workflow_mq_activator
 
 logging.getLogger("pymongo").setLevel(logging.INFO)
 
@@ -63,7 +63,7 @@ def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
         "collector": f"collector-{location}",
         "schedd": f"schedd-{location}",
         "n_workers": 100,
-        "container_config": {
+        "pilot_config": {
             "image": task_directive["task_image"],
             "arguments": task_directive["task_args"],
             "environment": {},
@@ -304,7 +304,7 @@ class MQSRESTCalls:
 @patch("wms.workflow_mq_activator.RestClient", new=MagicMock)  # it's a from-import
 async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
     """Test the MQS scheduling with several tasks and requests."""
-    mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
+    mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")  # type: ignore[var-annotated]
     workflows_client = database.client.MongoValidatedCollection(
         mongo_client,
         database.utils.WORKFLOWS_COLL_NAME,
@@ -365,7 +365,7 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
                 tf = _make_test_taskforce(td_db, location, i)
                 # update fields that the mq activator should've also done
                 tf["phase"] = str(schema.enums.TaskforcePhase.PRE_LAUNCH)
-                tf["container_config"]["environment"] = {
+                tf["pilot_config"]["environment"] = {
                     # input
                     "EWMS_PILOT_QUEUE_INCOMING": td_db["input_queues"],
                     "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": [

@@ -88,10 +88,10 @@ async def _update_taskforces_w_mqprofile_info(
             },
             {
                 "$push": {  # mongo appends to list
-                    "container_config.environment.EWMS_PILOT_QUEUE_INCOMING": mqid,
-                    "container_config.environment.EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": auth_token,
-                    "container_config.environment.EWMS_PILOT_QUEUE_INCOMING_BROKER_TYPE": broker_type,
-                    "container_config.environment.EWMS_PILOT_QUEUE_INCOMING_BROKER_ADDRESS": broker_address,
+                    "pilot_config.environment.EWMS_PILOT_QUEUE_INCOMING": mqid,
+                    "pilot_config.environment.EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": auth_token,
+                    "pilot_config.environment.EWMS_PILOT_QUEUE_INCOMING_BROKER_TYPE": broker_type,
+                    "pilot_config.environment.EWMS_PILOT_QUEUE_INCOMING_BROKER_ADDRESS": broker_address,
                 }
             },
             session=session,
@@ -112,10 +112,10 @@ async def _update_taskforces_w_mqprofile_info(
             },
             {
                 "$push": {  # mongo appends to list
-                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING": mqid,
-                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": auth_token,
-                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_TYPE": broker_type,
-                    "container_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": broker_address,
+                    "pilot_config.environment.EWMS_PILOT_QUEUE_OUTGOING": mqid,
+                    "pilot_config.environment.EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": auth_token,
+                    "pilot_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_TYPE": broker_type,
+                    "pilot_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": broker_address,
                 }
             },
             session=session,

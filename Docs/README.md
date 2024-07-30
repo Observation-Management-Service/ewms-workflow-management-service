@@ -30,9 +30,9 @@
  - [FindObject](./Models/FindObject.md)
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
- - [TaskforceObject_container_config](./Models/TaskforceObject_container_config.md)
- - [TaskforceObject_container_config_environment_value](./Models/TaskforceObject_container_config_environment_value.md)
  - [TaskforceObject_n_workers](./Models/TaskforceObject_n_workers.md)
+ - [TaskforceObject_pilot_config](./Models/TaskforceObject_pilot_config.md)
+ - [TaskforceObject_pilot_config_environment_value](./Models/TaskforceObject_pilot_config_environment_value.md)
  - [TaskforceObject_submit_dict_value](./Models/TaskforceObject_submit_dict_value.md)
  - [TaskforceObject_worker_config](./Models/TaskforceObject_worker_config.md)
  - [TaskforceUUIDObject](./Models/TaskforceUUIDObject.md)
@@ -53,6 +53,8 @@
  - [_v0_workflows_post_200_response](./Models/_v0_workflows_post_200_response.md)
  - [_v0_workflows_post_request](./Models/_v0_workflows_post_request.md)
  - [_v0_workflows_post_request_tasks_inner](./Models/_v0_workflows_post_request_tasks_inner.md)
+ - [pilot_config](./Models/pilot_config.md)
+ - [pilot_config_environment_value](./Models/pilot_config_environment_value.md)
  - [worker_config](./Models/worker_config.md)
 
 

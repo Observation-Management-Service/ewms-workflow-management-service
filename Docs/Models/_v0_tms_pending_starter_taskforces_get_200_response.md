@@ -10,7 +10,7 @@
 | **collector** | **String** |  | [optional] [default to null] |
 | **schedd** | **String** |  | [optional] [default to null] |
 | **n\_workers** | [**TaskforceObject_n_workers**](TaskforceObject_n_workers.md) |  | [optional] [default to null] |
-| **container\_config** | [**TaskforceObject_container_config**](TaskforceObject_container_config.md) |  | [optional] [default to null] |
+| **pilot\_config** | [**TaskforceObject_pilot_config**](TaskforceObject_pilot_config.md) |  | [optional] [default to null] |
 | **worker\_config** | [**TaskforceObject_worker_config**](TaskforceObject_worker_config.md) |  | [optional] [default to null] |
 | **cluster\_id** | [**TaskforceObject_n_workers**](TaskforceObject_n_workers.md) |  | [optional] [default to null] |
 | **submit\_dict** | [**Map**](TaskforceObject_submit_dict_value.md) |  | [optional] [default to null] |

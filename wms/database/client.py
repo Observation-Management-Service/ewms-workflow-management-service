@@ -7,12 +7,12 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from pymongo import ReturnDocument
 
 from .utils import (
+    TASKFORCES_COLL_NAME,
+    TASK_DIRECTIVES_COLL_NAME,
+    WORKFLOWS_COLL_NAME,
     _DB_NAME,
     get_jsonschema_spec_name,
     web_jsonschema_validate,
-    WORKFLOWS_COLL_NAME,
-    TASK_DIRECTIVES_COLL_NAME,
-    TASKFORCES_COLL_NAME,
 )
 from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
 
@@ -56,7 +56,7 @@ class MongoValidatedCollection:
         collection_name: str,
         parent_logger: logging.Logger | None = None,
     ) -> None:
-        self._collection = AsyncIOMotorCollection(
+        self._collection = AsyncIOMotorCollection(  # type: ignore[var-annotated]
             mongo_client[_DB_NAME],  # type: ignore[arg-type]
             collection_name,
         )

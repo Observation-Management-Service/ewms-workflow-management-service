@@ -119,6 +119,15 @@ if ENV.CI:  # just for testing -- can remove when we have 2+ clusters
 # --------------------------------------------------------------------------------------
 
 
+def get_pilot_image() -> str:
+    """Get the uri to the pilot image."""
+    tag = "0.23.0"
+    return f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{tag}"
+
+
+# --------------------------------------------------------------------------------------
+
+
 def config_logging() -> None:
     """Configure the logging level and format.
 

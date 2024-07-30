@@ -29,13 +29,10 @@
                 }
             ]
         },
-        "container_config": {
+        "pilot_config": {
             "type": "object",
             "properties": {
                 "image": {
-                    "type": "string"
-                },
-                "arguments": {
                     "type": "string"
                 },
                 "environment": {
@@ -70,7 +67,6 @@
             "additionalProperties": true,
             "required": [
                 "image",
-                "arguments",
                 "environment",
                 "input_files"
             ]
@@ -182,7 +178,7 @@
         "collector",
         "schedd",
         "n_workers",
-        "container_config",
+        "pilot_config",
         "worker_config",
         "cluster_id",
         "submit_dict",
