@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.6 (2024-07-30)
+
+### Other
+
+* Have User Supply `pilot_config` ([#38](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/38)) ([`cf42a57`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/cf42a57b80e3f5a43d270e15e6a7fbe5b419a0d2))
+
 ## v0.3.5 (2024-06-21)
 
 ### Other
