@@ -29,7 +29,7 @@
                 }
             ]
         },
-        "container_config": {
+        "pilot_config": {
             "type": "object",
             "properties": {
                 "image": {
@@ -182,7 +182,7 @@
         "collector",
         "schedd",
         "n_workers",
-        "container_config",
+        "pilot_config",
         "worker_config",
         "cluster_id",
         "submit_dict",

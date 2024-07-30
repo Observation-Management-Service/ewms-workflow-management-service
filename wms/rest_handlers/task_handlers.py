@@ -78,7 +78,7 @@ async def create_task_directive_and_taskforces(
                 # TODO: make optional/smart
                 "n_workers": n_workers,
                 #
-                "container_config": {
+                "pilot_config": {
                     "image": task_directive["task_image"],
                     "arguments": task_directive["task_args"],
                     "environment": environment,  # appended to by workflow_mq_activator

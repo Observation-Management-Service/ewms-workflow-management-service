@@ -1,7 +1,4 @@
-"""A simple example script (single-task workflow) to send to EWMS.
-
-See https://github.com/Observation-Management-Service/ewms-pilot/blob/main/examples/do_task.py
-"""
+"""A simple example script (single-task workflow) to send to EWMS."""
 
 import argparse
 import asyncio
@@ -106,8 +103,10 @@ async def request_workflow(
                 "cluster_locations": ["sub-2"],
                 "input_queue_aliases": ["input-queue"],
                 "output_queue_aliases": ["output-queue"],
-                "task_image": f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
-                "task_args": "python /app/examples/do_task.py",
+                "task_image": "python:alpine",
+                "task_args": (
+                    "python -m ewms_pilot " "--task-image  " '--task-args "python3 -V" '
+                ),
                 "environment": {},
                 "n_workers": n_workers,
                 "worker_config": {
@@ -263,7 +262,7 @@ async def main() -> None:
     # wait until queues are activated
     LOGGER.info("getting queues...")
     mqprofiles: list[dict] = []
-    while not mqprofiles:
+    while not (mqprofiles and all(m["is_activated"] for m in mqprofiles)):
         await asyncio.sleep(10)
         mqprofiles = (
             await rc.request(

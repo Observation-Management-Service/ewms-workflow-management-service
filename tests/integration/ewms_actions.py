@@ -98,7 +98,7 @@ async def user_requests_new_workflow(
     )
     assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
     assert all(
-        tf["container_config"]
+        tf["pilot_config"]
         == {
             "image": task_image,
             "arguments": task_args,
@@ -151,7 +151,7 @@ async def user_requests_new_workflow(
     )
     assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
     assert all(
-        tf["container_config"]["environment"]
+        tf["pilot_config"]["environment"]
         == {
             **environment,
             #
