@@ -26,5 +26,7 @@ Models/_v0_workflows__workflow_id__delete_200_response.md
 Models/_v0_workflows_post_200_response.md
 Models/_v0_workflows_post_request.md
 Models/_v0_workflows_post_request_tasks_inner.md
+Models/pilot_config.md
+Models/pilot_config_environment_value.md
 Models/worker_config.md
 README.md

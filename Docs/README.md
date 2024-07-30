@@ -53,6 +53,8 @@
  - [_v0_workflows_post_200_response](./Models/_v0_workflows_post_200_response.md)
  - [_v0_workflows_post_request](./Models/_v0_workflows_post_request.md)
  - [_v0_workflows_post_request_tasks_inner](./Models/_v0_workflows_post_request_tasks_inner.md)
+ - [pilot_config](./Models/pilot_config.md)
+ - [pilot_config_environment_value](./Models/pilot_config_environment_value.md)
  - [worker_config](./Models/worker_config.md)
 
 
