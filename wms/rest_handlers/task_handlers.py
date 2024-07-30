@@ -54,7 +54,7 @@ async def create_task_directive_and_taskforces(
     pilot_config["environment"].update(
         {
             "EWMS_PILOT_TASK_IMAGE": task_image,
-            "EWMS_PILOT_TASK_ARGUMENTS": task_args,
+            "EWMS_PILOT_TASK_ARGS": task_args,
         }
     )
 
