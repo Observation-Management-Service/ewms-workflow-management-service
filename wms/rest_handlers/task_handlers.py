@@ -52,14 +52,6 @@ async def create_task_directive_and_taskforces(
         # MUTABLE
     }
 
-    # add to env vars
-    pilot_config["environment"].update(
-        {
-            "EWMS_PILOT_TASK_IMAGE": task_image,
-            "EWMS_PILOT_TASK_ARGS": task_args,
-        }
-    )
-
     # first, check that locations are legit
     for location in cluster_locations:
         if location not in config.KNOWN_CLUSTERS:
