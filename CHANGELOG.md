@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.7 (2024-07-31)
+
+### Other
+
+* Validate Pilot Tag with GH ([#39](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/39)) ([`3eebc29`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/3eebc29e364333e590c42671ac789e3a4bf51d88))
+
 ## v0.3.6 (2024-07-30)
 
 ### Other
