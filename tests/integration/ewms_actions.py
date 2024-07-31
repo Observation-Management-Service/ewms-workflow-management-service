@@ -54,7 +54,7 @@ async def user_requests_new_workflow(
         "worker_memory": "512M",
     }
     environment: dict[str, str] = {}
-    input_files = []
+    input_files: list[str] = []
 
     #
     # USER...
@@ -97,10 +97,9 @@ async def user_requests_new_workflow(
         tf["worker_config"] == worker_config for tf in workflow_resp["taskforces"]
     )
     assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
-    assert all(
-        tf["pilot_config"]
-        == {
-            "image": "/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:0.23.0",
+    for tf in workflow_resp["taskforces"]:
+        expected = {
+            "image": os.environ["TEST_PILOT_IMAGE_LATEST_TAG"],
             "environment": {
                 **environment,
                 "EWMS_PILOT_TASK_IMAGE": task_image,
@@ -108,8 +107,9 @@ async def user_requests_new_workflow(
             },
             "input_files": input_files,
         }
-        for tf in workflow_resp["taskforces"]
-    )
+        print(tf["pilot_config"])
+        print(expected)
+        assert tf["pilot_config"] == expected
 
     ############################################
     # mq activator & launch control runs...

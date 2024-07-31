@@ -252,6 +252,7 @@ jobs:
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
           
           sleep 10
+          export TEST_PILOT_IMAGE_LATEST_TAG=$( python -c 'import requests; print(requests.get("https://api.github.com/repos/Observation-Management-Service/ewms-pilot/releases/latest").json()["tag_name"])' )
           pytest -vvv --exitfirst tests/integration/test_tms_workflow.py
       #
       - if: always()

@@ -104,10 +104,7 @@ async def request_workflow(
                 "input_queue_aliases": ["input-queue"],
                 "output_queue_aliases": ["output-queue"],
                 "task_image": "python:alpine",
-                "task_args": (
-                    "python -m ewms_pilot " "--task-image  " '--task-args "python3 -V" '
-                ),
-                "environment": {},
+                "task_args": "python3 -V",
                 "n_workers": n_workers,
                 "worker_config": {
                     "do_transfer_worker_stdouterr": True,
@@ -117,6 +114,18 @@ async def request_workflow(
                     "worker_disk": "512M",
                     "worker_memory": "512M",
                 },
+                # optionally add this...
+                **(
+                    {
+                        "pilot_config": {
+                            "environment": {},
+                            "input_files": [],
+                            "image": f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
+                        }
+                    }
+                    if pilot_cvmfs_image_tag
+                    else {}
+                ),
             }
         ],
     }
@@ -227,7 +236,7 @@ async def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--pilot-cvmfs-image-tag",
-        required=True,
+        default="",
         help="the tag (version) of the pilot example image that the workers will use. Ex: 0.1.11",
     )
     parser.add_argument(

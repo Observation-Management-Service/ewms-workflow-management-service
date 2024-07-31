@@ -52,16 +52,6 @@ async def create_task_directive_and_taskforces(
         # MUTABLE
     }
 
-    # add to env vars
-    if "environment" not in pilot_config:
-        pilot_config["environment"] = {}
-    pilot_config["environment"].update(
-        {
-            "EWMS_PILOT_TASK_IMAGE": task_image,
-            "EWMS_PILOT_TASK_ARGS": task_args,
-        }
-    )
-
     # first, check that locations are legit
     for location in cluster_locations:
         if location not in config.KNOWN_CLUSTERS:
@@ -92,11 +82,7 @@ async def create_task_directive_and_taskforces(
                 # MUTABLE
                 #
                 # 'pilot_config.environment' is appended to by workflow_mq_activator
-                "pilot_config": {
-                    **pilot_config,  # image + environment
-                    # add default if missing:
-                    "input_files": pilot_config.get("input_files", []),
-                },
+                "pilot_config": pilot_config,
                 #
                 # set ONCE by tms via /tms/condor-submit/taskforces/<id>
                 "cluster_id": None,

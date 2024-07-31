@@ -64,9 +64,11 @@ def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
         "schedd": f"schedd-{location}",
         "n_workers": 100,
         "pilot_config": {
-            "image": task_directive["task_image"],
-            "arguments": task_directive["task_args"],
-            "environment": {},
+            "image": "v1.2.3",
+            "environment": {
+                "EWMS_PILOT_TASK_IMAGE": task_directive["task_image"],
+                "EWMS_PILOT_TASK_ARGS": task_directive["task_args"],
+            },
             "input_files": [],
         },
         "worker_config": {
@@ -388,6 +390,8 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
                     "EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": [
                         f"DUMMY_BROKER_ADDRESS_{q}" for q in td_db["output_queues"]
                     ],
+                    "EWMS_PILOT_TASK_IMAGE": td_db["task_image"],
+                    "EWMS_PILOT_TASK_ARGS": td_db["task_args"],
                 }
                 expected_tfs.append(tf)
             # get all taskforces for task_id

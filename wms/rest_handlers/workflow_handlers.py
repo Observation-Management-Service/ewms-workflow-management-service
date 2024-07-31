@@ -7,7 +7,7 @@ import uuid
 from rest_tools.server import validate_request
 from tornado import web
 
-from . import auth
+from . import auth, utils
 from .base_handlers import BaseWMSHandler
 from .task_handlers import create_task_directive_and_taskforces
 from .. import config
@@ -84,10 +84,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
                     if p["alias"] in task_input["output_queue_aliases"]
                 ],
                 #
-                task_input.get(
-                    "pilot_config",
-                    {"image": config.get_pilot_image()},
-                ),
+                utils.add_values_to_pilot_config(task_input),
                 task_input["worker_config"],
                 task_input["n_workers"],
             )
