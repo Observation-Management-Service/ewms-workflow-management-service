@@ -100,7 +100,7 @@ async def user_requests_new_workflow(
     assert all(
         tf["pilot_config"]
         == {
-            "image": "v0.23.0",
+            "image": os.environ["TEST_PILOT_IMAGE_LATEST_TAG"],
             "environment": {
                 **environment,
                 "EWMS_PILOT_TASK_IMAGE": task_image,

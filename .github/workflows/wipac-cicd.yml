@@ -248,6 +248,7 @@ jobs:
             --env TASKFORCE_LAUNCH_CONTROL_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_DELAY }}" \
             --env WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT="${{ env.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT }}" \
             --env WORKFLOW_MQ_ACTIVATOR_DELAY="${{ env.WORKFLOW_MQ_ACTIVATOR_DELAY }}" \
+            --env TEST_PILOT_IMAGE_LATEST_TAG=v"$( python -c 'import wms; print(wms.__version__)'" ) \
             --env CI="true" \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
           
