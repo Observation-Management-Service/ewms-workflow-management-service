@@ -131,12 +131,14 @@ GH_API_PILOT_RELEASES_URL = (
 @cachetools.func.ttl_cache(ttl=1 * 60)
 def get_pilot_image(tag: str) -> str:
     """Get the uri to the pilot image."""
+    LOGGER.info(f"Retrieving pilot image info from {GH_API_PILOT_RELEASES_URL}...")
     if tag == "latest":  # convert to immutable version tag
-        tag = requests.get(urljoin(GH_API_PILOT_RELEASES_URL, "latest")).json()[
-            "tag_name"
-        ]
+        resp = requests.get(urljoin(GH_API_PILOT_RELEASES_URL, "latest"))
+        LOGGER.debug(resp)
+        tag = resp.json()["tag_name"]
     else:
         all_em = [a["tag_name"] for a in requests.get(GH_API_PILOT_RELEASES_URL).json()]
+        LOGGER.debug(all_em)
         if tag not in all_em:
             msg = f"pilot image not found: {tag}"
             raise web.HTTPError(
