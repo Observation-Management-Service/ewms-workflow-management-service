@@ -97,9 +97,8 @@ async def user_requests_new_workflow(
         tf["worker_config"] == worker_config for tf in workflow_resp["taskforces"]
     )
     assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
-    assert all(
-        tf["pilot_config"]
-        == {
+    for tf in workflow_resp["taskforces"]:
+        assert tf["pilot_config"] == {
             "image": os.environ["TEST_PILOT_IMAGE_LATEST_TAG"],
             "environment": {
                 **environment,
@@ -108,8 +107,6 @@ async def user_requests_new_workflow(
             },
             "input_files": input_files,
         }
-        for tf in workflow_resp["taskforces"]
-    )
 
     ############################################
     # mq activator & launch control runs...
