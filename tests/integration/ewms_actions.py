@@ -54,7 +54,7 @@ async def user_requests_new_workflow(
         "worker_memory": "512M",
     }
     environment: dict[str, str] = {}
-    input_files = []
+    input_files: list[str] = []
 
     #
     # USER...
@@ -98,7 +98,7 @@ async def user_requests_new_workflow(
     )
     assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
     for tf in workflow_resp["taskforces"]:
-        assert tf["pilot_config"] == {
+        expected = {
             "image": os.environ["TEST_PILOT_IMAGE_LATEST_TAG"],
             "environment": {
                 **environment,
@@ -107,6 +107,9 @@ async def user_requests_new_workflow(
             },
             "input_files": input_files,
         }
+        print(tf["pilot_config"])
+        print(expected)
+        assert tf["pilot_config"] == expected
 
     ############################################
     # mq activator & launch control runs...
