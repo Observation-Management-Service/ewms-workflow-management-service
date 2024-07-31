@@ -390,6 +390,8 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
                     "EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": [
                         f"DUMMY_BROKER_ADDRESS_{q}" for q in td_db["output_queues"]
                     ],
+                    "EWMS_PILOT_TASK_IMAGE": td_db["task_image"],
+                    "EWMS_PILOT_TASK_ARGS": td_db["task_args"],
                 }
                 expected_tfs.append(tf)
             # get all taskforces for task_id
