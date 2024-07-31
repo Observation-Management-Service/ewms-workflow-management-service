@@ -123,7 +123,7 @@ if ENV.CI:  # just for testing -- can remove when we have 2+ clusters
 # --------------------------------------------------------------------------------------
 
 
-GH_API_PILOT_RELEASES_URL = (
+GH_API_PILOT_RELEASES_URL = (  # can't end in '/'
     "https://api.github.com/repos/Observation-Management-Service/ewms-pilot/releases"
 )
 
@@ -132,13 +132,13 @@ GH_API_PILOT_RELEASES_URL = (
 def get_pilot_image(tag: str) -> str:
     """Get the uri to the pilot image."""
     if tag == "latest":  # convert to immutable version tag
-        url = urljoin(GH_API_PILOT_RELEASES_URL, "latest")
-        LOGGER.info(f"Retrieving pilot image info from {url}...")
+        url = urljoin(GH_API_PILOT_RELEASES_URL + "/", "latest")
+        LOGGER.info(f"Retrieving pilot image info from {url} ...")
         resp = requests.get(url)
         LOGGER.debug(resp)
         tag = resp.json()["tag_name"]
     else:
-        LOGGER.info(f"Retrieving pilot image info from {GH_API_PILOT_RELEASES_URL}...")
+        LOGGER.info(f"Retrieving pilot image info from {GH_API_PILOT_RELEASES_URL} ...")
         all_em = [a["tag_name"] for a in requests.get(GH_API_PILOT_RELEASES_URL).json()]
         LOGGER.debug(all_em)
         if tag not in all_em:
