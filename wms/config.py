@@ -134,13 +134,12 @@ def get_pilot_image(tag: str) -> str:
     if tag == "latest":  # convert to immutable version tag
         url = urljoin(GH_API_PILOT_RELEASES_URL + "/", "latest")
         LOGGER.info(f"Retrieving pilot image info from {url} ...")
-        resp = requests.get(url)
-        LOGGER.debug(resp)
-        tag = resp.json()["tag_name"]
+        tag = requests.get(url).json()["tag_name"]
+        LOGGER.info(f"latest pilot tag is {tag}")
     else:
         LOGGER.info(f"Retrieving pilot image info from {GH_API_PILOT_RELEASES_URL} ...")
         all_em = [a["tag_name"] for a in requests.get(GH_API_PILOT_RELEASES_URL).json()]
-        LOGGER.debug(all_em)
+        LOGGER.debug(f"all available pilot tags: {all_em}")
         if tag not in all_em:
             msg = f"pilot image not found: {tag}"
             raise web.HTTPError(

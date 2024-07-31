@@ -100,7 +100,7 @@ async def user_requests_new_workflow(
     assert all(
         tf["pilot_config"]
         == {
-            "image": "/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:0.23.0",
+            "image": "v0.23.0",
             "environment": {
                 **environment,
                 "EWMS_PILOT_TASK_IMAGE": task_image,
