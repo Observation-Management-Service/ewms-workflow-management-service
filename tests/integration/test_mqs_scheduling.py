@@ -64,9 +64,11 @@ def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
         "schedd": f"schedd-{location}",
         "n_workers": 100,
         "pilot_config": {
-            "image": task_directive["task_image"],
-            "arguments": task_directive["task_args"],
-            "environment": {},
+            "image": "1.2.3",
+            "environment": {
+                "EWMS_PILOT_TASK_IMAGE": task_directive["task_image"],
+                "EWMS_PILOT_TASK_ARGS": task_directive["task_args"],
+            },
             "input_files": [],
         },
         "worker_config": {
