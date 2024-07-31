@@ -187,7 +187,7 @@
                                 "minItems": 0
                             }
                         },
-                        "additionalProperties": true,
+                        "additionalProperties": false,
                         "required": [
                             "image",
                             "environment",
@@ -216,7 +216,7 @@
                                 "type": "string"
                             }
                         },
-                        "additionalProperties": true,
+                        "additionalProperties": false,
                         "required": [
                             "do_transfer_worker_stdouterr",
                             "max_worker_runtime",
