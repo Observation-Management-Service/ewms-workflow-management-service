@@ -5,12 +5,16 @@ import json
 import logging
 from pathlib import Path
 from typing import Any
+from urllib.parse import urljoin
 
+import cachetools.func
 import jsonschema
 import openapi_core
+import requests
 from jsonschema_path import SchemaPath
 from openapi_spec_validator import validate
 from openapi_spec_validator.readers import read_from_filename
+from tornado import web
 from wipac_dev_tools import from_environment_as_dataclass, logging_tools
 
 LOGGER = logging.getLogger(__name__)
@@ -119,10 +123,29 @@ if ENV.CI:  # just for testing -- can remove when we have 2+ clusters
 # --------------------------------------------------------------------------------------
 
 
-def get_pilot_image() -> str:
+GH_API_PILOT_RELEASES_URL = (
+    "https://api.github.com/repos/Observation-Management-Service/ewms-pilot/releases"
+)
+
+
+@cachetools.func.ttl_cache(ttl=1 * 60)
+def get_pilot_image(tag: str) -> str:
     """Get the uri to the pilot image."""
-    tag = "0.23.0"
-    return f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{tag}"
+    if tag == "latest":  # convert to immutable version tag
+        tag = requests.get(urljoin(GH_API_PILOT_RELEASES_URL, "latest")).json()[
+            "tag_name"
+        ]
+    else:
+        all_em = [a["tag_name"] for a in requests.get(GH_API_PILOT_RELEASES_URL).json()]
+        if tag not in all_em:
+            msg = f"pilot image not found: {tag}"
+            raise web.HTTPError(
+                status_code=400,
+                log_message=msg,
+                reason=msg,  # to client
+            )
+
+    return tag
 
 
 # --------------------------------------------------------------------------------------
