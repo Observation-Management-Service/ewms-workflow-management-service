@@ -104,7 +104,7 @@ async def request_workflow(
                 "input_queue_aliases": ["input-queue"],
                 "output_queue_aliases": ["output-queue"],
                 "task_image": "python:alpine",
-                "task_args": "python3 -V",
+                "task_args": "cp {{INFILE}} {{OUTFILE}}",
                 "n_workers": n_workers,
                 "worker_config": {
                     "do_transfer_worker_stdouterr": True,
@@ -120,7 +120,7 @@ async def request_workflow(
                         "pilot_config": {
                             "environment": {},
                             "input_files": [],
-                            "image": f"/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-pilot:{pilot_cvmfs_image_tag}",
+                            "image": pilot_cvmfs_image_tag,
                         }
                     }
                     if pilot_cvmfs_image_tag
