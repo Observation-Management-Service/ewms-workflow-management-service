@@ -2,7 +2,6 @@
 
 import logging
 import time
-import uuid
 
 from rest_tools.server import validate_request
 from tornado import web
@@ -13,6 +12,7 @@ from .task_handlers import create_task_directive_and_taskforces
 from .. import config
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TaskforcePhase
+from ..utils import IDFactory
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
         """
         workflow = {
             # IMMUTABLE
-            "workflow_id": uuid.uuid4().hex,
+            "workflow_id": IDFactory.generate_workflow_id(),
             "timestamp": time.time(),
             "priority": 10,  # TODO
             # MUTABLE
