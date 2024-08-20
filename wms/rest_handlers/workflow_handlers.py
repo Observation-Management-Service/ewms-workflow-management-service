@@ -125,7 +125,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
 class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for a workflow."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows/(?P<workflow_id>\w+)$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows/(?P<workflow_id>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

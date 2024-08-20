@@ -169,7 +169,7 @@ class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a condor-submitted taskforce."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>\w+)$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -247,7 +247,7 @@ class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
 class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a taskforce designated to be stopped."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces/(?P<taskforce_uuid>\w+)$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -286,7 +286,7 @@ class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
 class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a condor-completed taskforce."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-complete/taskforces/(?P<taskforce_uuid>\w+)$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-complete/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -326,7 +326,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
 class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for a taskforce."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/taskforces/(?P<taskforce_uuid>\w+)$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

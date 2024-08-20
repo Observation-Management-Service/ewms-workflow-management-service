@@ -112,7 +112,7 @@ async def create_task_directive_and_taskforces(
 class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for a task's directive."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/task-directives/(?P<task_id>\w+)$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/task-directives/(?P<task_id>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
