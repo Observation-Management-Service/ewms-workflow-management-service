@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.9 (2024-08-20)
+
+### Other
+
+* Make Object IDs Hierarchical in Pattern ([#40](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/40)) ([`b166dfa`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/b166dfa59313873bcf1e71391e4b828da52ec619))
+
 ## v0.3.8 (2024-08-09)
 
 ### Other
