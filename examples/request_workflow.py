@@ -103,7 +103,7 @@ async def request_workflow(
                 "cluster_locations": ["sub-2"],
                 "input_queue_aliases": ["input-queue"],
                 "output_queue_aliases": ["output-queue"],
-                "task_image": "python:alpine",
+                "task_image": "/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-task-management-service:0.1.44",
                 "task_args": "cp {{INFILE}} {{OUTFILE}}",
                 "n_workers": n_workers,
                 "worker_config": {
@@ -162,7 +162,7 @@ async def read_queue(queue: Queue) -> None:
     LOGGER.info("Done reading queue")
 
 
-def monitor_wms(rc: RestClient, workflow_id: str) -> None:
+def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
     """Routinely query WMS."""
     LOGGER.info("Monitoring WMS...")
 
@@ -245,6 +245,11 @@ async def main() -> None:
         type=int,
         help="the number of workers to use",
     )
+    parser.add_argument(
+        "--monitor-workflow-id",
+        default="",
+        help="the workflow id to resume monitoring instead of requesting a new workflow",
+    )
     args = parser.parse_args()
     wipac_dev_tools.logging_tools.log_argparse_args(args)
 
@@ -256,6 +261,10 @@ async def main() -> None:
         retries=0,
     )
 
+    # do we just want to resume monitoring?
+    if args.monitor_workflow_id:
+        return monitor_workflow(rc, args.monitor_workflow_id)
+
     # request workflow
     workflow_id, input_queue, output_queue = await request_workflow(
         rc,
@@ -263,7 +272,7 @@ async def main() -> None:
         args.n_workers,
     )
     threading.Thread(
-        target=monitor_wms,
+        target=monitor_workflow,
         args=(rc, workflow_id),
         daemon=True,
     ).start()

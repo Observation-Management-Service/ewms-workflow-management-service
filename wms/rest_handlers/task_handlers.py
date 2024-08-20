@@ -2,7 +2,6 @@
 
 import logging
 import time
-import uuid
 
 from rest_tools.server import validate_request
 from tornado import web
@@ -12,6 +11,7 @@ from .base_handlers import BaseWMSHandler
 from .. import config
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TaskforcePhase
+from ..utils import IDFactory
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ async def create_task_directive_and_taskforces(
     task_directive = {
         # IMMUTABLE
         #
-        "task_id": uuid.uuid4().hex,
+        "task_id": IDFactory.generate_task_id(workflow_id),
         "workflow_id": workflow_id,
         "timestamp": time.time(),
         #
@@ -67,7 +67,9 @@ async def create_task_directive_and_taskforces(
             {
                 # IMMUTABLE
                 #
-                "taskforce_uuid": uuid.uuid4().hex,
+                "taskforce_uuid": IDFactory.generate_taskforce_id(
+                    task_directive["task_id"]  # type: ignore
+                ),
                 "task_id": task_directive["task_id"],
                 "workflow_id": workflow_id,
                 "timestamp": time.time(),
@@ -110,7 +112,7 @@ async def create_task_directive_and_taskforces(
 class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for a task's directive."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/task-directives/(?P<task_id>\w+)$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/task-directives/(?P<task_id>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
