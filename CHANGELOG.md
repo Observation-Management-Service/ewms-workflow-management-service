@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.10 (2024-08-26)
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`9bf3ca8`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/9bf3ca89d02adabd43ab982a753057a32cf3b2c0))
+* <ci> modify rest documentation ([`899d6ce`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/899d6ce8023aef8dd4983b4da2c88d8ee86767e6))
+* Add `groups=/tokens/ewms-dev` to User Auth ([`d4bbde9`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/d4bbde958655990d0853e56e1dff67ebe99290f9))
+
 ## v0.3.9 (2024-08-20)
 
 ### Other
