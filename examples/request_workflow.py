@@ -162,7 +162,7 @@ async def read_queue(queue: Queue) -> None:
     LOGGER.info("Done reading queue")
 
 
-def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
+async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
     """Routinely query WMS."""
     LOGGER.info("Monitoring WMS...")
 
@@ -174,37 +174,43 @@ def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
         if i > 0:
             time.sleep(15)  # in thread, so ok
 
-        workflow = rc.request_seq(
+        workflow = await rc.request(
             "GET",
             f"/v0/workflows/{workflow_id}",
         )
-        task_directives = rc.request_seq(
-            "POST",
-            "/v0/query/task-directives",
-            {"query": {"workflow_id": workflow_id}},
+        task_directives = (
+            await rc.request(
+                "POST",
+                "/v0/query/task-directives",
+                {"query": {"workflow_id": workflow_id}},
+            )
         )["task_directives"]
 
         if i == 0:
-            taskforces = rc.request_seq(
-                "POST",
-                "/v0/query/taskforces",
-                {"query": {"workflow_id": workflow_id}},
+            taskforces = (
+                await rc.request(
+                    "POST",
+                    "/v0/query/taskforces",
+                    {"query": {"workflow_id": workflow_id}},
+                )
             )["taskforces"]
         else:
-            taskforces = rc.request_seq(
-                "POST",
-                "/v0/query/taskforces",
-                {
-                    "query": {"workflow_id": workflow_id},
-                    "projection": [
-                        "condor_complete_ts",
-                        "phase",
-                        "compound_statuses",
-                        "top_task_errors",
-                        "taskforce_uuid",
-                        "task_id",
-                    ],
-                },
+            taskforces = (
+                await rc.request(
+                    "POST",
+                    "/v0/query/taskforces",
+                    {
+                        "query": {"workflow_id": workflow_id},
+                        "projection": [
+                            "condor_complete_ts",
+                            "phase",
+                            "compound_statuses",
+                            "top_task_errors",
+                            "taskforce_uuid",
+                            "task_id",
+                        ],
+                    },
+                )
             )["taskforces"]
 
         if (prev_workflow, prev_task_directives, prev_taskforces) == (
@@ -263,7 +269,7 @@ async def main() -> None:
 
     # do we just want to resume monitoring?
     if args.monitor_workflow_id:
-        return monitor_workflow(rc, args.monitor_workflow_id)
+        return await monitor_workflow(rc, args.monitor_workflow_id)
 
     # request workflow
     workflow_id, input_queue, output_queue = await request_workflow(
@@ -271,8 +277,13 @@ async def main() -> None:
         args.pilot_cvmfs_image_tag,
         args.n_workers,
     )
+
+    # monitor
+    def monitor_wrapper(rc: RestClient, workflow_id: str) -> None:
+        asyncio.run(monitor_workflow(rc, workflow_id))
+
     threading.Thread(
-        target=monitor_workflow,
+        target=monitor_wrapper,
         args=(rc, workflow_id),
         daemon=True,
     ).start()

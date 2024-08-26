@@ -36,7 +36,10 @@ if ENV.CI:
 else:
     service_account_auth = token_attribute_role_mapping_auth(  # type: ignore[no-untyped-call]
         role_attrs={
-            AuthAccounts.USER: ["groups=/institutions/IceCube.*"],
+            AuthAccounts.USER: [
+                "groups=/institutions/IceCube.*",
+                "groups=/tokens/ewms-dev",
+            ],
             AuthAccounts.TMS: ["ewms_role=system-tms"],
         }
     )
