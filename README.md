@@ -4,7 +4,14 @@
 
 # ewms-workflow-management-service
 
-The external interface for EWMS
+A Workflow Management Service for EWMS
+
+The WMS is both the central component and the external interface for the Event Workflow Management System (EWMS). This service:
+
+- Processes external requests for HTCondor-served, [task](#task)-based [workflows](#workflow).
+- Translates workflows into actionable instructions.
+- Serves as the central communicator among EWMS components.
+- Manages workloads based on resources and workflow status.
 
 ## API Documentation
 
@@ -34,8 +41,7 @@ The **message queue** transfers **events** to and from a task. Public message qu
 
 #### Event
 
-An **event** is an object transferred via **message queues**. It is the most frequently occurring object in EWMS.  
-See [above](#message-queue).
+An **event** is an object transferred via **message queues**. It is the most frequently occurring object in EWMS. See [above](#message-queue).
 
 ### Task
 
