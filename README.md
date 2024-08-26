@@ -30,21 +30,22 @@ The **workflow** is the highest-level object in the EWMS hierarchy. It consists 
 
 ### Message Queue
 
-The **message queue** transfers **events** to and from a task. Public message queues allow external event injection or retrieval. This flexibility enables the creation of **workflows** of varying complexity, akin to graph theory. Each message queue is identified by an ID and requires an authentication token for access.
+The **message queue** transfers **events** to and from a task. Public message queues allow external event injection or retrieval. This flexibility supports creating **workflows** of various complexity, similar to graph theory. Each message queue is identified by an ID and requires an authentication token for access.
 
 #### Event
 
-An **event** is an object transferred via **message queues**. This object easily has the largest cardinality of any other object within EWMS. See [above](#message-queue).
+An **event** is an object transferred via **message queues**. It is the most frequently occurring object in EWMS.  
+See [above](#message-queue).
 
 ### Task
 
-The term **task** varies by context in EWMS:
+The term **task** has different meanings depending on the context within EWMS:
 
-- **User context**: A task is the unit of work we aim to parallelize.
-- **EWMS pilot context**: A task is a runtime instance of the task container (think, mathematical function) applied to an inbound **event** from a **message queue** which may produce outbound events.
-- **WMS context**: A **task** refers to the unique combination of an image, arguments, environment variables, etc.
+- **User context**: A task is a unit of work intended for parallelization.
+- **EWMS pilot context**: A task is a runtime instance of the task container (similar to a mathematical function), applied to an inbound **event** from a **message queue** and potentially produces outbound events.
+- **WMS context**: A **task** refers to the unique combination of a workflow instance, image, arguments, environment variables, etc.
 
-Due to this ambiguity, the **task directive** serves as a first-order object within the WMS.
+Due to this ambiguity, the **task directive** is considered a first-order object within the WMS.
 
 ### Task Directive
 
