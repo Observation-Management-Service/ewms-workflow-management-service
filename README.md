@@ -20,26 +20,26 @@ See [Docs/](./Docs)
 
 ## Overview
 
-As seen [above](#ewms-workflow-management-service), the WMS has several concurrent responsibilities. Most of these actions can be described in the "story" of a worklow:
+As described [above](#ewms-workflow-management-service), the WMS has several concurrent responsibilities. These actions can be outlined in the "story" of a workflow:
 
 ### EWMS Workflow Lifetime
 
-1. The user requests a new [workflow](#workflow) and the WMS translates this workflow into _n_ [task directives](#task-directive), _m_ [taskforces](#taskforce), and determines how many queues are needed.
+1. The user requests a new [workflow](#workflow). The WMS translates this workflow into _n_ [task directives](#task-directive), _m_ [taskforces](#taskforce), and determines the number of required queues.
     - [POST @ /v0/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0WorkflowsPost)
-1. The WMS requests _p_ queues from the [MQS](https://github.com/Observation-Management-Service/ewms-message-queue-service):
-    1. If the MQS indicates that resources are currently insufficient, the WMS waits. During this time, the WMS also requests any other pending workflows from the MQS.
+2. The WMS requests _p_ queues from the [MQS](https://github.com/Observation-Management-Service/ewms-message-queue-service):
+    1. If the MQS indicates that resources are insufficient, the WMS waits and also requests any other pending workflows from the MQS.
     2. Otherwise/eventually, the MQS creates the queues and provides them to the WMS.
-1. The WMS makes tokens for any publicly-accessible queues available to the user.
+3. The WMS makes tokens for any publicly accessible queues available to the user.
     - [GET @ /v0/mqs/workflows/{workflow_id}/mq-profiles/public](https://github.com/Observation-Management-Service/ewms-message-queue-service/blob/main/Docs/Apis/DefaultApi.md#v0MqsWorkflowsWorkflowIdMqProfilesPublicGet)
-1. The WMS marks the workflow's taskforce(s) as ready for the [TMS](https://github.com/Observation-Management-Service/ewms-task-management-service).
+4. The WMS marks the workflow's taskforce(s) as ready for the [TMS](https://github.com/Observation-Management-Service/ewms-task-management-service).
     - See [taskforce.phase](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md)
-1. When ready, the TMS initiates HTCondor jobs for the taskforce(s).
-1. The TMS relays live, aggregated runtime statuses to the WMS, routinely until the workflow's taskforces are done.
+5. When ready, the TMS initiates HTCondor jobs for the taskforce(s).
+6. The TMS relays live, aggregated runtime statuses to the WMS until the workflow's taskforces are completed.
     - See [taskforce.compound_statuses](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md) and/or [taskforce.top_task_errors](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md)
 
 ### First-Order Object Endpoints
 
-It is most useful to understand the [objects](#ewms-glossary-applied-to-the-wms) within WMS (and EWMS). The following REST endpoints provided the user the retrieve those objects.
+Understanding the [objects](#ewms-glossary-applied-to-the-wms) within the WMS (and EWMS) is key. The following REST endpoints allow users to retrieve these objects.
 
 #### Get a Workflow
 
