@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.11 (2024-08-27)
+
+### Other
+
+* Update README ([#41](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/41)) ([`479380f`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/479380f43746d1f82713e81ae270022e20f9fcf8))
+
 ## v0.3.10 (2024-08-26)
 
 ### Other
