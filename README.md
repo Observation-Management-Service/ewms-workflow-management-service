@@ -26,28 +26,69 @@ As described [above](#ewms-workflow-management-service), the WMS has several con
 
 1. The user requests a new [workflow](#workflow). The WMS translates this workflow into _n_ [task directives](#task-directive), _m_ [taskforces](#taskforce), and determines the number of required queues.
     - [POST @ /v0/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0WorkflowsPost)
+    - See [Example Workflow Request JSON](#example-workflow-request-json)
 2. The WMS requests _p_ queues from the [MQS](https://github.com/Observation-Management-Service/ewms-message-queue-service):
     1. If the MQS indicates that resources are insufficient, the WMS waits and also requests any other pending workflows from the MQS.
     2. Otherwise/eventually, the MQS creates the queues and provides them to the WMS.
 3. The WMS makes tokens for any publicly accessible queues available to the user.
     - [GET @ /v0/mqs/workflows/{workflow_id}/mq-profiles/public](https://github.com/Observation-Management-Service/ewms-message-queue-service/blob/main/Docs/Apis/DefaultApi.md#v0MqsWorkflowsWorkflowIdMqProfilesPublicGet)
 4. The WMS marks the workflow's taskforce(s) as ready for the [TMS](https://github.com/Observation-Management-Service/ewms-task-management-service).
-    - See [taskforce.phase](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md)
+    - See [`Taskforce.phase`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md)
 5. When ready, the TMS initiates HTCondor jobs for the taskforce(s).
 6. The TMS relays live, aggregated runtime statuses to the WMS until the workflow's taskforces are completed.
-    - See [taskforce.compound_statuses](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md) and/or [taskforce.top_task_errors](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md)
+    - See [`Taskforce.compound_statuses`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md) and/or [`Taskforce.top_task_errors`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md)
 
 This "story" is also detailed in [request_workflow.py](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/examples/request_workflow.py). However, this script may not suit all your needs. It is recommended to have a solid understanding of the user-facing [API endpoints](https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main/Docs#documentation-for-api-endpoints) and [objects](https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main/Docs#documentation-for-models).
 
+#### Example Workflow Request JSON
+
+Every [workflow](#workflow)) originates from a JSON object using [POST @ /v0/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0WorkflowsPost). The following is an example of valid a request object (refer to the [docs](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/_v0_workflows_post_request.md) for other optional fields not seen here):
+
+```json
+{
+    "public_queue_aliases": [
+        "input-queue",
+        "output-queue"
+    ],
+    "tasks": [
+        {
+            "cluster_locations": [
+                "sub-2"
+            ],
+            "input_queue_aliases": [
+                "input-queue"
+            ],
+            "output_queue_aliases": [
+                "output-queue"
+            ],
+            "task_image": "/cvmfs/icecube.opensciencegrid.org/containers/path/to/my-apptainer-container:1.2.3",
+            "task_args": "cp {{INFILE}} {{OUTFILE}}",
+            "n_workers": 1000,
+            "worker_config": {
+                "do_transfer_worker_stdouterr": true,
+                "max_worker_runtime": 600,
+                "n_cores": 1,
+                "priority": 99,
+                "worker_disk": "512M",
+                "worker_memory": "512M"
+            }
+        }
+    ]
+}
+```
+
+#### The Task Container
+
+The task container is built from the user-provided image, specified in the [workflow request object's `task_image`](#example-workflow-request-json) and persisted in [`TaskDirective.task_image`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskDirectiveObject.md). It runs within an [EWMS Pilot instance](https://github.com/Observation-Management-Service/ewms-pilot) on an HTCondor Execution Point (EP). For configuration and interaction with EWMS [events](#event), refer to the [EWMS Pilot documentation](https://github.com/Observation-Management-Service/ewms-pilot).
+
 ### Interacting with First-Order Objects using API Endpoints
 
-Understanding the [objects](#ewms-glossary-applied-to-the-wms) within the WMS (and EWMS) is key. The following REST endpoints allow users to interact with these objects.
+Understanding the [objects](#ewms-glossary-applied-to-the-wms) within the WMS (and EWMS) is key. The following REST endpoints allow users to retrieve with these objects.
 
 #### Get a Workflow
 
 _What's a [workflow](#workflow)?_
 
-- Create: [POST @ /v0/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0WorkflowsPost)
 - Get by ID: [GET @ /v0/workflows/{workflow_id}](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0workflowsworkflowidget)
 - Search by other criteria: [POST @ /v0/query/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0queryworkflowspost)
 
@@ -81,11 +122,12 @@ An **event** is an object transferred via **message queues**. It is the most fre
 
 ### Task
 
-The term **task** has different meanings depending on the context within EWMS:
+A **task** refers to the unique combination of a workflow instance, container image, runtime arguments, environment variables, etc.
+
+The term **task** also has different meanings depending on the context within EWMS:
 
 - **User context**: A task is a unit of work intended for parallelization.
-- **EWMS pilot context**: A task is a runtime instance of the task container, applied to an inbound **event** from a **message queue** and potentially produces outbound events (akin to a mathematical function).
-- **WMS context**: A **task** refers to the unique combination of a workflow instance, container image, runtime arguments, environment variables, etc.
+- **[EWMS pilot context](#the-task-container)**: A task is a runtime instance of the task container, applied to an inbound **event** from a **message queue** and potentially produces outbound events (akin to a mathematical function).
 
 _Due to this ambiguity, the **task directive** is considered a first-order object within the WMS._
 
