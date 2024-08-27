@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.13 (2024-08-27)
+
+### Other
+
+* README: Add Example Workflow ([`94cb825`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/94cb8251cd6bd731657555e62e14242bf9a83c50))
+
 ## v0.3.12 (2024-08-27)
 
 ### Other
