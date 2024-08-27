@@ -1,5 +1,5 @@
 <!--- Top of README Badges (automated) --->
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Observation-Management-Service/ewms-workflow-management-service?include_prereleases)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/) [![Lines of code](https://img.shields.io/tokei/lines/github/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/) [![GitHub issues](https://img.shields.io/github/issues/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues?q=is%3Aissue+sort%3Aupdated-desc+is%3Aopen) [![GitHub pull requests](https://img.shields.io/github/issues-pr/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/pulls?q=is%3Apr+sort%3Aupdated-desc+is%3Aopen) 
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Observation-Management-Service/ewms-workflow-management-service?include_prereleases)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/) [![Lines of code](https://img.shields.io/tokei/lines/github/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/) [![GitHub issues](https://img.shields.io/github/issues/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues?q=is%3Aissue+sort%3Aupdated-desc+is%3Aopen) [![GitHub pull requests](https://img.shields.io/github/issues-pr/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/pulls?q=is%3Apr+sort%3Aupdated-desc+is%3Aopen)
 <!--- End of README Badges (automated) --->
 
 # ewms-workflow-management-service
@@ -37,18 +37,19 @@ As described [above](#ewms-workflow-management-service), the WMS has several con
 6. The TMS relays live, aggregated runtime statuses to the WMS until the workflow's taskforces are completed.
     - See [taskforce.compound_statuses](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md) and/or [taskforce.top_task_errors](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md)
 
-This "story" is also detailed in [request_workflow.py](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/examples/request_workflow.py). However, this script may not suit all your needs. It is recommended to have a solid understanding of the user-facing [endpoints and objects](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/Docs/README.md).
+This "story" is also detailed in [request_workflow.py](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/examples/request_workflow.py). However, this script may not suit all your needs. It is recommended to have a solid understanding of the user-facing [API endpoints](https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main/Docs#documentation-for-api-endpoints) and [objects](https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main/Docs#documentation-for-models).
 
-### First-Order Object Endpoints
+### Interacting with First-Order Objects using API Endpoints
 
-Understanding the [objects](#ewms-glossary-applied-to-the-wms) within the WMS (and EWMS) is key. The following REST endpoints allow users to retrieve these objects.
+Understanding the [objects](#ewms-glossary-applied-to-the-wms) within the WMS (and EWMS) is key. The following REST endpoints allow users to interact with these objects.
 
 #### Get a Workflow
 
 _What's a [workflow](#workflow)?_
 
+- Create: [POST @ /v0/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0WorkflowsPost)
 - Get by ID: [GET @ /v0/workflows/{workflow_id}](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0workflowsworkflowidget)
-- Search by other criteria: [POST /v0/query/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0queryworkflowspost)
+- Search by other criteria: [POST @ /v0/query/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0queryworkflowspost)
 
 #### Get a Task Directive
 
@@ -68,33 +69,30 @@ _What's a [taskforce](#taskforce)?_
 
 ### Workflow
 
-The **workflow** is the highest-level object in the EWMS hierarchy. It consists of 1+ **tasks**, each described by a **task directive**. These tasks are connected by **message queues**, similar to nodes and edges in a graph.  
-[More documentation](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/WorkflowObject.md).
+The **workflow** is the highest-level object in the EWMS hierarchy. It consists of 1+ **tasks**, each described by a **task directive**. These tasks are connected by **message queues**, akin to nodes and edges in a graph. _[See object properties.](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/WorkflowObject.md)_
 
 ### Message Queue
 
-The **message queue** transfers **events** to and from a task. Public message queues allow external event injection or retrieval. This flexibility supports creating **workflows** of various complexity, similar to graph theory. Each message queue is identified by an ID and requires an authentication token for access.
+The **message queue** transfers **events** to and from a task. Public message queues allow external event injection or retrieval. This flexibility supports creating **workflows** of various complexity (graph theory). Each message queue is identified by an ID and requires an authentication token for access.
 
 #### Event
 
-An **event** is an object transferred via **message queues**. It is the most frequently occurring object in EWMS. See [above](#message-queue).
+An **event** is an object transferred via **message queues**. It is the most frequently occurring object in EWMS.
 
 ### Task
 
 The term **task** has different meanings depending on the context within EWMS:
 
 - **User context**: A task is a unit of work intended for parallelization.
-- **EWMS pilot context**: A task is a runtime instance of the task container (similar to a mathematical function), applied to an inbound **event** from a **message queue** and potentially produces outbound events.
-- **WMS context**: A **task** refers to the unique combination of a workflow instance, image, arguments, environment variables, etc.
+- **EWMS pilot context**: A task is a runtime instance of the task container, applied to an inbound **event** from a **message queue** and potentially produces outbound events (akin to a mathematical function).
+- **WMS context**: A **task** refers to the unique combination of a workflow instance, container image, runtime arguments, environment variables, etc.
 
-Due to this ambiguity, the **task directive** is considered a first-order object within the WMS.
+_Due to this ambiguity, the **task directive** is considered a first-order object within the WMS._
 
 ### Task Directive
 
-The **task directive** represents the unique configuration of a task and its place within an EWMS **workflow**. This object is immutable, with `task_id` as its primary key.  
-[More documentation](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskDirectiveObject.md).
+The **task directive** represents the unique configuration of a [task](#task) (WMS context) and its place within an EWMS **workflow**. This object is immutable, with `task_id` as its primary key. _[See object properties.](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskDirectiveObject.md)_
 
 ### Taskforce
 
-A **taskforce** is not explicitly created by the user. It serves as a two-way bridge between EWMS and HTCondor. A **taskforce** is created for each application of a **task directive** (N:1 mapping) and contains HTCondor compute instructions and runtime status information. Each taskforce is applied to a single HTCondor cluster, with a fixed number of workers. If more compute resources are needed, additional taskforces are created from the same **task directive**.  
-[More documentation](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md).
+A **taskforce** is not explicitly created by the user. It serves as a two-way bridge between EWMS and HTCondor. A **taskforce** is created for each application of a **task directive** (N:1 mapping) and contains HTCondor compute instructions and runtime status information. Each taskforce is applied to a single HTCondor cluster, with a fixed number of workers. If more compute resources are needed, additional taskforces are created from the same **task directive**. _[See object properties.](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md)_
