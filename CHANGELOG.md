@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.12 (2024-08-27)
+
+### Other
+
+* <bot> update README.md ([`3a465b2`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/3a465b2579b0a12541e278c37743a2380a95fbb4))
+* README Updates Followup ([`70c881a`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/70c881ab10fcfd6fea0ad085bf9ee2f25acf2797))
+
 ## v0.3.11 (2024-08-27)
 
 ### Other
