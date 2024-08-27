@@ -37,7 +37,7 @@ As described [above](#ewms-workflow-management-service), the WMS has several con
 6. The TMS relays live, aggregated runtime statuses to the WMS until the workflow's taskforces are completed.
     - See [taskforce.compound_statuses](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md) and/or [taskforce.top_task_errors](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md)
 
-This "story" is also detailed in [request_workflow.py](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/examples/request_workflow.py). However, this script may not suit your needs well. It is recommended to have a solid understanding of the user-facing [endpoints and objects](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/Docs/README.md).
+This "story" is also detailed in [request_workflow.py](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/examples/request_workflow.py). However, this script may not suit all your needs. It is recommended to have a solid understanding of the user-facing [endpoints and objects](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/Docs/README.md).
 
 ### First-Order Object Endpoints
 
