@@ -209,7 +209,7 @@ jobs:
                   http_request=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $3); print $3}')
                   mapping["$method"]="$http_request"
               fi
-          done < "$markdown_file"
+          done < "$outdir/README.md"
           
           # Now you can access the dictionary and process it as needed
           for key in "${!mapping[@]}"; do
