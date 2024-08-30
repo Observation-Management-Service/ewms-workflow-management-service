@@ -228,12 +228,12 @@ jobs:
               http_request_markdown_link=$(echo "$http_request_header" | \
                   sed -e 's/\*\*//g' \
                       -e 's/[{}]//g' \
-                      -e 's/[ :_]/-/g' \
+                      -e 's/[ :]/-/g' \
                       -e 's/-\+/-/g' \
                       -e 's/^-//' \
                       -e 's/-$//' \
                       -e 's/\///g' \
-                  | tr '[:upper:]' '[:lower:]')   # Remove **, {}, slashes; replace spaces/colons/underscores with hyphens; normalize hyphens; convert to lowercase  
+                  | tr '[:upper:]' '[:lower:]')   # Remove **, {}, slashes; replace spaces/colons with hyphens; normalize hyphens; convert to lowercase  
           
               method_header=$(echo "$method_col_attr" | awk -F'[][]' '{print $2}' | sed 's/\*\*//g')
               method_markdown_link=$(echo "$method_col_attr" | awk -F'#' '{print $2}' | sed 's/[)]//')
