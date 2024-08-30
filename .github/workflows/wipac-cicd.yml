@@ -229,11 +229,11 @@ jobs:
                   sed -e 's/\*\*//g' \
                       -e 's/[{}]//g' \
                       -e 's/[ /:_]/-/g' \
-                      -e 's/[^a-zA-Z0-9-]//g' \
-                      -e 's/--*/-/g' \
+                      -e 's/-\+/-/g' \
                       -e 's/^-//' \
                       -e 's/-$//' \
-                  | tr '[:upper:]' '[:lower:]')
+                      -e 's/\///g' \
+                  | tr '[:upper:]' '[:lower:]')   # Remove **, {}, slashes; replace spaces/colons/underscores with hyphens; normalize hyphens; convert to lowercase  
           
               method_header=$(echo "$method_col_attr" | awk -F'[][]' '{print $2}' | sed 's/\*\*//g')
               method_markdown_link=$(echo "$method_col_attr" | awk -F'#' '{print $2}' | sed 's/[)]//')
