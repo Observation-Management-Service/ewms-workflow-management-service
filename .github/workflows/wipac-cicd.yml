@@ -200,7 +200,7 @@ jobs:
               fi
           
               # Skip the table separator line
-              if [[ "$line" =~ ^\|[-| ]+\|$ ]]; then
+              if [[ "$line" == \|--* ]]; then
                   continue
               fi
           
