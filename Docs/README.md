@@ -6,22 +6,22 @@
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
-| *DefaultApi* | [**v0Get**](Apis/DefaultApi.md#v0get) | **GET** /v0/ |  |
-*DefaultApi* | [**v0QueryTaskDirectivesPost**](Apis/DefaultApi.md#v0querytaskdirectivespost) | **POST** /v0/query/task-directives |  |
-*DefaultApi* | [**v0QueryTaskforcesPost**](Apis/DefaultApi.md#v0querytaskforcespost) | **POST** /v0/query/taskforces |  |
-*DefaultApi* | [**v0QueryWorkflowsPost**](Apis/DefaultApi.md#v0queryworkflowspost) | **POST** /v0/query/workflows |  |
-*DefaultApi* | [**v0SchemaOpenapiGet**](Apis/DefaultApi.md#v0schemaopenapiget) | **GET** /v0/schema/openapi |  |
-*DefaultApi* | [**v0TaskDirectivesTaskIdGet**](Apis/DefaultApi.md#v0taskdirectivestaskidget) | **GET** /v0/task-directives/{task_id} |  |
-*DefaultApi* | [**v0TaskforcesTaskforceUuidGet**](Apis/DefaultApi.md#v0taskforcestaskforceuuidget) | **GET** /v0/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [**v0TmsCondorCompleteTaskforcesTaskforceUuidPost**](Apis/DefaultApi.md#v0tmscondorcompletetaskforcestaskforceuuidpost) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [**v0TmsCondorSubmitTaskforcesTaskforceUuidPost**](Apis/DefaultApi.md#v0tmscondorsubmittaskforcestaskforceuuidpost) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [**v0TmsPendingStarterTaskforcesGet**](Apis/DefaultApi.md#v0tmspendingstartertaskforcesget) | **GET** /v0/tms/pending-starter/taskforces |  |
-*DefaultApi* | [**v0TmsPendingStopperTaskforcesGet**](Apis/DefaultApi.md#v0tmspendingstoppertaskforcesget) | **GET** /v0/tms/pending-stopper/taskforces |  |
-*DefaultApi* | [**v0TmsPendingStopperTaskforcesTaskforceUuidDelete**](Apis/DefaultApi.md#v0tmspendingstoppertaskforcestaskforceuuiddelete) | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [**v0TmsStatusesTaskforcesPost**](Apis/DefaultApi.md#v0tmsstatusestaskforcespost) | **POST** /v0/tms/statuses/taskforces |  |
-*DefaultApi* | [**v0WorkflowsPost**](Apis/DefaultApi.md#v0workflowspost) | **POST** /v0/workflows |  |
-*DefaultApi* | [**v0WorkflowsWorkflowIdDelete**](Apis/DefaultApi.md#v0workflowsworkflowiddelete) | **DELETE** /v0/workflows/{workflow_id} |  |
-*DefaultApi* | [**v0WorkflowsWorkflowIdGet**](Apis/DefaultApi.md#v0workflowsworkflowidget) | **GET** /v0/workflows/{workflow_id} |  |
+| *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0) | **GET** /v0/ |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0taskforcestaskforce_uuid) | **GET** /v0/taskforces/{taskforce_uuid} |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce_uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuid) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-startertaskforces) | **GET** /v0/tms/pending-starter/taskforces |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0tmspending-stoppertaskforcestaskforce_uuid) | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflows) | **POST** /v0/workflows |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0workflowsworkflow_id) | **DELETE** /v0/workflows/{workflow_id} |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0workflowsworkflow_id) | **GET** /v0/workflows/{workflow_id} |  |
 
 
 <a name="documentation-for-models"></a>
