@@ -1,5 +1,5 @@
 <!--- Top of README Badges (automated) --->
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Observation-Management-Service/ewms-workflow-management-service?include_prereleases)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/) [![Lines of code](https://img.shields.io/tokei/lines/github/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/) [![GitHub issues](https://img.shields.io/github/issues/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues?q=is%3Aissue+sort%3Aupdated-desc+is%3Aopen) [![GitHub pull requests](https://img.shields.io/github/issues-pr/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/pulls?q=is%3Apr+sort%3Aupdated-desc+is%3Aopen) 
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Observation-Management-Service/ewms-workflow-management-service?include_prereleases)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/) [![Lines of code](https://img.shields.io/tokei/lines/github/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/) [![GitHub issues](https://img.shields.io/github/issues/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues?q=is%3Aissue+sort%3Aupdated-desc+is%3Aopen) [![GitHub pull requests](https://img.shields.io/github/issues-pr/Observation-Management-Service/ewms-workflow-management-service)](https://github.com/Observation-Management-Service/ewms-workflow-management-service/pulls?q=is%3Apr+sort%3Aupdated-desc+is%3Aopen)
 <!--- End of README Badges (automated) --->
 
 # ewms-workflow-management-service
@@ -25,7 +25,7 @@ As described [above](#ewms-workflow-management-service), the WMS has several con
 ### EWMS Workflow Lifetime
 
 1. The user requests a new [workflow](#workflow). The WMS translates this workflow into _n_ [task directives](#task-directive), _m_ [taskforces](#taskforce), and determines the number of required queues.
-    - [POST @ /v0/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0WorkflowsPost)
+    - [POST @ /v0/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#post-v0workflows)
     - See [Example Workflow Request JSON](#example-workflow-request-json)
 2. The WMS requests _p_ queues from the [MQS](https://github.com/Observation-Management-Service/ewms-message-queue-service):
     1. If the MQS indicates that resources are insufficient, the WMS waits and also requests any other pending workflows from the MQS.
@@ -42,7 +42,7 @@ This "story" is also detailed in [request_workflow.py](https://github.com/Observ
 
 #### Example Workflow Request JSON
 
-Every [workflow](#workflow)) originates from a JSON object using [POST @ /v0/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0WorkflowsPost). The following is an example of valid a request object (refer to the [docs](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/_v0_workflows_post_request.md) for other optional fields not seen here):
+Every [workflow](#workflow)) originates from a JSON object using [POST @ /v0/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#post-v0workflows). The following is an example of valid a request object (refer to the [docs](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/_v0_workflows_post_request.md) for other optional fields not seen here):
 
 ```json
 {
@@ -89,22 +89,22 @@ Understanding the [objects](#ewms-glossary-applied-to-the-wms) within the WMS (a
 
 _What's a [workflow](#workflow)?_
 
-- Get by ID: [GET @ /v0/workflows/{workflow_id}](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0workflowsworkflowidget)
-- Search by other criteria: [POST @ /v0/query/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0queryworkflowspost)
+- Get by ID: [GET @ /v0/workflows/{workflow_id}](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#get-v0workflowsworkflow-id)
+- Search by other criteria: [POST @ /v0/query/workflows](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#post-v0workflows)
 
 #### Get a Task Directive
 
 _What's a [task directive](#task-directive)?_
 
-- Get by ID: [GET @ /v0/task-directives/{task_id}](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0taskdirectivestaskidget)
-- Search by other criteria: [POST @ /v0/query/task-directives](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0querytaskdirectivespost)
+- Get by ID: [GET @ /v0/task-directives/{task_id}](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#get-v0task-directivestask_id)
+- Search by other criteria: [POST @ /v0/query/task-directives](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#post-v0querytask-directives)
 
 #### Get a Taskforce
 
 _What's a [taskforce](#taskforce)?_
 
-- Get by ID: [GET @ /v0/taskforces/{taskforce_uuid}](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0taskforcestaskforceuuidget)
-- Search by other criteria: [POST @ /v0/query/taskforces](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#v0querytaskforcespost)
+- Get by ID: [GET @ /v0/taskforces/{taskforce_uuid}](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#get-v0taskforcestaskforce_uuid)
+- Search by other criteria: [POST @ /v0/query/taskforces](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#post-v0querytaskforces)
 
 ## EWMS Glossary Applied to the WMS
 
