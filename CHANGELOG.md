@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.14 (2024-08-30)
+
+### Other
+
+* OpenAPI Docs: Rename Sections for Clarity ([#45](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/45)) ([`b9dd071`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/b9dd071cade8bca6c6c02c2849480e95fcb376cc))
+
 ## v0.3.13 (2024-08-27)
 
 ### Other
