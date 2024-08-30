@@ -213,7 +213,7 @@ jobs:
           
           # Now you can access the dictionary and process it as needed
           for method_col_attr in "${!mapping[@]}"; do
-              http_request_col_attr="${mapping[$key]}"
+              http_request_col_attr="${mapping[$method_col_attr]}"
               echo "$method_col_attr -> $http_request_col_attr"
           
               http_request_header=$(echo "$http_request_col_attr" | tr -d '*')  # remove the markdown bold markers
