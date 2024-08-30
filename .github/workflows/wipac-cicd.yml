@@ -165,6 +165,7 @@ jobs:
       - name: generate docs (README)
         if: env.IS_GIT_BEHIND != 'true'
         run: |
+          set -e
           outdir=Docs
           git rm -r $outdir || true
           # generate
@@ -175,7 +176,6 @@ jobs:
               -i /local/wms/$REST_OPENAPI_SPEC_FPATH \
               -g markdown \
               -o /local/$outdir
-          set -ex
           sudo chmod -R +777 $outdir  # needed since the 'rm' above wiped previous ownership & now container owns it all
           # tweak auto-generated contents -- miscellaneous
           # remove "no auth" mentions
