@@ -184,6 +184,8 @@ jobs:
           #       ^^ alternate delimiter: https://stackoverflow.com/a/1797967
           find $outdir -type f -exec sed -i '/No authorization required/d' {} +
           
+          cat "$outdir/README.md"
+          
           # get mapping -- method (link/header) and request dest
           declare -A mapping  # associative array (like python dict)
           in_table=false
