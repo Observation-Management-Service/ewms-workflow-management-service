@@ -228,7 +228,7 @@ jobs:
               http_request_markdown_link=$(echo "$http_request_header" | \
                   sed -e 's/\*\*//g' \
                       -e 's/[{}]//g' \
-                      -e 's/[ /:_]/-/g' \
+                      -e 's/[ :_]/-/g' \
                       -e 's/-\+/-/g' \
                       -e 's/^-//' \
                       -e 's/-$//' \
