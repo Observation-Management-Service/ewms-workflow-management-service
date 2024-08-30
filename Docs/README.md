@@ -6,22 +6,22 @@
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
-| *DefaultApi* | [**v0Get**](Apis/DefaultApi.md#v0get) | **GET** /v0/ |  |
-*DefaultApi* | [**v0QueryTaskDirectivesPost**](Apis/DefaultApi.md#v0querytaskdirectivespost) | **POST** /v0/query/task-directives |  |
-*DefaultApi* | [**v0QueryTaskforcesPost**](Apis/DefaultApi.md#v0querytaskforcespost) | **POST** /v0/query/taskforces |  |
-*DefaultApi* | [**v0QueryWorkflowsPost**](Apis/DefaultApi.md#v0queryworkflowspost) | **POST** /v0/query/workflows |  |
-*DefaultApi* | [**v0SchemaOpenapiGet**](Apis/DefaultApi.md#v0schemaopenapiget) | **GET** /v0/schema/openapi |  |
-*DefaultApi* | [**v0TaskDirectivesTaskIdGet**](Apis/DefaultApi.md#v0taskdirectivestaskidget) | **GET** /v0/task-directives/{task_id} |  |
-*DefaultApi* | [**v0TaskforcesTaskforceUuidGet**](Apis/DefaultApi.md#v0taskforcestaskforceuuidget) | **GET** /v0/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [**v0TmsCondorCompleteTaskforcesTaskforceUuidPost**](Apis/DefaultApi.md#v0tmscondorcompletetaskforcestaskforceuuidpost) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [**v0TmsCondorSubmitTaskforcesTaskforceUuidPost**](Apis/DefaultApi.md#v0tmscondorsubmittaskforcestaskforceuuidpost) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [**v0TmsPendingStarterTaskforcesGet**](Apis/DefaultApi.md#v0tmspendingstartertaskforcesget) | **GET** /v0/tms/pending-starter/taskforces |  |
-*DefaultApi* | [**v0TmsPendingStopperTaskforcesGet**](Apis/DefaultApi.md#v0tmspendingstoppertaskforcesget) | **GET** /v0/tms/pending-stopper/taskforces |  |
-*DefaultApi* | [**v0TmsPendingStopperTaskforcesTaskforceUuidDelete**](Apis/DefaultApi.md#v0tmspendingstoppertaskforcestaskforceuuiddelete) | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [**v0TmsStatusesTaskforcesPost**](Apis/DefaultApi.md#v0tmsstatusestaskforcespost) | **POST** /v0/tms/statuses/taskforces |  |
-*DefaultApi* | [**v0WorkflowsPost**](Apis/DefaultApi.md#v0workflowspost) | **POST** /v0/workflows |  |
-*DefaultApi* | [**v0WorkflowsWorkflowIdDelete**](Apis/DefaultApi.md#v0workflowsworkflowiddelete) | **DELETE** /v0/workflows/{workflow_id} |  |
-*DefaultApi* | [**v0WorkflowsWorkflowIdGet**](Apis/DefaultApi.md#v0workflowsworkflowidget) | **GET** /v0/workflows/{workflow_id} |  |
+| *DefaultApi* | [**GET /v0/**](Apis/DefaultApi.md#GET /v0/) | **GET** /v0/ |  |
+*DefaultApi* | [**POST /v0/query/task-directives**](Apis/DefaultApi.md#POST /v0/query/task-directives) | **POST** /v0/query/task-directives |  |
+*DefaultApi* | [**POST /v0/query/taskforces**](Apis/DefaultApi.md#POST /v0/query/taskforces) | **POST** /v0/query/taskforces |  |
+*DefaultApi* | [**POST /v0/query/workflows**](Apis/DefaultApi.md#POST /v0/query/workflows) | **POST** /v0/query/workflows |  |
+*DefaultApi* | [**GET /v0/schema/openapi**](Apis/DefaultApi.md#GET /v0/schema/openapi) | **GET** /v0/schema/openapi |  |
+*DefaultApi* | [**GET /v0/task-directives/{task_id}**](Apis/DefaultApi.md#GET /v0/task-directives/{task_id}) | **GET** /v0/task-directives/{task_id} |  |
+*DefaultApi* | [**GET /v0/taskforces/{taskforce_uuid}**](Apis/DefaultApi.md#GET /v0/taskforces/{taskforce_uuid}) | **GET** /v0/taskforces/{taskforce_uuid} |  |
+*DefaultApi* | [**POST /v0/tms/condor-complete/taskforces/{taskforce_uuid}**](Apis/DefaultApi.md#POST /v0/tms/condor-complete/taskforces/{taskforce_uuid}) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
+*DefaultApi* | [**POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}**](Apis/DefaultApi.md#POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} |  |
+*DefaultApi* | [**GET /v0/tms/pending-starter/taskforces**](Apis/DefaultApi.md#GET /v0/tms/pending-starter/taskforces) | **GET** /v0/tms/pending-starter/taskforces |  |
+*DefaultApi* | [**GET /v0/tms/pending-stopper/taskforces**](Apis/DefaultApi.md#GET /v0/tms/pending-stopper/taskforces) | **GET** /v0/tms/pending-stopper/taskforces |  |
+*DefaultApi* | [**DELETE /v0/tms/pending-stopper/taskforces/{taskforce_uuid}**](Apis/DefaultApi.md#DELETE /v0/tms/pending-stopper/taskforces/{taskforce_uuid}) | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} |  |
+*DefaultApi* | [**POST /v0/tms/statuses/taskforces**](Apis/DefaultApi.md#POST /v0/tms/statuses/taskforces) | **POST** /v0/tms/statuses/taskforces |  |
+*DefaultApi* | [**POST /v0/workflows**](Apis/DefaultApi.md#POST /v0/workflows) | **POST** /v0/workflows |  |
+*DefaultApi* | [**DELETE /v0/workflows/{workflow_id}**](Apis/DefaultApi.md#DELETE /v0/workflows/{workflow_id}) | **DELETE** /v0/workflows/{workflow_id} |  |
+*DefaultApi* | [**GET /v0/workflows/{workflow_id}**](Apis/DefaultApi.md#GET /v0/workflows/{workflow_id}) | **GET** /v0/workflows/{workflow_id} |  |
 
 
 <a name="documentation-for-models"></a>
