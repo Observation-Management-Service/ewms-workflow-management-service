@@ -4,22 +4,22 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| dot | **GET** /v0/ |  |
-| dot | **POST** /v0/query/task-directives |  |
-| dot | **POST** /v0/query/taskforces |  |
-| dot | **POST** /v0/query/workflows |  |
-| dot | **GET** /v0/schema/openapi |  |
-| dot | **GET** /v0/task-directives/{task_id} |  |
-| dot | **GET** /v0/taskforces/{taskforce_uuid} |  |
-| dot | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
-| dot | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} |  |
-| dot | **GET** /v0/tms/pending-starter/taskforces |  |
-| dot | **GET** /v0/tms/pending-stopper/taskforces |  |
-| dot | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} |  |
-| dot | **POST** /v0/tms/statuses/taskforces |  |
-| dot | **POST** /v0/workflows |  |
-| dot | **DELETE** /v0/workflows/{workflow_id} |  |
-| dot | **GET** /v0/workflows/{workflow_id} |  |
+| [**link**](DefaultApi.md#get-v0) | **GET** /v0/ |  |
+| [**link**](DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives |  |
+| [**link**](DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces |  |
+| [**link**](DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows |  |
+| [**link**](DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi |  |
+| [**link**](DefaultApi.md#get-v0task-directivestask-id) | **GET** /v0/task-directives/{task_id} |  |
+| [**link**](DefaultApi.md#get-v0taskforcestaskforce-uuid) | **GET** /v0/taskforces/{taskforce_uuid} |  |
+| [**link**](DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce-uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
+| [**link**](DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce-uuid) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} |  |
+| [**link**](DefaultApi.md#get-v0tmspending-startertaskforces) | **GET** /v0/tms/pending-starter/taskforces |  |
+| [**link**](DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces |  |
+| [**link**](DefaultApi.md#delete-v0tmspending-stoppertaskforcestaskforce-uuid) | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} |  |
+| [**link**](DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces |  |
+| [**link**](DefaultApi.md#post-v0workflows) | **POST** /v0/workflows |  |
+| [**link**](DefaultApi.md#delete-v0workflowsworkflow-id) | **DELETE** /v0/workflows/{workflow_id} |  |
+| [**link**](DefaultApi.md#get-v0workflowsworkflow-id) | **GET** /v0/workflows/{workflow_id} |  |
 
 
 <a name="GET /v0/"></a>
