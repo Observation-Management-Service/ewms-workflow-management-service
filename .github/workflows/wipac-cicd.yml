@@ -239,8 +239,9 @@ jobs:
               method_markdown_link=$(echo "$method_col_attr" | awk -F'#' '{print $2}' | sed 's/[)]//')
           
               set -x
+              # do link first in case the method header and link are too similar 
+              find "$outdir" -type f -exec sed -i "s;#$method_markdown_link;#$http_request_markdown_link;gI" {} +  # case-insensitive replacefind "$outdir" -type f -exec sed -i "s;$method_markdown_link;$http_request_markdown_link;gI" {} +  # case-insensitive replace
               find "$outdir" -type f -exec sed -i "s;$method_header;$http_request_header;gI" {} +  # case-insensitive replace
-              find "$outdir" -type f -exec sed -i "s;$method_markdown_link;$http_request_markdown_link;gI" {} +  # case-insensitive replace
               set +x
           done
 
