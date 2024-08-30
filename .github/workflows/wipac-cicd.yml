@@ -199,6 +199,11 @@ jobs:
                   continue
               fi
           
+              # Skip the table separator line
+              if [[ "$line" =~ ^\|[-| ]+\|$ ]]; then
+                  continue
+              fi
+          
               # Stop processing if a blank line is encountered (end of table)
               [[ -z "$line" ]] && break
           
