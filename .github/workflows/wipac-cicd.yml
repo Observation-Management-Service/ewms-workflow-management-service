@@ -218,14 +218,22 @@ jobs:
           
               http_request_header=$(echo "$http_request_col_attr" | tr -d '*')  # remove the markdown bold markers
               http_request_markdown_link=$(echo "$http_request_header" | \
-                  sed -e 's/\*\*//g' \               # Remove bold markers
-                      -e 's/[{}]//g' \               # Remove curly braces
-                      -e 's/[ /:_]/-/g' \            # Replace spaces, slashes, underscores, and colons with hyphens
-                      -e 's/[^a-zA-Z0-9-]//g' \      # Remove all other special characters
-                      -e 's/--*/-/g' \               # Replace multiple hyphens with a single one
-                      -e 's/^-//' \                  # Remove leading hyphen
-                      -e 's/-$//' \                  # Remove trailing hyphen
-                  | tr '[:upper:]' '[:lower:]')      # Convert to lowercase
+                  # Remove bold markers
+                  sed -e 's/\*\*//g' \
+                  # Remove curly braces
+                      -e 's/[{}]//g' \
+                  # Replace spaces, slashes, underscores, and colons with hyphens
+                      -e 's/[ /:_]/-/g' \
+                  # Remove all other special characters
+                      -e 's/[^a-zA-Z0-9-]//g' \
+                  # Replace multiple hyphens with a single one
+                      -e 's/--*/-/g' \
+                  # Remove leading hyphen
+                      -e 's/^-//' \
+                  # Remove trailing hyphen
+                      -e 's/-$//' \
+                  # Convert to lowercase
+                  | tr '[:upper:]' '[:lower:]')
           
               method_header=$(echo "$method_col_attr" | awk -F'[][]' '{print $2}' | sed 's/\*\*//g')
               method_markdown_link=$(echo "$method_col_attr" | awk -F'#' '{print $2}' | sed 's/[)]//')
