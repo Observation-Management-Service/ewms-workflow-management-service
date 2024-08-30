@@ -209,13 +209,14 @@ jobs:
               # Stop processing if a blank line is encountered (end of table)
               [[ -z "$line" ]] && break
           
+              # the first entry starts with `|`, the following do not: just lstrip all 
+              line=$(echo "$line" | sed 's/^|*//')
+          
               # Process the table row and extract the relevant fields
-              if [[ "$line" =~ \| ]]; then
-                  # Extract the Method and HTTP request fields (second and third columns)
-                  method_col_attr=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}')
-                  http_request_col_attr=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $3); print $3}')
-                  mapping["$method_col_attr"]="$http_request_col_attr"
-              fi
+              #    extract the Method and HTTP request fields (second and third columns)
+              method_col_attr=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}')
+              http_request_col_attr=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $3); print $3}')
+              mapping["$method_col_attr"]="$http_request_col_attr"
           done < "$outdir/README.md"
           
           # Now you can access the dictionary and process it as needed
