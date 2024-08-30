@@ -230,8 +230,8 @@ jobs:
               method_header=$(echo "$method_col_attr" | awk -F'[][]' '{print $2}' | sed 's/\*\*//g')
               method_markdown_link=$(echo "$method_col_attr" | awk -F'#' '{print $2}' | sed 's/[)]//')
           
-              find "$outdir" -type f -exec sed -i "s/$method_header/$http_request_header/gI" {} +  # case-insensitive replace
-              find "$outdir" -type f -exec sed -i "s/$method_markdown_link/$http_request_markdown_link/gI" {} +  # case-insensitive replace
+              find "$outdir" -type f -exec sed -i "s;$method_header;$http_request_header;gI" {} +  # case-insensitive replace
+              find "$outdir" -type f -exec sed -i "s;$method_markdown_link;$http_request_markdown_link;gI" {} +  # case-insensitive replace
           done
 
       - name: git add, commit, push
