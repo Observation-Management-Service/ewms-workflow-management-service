@@ -205,19 +205,34 @@ jobs:
               # Process the table row and extract the relevant fields
               if [[ "$line" =~ \| ]]; then
                   # Extract the Method and HTTP request fields (second and third columns)
-                  method=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}')
-                  http_request=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $3); print $3}')
-                  mapping["$method"]="$http_request"
+                  method_col_attr=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}')
+                  http_request_col_attr=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $3); print $3}')
+                  mapping["$method_col_attr"]="$http_request_col_attr"
               fi
           done < "$outdir/README.md"
           
           # Now you can access the dictionary and process it as needed
-          for key in "${!mapping[@]}"; do
-              echo "$key -> ${mapping[$key]}"
+          for method_col_attr in "${!mapping[@]}"; do
+              http_request_col_attr="${mapping[$key]}"
+              echo "$method_col_attr -> $http_request_col_attr"
+          
+              http_request_header=$(echo "$http_request_col_attr" | tr -d '*')  # remove the markdown bold markers
+              http_request_markdown_link=$(echo "$http_request_header" | \
+                  sed -e 's/\*\*//g' \               # Remove bold markers
+                      -e 's/[{}]//g' \               # Remove curly braces
+                      -e 's/[ /:_]/-/g' \            # Replace spaces, slashes, underscores, and colons with hyphens
+                      -e 's/[^a-zA-Z0-9-]//g' \      # Remove all other special characters
+                      -e 's/--*/-/g' \               # Replace multiple hyphens with a single one
+                      -e 's/^-//' \                  # Remove leading hyphen
+                      -e 's/-$//' \                  # Remove trailing hyphen
+                  | tr '[:upper:]' '[:lower:]')      # Convert to lowercase
+          
+              method_header=$(echo "$method_col_attr" | awk -F'[][]' '{print $2}' | sed 's/\*\*//g')
+              method_markdown_link=$(echo "$method_col_attr" | awk -F'#' '{print $2}' | sed 's/[)]//')
+          
+              find "$outdir" -type f -exec sed -i "s/$method_header/$http_request_header/gI" {} +  # case-insensitive replace
+              find "$outdir" -type f -exec sed -i "s/$method_markdown_link/$http_request_markdown_link/gI" {} +  # case-insensitive replace
           done
-
-
-
 
       - name: git add, commit, push
         if: env.IS_GIT_BEHIND != 'true'
