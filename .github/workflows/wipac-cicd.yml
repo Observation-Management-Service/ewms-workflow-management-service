@@ -242,7 +242,7 @@ jobs:
               # do link first in case the method header and link are too similar 
               find "$outdir" -type f -exec sed -i "s;#$method_markdown_link;#$http_request_markdown_link;gI" {} +  # case-insensitive replacefind "$outdir" -type f -exec sed -i "s;$method_markdown_link;$http_request_markdown_link;gI" {} +  # case-insensitive replace
               find "$outdir" -type f -exec sed -i "s;$method_header;$http_request_header;gI" {} +  # case-insensitive replace
-              find "$outdir" -type f -exec sed -i "s;\[\*\*$http_request_header\*\*\](.*\.md#$http_request_markdown_link);dot;g" {} +  # case-insensitive replace
+              find "$outdir" -type f -exec sed -i "s;\(\[\*\*\)$http_request_header\(\*\*\](.*\.md#$http_request_markdown_link)\);\1link\2;g" {} +  # case-insensitive replace
               set +x
           done
 
