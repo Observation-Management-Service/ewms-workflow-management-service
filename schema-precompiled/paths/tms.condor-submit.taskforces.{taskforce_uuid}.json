@@ -25,7 +25,8 @@
                                 "taskforce_uuid": {
                                     "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                 }
-                            }
+                            },
+                            "additionalProperties": false
                         }
                     }
                 }
