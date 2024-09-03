@@ -3,33 +3,33 @@
     "properties": {
         "taskforce_uuid": {
             "type": "string",
-            "description": "the unique ID for this object (auto-created)"
+            "description": "A unique identifier automatically generated for this taskforce."
         },
         "task_id": {
             "type": "string",
-            "description": "the ID of the associated task directive object (N taskforces : 1 task directive)"
+            "description": "The identifier of the associated task directive object (N taskforces : 1 task directive)."
         },
         "workflow_id": {
             "type": "string",
-            "description": "the ID of the encompassing workflow object (N*M taskforces : M task directive : 1 workflow)"
+            "description": "The identifier of the overarching workflow object (N*M taskforces : M task directives : 1 workflow)."
         },
         "timestamp": {
             "type": "number",
-            "description": "the time (epoch) when this object was created"
+            "description": "The epoch time when this taskforce was created."
         },
         "collector": {
             "type": "string",
-            "description": "the HTCondor collector address"
+            "description": "The address of the HTCondor collector."
         },
         "schedd": {
             "type": "string",
-            "description": "the HTCondor schedd address"
+            "description": "The address of the HTCondor schedd."
         },
         "n_workers": {
             "anyOf": [
                 {
                     "type": "integer",
-                    "description": "the number of workers for this taskforces's HTCondor cluster (immutable)"
+                    "description": "The number of workers in this taskforce's HTCondor cluster (immutable)."
                 },
                 {
                     "type": "null"
@@ -38,16 +38,16 @@
         },
         "pilot_config": {
             "type": "object",
-            "description": "configuration for the EWMS pilot",
+            "description": "Configuration settings for the EWMS pilot.",
             "properties": {
                 "image": {
                     "type": "string",
-                    "description": "the images tag to use ('v#.#.#' or 'latest'): useful for repeatability",
+                    "description": "The image tag to use (e.g., 'v#.#.#' or 'latest'). This is useful for repeatability.",
                     "pattern": "^(v[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})|(latest)$"
                 },
                 "environment": {
                     "type": "object",
-                    "description": "environment variables and values",
+                    "description": "Environment variables and their corresponding values.",
                     "additionalProperties": {
                         "anyOf": [
                             {
@@ -69,7 +69,7 @@
                 },
                 "input_files": {
                     "type": "array",
-                    "description": "paths to files to make available to the task container -- must already be accessible on the AP",
+                    "description": "Paths to files to make available to the task container. These files must already be accessible on the AP.",
                     "items": {
                         "type": "string"
                     },
@@ -85,31 +85,31 @@
         },
         "worker_config": {
             "type": "object",
-            "description": "configuration for the HTCondor cluster submission",
+            "description": "Configuration settings for the HTCondor cluster submission.",
             "properties": {
                 "do_transfer_worker_stdouterr": {
                     "type": "boolean",
-                    "description": "whether to transfer back the workers' stdout and stderr (accessible on the AP)"
+                    "description": "Indicates whether to transfer back the workers' stdout and stderr (accessible on the AP)."
                 },
                 "max_worker_runtime": {
                     "type": "integer",
-                    "description": "the maximum runtime for a worker -- adjust for optimization (may want to kill slow CPUs)"
+                    "description": "The maximum runtime for a worker. Adjust this to optimize performance (e.g., to terminate slow CPUs)."
                 },
                 "n_cores": {
                     "type": "integer",
-                    "description": "the number of cores to request per HTCondor worker"
+                    "description": "The number of cores to request per HTCondor worker."
                 },
                 "priority": {
                     "type": "integer",
-                    "description": "the HTCondor priority"
+                    "description": "The priority level for the HTCondor submission."
                 },
                 "worker_disk": {
                     "type": "string",
-                    "description": "the amount of disk to request per HTCondor worker"
+                    "description": "The amount of disk space to request per HTCondor worker."
                 },
                 "worker_memory": {
                     "type": "string",
-                    "description": "the amount of memory to request per HTCondor worker"
+                    "description": "The amount of memory to request per HTCondor worker."
                 }
             },
             "additionalProperties": false,
@@ -126,7 +126,7 @@
             "anyOf": [
                 {
                     "type": "integer",
-                    "description": "the ID for the associated HTCondor cluster"
+                    "description": "The identifier for the associated HTCondor cluster."
                 },
                 {
                     "type": "null"
@@ -135,7 +135,7 @@
         },
         "submit_dict": {
             "type": "object",
-            "description": "the actual HTCondor submit class ad",
+            "description": "The actual HTCondor submit class ad.",
             "additionalProperties": {
                 "anyOf": [
                     {
@@ -150,13 +150,13 @@
         },
         "job_event_log_fpath": {
             "type": "string",
-            "description": "the filepath on the HTCondor AP containing job event logs"
+            "description": "The file path on the HTCondor AP containing job event logs."
         },
         "condor_complete_ts": {
             "anyOf": [
                 {
                     "type": "integer",
-                    "description": "the time (epoch) when the HTCondor cluster completed; null if not complete"
+                    "description": "The epoch time when the HTCondor cluster completed. If null, the cluster has not yet completed."
                 },
                 {
                     "type": "null"
@@ -165,7 +165,7 @@
         },
         "phase": {
             "type": "string",
-            "description": "the phase the taskforce is in for the workflow's lifetime (not all taskforces will be in every phase)",
+            "description": "The current phase of the taskforce within the workflow's lifetime. Not all taskforces will enter every phase.",
             "enum": [
                 "pre-mq-activation",
                 "pre-launch",
@@ -177,12 +177,11 @@
         },
         "compound_statuses": {
             "type": "object",
-            "description": "an aggregated status of the workers (double-dictionary), mapping HTCondor state to EWMS pilot state to count",
+            "description": "Aggregated status of the workers, represented as a nested dictionary mapping HTCondor states to EWMS pilot states and their counts.",
             "additionalProperties": {
                 "type": "object",
                 "additionalProperties": {
-                    "type": "integer",
-                    "description": ""
+                    "type": "integer"
                 },
                 "minProperties": 0
             },
@@ -190,10 +189,9 @@
         },
         "top_task_errors": {
             "type": "object",
-            "description": "the top errors for all workers, paired with the count",
+            "description": "The most common errors encountered by workers, paired with their occurrence counts.",
             "additionalProperties": {
-                "type": "integer",
-                "description": ""
+                "type": "integer"
             },
             "minProperties": 0
         }

@@ -3,15 +3,15 @@
     "properties": {
         "task_id": {
             "type": "string",
-            "description": "the unique ID for this object (auto-created)"
+            "description": "A unique identifier automatically generated for this task."
         },
         "workflow_id": {
             "type": "string",
-            "description": "the ID of the encompassing workflow object (M task directive : 1 workflow)"
+            "description": "The identifier of the overarching workflow object (M task directives : 1 workflow)."
         },
         "cluster_locations": {
             "type": "array",
-            "description": "the HTCondor pool(s) where the taskforce(s) will run",
+            "description": "The HTCondor pool(s) where the taskforce(s) will run.",
             "items": {
                 "type": "string"
             },
@@ -19,19 +19,19 @@
         },
         "task_image": {
             "type": "string",
-            "description": "the docker/singularity/apptainer image to run for each event: apptainer images in the directory (sandbox) format will start fastest, all others formats are first converted to such on each worker CPU"
+            "description": "The Docker/Singularity/Apptainer image to run for each event. Apptainer images in directory (sandbox) format will start fastest; other formats will first be converted to this format on each worker CPU."
         },
         "task_args": {
             "type": "string",
-            "description": "the arguments string to pass to the task image"
+            "description": "The argument string to pass to the task image."
         },
         "timestamp": {
             "type": "number",
-            "description": "the time (epoch) when this object was created"
+            "description": "The epoch time when this task was created."
         },
         "input_queues": {
             "type": "array",
-            "description": "the message queue(s) that this task will use for event input",
+            "description": "The message queue(s) that this task will use for event input.",
             "items": {
                 "type": "string"
             },
@@ -39,7 +39,7 @@
         },
         "output_queues": {
             "type": "array",
-            "description": "the message queue(s) that this task will use for event output",
+            "description": "The message queue(s) that this task will use for event output.",
             "items": {
                 "type": "string"
             },
