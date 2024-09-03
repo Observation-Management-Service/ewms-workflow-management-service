@@ -3,7 +3,7 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String** |  | [optional] [default to null] |
+| **taskforce\_uuid** | **String** | the unique ID for this taskforce object (auto-created) | [optional] [default to null] |
 | **task\_id** | **String** |  | [optional] [default to null] |
 | **workflow\_id** | **String** |  | [optional] [default to null] |
 | **timestamp** | **BigDecimal** |  | [optional] [default to null] |
