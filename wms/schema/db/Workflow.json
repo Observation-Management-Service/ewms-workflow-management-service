@@ -1,5 +1,6 @@
 {
     "type": "object",
+    "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main?tab=readme-ov-file#workflow",
     "properties": {
         "workflow_id": {
             "type": "string",

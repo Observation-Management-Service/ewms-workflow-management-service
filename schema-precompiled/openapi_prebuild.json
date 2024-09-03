@@ -50,6 +50,7 @@
             "TaskforceObject": "GHA_CI_INGEST_FILE_CONTENTS ../wms/schema/db/Taskforce.json required=[]",
             "FindObject": {
                 "type": "object",
+                "description": "The fields and values used to search.",
                 "properties": {
                     "query": {
                         "description": "the search criteria (MongoDB-filter syntax)",

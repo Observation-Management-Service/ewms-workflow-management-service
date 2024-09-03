@@ -1,5 +1,6 @@
 {
     "type": "object",
+    "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#taskforce",
     "properties": {
         "taskforce_uuid": {
             "type": "string",

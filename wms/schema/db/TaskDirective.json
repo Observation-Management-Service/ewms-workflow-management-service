@@ -1,5 +1,6 @@
 {
     "type": "object",
+    "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#task-directive",
     "properties": {
         "task_id": {
             "type": "string",
