@@ -798,7 +798,7 @@
                 }
             ],
             "post": {
-                "description": "Updates the specified taskforce with the completion timestamp of the HTCondor cluster.",
+                "description": "For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -895,7 +895,7 @@
                 }
             ],
             "post": {
-                "description": "Confirms that a taskforce has been submitted to HTCondor for execution.",
+                "description": "For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -978,7 +978,7 @@
         "/v0/tms/pending-starter/taskforces": {
             "parameters": [],
             "get": {
-                "description": "Retrieves the next taskforce ready to start at the specified HTCondor location.",
+                "description": "For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
@@ -1037,7 +1037,7 @@
         "/v0/tms/pending-stopper/taskforces": {
             "parameters": [],
             "get": {
-                "description": "Retrieves the next taskforce ready to stop at the specified HTCondor location.",
+                "description": "For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
@@ -1100,7 +1100,7 @@
                 }
             ],
             "delete": {
-                "description": "Confirms that a taskforce has been removed on HTCondor.",
+                "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
                 "responses": {
                     "200": {
                         "description": "the uuid of the updated taskforce objects",
@@ -1174,7 +1174,7 @@
         "/v0/tms/statuses/taskforces": {
             "parameters": [],
             "post": {
-                "description": "Updates and returns the statuses and errors for the specified taskforces.",
+                "description": "For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces.",
                 "requestBody": {
                     "content": {
                         "application/json": {
