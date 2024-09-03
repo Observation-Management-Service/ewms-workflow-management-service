@@ -3,7 +3,7 @@
     "properties": {
         "taskforce_uuid": {
             "type": "string",
-            "description": "the unique ID for this taskforce object (auto-created)"
+            "description": "the unique ID for this object (auto-created)"
         },
         "task_id": {
             "type": "string",
@@ -15,7 +15,7 @@
         },
         "timestamp": {
             "type": "number",
-            "description": "the time (epoch) when this taskforce object was created"
+            "description": "the time (epoch) when this object was created"
         },
         "collector": {
             "type": "string",

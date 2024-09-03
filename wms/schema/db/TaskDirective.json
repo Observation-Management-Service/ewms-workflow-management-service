@@ -2,29 +2,36 @@
     "type": "object",
     "properties": {
         "task_id": {
-            "type": "string"
+            "type": "string",
+            "description": "the unique ID for this object (auto-created)"
         },
         "workflow_id": {
-            "type": "string"
+            "type": "string",
+            "description": "the ID of the encompassing workflow object (M task directive : 1 workflow)"
         },
         "cluster_locations": {
             "type": "array",
+            "description": "the HTCondor pool(s) where the taskforce(s) will run",
             "items": {
                 "type": "string"
             },
             "minItems": 1
         },
         "task_image": {
-            "type": "string"
+            "type": "string",
+            "description": "the docker/singularity/apptainer image to run for each event: apptainer images in the directory (sandbox) format will start fastest, all others formats are first converted to such on each worker CPU"
         },
         "task_args": {
-            "type": "string"
+            "type": "string",
+            "description": "the arguments string to pass to the task image"
         },
         "timestamp": {
-            "type": "number"
+            "type": "number",
+            "description": "the time (epoch) when this object was created"
         },
         "input_queues": {
             "type": "array",
+            "description": "the message queue(s) that this task will use for event input",
             "items": {
                 "type": "string"
             },
@@ -32,6 +39,7 @@
         },
         "output_queues": {
             "type": "array",
+            "description": "the message queue(s) that this task will use for event output",
             "items": {
                 "type": "string"
             },

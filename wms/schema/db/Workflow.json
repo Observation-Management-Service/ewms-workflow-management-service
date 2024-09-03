@@ -3,11 +3,11 @@
     "properties": {
         "workflow_id": {
             "type": "string",
-            "description": "the unique ID for this workflow object (auto-created)"
+            "description": "the unique ID for this object (auto-created)"
         },
         "timestamp": {
             "type": "number",
-            "description": "the time (epoch) when this workflow object was created"
+            "description": "the time (epoch) when this object was created"
         },
         "priority": {
             "type": "integer",
