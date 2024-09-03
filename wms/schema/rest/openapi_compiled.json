@@ -20,7 +20,7 @@
                 "name": "taskforce_uuid",
                 "in": "path",
                 "required": true,
-                "description": "the taskforce object's uuid",
+                "description": "uuid of the taskforce",
                 "schema": {
                     "type": "string"
                 }
@@ -400,6 +400,7 @@
         "/v0/query/task-directives": {
             "parameters": [],
             "post": {
+                "description": "Search for task directives using MongoDB-filter syntax",
                 "requestBody": {
                     "content": {
                         "application/json": {
