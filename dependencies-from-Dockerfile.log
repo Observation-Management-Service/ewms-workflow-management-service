@@ -12,7 +12,7 @@ certifi==2024.8.30
 cffi==1.17.0
 charset-normalizer==3.3.2
 coloredlogs==15.0.1
-cryptography==43.0.0
+cryptography==43.0.1
 Deprecated==1.2.14
 dnspython==2.6.1
 googleapis-common-protos==1.59.1
@@ -28,7 +28,7 @@ lazy-object-proxy==1.10.0
 MarkupSafe==2.1.5
 more-itertools==10.4.0
 motor==3.5.1
-openapi-core==0.19.3
+openapi-core==0.19.4
 openapi-schema-validator==0.6.2
 openapi-spec-validator==0.7.1
 opentelemetry-api==1.27.0
@@ -70,7 +70,7 @@ zipp==3.20.1
 ########################################################################
 #  pipdeptree
 ########################################################################
-cryptography==43.0.0
+cryptography==43.0.1
 └── cffi [required: >=1.12, installed: 1.17.0]
     └── pycparser [required: Any, installed: 2.22]
 pipdeptree==2.23.1
@@ -207,7 +207,7 @@ wms
 ├── motor [required: Any, installed: 3.5.1]
 │   └── pymongo [required: >=4.5,<5, installed: 4.8.0]
 │       └── dnspython [required: >=1.16.0,<3.0.0, installed: 2.6.1]
-├── openapi-core [required: Any, installed: 0.19.3]
+├── openapi-core [required: Any, installed: 0.19.4]
 │   ├── isodate [required: Any, installed: 0.6.1]
 │   │   └── six [required: Any, installed: 1.16.0]
 │   ├── jsonschema [required: >=4.18.0,<5.0.0, installed: 4.23.0]

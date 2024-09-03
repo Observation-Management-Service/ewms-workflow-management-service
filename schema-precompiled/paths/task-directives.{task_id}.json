@@ -11,6 +11,7 @@
         }
     ],
     "get": {
+        "description": "Retrieves the task directive that matches the specified task ID.",
         "responses": {
             "200": {
                 "description": "the matching task directive",

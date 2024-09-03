@@ -11,6 +11,7 @@
         }
     ],
     "get": {
+        "description": "Retrieves the workflow object that matches the specified workflow ID.",
         "responses": {
             "200": {
                 "description": "the matching workflow object",
@@ -75,6 +76,7 @@
         }
     },
     "delete": {
+        "description": "Aborts the specified workflow and updates the associated taskforces.",
         "responses": {
             "200": {
                 "description": "the matching workflow object",

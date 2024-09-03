@@ -1,28 +1,36 @@
 {
     "type": "object",
+    "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#taskforce",
     "properties": {
         "taskforce_uuid": {
-            "type": "string"
+            "type": "string",
+            "description": "A unique identifier automatically generated for this taskforce."
         },
         "task_id": {
-            "type": "string"
+            "type": "string",
+            "description": "The identifier of the associated task directive object (N taskforces : 1 task directive)."
         },
         "workflow_id": {
-            "type": "string"
+            "type": "string",
+            "description": "The identifier of the overarching workflow object (N*M taskforces : M task directives : 1 workflow)."
         },
         "timestamp": {
-            "type": "number"
+            "type": "number",
+            "description": "The epoch time when this taskforce was created."
         },
         "collector": {
-            "type": "string"
+            "type": "string",
+            "description": "The address of the HTCondor collector."
         },
         "schedd": {
-            "type": "string"
+            "type": "string",
+            "description": "The address of the HTCondor schedd."
         },
         "n_workers": {
             "anyOf": [
                 {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "The number of workers in this taskforce's HTCondor cluster (immutable)."
                 },
                 {
                     "type": "null"
@@ -31,13 +39,16 @@
         },
         "pilot_config": {
             "type": "object",
+            "description": "Configuration settings for the EWMS pilot.",
             "properties": {
                 "image": {
                     "type": "string",
+                    "description": "The image tag to use (e.g., 'v#.#.#' or 'latest'). This is useful for repeatability.",
                     "pattern": "^(v[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})|(latest)$"
                 },
                 "environment": {
                     "type": "object",
+                    "description": "Environment variables and their corresponding values.",
                     "additionalProperties": {
                         "anyOf": [
                             {
@@ -59,6 +70,7 @@
                 },
                 "input_files": {
                     "type": "array",
+                    "description": "Paths to files to make available to the task container. These files must already be accessible on the AP.",
                     "items": {
                         "type": "string"
                     },
@@ -74,24 +86,31 @@
         },
         "worker_config": {
             "type": "object",
+            "description": "Configuration settings for the HTCondor cluster submission.",
             "properties": {
                 "do_transfer_worker_stdouterr": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "description": "Indicates whether to transfer back the workers' stdout and stderr (accessible on the AP)."
                 },
                 "max_worker_runtime": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "The maximum runtime for a worker. Adjust this to optimize performance (e.g., to terminate slow CPUs)."
                 },
                 "n_cores": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "The number of cores to request per HTCondor worker."
                 },
                 "priority": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "The priority level for the HTCondor submission."
                 },
                 "worker_disk": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The amount of disk space to request per HTCondor worker."
                 },
                 "worker_memory": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The amount of memory to request per HTCondor worker."
                 }
             },
             "additionalProperties": false,
@@ -107,7 +126,8 @@
         "cluster_id": {
             "anyOf": [
                 {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "The identifier for the associated HTCondor cluster."
                 },
                 {
                     "type": "null"
@@ -116,6 +136,7 @@
         },
         "submit_dict": {
             "type": "object",
+            "description": "The actual HTCondor submit class ad.",
             "additionalProperties": {
                 "anyOf": [
                     {
@@ -129,12 +150,14 @@
             "minProperties": 0
         },
         "job_event_log_fpath": {
-            "type": "string"
+            "type": "string",
+            "description": "The file path on the HTCondor AP containing job event logs."
         },
         "condor_complete_ts": {
             "anyOf": [
                 {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "The epoch time when the HTCondor cluster completed. If null, the cluster has not yet completed."
                 },
                 {
                     "type": "null"
@@ -143,6 +166,7 @@
         },
         "phase": {
             "type": "string",
+            "description": "The current phase of the taskforce within the workflow's lifetime. Not all taskforces will enter every phase.",
             "enum": [
                 "pre-mq-activation",
                 "pre-launch",
@@ -154,6 +178,7 @@
         },
         "compound_statuses": {
             "type": "object",
+            "description": "Aggregated status of the workers, represented as a nested dictionary mapping HTCondor states to EWMS pilot states and their counts.",
             "additionalProperties": {
                 "type": "object",
                 "additionalProperties": {
@@ -165,6 +190,7 @@
         },
         "top_task_errors": {
             "type": "object",
+            "description": "The most common errors encountered by workers, paired with their occurrence counts.",
             "additionalProperties": {
                 "type": "integer"
             },

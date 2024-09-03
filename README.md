@@ -12,7 +12,7 @@ The WMS is both the central component and the external interface for the Event W
 - **Translates workflows** into actionable instructions.
 - **Coordinates assignments** among EWMS components.
 - **Manages workloads** based on available resources and workflow status.
-- **Relays** information (workflow statuses, history, etc.) to external parties on demand.
+- **Relays information** (workflow statuses, history, etc.) to external parties on demand.
 
 ## API Documentation
 

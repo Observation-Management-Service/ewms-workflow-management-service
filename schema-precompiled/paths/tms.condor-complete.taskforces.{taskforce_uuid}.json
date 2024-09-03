@@ -5,6 +5,7 @@
         }
     ],
     "post": {
+        "description": "For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster.",
         "requestBody": {
             "content": {
                 "application/json": {
@@ -30,7 +31,13 @@
                 "content": {
                     "application/json": {
                         "schema": {
-                            "$ref": "#/components/schemas/TaskforceUUIDObject"
+                            "type": "object",
+                            "properties": {
+                                "taskforce_uuid": {
+                                    "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                }
+                            },
+                            "additionalProperties": false
                         }
                     }
                 }

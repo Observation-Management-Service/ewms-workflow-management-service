@@ -1,30 +1,38 @@
 {
     "type": "object",
+    "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#task-directive",
     "properties": {
         "task_id": {
-            "type": "string"
+            "type": "string",
+            "description": "A unique identifier automatically generated for this task."
         },
         "workflow_id": {
-            "type": "string"
+            "type": "string",
+            "description": "The identifier of the overarching workflow object (M task directives : 1 workflow)."
         },
         "cluster_locations": {
             "type": "array",
+            "description": "The HTCondor pool(s) where the taskforce(s) will run.",
             "items": {
                 "type": "string"
             },
             "minItems": 1
         },
         "task_image": {
-            "type": "string"
+            "type": "string",
+            "description": "The Docker/Singularity/Apptainer image to run for each event. Apptainer images in directory (sandbox) format will start fastest; other formats will first be converted to this format on each worker CPU."
         },
         "task_args": {
-            "type": "string"
+            "type": "string",
+            "description": "The argument string to pass to the task image."
         },
         "timestamp": {
-            "type": "number"
+            "type": "number",
+            "description": "The epoch time when this task was created."
         },
         "input_queues": {
             "type": "array",
+            "description": "The message queue(s) that this task will use for event input.",
             "items": {
                 "type": "string"
             },
@@ -32,6 +40,7 @@
         },
         "output_queues": {
             "type": "array",
+            "description": "The message queue(s) that this task will use for event output.",
             "items": {
                 "type": "string"
             },

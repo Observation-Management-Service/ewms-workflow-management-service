@@ -20,7 +20,7 @@
                 "name": "taskforce_uuid",
                 "in": "path",
                 "required": true,
-                "description": "the taskforce object's uuid",
+                "description": "uuid of the taskforce",
                 "schema": {
                     "type": "string"
                 }
@@ -47,20 +47,25 @@
         "schemas": {
             "WorkflowObject": {
                 "type": "object",
+                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main?tab=readme-ov-file#workflow",
                 "properties": {
                     "workflow_id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "A unique identifier automatically generated for this workflow."
                     },
                     "timestamp": {
-                        "type": "number"
+                        "type": "number",
+                        "description": "The epoch time when this workflow was created."
                     },
                     "priority": {
-                        "type": "integer"
+                        "type": "integer",
+                        "description": "The workflow's priority level relative to other workflows."
                     },
                     "mq_activated_ts": {
                         "anyOf": [
                             {
-                                "type": "number"
+                                "type": "number",
+                                "description": "The epoch time when message queues were created for this workflow. If null, the queues have not yet been created."
                             },
                             {
                                 "type": "null"
@@ -68,10 +73,12 @@
                         ]
                     },
                     "_mq_activation_retry_at_ts": {
-                        "type": "number"
+                        "type": "number",
+                        "description": "For internal use only: The epoch time to retry requesting message queues from MQS."
                     },
                     "aborted": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "description": "Indicates whether the workflow has been aborted."
                     }
                 },
                 "required": [],
@@ -79,31 +86,39 @@
             },
             "TaskDirectiveObject": {
                 "type": "object",
+                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#task-directive",
                 "properties": {
                     "task_id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "A unique identifier automatically generated for this task."
                     },
                     "workflow_id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The identifier of the overarching workflow object (M task directives : 1 workflow)."
                     },
                     "cluster_locations": {
                         "type": "array",
+                        "description": "The HTCondor pool(s) where the taskforce(s) will run.",
                         "items": {
                             "type": "string"
                         },
                         "minItems": 1
                     },
                     "task_image": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The Docker/Singularity/Apptainer image to run for each event. Apptainer images in directory (sandbox) format will start fastest; other formats will first be converted to this format on each worker CPU."
                     },
                     "task_args": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The argument string to pass to the task image."
                     },
                     "timestamp": {
-                        "type": "number"
+                        "type": "number",
+                        "description": "The epoch time when this task was created."
                     },
                     "input_queues": {
                         "type": "array",
+                        "description": "The message queue(s) that this task will use for event input.",
                         "items": {
                             "type": "string"
                         },
@@ -111,6 +126,7 @@
                     },
                     "output_queues": {
                         "type": "array",
+                        "description": "The message queue(s) that this task will use for event output.",
                         "items": {
                             "type": "string"
                         },
@@ -122,29 +138,37 @@
             },
             "TaskforceObject": {
                 "type": "object",
+                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#taskforce",
                 "properties": {
                     "taskforce_uuid": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "A unique identifier automatically generated for this taskforce."
                     },
                     "task_id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The identifier of the associated task directive object (N taskforces : 1 task directive)."
                     },
                     "workflow_id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The identifier of the overarching workflow object (N*M taskforces : M task directives : 1 workflow)."
                     },
                     "timestamp": {
-                        "type": "number"
+                        "type": "number",
+                        "description": "The epoch time when this taskforce was created."
                     },
                     "collector": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The address of the HTCondor collector."
                     },
                     "schedd": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The address of the HTCondor schedd."
                     },
                     "n_workers": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": "The number of workers in this taskforce's HTCondor cluster (immutable)."
                             },
                             {
                                 "type": "null"
@@ -153,13 +177,16 @@
                     },
                     "pilot_config": {
                         "type": "object",
+                        "description": "Configuration settings for the EWMS pilot.",
                         "properties": {
                             "image": {
                                 "type": "string",
+                                "description": "The image tag to use (e.g., 'v#.#.#' or 'latest'). This is useful for repeatability.",
                                 "pattern": "^(v[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})|(latest)$"
                             },
                             "environment": {
                                 "type": "object",
+                                "description": "Environment variables and their corresponding values.",
                                 "additionalProperties": {
                                     "anyOf": [
                                         {
@@ -181,6 +208,7 @@
                             },
                             "input_files": {
                                 "type": "array",
+                                "description": "Paths to files to make available to the task container. These files must already be accessible on the AP.",
                                 "items": {
                                     "type": "string"
                                 },
@@ -196,24 +224,31 @@
                     },
                     "worker_config": {
                         "type": "object",
+                        "description": "Configuration settings for the HTCondor cluster submission.",
                         "properties": {
                             "do_transfer_worker_stdouterr": {
-                                "type": "boolean"
+                                "type": "boolean",
+                                "description": "Indicates whether to transfer back the workers' stdout and stderr (accessible on the AP)."
                             },
                             "max_worker_runtime": {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": "The maximum runtime for a worker. Adjust this to optimize performance (e.g., to terminate slow CPUs)."
                             },
                             "n_cores": {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": "The number of cores to request per HTCondor worker."
                             },
                             "priority": {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": "The priority level for the HTCondor submission."
                             },
                             "worker_disk": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "The amount of disk space to request per HTCondor worker."
                             },
                             "worker_memory": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "The amount of memory to request per HTCondor worker."
                             }
                         },
                         "additionalProperties": false,
@@ -229,7 +264,8 @@
                     "cluster_id": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": "The identifier for the associated HTCondor cluster."
                             },
                             {
                                 "type": "null"
@@ -238,6 +274,7 @@
                     },
                     "submit_dict": {
                         "type": "object",
+                        "description": "The actual HTCondor submit class ad.",
                         "additionalProperties": {
                             "anyOf": [
                                 {
@@ -251,12 +288,14 @@
                         "minProperties": 0
                     },
                     "job_event_log_fpath": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The file path on the HTCondor AP containing job event logs."
                     },
                     "condor_complete_ts": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": "The epoch time when the HTCondor cluster completed. If null, the cluster has not yet completed."
                             },
                             {
                                 "type": "null"
@@ -265,6 +304,7 @@
                     },
                     "phase": {
                         "type": "string",
+                        "description": "The current phase of the taskforce within the workflow's lifetime. Not all taskforces will enter every phase.",
                         "enum": [
                             "pre-mq-activation",
                             "pre-launch",
@@ -276,6 +316,7 @@
                     },
                     "compound_statuses": {
                         "type": "object",
+                        "description": "Aggregated status of the workers, represented as a nested dictionary mapping HTCondor states to EWMS pilot states and their counts.",
                         "additionalProperties": {
                             "type": "object",
                             "additionalProperties": {
@@ -287,6 +328,7 @@
                     },
                     "top_task_errors": {
                         "type": "object",
+                        "description": "The most common errors encountered by workers, paired with their occurrence counts.",
                         "additionalProperties": {
                             "type": "integer"
                         },
@@ -298,6 +340,7 @@
             },
             "FindObject": {
                 "type": "object",
+                "description": "The fields and values used to search.",
                 "properties": {
                     "query": {
                         "description": "the search criteria (MongoDB-filter syntax)",
@@ -316,19 +359,6 @@
                     "query"
                 ],
                 "additionalProperties": false
-            },
-            "TaskforceUUIDObject": {
-                "type": "object",
-                "properties": {
-                    "taskforce_uuid": {
-                        "description": "the uuid of the updated taskforce object",
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "taskforce_uuid"
-                ],
-                "additionalProperties": false
             }
         }
     },
@@ -336,6 +366,7 @@
         "/v0/": {
             "parameters": [],
             "get": {
+                "description": "Returns an empty response.",
                 "responses": {
                     "200": {
                         "description": "an empty response",
@@ -374,6 +405,7 @@
         "/v0/query/task-directives": {
             "parameters": [],
             "post": {
+                "description": "Queries and returns a list of task directive objects based on the provided criteria.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -439,6 +471,7 @@
         "/v0/query/taskforces": {
             "parameters": [],
             "post": {
+                "description": "Queries and returns a list of taskforce objects based on the provided criteria.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -504,6 +537,7 @@
         "/v0/query/workflows": {
             "parameters": [],
             "post": {
+                "description": "Queries and returns a list of workflow objects based on the provided criteria.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -569,6 +603,7 @@
         "/v0/schema/openapi": {
             "parameters": [],
             "get": {
+                "description": "Returns the OpenAPI schema.",
                 "responses": {
                     "200": {
                         "description": "the openapi schema",
@@ -623,6 +658,7 @@
                 }
             ],
             "get": {
+                "description": "Retrieves the task directive that matches the specified task ID.",
                 "responses": {
                     "200": {
                         "description": "the matching task directive",
@@ -694,6 +730,7 @@
                 }
             ],
             "get": {
+                "description": "Retrieves the taskforce object that matches the specified taskforce UUID.",
                 "responses": {
                     "200": {
                         "description": "the matching taskforce object",
@@ -765,6 +802,7 @@
                 }
             ],
             "post": {
+                "description": "For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -790,7 +828,13 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce_uuid": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                        }
+                                    },
+                                    "additionalProperties": false
                                 }
                             }
                         }
@@ -855,6 +899,7 @@
                 }
             ],
             "post": {
+                "description": "For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -870,7 +915,13 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce_uuid": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                        }
+                                    },
+                                    "additionalProperties": false
                                 }
                             }
                         }
@@ -931,6 +982,7 @@
         "/v0/tms/pending-starter/taskforces": {
             "parameters": [],
             "get": {
+                "description": "For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
@@ -989,6 +1041,7 @@
         "/v0/tms/pending-stopper/taskforces": {
             "parameters": [],
             "get": {
+                "description": "For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
@@ -1051,13 +1104,20 @@
                 }
             ],
             "delete": {
+                "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
                 "responses": {
                     "200": {
                         "description": "the uuid of the updated taskforce objects",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce_uuid": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                        }
+                                    },
+                                    "additionalProperties": false
                                 }
                             }
                         }
@@ -1118,6 +1178,7 @@
         "/v0/tms/statuses/taskforces": {
             "parameters": [],
             "post": {
+                "description": "For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1266,6 +1327,7 @@
         "/v0/workflows": {
             "parameters": [],
             "post": {
+                "description": "Creates a new workflow and associated task directives and taskforces.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1411,6 +1473,7 @@
                 }
             ],
             "get": {
+                "description": "Retrieves the workflow object that matches the specified workflow ID.",
                 "responses": {
                     "200": {
                         "description": "the matching workflow object",
@@ -1475,6 +1538,7 @@
                 }
             },
             "delete": {
+                "description": "Aborts the specified workflow and updates the associated taskforces.",
                 "responses": {
                     "200": {
                         "description": "the matching workflow object",

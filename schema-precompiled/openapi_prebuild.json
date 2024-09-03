@@ -20,7 +20,7 @@
                 "name": "taskforce_uuid",
                 "in": "path",
                 "required": true,
-                "description": "the taskforce object's uuid",
+                "description": "uuid of the taskforce",
                 "schema": {
                     "type": "string"
                 }
@@ -50,6 +50,7 @@
             "TaskforceObject": "GHA_CI_INGEST_FILE_CONTENTS ../wms/schema/db/Taskforce.json required=[]",
             "FindObject": {
                 "type": "object",
+                "description": "The fields and values used to search.",
                 "properties": {
                     "query": {
                         "description": "the search criteria (MongoDB-filter syntax)",
@@ -66,19 +67,6 @@
                 },
                 "required": [
                     "query"
-                ],
-                "additionalProperties": false
-            },
-            "TaskforceUUIDObject": {
-                "type": "object",
-                "properties": {
-                    "taskforce_uuid": {
-                        "description": "the uuid of the updated taskforce object",
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "taskforce_uuid"
                 ],
                 "additionalProperties": false
             }

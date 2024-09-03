@@ -1,6 +1,7 @@
 {
     "parameters": [],
     "get": {
+        "description": "Returns the OpenAPI schema.",
         "responses": {
             "200": {
                 "description": "the openapi schema",

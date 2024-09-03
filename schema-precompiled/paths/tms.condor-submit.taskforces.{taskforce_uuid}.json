@@ -5,6 +5,7 @@
         }
     ],
     "post": {
+        "description": "For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution.",
         "requestBody": {
             "content": {
                 "application/json": {
@@ -20,7 +21,13 @@
                 "content": {
                     "application/json": {
                         "schema": {
-                            "$ref": "#/components/schemas/TaskforceUUIDObject"
+                            "type": "object",
+                            "properties": {
+                                "taskforce_uuid": {
+                                    "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                }
+                            },
+                            "additionalProperties": false
                         }
                     }
                 }

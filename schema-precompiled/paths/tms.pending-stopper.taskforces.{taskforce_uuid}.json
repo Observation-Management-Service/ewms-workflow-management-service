@@ -5,13 +5,20 @@
         }
     ],
     "delete": {
+        "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
         "responses": {
             "200": {
                 "description": "the uuid of the updated taskforce objects",
                 "content": {
                     "application/json": {
                         "schema": {
-                            "$ref": "#/components/schemas/TaskforceUUIDObject"
+                            "type": "object",
+                            "properties": {
+                                "taskforce_uuid": {
+                                    "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                }
+                            },
+                            "additionalProperties": false
                         }
                     }
                 }
