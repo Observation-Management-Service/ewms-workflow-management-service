@@ -1,6 +1,7 @@
 {
     "parameters": [],
     "post": {
+        "description": "Search for task directives using MongoDB-filter syntax",
         "requestBody": {
             "content": {
                 "application/json": {

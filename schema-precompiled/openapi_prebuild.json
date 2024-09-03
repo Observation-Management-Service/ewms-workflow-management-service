@@ -20,7 +20,7 @@
                 "name": "taskforce_uuid",
                 "in": "path",
                 "required": true,
-                "description": "the taskforce object's uuid",
+                "description": "uuid of the taskforce",
                 "schema": {
                     "type": "string"
                 }
