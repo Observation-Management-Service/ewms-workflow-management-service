@@ -186,7 +186,7 @@ This endpoint does not need any parameter.
 
 <a name="POST /v0/tms/condor-complete/taskforces/{taskforce_uuid}"></a>
 # **POST /v0/tms/condor-complete/taskforces/{taskforce_uuid}**
-> TaskforceUUIDObject POST /v0/tms/condor-complete/taskforces/{taskforce_uuid}(taskforce\_uuid, \_v0\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request)
+> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-complete/taskforces/{taskforce_uuid}(taskforce\_uuid, \_v0\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request)
 
 
 
@@ -199,7 +199,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**TaskforceUUIDObject**](../Models/TaskforceUUIDObject.md)
+[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
 
 ### Authorization
 
@@ -211,7 +211,7 @@ This endpoint does not need any parameter.
 
 <a name="POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}"></a>
 # **POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}**
-> TaskforceUUIDObject POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}(taskforce\_uuid, TaskforceObject)
+> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}(taskforce\_uuid, TaskforceObject)
 
 
 
@@ -224,7 +224,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**TaskforceUUIDObject**](../Models/TaskforceUUIDObject.md)
+[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
 
 ### Authorization
 
@@ -286,7 +286,7 @@ This endpoint does not need any parameter.
 
 <a name="DELETE /v0/tms/pending-stopper/taskforces/{taskforce_uuid}"></a>
 # **DELETE /v0/tms/pending-stopper/taskforces/{taskforce_uuid}**
-> TaskforceUUIDObject DELETE /v0/tms/pending-stopper/taskforces/{taskforce_uuid}(taskforce\_uuid)
+> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response DELETE /v0/tms/pending-stopper/taskforces/{taskforce_uuid}(taskforce\_uuid)
 
 
 
@@ -298,7 +298,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**TaskforceUUIDObject**](../Models/TaskforceUUIDObject.md)
+[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
 
 ### Authorization
 
