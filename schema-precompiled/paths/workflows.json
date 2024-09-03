@@ -1,6 +1,7 @@
 {
     "parameters": [],
     "post": {
+        "description": "Creates a new workflow and associated task directives and taskforces.",
         "requestBody": {
             "content": {
                 "application/json": {

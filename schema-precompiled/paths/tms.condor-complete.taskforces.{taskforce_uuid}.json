@@ -5,6 +5,7 @@
         }
     ],
     "post": {
+        "description": "Updates the specified taskforce with the completion timestamp of the HTCondor cluster.",
         "requestBody": {
             "content": {
                 "application/json": {

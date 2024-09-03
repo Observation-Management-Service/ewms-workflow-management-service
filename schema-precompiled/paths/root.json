@@ -1,6 +1,7 @@
 {
     "parameters": [],
     "get": {
+        "description": "Returns an empty response.",
         "responses": {
             "200": {
                 "description": "an empty response",

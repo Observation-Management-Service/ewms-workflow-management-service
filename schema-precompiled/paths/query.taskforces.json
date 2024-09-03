@@ -1,6 +1,7 @@
 {
     "parameters": [],
     "post": {
+        "description": "Queries and returns a list of taskforce objects based on the provided criteria.",
         "requestBody": {
             "content": {
                 "application/json": {

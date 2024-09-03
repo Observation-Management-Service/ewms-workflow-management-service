@@ -5,6 +5,7 @@
         }
     ],
     "post": {
+        "description": "Confirms that a taskforce has been submitted to HTCondor for execution.",
         "requestBody": {
             "content": {
                 "application/json": {

@@ -1,6 +1,7 @@
 {
     "parameters": [],
     "get": {
+        "description": "Retrieves the next taskforce ready to start at the specified HTCondor location.",
         "parameters": [
             {
                 "$ref": "#/components/parameters/CondorCollector"
