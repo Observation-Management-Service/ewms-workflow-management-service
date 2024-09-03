@@ -362,6 +362,7 @@
         "/v0/": {
             "parameters": [],
             "get": {
+                "description": "Returns an empty response.",
                 "responses": {
                     "200": {
                         "description": "an empty response",
@@ -400,7 +401,7 @@
         "/v0/query/task-directives": {
             "parameters": [],
             "post": {
-                "description": "Search for task directives using MongoDB-filter syntax",
+                "description": "Queries and returns a list of task directive objects based on the provided criteria.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -466,6 +467,7 @@
         "/v0/query/taskforces": {
             "parameters": [],
             "post": {
+                "description": "Queries and returns a list of taskforce objects based on the provided criteria.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -531,6 +533,7 @@
         "/v0/query/workflows": {
             "parameters": [],
             "post": {
+                "description": "Queries and returns a list of workflow objects based on the provided criteria.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -596,6 +599,7 @@
         "/v0/schema/openapi": {
             "parameters": [],
             "get": {
+                "description": "Returns the OpenAPI schema.",
                 "responses": {
                     "200": {
                         "description": "the openapi schema",
@@ -650,6 +654,7 @@
                 }
             ],
             "get": {
+                "description": "Retrieves the task directive that matches the specified task ID.",
                 "responses": {
                     "200": {
                         "description": "the matching task directive",
@@ -721,6 +726,7 @@
                 }
             ],
             "get": {
+                "description": "Retrieves the taskforce object that matches the specified taskforce UUID.",
                 "responses": {
                     "200": {
                         "description": "the matching taskforce object",
@@ -792,6 +798,7 @@
                 }
             ],
             "post": {
+                "description": "Updates the specified taskforce with the completion timestamp of the HTCondor cluster.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -888,6 +895,7 @@
                 }
             ],
             "post": {
+                "description": "Confirms that a taskforce has been submitted to HTCondor for execution.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -970,6 +978,7 @@
         "/v0/tms/pending-starter/taskforces": {
             "parameters": [],
             "get": {
+                "description": "Retrieves the next taskforce ready to start at the specified HTCondor location.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
@@ -1028,6 +1037,7 @@
         "/v0/tms/pending-stopper/taskforces": {
             "parameters": [],
             "get": {
+                "description": "Retrieves the next taskforce ready to stop at the specified HTCondor location.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
@@ -1090,6 +1100,7 @@
                 }
             ],
             "delete": {
+                "description": "Confirms that a taskforce has been removed on HTCondor.",
                 "responses": {
                     "200": {
                         "description": "the uuid of the updated taskforce objects",
@@ -1163,6 +1174,7 @@
         "/v0/tms/statuses/taskforces": {
             "parameters": [],
             "post": {
+                "description": "Updates and returns the statuses and errors for the specified taskforces.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1311,6 +1323,7 @@
         "/v0/workflows": {
             "parameters": [],
             "post": {
+                "description": "Creates a new workflow and associated task directives and taskforces.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1456,6 +1469,7 @@
                 }
             ],
             "get": {
+                "description": "Retrieves the workflow object that matches the specified workflow ID.",
                 "responses": {
                     "200": {
                         "description": "the matching workflow object",
@@ -1520,6 +1534,7 @@
                 }
             },
             "delete": {
+                "description": "Aborts the specified workflow and updates the associated taskforces.",
                 "responses": {
                     "200": {
                         "description": "the matching workflow object",
