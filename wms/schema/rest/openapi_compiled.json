@@ -50,35 +50,34 @@
                 "properties": {
                     "workflow_id": {
                         "type": "string",
-                        "description": "the unique ID for this workflow object (auto-created)"
+                        "description": "A unique identifier automatically generated for this workflow."
                     },
                     "timestamp": {
                         "type": "number",
-                        "description": "the time (epoch) when this workflow object was created"
+                        "description": "The epoch time when this workflow was created."
                     },
                     "priority": {
                         "type": "integer",
-                        "description": "the priority of the workflow in relation to other workflows"
+                        "description": "The workflow's priority level relative to other workflows."
                     },
                     "mq_activated_ts": {
                         "anyOf": [
                             {
                                 "type": "number",
-                                "description": "NUMBER the time (epoch) when message queues were created for the workflow; null if queues have not (yet) been created"
+                                "description": "The epoch time when message queues were created for this workflow. If null, the queues have not yet been created."
                             },
                             {
-                                "type": "null",
-                                "description": "NULL the time (epoch) when message queues were created for the workflow; null if queues have not (yet) been created"
+                                "type": "null"
                             }
                         ]
                     },
                     "_mq_activation_retry_at_ts": {
                         "type": "number",
-                        "description": "internal use only: when to retry requesting message queues from MQS"
+                        "description": "For internal use only: The epoch time to retry requesting message queues from MQS."
                     },
                     "aborted": {
                         "type": "boolean",
-                        "description": "whether the workflow has been aborted"
+                        "description": "Indicates whether the workflow has been aborted."
                     }
                 },
                 "required": [],
@@ -88,29 +87,36 @@
                 "type": "object",
                 "properties": {
                     "task_id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "A unique identifier automatically generated for this task."
                     },
                     "workflow_id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The identifier of the overarching workflow object (M task directives : 1 workflow)."
                     },
                     "cluster_locations": {
                         "type": "array",
+                        "description": "The HTCondor pool(s) where the taskforce(s) will run.",
                         "items": {
                             "type": "string"
                         },
                         "minItems": 1
                     },
                     "task_image": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The Docker/Singularity/Apptainer image to run for each event. Apptainer images in directory (sandbox) format will start fastest; other formats will first be converted to this format on each worker CPU."
                     },
                     "task_args": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The argument string to pass to the task image."
                     },
                     "timestamp": {
-                        "type": "number"
+                        "type": "number",
+                        "description": "The epoch time when this task was created."
                     },
                     "input_queues": {
                         "type": "array",
+                        "description": "The message queue(s) that this task will use for event input.",
                         "items": {
                             "type": "string"
                         },
@@ -118,6 +124,7 @@
                     },
                     "output_queues": {
                         "type": "array",
+                        "description": "The message queue(s) that this task will use for event output.",
                         "items": {
                             "type": "string"
                         },
@@ -132,64 +139,61 @@
                 "properties": {
                     "taskforce_uuid": {
                         "type": "string",
-                        "description": "the unique ID for this taskforce object (auto-created)"
+                        "description": "A unique identifier automatically generated for this taskforce."
                     },
                     "task_id": {
                         "type": "string",
-                        "description": ""
+                        "description": "The identifier of the associated task directive object (N taskforces : 1 task directive)."
                     },
                     "workflow_id": {
                         "type": "string",
-                        "description": ""
+                        "description": "The identifier of the overarching workflow object (N*M taskforces : M task directives : 1 workflow)."
                     },
                     "timestamp": {
                         "type": "number",
-                        "description": ""
+                        "description": "The epoch time when this taskforce was created."
                     },
                     "collector": {
                         "type": "string",
-                        "description": ""
+                        "description": "The address of the HTCondor collector."
                     },
                     "schedd": {
                         "type": "string",
-                        "description": ""
+                        "description": "The address of the HTCondor schedd."
                     },
                     "n_workers": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": "The number of workers in this taskforce's HTCondor cluster (immutable)."
                             },
                             {
                                 "type": "null"
                             }
-                        ],
-                        "description": ""
+                        ]
                     },
                     "pilot_config": {
                         "type": "object",
-                        "description": "",
+                        "description": "Configuration settings for the EWMS pilot.",
                         "properties": {
                             "image": {
                                 "type": "string",
-                                "description": "",
+                                "description": "The image tag to use (e.g., 'v#.#.#' or 'latest'). This is useful for repeatability.",
                                 "pattern": "^(v[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})|(latest)$"
                             },
                             "environment": {
                                 "type": "object",
-                                "description": "",
+                                "description": "Environment variables and their corresponding values.",
                                 "additionalProperties": {
                                     "anyOf": [
                                         {
-                                            "type": "string",
-                                            "description": ""
+                                            "type": "string"
                                         },
                                         {
-                                            "type": "integer",
-                                            "description": ""
+                                            "type": "integer"
                                         },
                                         {
                                             "type": "array",
-                                            "description": "",
                                             "items": {
                                                 "type": "string"
                                             },
@@ -201,7 +205,7 @@
                             },
                             "input_files": {
                                 "type": "array",
-                                "description": "",
+                                "description": "Paths to files to make available to the task container. These files must already be accessible on the AP.",
                                 "items": {
                                     "type": "string"
                                 },
@@ -217,31 +221,31 @@
                     },
                     "worker_config": {
                         "type": "object",
-                        "description": "",
+                        "description": "Configuration settings for the HTCondor cluster submission.",
                         "properties": {
                             "do_transfer_worker_stdouterr": {
                                 "type": "boolean",
-                                "description": ""
+                                "description": "Indicates whether to transfer back the workers' stdout and stderr (accessible on the AP)."
                             },
                             "max_worker_runtime": {
                                 "type": "integer",
-                                "description": ""
+                                "description": "The maximum runtime for a worker. Adjust this to optimize performance (e.g., to terminate slow CPUs)."
                             },
                             "n_cores": {
                                 "type": "integer",
-                                "description": ""
+                                "description": "The number of cores to request per HTCondor worker."
                             },
                             "priority": {
                                 "type": "integer",
-                                "description": ""
+                                "description": "The priority level for the HTCondor submission."
                             },
                             "worker_disk": {
                                 "type": "string",
-                                "description": ""
+                                "description": "The amount of disk space to request per HTCondor worker."
                             },
                             "worker_memory": {
                                 "type": "string",
-                                "description": ""
+                                "description": "The amount of memory to request per HTCondor worker."
                             }
                         },
                         "additionalProperties": false,
@@ -257,26 +261,24 @@
                     "cluster_id": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": "The identifier for the associated HTCondor cluster."
                             },
                             {
                                 "type": "null"
                             }
-                        ],
-                        "description": ""
+                        ]
                     },
                     "submit_dict": {
                         "type": "object",
-                        "description": "",
+                        "description": "The actual HTCondor submit class ad.",
                         "additionalProperties": {
                             "anyOf": [
                                 {
-                                    "type": "string",
-                                    "description": ""
+                                    "type": "string"
                                 },
                                 {
-                                    "type": "integer",
-                                    "description": ""
+                                    "type": "integer"
                                 }
                             ]
                         },
@@ -284,22 +286,22 @@
                     },
                     "job_event_log_fpath": {
                         "type": "string",
-                        "description": ""
+                        "description": "The file path on the HTCondor AP containing job event logs."
                     },
                     "condor_complete_ts": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": "The epoch time when the HTCondor cluster completed. If null, the cluster has not yet completed."
                             },
                             {
                                 "type": "null"
                             }
-                        ],
-                        "description": ""
+                        ]
                     },
                     "phase": {
                         "type": "string",
-                        "description": "",
+                        "description": "The current phase of the taskforce within the workflow's lifetime. Not all taskforces will enter every phase.",
                         "enum": [
                             "pre-mq-activation",
                             "pre-launch",
@@ -311,12 +313,11 @@
                     },
                     "compound_statuses": {
                         "type": "object",
-                        "description": "",
+                        "description": "Aggregated status of the workers, represented as a nested dictionary mapping HTCondor states to EWMS pilot states and their counts.",
                         "additionalProperties": {
                             "type": "object",
                             "additionalProperties": {
-                                "type": "integer",
-                                "description": ""
+                                "type": "integer"
                             },
                             "minProperties": 0
                         },
@@ -324,10 +325,9 @@
                     },
                     "top_task_errors": {
                         "type": "object",
-                        "description": "",
+                        "description": "The most common errors encountered by workers, paired with their occurrence counts.",
                         "additionalProperties": {
-                            "type": "integer",
-                            "description": ""
+                            "type": "integer"
                         },
                         "minProperties": 0
                     }
