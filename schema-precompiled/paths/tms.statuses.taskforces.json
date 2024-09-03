@@ -1,7 +1,7 @@
 {
     "parameters": [],
     "post": {
-        "description": "Updates and returns the statuses and errors for the specified taskforces.",
+        "description": "For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces.",
         "requestBody": {
             "content": {
                 "application/json": {
