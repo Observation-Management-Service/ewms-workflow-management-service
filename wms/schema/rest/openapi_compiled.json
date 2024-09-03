@@ -829,7 +829,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce_uuid": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -909,7 +914,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce_uuid": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1096,7 +1106,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TaskforceUUIDObject"
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce_uuid": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                        }
+                                    }
                                 }
                             }
                         }
