@@ -49,6 +49,8 @@ null (empty response body)
 
 
 
+    Search for task directives using MongoDB-filter syntax
+
 ### Parameters
 
 |Name | Type | Description  | Notes |
@@ -170,7 +172,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| the taskforce object&#39;s uuid | [default to null] |
+| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
 
 ### Return type
 
@@ -194,7 +196,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| the taskforce object&#39;s uuid | [default to null] |
+| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
 | **\_v0\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request** | [**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_request**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_request.md)|  | [optional] |
 
 ### Return type
@@ -219,7 +221,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| the taskforce object&#39;s uuid | [default to null] |
+| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
 | **TaskforceObject** | [**TaskforceObject**](../Models/TaskforceObject.md)|  | [optional] |
 
 ### Return type
@@ -294,7 +296,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| the taskforce object&#39;s uuid | [default to null] |
+| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
 
 ### Return type
 

@@ -7,7 +7,7 @@
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
 | *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0) | **GET** /v0/ |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives |  |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives | Search for task directives using MongoDB-filter syntax |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces |  |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows |  |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi |  |
