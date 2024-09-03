@@ -30,6 +30,8 @@
  - [FindObject](./Models/FindObject.md)
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
+ - [TaskforceObject_cluster_id](./Models/TaskforceObject_cluster_id.md)
+ - [TaskforceObject_condor_complete_ts](./Models/TaskforceObject_condor_complete_ts.md)
  - [TaskforceObject_n_workers](./Models/TaskforceObject_n_workers.md)
  - [TaskforceObject_pilot_config](./Models/TaskforceObject_pilot_config.md)
  - [TaskforceObject_pilot_config_environment_value](./Models/TaskforceObject_pilot_config_environment_value.md)
