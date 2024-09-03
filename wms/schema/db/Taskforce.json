@@ -2,22 +2,28 @@
     "type": "object",
     "properties": {
         "taskforce_uuid": {
-            "type": "string"
+            "type": "string",
+            "description": "the unique ID for this taskforce object (auto-created)"
         },
         "task_id": {
-            "type": "string"
+            "type": "string",
+            "description": ""
         },
         "workflow_id": {
-            "type": "string"
+            "type": "string",
+            "description": ""
         },
         "timestamp": {
-            "type": "number"
+            "type": "number",
+            "description": ""
         },
         "collector": {
-            "type": "string"
+            "type": "string",
+            "description": ""
         },
         "schedd": {
-            "type": "string"
+            "type": "string",
+            "description": ""
         },
         "n_workers": {
             "anyOf": [
@@ -27,27 +33,34 @@
                 {
                     "type": "null"
                 }
-            ]
+            ],
+            "description": ""
         },
         "pilot_config": {
             "type": "object",
+            "description": "",
             "properties": {
                 "image": {
                     "type": "string",
+                    "description": "",
                     "pattern": "^(v[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})|(latest)$"
                 },
                 "environment": {
                     "type": "object",
+                    "description": "",
                     "additionalProperties": {
                         "anyOf": [
                             {
-                                "type": "string"
+                                "type": "string",
+                                "description": ""
                             },
                             {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": ""
                             },
                             {
                                 "type": "array",
+                                "description": "",
                                 "items": {
                                     "type": "string"
                                 },
@@ -59,6 +72,7 @@
                 },
                 "input_files": {
                     "type": "array",
+                    "description": "",
                     "items": {
                         "type": "string"
                     },
@@ -74,24 +88,31 @@
         },
         "worker_config": {
             "type": "object",
+            "description": "",
             "properties": {
                 "do_transfer_worker_stdouterr": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "description": ""
                 },
                 "max_worker_runtime": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": ""
                 },
                 "n_cores": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": ""
                 },
                 "priority": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": ""
                 },
                 "worker_disk": {
-                    "type": "string"
+                    "type": "string",
+                    "description": ""
                 },
                 "worker_memory": {
-                    "type": "string"
+                    "type": "string",
+                    "description": ""
                 }
             },
             "additionalProperties": false,
@@ -112,24 +133,29 @@
                 {
                     "type": "null"
                 }
-            ]
+            ],
+            "description": ""
         },
         "submit_dict": {
             "type": "object",
+            "description": "",
             "additionalProperties": {
                 "anyOf": [
                     {
-                        "type": "string"
+                        "type": "string",
+                        "description": ""
                     },
                     {
-                        "type": "integer"
+                        "type": "integer",
+                        "description": ""
                     }
                 ]
             },
             "minProperties": 0
         },
         "job_event_log_fpath": {
-            "type": "string"
+            "type": "string",
+            "description": ""
         },
         "condor_complete_ts": {
             "anyOf": [
@@ -139,10 +165,12 @@
                 {
                     "type": "null"
                 }
-            ]
+            ],
+            "description": ""
         },
         "phase": {
             "type": "string",
+            "description": "",
             "enum": [
                 "pre-mq-activation",
                 "pre-launch",
@@ -154,10 +182,12 @@
         },
         "compound_statuses": {
             "type": "object",
+            "description": "",
             "additionalProperties": {
                 "type": "object",
                 "additionalProperties": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": ""
                 },
                 "minProperties": 0
             },
@@ -165,8 +195,10 @@
         },
         "top_task_errors": {
             "type": "object",
+            "description": "",
             "additionalProperties": {
-                "type": "integer"
+                "type": "integer",
+                "description": ""
             },
             "minProperties": 0
         }

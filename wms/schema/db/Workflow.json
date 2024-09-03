@@ -16,13 +16,14 @@
         "mq_activated_ts": {
             "anyOf": [
                 {
-                    "type": "number"
+                    "type": "number",
+                    "description": "NUMBER the time (epoch) when message queues were created for the workflow; null if queues have not (yet) been created"
                 },
                 {
-                    "type": "null"
+                    "type": "null",
+                    "description": "NULL the time (epoch) when message queues were created for the workflow; null if queues have not (yet) been created"
                 }
-            ],
-            "description": "the time (epoch) when message queues were created for the workflow; null if queues have not (yet) been created"
+            ]
         },
         "_mq_activation_retry_at_ts": {
             "type": "number",
