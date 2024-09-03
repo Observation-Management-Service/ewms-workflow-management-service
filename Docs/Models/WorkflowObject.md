@@ -3,7 +3,7 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **workflow\_id** | **String** |  | [optional] [default to null] |
+| **workflow\_id** | **String** | this is the workflow id (descript) | [optional] [default to null] |
 | **timestamp** | **BigDecimal** |  | [optional] [default to null] |
 | **priority** | **Integer** |  | [optional] [default to null] |
 | **mq\_activated\_ts** | **BigDecimal** |  | [optional] [default to null] |
