@@ -28,6 +28,8 @@ All URIs are relative to *http://localhost*
 
 
 
+    Returns an empty response.
+
 ### Parameters
 This endpoint does not need any parameter.
 
@@ -49,7 +51,7 @@ null (empty response body)
 
 
 
-    Search for task directives using MongoDB-filter syntax
+    Queries and returns a list of task directive objects based on the provided criteria.
 
 ### Parameters
 
@@ -75,6 +77,8 @@ null (empty response body)
 
 
 
+    Queries and returns a list of taskforce objects based on the provided criteria.
+
 ### Parameters
 
 |Name | Type | Description  | Notes |
@@ -98,6 +102,8 @@ null (empty response body)
 > _v0_query_workflows_post_200_response POST /v0/query/workflows(FindObject)
 
 
+
+    Queries and returns a list of workflow objects based on the provided criteria.
 
 ### Parameters
 
@@ -123,6 +129,8 @@ null (empty response body)
 
 
 
+    Returns the OpenAPI schema.
+
 ### Parameters
 This endpoint does not need any parameter.
 
@@ -143,6 +151,8 @@ This endpoint does not need any parameter.
 > TaskDirectiveObject GET /v0/task-directives/{task_id}(task\_id)
 
 
+
+    Retrieves the task directive that matches the specified task ID.
 
 ### Parameters
 
@@ -168,6 +178,8 @@ This endpoint does not need any parameter.
 
 
 
+    Retrieves the taskforce object that matches the specified taskforce UUID.
+
 ### Parameters
 
 |Name | Type | Description  | Notes |
@@ -191,6 +203,8 @@ This endpoint does not need any parameter.
 > _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-complete/taskforces/{taskforce_uuid}(taskforce\_uuid, \_v0\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request)
 
 
+
+    Updates the specified taskforce with the completion timestamp of the HTCondor cluster.
 
 ### Parameters
 
@@ -217,6 +231,8 @@ This endpoint does not need any parameter.
 
 
 
+    Confirms that a taskforce has been submitted to HTCondor for execution.
+
 ### Parameters
 
 |Name | Type | Description  | Notes |
@@ -241,6 +257,8 @@ This endpoint does not need any parameter.
 > _v0_tms_pending_starter_taskforces_get_200_response GET /v0/tms/pending-starter/taskforces(collector, schedd)
 
 
+
+    Retrieves the next taskforce ready to start at the specified HTCondor location.
 
 ### Parameters
 
@@ -267,6 +285,8 @@ This endpoint does not need any parameter.
 
 
 
+    Retrieves the next taskforce ready to stop at the specified HTCondor location.
+
 ### Parameters
 
 |Name | Type | Description  | Notes |
@@ -292,6 +312,8 @@ This endpoint does not need any parameter.
 
 
 
+    Confirms that a taskforce has been removed on HTCondor.
+
 ### Parameters
 
 |Name | Type | Description  | Notes |
@@ -315,6 +337,8 @@ This endpoint does not need any parameter.
 > _v0_tms_statuses_taskforces_post_200_response POST /v0/tms/statuses/taskforces(\_v0\_tms\_statuses\_taskforces\_post\_request)
 
 
+
+    Updates and returns the statuses and errors for the specified taskforces.
 
 ### Parameters
 
@@ -340,6 +364,8 @@ This endpoint does not need any parameter.
 
 
 
+    Creates a new workflow and associated task directives and taskforces.
+
 ### Parameters
 
 |Name | Type | Description  | Notes |
@@ -364,6 +390,8 @@ This endpoint does not need any parameter.
 
 
 
+    Aborts the specified workflow and updates the associated taskforces.
+
 ### Parameters
 
 |Name | Type | Description  | Notes |
@@ -387,6 +415,8 @@ This endpoint does not need any parameter.
 > WorkflowObject GET /v0/workflows/{workflow_id}(workflow\_id)
 
 
+
+    Retrieves the workflow object that matches the specified workflow ID.
 
 ### Parameters
 

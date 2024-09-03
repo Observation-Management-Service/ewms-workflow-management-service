@@ -6,22 +6,22 @@
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
-| *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0) | **GET** /v0/ |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives | Search for task directives using MongoDB-filter syntax |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0taskforcestaskforce_uuid) | **GET** /v0/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce_uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuid) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-startertaskforces) | **GET** /v0/tms/pending-starter/taskforces |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0tmspending-stoppertaskforcestaskforce_uuid) | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflows) | **POST** /v0/workflows |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0workflowsworkflow_id) | **DELETE** /v0/workflows/{workflow_id} |  |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0workflowsworkflow_id) | **GET** /v0/workflows/{workflow_id} |  |
+| *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0) | **GET** /v0/ | Returns an empty response. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives | Queries and returns a list of task directive objects based on the provided criteria. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces | Queries and returns a list of taskforce objects based on the provided criteria. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows | Queries and returns a list of workflow objects based on the provided criteria. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi | Returns the OpenAPI schema. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} | Retrieves the task directive that matches the specified task ID. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0taskforcestaskforce_uuid) | **GET** /v0/taskforces/{taskforce_uuid} | Retrieves the taskforce object that matches the specified taskforce UUID. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce_uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} | Updates the specified taskforce with the completion timestamp of the HTCondor cluster. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuid) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} | Confirms that a taskforce has been submitted to HTCondor for execution. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-startertaskforces) | **GET** /v0/tms/pending-starter/taskforces | Retrieves the next taskforce ready to start at the specified HTCondor location. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces | Retrieves the next taskforce ready to stop at the specified HTCondor location. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0tmspending-stoppertaskforcestaskforce_uuid) | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} | Confirms that a taskforce has been removed on HTCondor. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces | Updates and returns the statuses and errors for the specified taskforces. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflows) | **POST** /v0/workflows | Creates a new workflow and associated task directives and taskforces. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0workflowsworkflow_id) | **DELETE** /v0/workflows/{workflow_id} | Aborts the specified workflow and updates the associated taskforces. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0workflowsworkflow_id) | **GET** /v0/workflows/{workflow_id} | Retrieves the workflow object that matches the specified workflow ID. |
 
 
 <a name="documentation-for-models"></a>
