@@ -49,7 +49,9 @@
                 "type": "object",
                 "properties": {
                     "workflow_id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "this is the workflow id (descript)",
+                        "tile": "id for the workflow (title)"
                     },
                     "timestamp": {
                         "type": "number"
