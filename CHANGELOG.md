@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.15 (2024-09-03)
+
+### Other
+
+* Add Details to OpenAPI Fields ([#46](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/46)) ([`f58f3ba`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/f58f3bacf2015a05fbe356df2280bc1a62c8904d))
+
 ## v0.3.14 (2024-08-30)
 
 ### Other
