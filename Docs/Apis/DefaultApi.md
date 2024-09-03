@@ -204,7 +204,7 @@ This endpoint does not need any parameter.
 
 
 
-    Updates the specified taskforce with the completion timestamp of the HTCondor cluster.
+    For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster.
 
 ### Parameters
 
@@ -231,7 +231,7 @@ This endpoint does not need any parameter.
 
 
 
-    Confirms that a taskforce has been submitted to HTCondor for execution.
+    For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution.
 
 ### Parameters
 
@@ -258,7 +258,7 @@ This endpoint does not need any parameter.
 
 
 
-    Retrieves the next taskforce ready to start at the specified HTCondor location.
+    For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location.
 
 ### Parameters
 
@@ -285,7 +285,7 @@ This endpoint does not need any parameter.
 
 
 
-    Retrieves the next taskforce ready to stop at the specified HTCondor location.
+    For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location.
 
 ### Parameters
 
@@ -312,7 +312,7 @@ This endpoint does not need any parameter.
 
 
 
-    Confirms that a taskforce has been removed on HTCondor.
+    For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.
 
 ### Parameters
 
@@ -338,7 +338,7 @@ This endpoint does not need any parameter.
 
 
 
-    Updates and returns the statuses and errors for the specified taskforces.
+    For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces.
 
 ### Parameters
 
