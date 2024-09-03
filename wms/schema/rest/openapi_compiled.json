@@ -47,6 +47,7 @@
         "schemas": {
             "WorkflowObject": {
                 "type": "object",
+                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main?tab=readme-ov-file#workflow",
                 "properties": {
                     "workflow_id": {
                         "type": "string",
@@ -85,6 +86,7 @@
             },
             "TaskDirectiveObject": {
                 "type": "object",
+                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#task-directive",
                 "properties": {
                     "task_id": {
                         "type": "string",
@@ -136,6 +138,7 @@
             },
             "TaskforceObject": {
                 "type": "object",
+                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#taskforce",
                 "properties": {
                     "taskforce_uuid": {
                         "type": "string",
@@ -337,6 +340,7 @@
             },
             "FindObject": {
                 "type": "object",
+                "description": "The fields and values used to search.",
                 "properties": {
                     "query": {
                         "description": "the search criteria (MongoDB-filter syntax)",
