@@ -1348,6 +1348,14 @@
                                                 "task_args": {
                                                     "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                                 },
+                                                "task_env": {
+                                                    "type": "object",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "minItems": 0,
+                                                    "minProperties": 0
+                                                },
                                                 "input_queue_aliases": {
                                                     "type": "array",
                                                     "items": {
