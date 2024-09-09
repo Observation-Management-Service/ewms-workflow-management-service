@@ -1337,7 +1337,7 @@
         "/v0/workflows": {
             "parameters": [],
             "post": {
-                "description": "Creates a new workflow and associated task directives and taskforces.",
+                "description": "Creates a new workflow along with its associated task directives and taskforces.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1360,6 +1360,7 @@
                                                     "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                                 },
                                                 "task_env": {
+                                                    "description": "Environment variables (and values) to set in the task instance.",
                                                     "type": "object",
                                                     "items": {
                                                         "type": "string"
@@ -1367,6 +1368,7 @@
                                                     "minProperties": 0
                                                 },
                                                 "input_queue_aliases": {
+                                                    "description": "User-defined aliases for input event queues. Globally-unique IDs for the queues will be generated after submission.",
                                                     "type": "array",
                                                     "uniqueItems": true,
                                                     "items": {
@@ -1375,6 +1377,7 @@
                                                     "minItems": 0
                                                 },
                                                 "output_queue_aliases": {
+                                                    "description": "User-defined aliases for output event queues. Globally-unique IDs for the queues will be generated after submission.",
                                                     "type": "array",
                                                     "uniqueItems": true,
                                                     "items": {
@@ -1405,6 +1408,7 @@
                                         "minItems": 1
                                     },
                                     "public_queue_aliases": {
+                                        "description": "User-defined aliases for queues listed in 'input_queue_aliases' and 'output_queue_aliases' that will be used externally. The actual IDs will be generated after submission.",
                                         "type": "array",
                                         "uniqueItems": true,
                                         "items": {
