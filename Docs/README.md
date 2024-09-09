@@ -19,7 +19,7 @@
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces | For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0tmspending-stoppertaskforcestaskforce_uuid) | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} | For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces | For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflows) | **POST** /v0/workflows | Creates a new workflow and associated task directives and taskforces. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflows) | **POST** /v0/workflows | Creates a new workflow along with its associated task directives and taskforces. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0workflowsworkflow_id) | **DELETE** /v0/workflows/{workflow_id} | Aborts the specified workflow and updates the associated taskforces. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0workflowsworkflow_id) | **GET** /v0/workflows/{workflow_id} | Retrieves the workflow object that matches the specified workflow ID. |
 

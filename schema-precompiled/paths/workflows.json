@@ -1,7 +1,7 @@
 {
     "parameters": [],
     "post": {
-        "description": "Creates a new workflow and associated task directives and taskforces.",
+        "description": "Creates a new workflow along with its associated task directives and taskforces.",
         "requestBody": {
             "content": {
                 "application/json": {
@@ -10,6 +10,7 @@
                         "properties": {
                             "tasks": {
                                 "type": "array",
+                                "uniqueItems": true,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -22,15 +23,43 @@
                                         "task_args": {
                                             "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                         },
+                                        "task_env": {
+                                            "description": "Environment variables (and values) to set in the task instance.",
+                                            "type": "object",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "minProperties": 0
+                                        },
+                                        "init_image": {
+                                            "type": "string",
+                                            "description": "The Docker/Singularity/Apptainer image for the init container. See 'task_image' for caveats/optimizations regarding the image format."
+                                        },
+                                        "init_args": {
+                                            "type": "string",
+                                            "description": "The argument string to pass to the init container."
+                                        },
+                                        "init_env": {
+                                            "description": "Environment variables (and values) to set in the init container.",
+                                            "type": "object",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "minProperties": 0
+                                        },
                                         "input_queue_aliases": {
+                                            "description": "User-defined aliases for input event queues. Globally-unique IDs for the queues will be generated after submission.",
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "type": "string"
                                             },
                                             "minItems": 0
                                         },
                                         "output_queue_aliases": {
+                                            "description": "User-defined aliases for output event queues. Globally-unique IDs for the queues will be generated after submission.",
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "type": "string"
                                             },
@@ -59,7 +88,9 @@
                                 "minItems": 1
                             },
                             "public_queue_aliases": {
+                                "description": "User-defined aliases for queues listed in 'input_queue_aliases' and 'output_queue_aliases' that will be used externally. The actual IDs will be generated after submission.",
                                 "type": "array",
+                                "uniqueItems": true,
                                 "items": {
                                     "type": "string"
                                 },
@@ -88,6 +119,7 @@
                                 },
                                 "task_directives": {
                                     "type": "array",
+                                    "uniqueItems": true,
                                     "items": {
                                         "$ref": "#/components/schemas/TaskDirectiveObject"
                                     },
@@ -95,6 +127,7 @@
                                 },
                                 "taskforces": {
                                     "type": "array",
+                                    "uniqueItems": true,
                                     "items": {
                                         "$ref": "#/components/schemas/TaskforceObject"
                                     },

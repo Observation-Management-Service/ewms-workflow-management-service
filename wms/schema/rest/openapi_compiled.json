@@ -98,6 +98,7 @@
                     },
                     "cluster_locations": {
                         "type": "array",
+                        "uniqueItems": true,
                         "description": "The HTCondor pool(s) where the taskforce(s) will run.",
                         "items": {
                             "type": "string"
@@ -118,6 +119,7 @@
                     },
                     "input_queues": {
                         "type": "array",
+                        "uniqueItems": true,
                         "description": "The message queue(s) that this task will use for event input.",
                         "items": {
                             "type": "string"
@@ -126,6 +128,7 @@
                     },
                     "output_queues": {
                         "type": "array",
+                        "uniqueItems": true,
                         "description": "The message queue(s) that this task will use for event output.",
                         "items": {
                             "type": "string"
@@ -208,6 +211,7 @@
                             },
                             "input_files": {
                                 "type": "array",
+                                "uniqueItems": true,
                                 "description": "Paths to files to make available to the task container. These files must already be accessible on the AP.",
                                 "items": {
                                     "type": "string"
@@ -349,6 +353,7 @@
                     "projection": {
                         "description": "the fields to include in the response",
                         "type": "array",
+                        "uniqueItems": true,
                         "items": {
                             "type": "string"
                         },
@@ -424,7 +429,7 @@
                                     "type": "object",
                                     "properties": {
                                         "task_directives": {
-                                            "description": "a list of task directive objects",
+                                            "description": "A list of task directive objects. Entries may not be unique if query included a 'projection'.",
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/TaskDirectiveObject"
@@ -490,7 +495,7 @@
                                     "type": "object",
                                     "properties": {
                                         "taskforces": {
-                                            "description": "a list of taskforce objects",
+                                            "description": "A list of taskforce objects. Entries may not be unique if query included a 'projection'.",
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/TaskforceObject"
@@ -556,7 +561,7 @@
                                     "type": "object",
                                     "properties": {
                                         "workflows": {
-                                            "description": "a list of workflow objects",
+                                            "description": "A list of workflow objects. Entries may not be unique if query included a 'projection'.",
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/WorkflowObject"
@@ -1230,6 +1235,7 @@
                                     "properties": {
                                         "results": {
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "type": "object",
                                                 "properties": {
@@ -1266,6 +1272,7 @@
                                     "properties": {
                                         "results": {
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "type": "object",
                                                 "properties": {
@@ -1327,7 +1334,7 @@
         "/v0/workflows": {
             "parameters": [],
             "post": {
-                "description": "Creates a new workflow and associated task directives and taskforces.",
+                "description": "Creates a new workflow along with its associated task directives and taskforces.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1336,6 +1343,7 @@
                                 "properties": {
                                     "tasks": {
                                         "type": "array",
+                                        "uniqueItems": true,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -1348,15 +1356,43 @@
                                                 "task_args": {
                                                     "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                                 },
+                                                "task_env": {
+                                                    "description": "Environment variables (and values) to set in the task instance.",
+                                                    "type": "object",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "minProperties": 0
+                                                },
+                                                "init_image": {
+                                                    "type": "string",
+                                                    "description": "The Docker/Singularity/Apptainer image for the init container. See 'task_image' for caveats/optimizations regarding the image format."
+                                                },
+                                                "init_args": {
+                                                    "type": "string",
+                                                    "description": "The argument string to pass to the init container."
+                                                },
+                                                "init_env": {
+                                                    "description": "Environment variables (and values) to set in the init container.",
+                                                    "type": "object",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "minProperties": 0
+                                                },
                                                 "input_queue_aliases": {
+                                                    "description": "User-defined aliases for input event queues. Globally-unique IDs for the queues will be generated after submission.",
                                                     "type": "array",
+                                                    "uniqueItems": true,
                                                     "items": {
                                                         "type": "string"
                                                     },
                                                     "minItems": 0
                                                 },
                                                 "output_queue_aliases": {
+                                                    "description": "User-defined aliases for output event queues. Globally-unique IDs for the queues will be generated after submission.",
                                                     "type": "array",
+                                                    "uniqueItems": true,
                                                     "items": {
                                                         "type": "string"
                                                     },
@@ -1385,7 +1421,9 @@
                                         "minItems": 1
                                     },
                                     "public_queue_aliases": {
+                                        "description": "User-defined aliases for queues listed in 'input_queue_aliases' and 'output_queue_aliases' that will be used externally. The actual IDs will be generated after submission.",
                                         "type": "array",
+                                        "uniqueItems": true,
                                         "items": {
                                             "type": "string"
                                         },
@@ -1414,6 +1452,7 @@
                                         },
                                         "task_directives": {
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "$ref": "#/components/schemas/TaskDirectiveObject"
                                             },
@@ -1421,6 +1460,7 @@
                                         },
                                         "taskforces": {
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "$ref": "#/components/schemas/TaskforceObject"
                                             },

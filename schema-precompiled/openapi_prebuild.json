@@ -59,6 +59,7 @@
                     "projection": {
                         "description": "the fields to include in the response",
                         "type": "array",
+                        "uniqueItems": true,
                         "items": {
                             "type": "string"
                         },
