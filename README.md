@@ -83,9 +83,9 @@ The task container is built from the user-provided image, specified by the [work
 
 ##### The Init Container
 
-The init container runs once on a worker before any task/event is processed. This is specified by the [workflow request object's `init_image`, `init_args`, and `init_env`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#post-v0workflows). See [EWMS Pilot documentation](https://github.com/Observation-Management-Service/ewms-pilot#the-init-container) for more information.
+The init container runs once on a worker before any task/event is processed. This is specified by the [workflow request object's `init_image`, `init_args`, and `init_env`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#post-v0workflows). See the [EWMS Pilot documentation](https://github.com/Observation-Management-Service/ewms-pilot#the-init-container) for more information.
 
-##### Persisted Attribute Locations
+##### Locations of Persisted Attributes
 
 The [workflow request object's](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#post-v0workflows) fields are mostly persisted in similarly-named fields the [`TaskDirective`](#task-directive) object. However, some are located in other places:
 
@@ -93,10 +93,10 @@ The [workflow request object's](https://github.com/Observation-Management-Servic
 |------------------------------|--------------------------------------------------------------------------------------------|
 | `task_image`                 | `TaskDirective.task_image` and `Taskforce.pilot_config.environment.EWMS_PILOT_TASK_IMAGE`  |
 | `task_args`                  | `TaskDirective.task_args` and `Taskforce.pilot_config.environment.EWMS_PILOT_TASK_ARGS`    |
-| `task_env`                   | `Taskforce.pilot_config.environment.EWMS_PILOT_TASK_ENV_JSON` (as JSON-string)             |
+| `task_env`                   | `Taskforce.pilot_config.environment.EWMS_PILOT_TASK_ENV_JSON` (as a JSON-string)           |
 | `init_image`                 | `Taskforce.pilot_config.environment.EWMS_PILOT_INIT_IMAGE`                                 |
 | `init_args`                  | `Taskforce.pilot_config.environment.EWMS_PILOT_INIT_ARGS`                                  |
-| `init_env`                   | `Taskforce.pilot_config.environment.EWMS_PILOT_INIT_ENV_JSON` (as JSON-string)             |
+| `init_env`                   | `Taskforce.pilot_config.environment.EWMS_PILOT_INIT_ENV_JSON` (as a JSON-string)           |
 | `pilot_config`               | `Taskforce.pilot_config` (with additions to the `environment` sub-field, like those above) |
 | `worker_config`              | `Taskforce.worker_config`                                                                  |
 | `n_workers`                  | `Taskforce.n_workers`                                                                      |
@@ -146,12 +146,12 @@ An **event** is an object transferred via **message queues**. It is the most fre
 
 A **task** refers to the unique combination of a workflow instance, container image, runtime arguments, environment variables, etc.
 
-The term **task** also has different meanings depending on the context within EWMS:
+The term **task** also has **different meanings depending on the context** within EWMS:
 
 - **User context**: A task is a unit of work intended for parallelization.
 - **[EWMS pilot context](#the-task-container)**: A task is a runtime instance of the task container, applied to an inbound **event** from a **message queue** and potentially produces outbound events (akin to a mathematical function).
 
-_Due to this ambiguity, the **task directive** is considered a first-order object within the WMS._
+_Due to this ambiguity, the [**task directive**](#task-directive) is considered a first-order object within the WMS._
 
 ### Task Directive
 
