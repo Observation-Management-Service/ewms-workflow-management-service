@@ -1,7 +1,7 @@
 {
     "parameters": [],
     "post": {
-        "description": "Creates a new workflow and associated task directives and taskforces.",
+        "description": "Creates a new workflow along with its associated task directives and taskforces.",
         "requestBody": {
             "content": {
                 "application/json": {
@@ -32,7 +32,7 @@
                                             "minProperties": 0
                                         },
                                         "input_queue_aliases": {
-                                            "description": "The queues that this task will use for input event communication. Each queue will have a globally-unqiue identifier generated, however these aliases can be used for more-easily locate and refer to each. These names are used in 'public_queue_aliases'.",
+                                            "description": "User-defined aliases for input event queues. Globally-unique IDs for the queues will be generated after submission.",
                                             "type": "array",
                                             "uniqueItems": true,
                                             "items": {
@@ -41,7 +41,7 @@
                                             "minItems": 0
                                         },
                                         "output_queue_aliases": {
-                                            "description": "The queues that this task will use for output event communication. Each queue will have a globally-unqiue identifier generated, however these aliases can be used for more-easily locate and refer to each. These names are used in 'public_queue_aliases'.",
+                                            "description": "User-defined aliases for output event queues. Globally-unique IDs for the queues will be generated after submission.",
                                             "type": "array",
                                             "uniqueItems": true,
                                             "items": {
@@ -72,7 +72,7 @@
                                 "minItems": 1
                             },
                             "public_queue_aliases": {
-                                "description": "Aliases for the queues that are listed in each task entry's 'input_queue_aliases' and 'output_queue_aliases' that are deemed for external use.",
+                                "description": "User-defined aliases for queues listed in 'input_queue_aliases' and 'output_queue_aliases' that will be used externally. The actual IDs will be generated after submission.",
                                 "type": "array",
                                 "uniqueItems": true,
                                 "items": {
