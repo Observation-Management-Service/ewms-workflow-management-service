@@ -20,9 +20,8 @@
                             "type": "object",
                             "properties": {
                                 "taskforces": {
-                                    "description": "a list of taskforce objects",
+                                    "description": "A list of taskforce objects. Entries may not be unique if query included a 'projection'.",
                                     "type": "array",
-                                    // "uniqueItems": true, // not unique b/c resp values have 'projection' applied
                                     "items": {
                                         "$ref": "#/components/schemas/TaskforceObject"
                                     },

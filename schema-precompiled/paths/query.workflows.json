@@ -20,9 +20,8 @@
                             "type": "object",
                             "properties": {
                                 "workflows": {
-                                    "description": "a list of workflow objects",
+                                    "description": "A list of workflow objects. Entries may not be unique if query included a 'projection'.",
                                     "type": "array",
-                                    // "uniqueItems": true, // not unique b/c resp values have 'projection' applied
                                     "items": {
                                         "$ref": "#/components/schemas/WorkflowObject"
                                     },
