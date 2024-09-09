@@ -5,6 +5,7 @@ import asyncio
 import itertools
 import json
 import logging
+import random
 import threading
 import time
 from pathlib import Path
@@ -22,7 +23,7 @@ from rest_tools.client import RestClient, SavedDeviceGrantAuth
 LOGGER = logging.getLogger(__name__)
 
 
-MSGS = set(
+BUNCH_OF_WORDS = set(
     [
         "foo",
         "bar",
@@ -31,7 +32,6 @@ MSGS = set(
         "test",
         "data",
         "example",
-        "123",
         "abc",
         "xyz",
         "apple",
@@ -78,14 +78,22 @@ MSGS = set(
 )
 
 
-async def load_queue(queue: Queue) -> None:
+def generate_strings(n: int):
+    return [f"{random.choice(list(BUNCH_OF_WORDS))}{i}" for i in range(n)]
+
+
+async def load_queue(queue: Queue, n: int) -> list[str]:
     """Load the in-queue's with several contents."""
-    LOGGER.info("Loading in-queue with messages...")
+    LOGGER.info("Loading input events...")
+
+    strings = generate_strings(n)
 
     async with queue.open_pub() as pub:
-        for i, msg in enumerate(MSGS):
+        for i, msg in enumerate(strings):
             await pub.send(msg)
             LOGGER.debug(f"enqueued #{i}: {msg}")
+
+    return strings
 
 
 async def request_workflow(
@@ -140,15 +148,15 @@ async def request_workflow(
     )
 
 
-async def read_queue(queue: Queue) -> None:
+async def read_queue(queue: Queue, output_events: list[str]) -> None:
     """Read and dump the out-queue's contents."""
-    LOGGER.info("Reading out-queue messages...")
+    LOGGER.info("Reading output events...")
 
-    # using a set bc...
+    # using a set b/c...
     # 1. mqclient doesn't guarantee deliver-once delivery
-    # 2. assuming (without domain knowledge) that result values are unique
+    # 2. we know that result values are unique (we have domain knowledge for this)
     got: set[Any] = set()
-    # alternatively, we could adjust the timeout though that requires other assumptions
+    # alternatively, we could adjust the timeout, but that requires other assumptions
 
     async with queue.open_sub() as sub:
         i = 0
@@ -156,10 +164,10 @@ async def read_queue(queue: Queue) -> None:
             LOGGER.debug(f"received #{i}: {msg}")
             got.add(msg)
             i += 1
-            if len(got) == len(MSGS):  # naive check (see above explanation)
+            if sorted(got) == sorted(output_events):
                 break
 
-    LOGGER.info("Done reading queue")
+    LOGGER.info("Done reading queue -- received all output events")
 
 
 async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
@@ -241,6 +249,12 @@ async def main() -> None:
     """explain."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--n-input-events",
+        required=True,
+        type=int,
+        help="the number of input events to put into EWMS",
+    )
+    parser.add_argument(
         "--pilot-cvmfs-image-tag",
         default="",
         help="the tag (version) of the pilot example image that the workers will use. Ex: 0.1.11",
@@ -279,11 +293,11 @@ async def main() -> None:
     )
 
     # monitor
-    def monitor_wrapper(rc: RestClient, workflow_id: str) -> None:
+    def monitor_sync_wrapper(rc: RestClient, workflow_id: str) -> None:
         asyncio.run(monitor_workflow(rc, workflow_id))
 
     threading.Thread(
-        target=monitor_wrapper,
+        target=monitor_sync_wrapper,
         args=(rc, workflow_id),
         daemon=True,
     ).start()
@@ -303,13 +317,14 @@ async def main() -> None:
 
     # load & read queues
     input_mqprofile = next(p for p in mqprofiles if p["mqid"] == input_queue)
-    await load_queue(
+    input_events = await load_queue(
         queue=Queue(
             input_mqprofile["broker_type"],
             address=input_mqprofile["broker_address"],
             name=input_mqprofile["mqid"],
             auth_token=input_mqprofile["auth_token"],
-        )
+        ),
+        n=args.n_input_events,
     )
     output_mqprofile = next(p for p in mqprofiles if p["mqid"] == output_queue)
     await read_queue(
@@ -319,7 +334,8 @@ async def main() -> None:
             name=output_mqprofile["mqid"],
             auth_token=output_mqprofile["auth_token"],
             timeout=60 * 20,
-        )
+        ),
+        output_events=input_events,  # NOTE: this is dependent on the task image!
     )
 
     # wait at end, so monitor thread can get some final updates
