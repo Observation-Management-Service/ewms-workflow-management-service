@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.16 (2024-09-09)
+
+### Other
+
+* Top-Level Alias Attrs for `POST workflows/` (from `pilot_config`) ([#47](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/47)) ([`75328d7`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/75328d7d01b5aadf5415eb30c65a97f7f5207977))
+
 ## v0.3.15 (2024-09-03)
 
 ### Other
