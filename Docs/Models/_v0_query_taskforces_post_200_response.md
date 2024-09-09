@@ -3,7 +3,7 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **taskforces** | [**List**](TaskforceObject.md) | a list of taskforce objects | [default to null] |
+| **taskforces** | [**Set**](TaskforceObject.md) | a list of taskforce objects | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

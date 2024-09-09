@@ -3,7 +3,7 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **workflows** | [**List**](WorkflowObject.md) | a list of workflow objects | [default to null] |
+| **workflows** | [**Set**](WorkflowObject.md) | a list of workflow objects | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
