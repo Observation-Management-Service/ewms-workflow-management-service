@@ -9,17 +9,17 @@ LOGGER = logging.getLogger(__name__)
 
 def add_values_to_pilot_config(task_input: dict) -> dict:
     """Add values (default and detected) to the pilot config dictionary."""
-    dicto = task_input.get("pilot_config", {})
+    pilot_config = task_input.get("pilot_config", {})
 
     # add to env vars
-    if "environment" not in dicto:
-        dicto["environment"] = {}
-    dicto["environment"].update(
+    if "environment" not in pilot_config:
+        pilot_config["environment"] = {}
+    pilot_config["environment"].update(
         {
             "EWMS_PILOT_TASK_IMAGE": task_input["task_image"],
             "EWMS_PILOT_TASK_ARGS": task_input["task_args"],
             "EWMS_PILOT_TASK_ENV_JSON": json.dumps(
-                json.loads(dicto["environment"]["EWMS_PILOT_TASK_ENV_JSON"])
+                json.loads(pilot_config["environment"]["EWMS_PILOT_TASK_ENV_JSON"])
                 | task_input["task_env"]
             ),
         }
@@ -27,7 +27,7 @@ def add_values_to_pilot_config(task_input: dict) -> dict:
 
     # attach defaults
     return {
-        "image": config.get_pilot_image(dicto.get("image", "latest")),
-        "environment": dicto["environment"],
-        "input_files": dicto.get("input_files", []),
+        "image": config.get_pilot_image(pilot_config.get("image", "latest")),
+        "environment": pilot_config["environment"],
+        "input_files": pilot_config.get("input_files", []),
     }
