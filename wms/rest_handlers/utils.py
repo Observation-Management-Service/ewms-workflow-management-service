@@ -18,11 +18,10 @@ def add_values_to_pilot_config(task_input: dict) -> dict:
         {
             "EWMS_PILOT_TASK_IMAGE": task_input["task_image"],
             "EWMS_PILOT_TASK_ARGS": task_input["task_args"],
-            "EWMS_PILOT_TASK_ENV_JSON": (  # don't call json.dumps if there's no data
-                json.dumps(task_input["task_env"]) if task_input.get("task_env") else {}
-            ),
         }
     )
+    if env := task_input.get("task_env"):
+        pilot_config["environment"]["EWMS_PILOT_TASK_ENV_JSON"] = json.dumps(env)
 
     # attach defaults
     return {
