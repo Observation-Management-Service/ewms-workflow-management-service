@@ -364,7 +364,7 @@ This endpoint does not need any parameter.
 
 
 
-    Creates a new workflow and associated task directives and taskforces.
+    Creates a new workflow along with its associated task directives and taskforces.
 
 ### Parameters
 
