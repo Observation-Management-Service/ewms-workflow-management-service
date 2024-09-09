@@ -22,7 +22,7 @@
                                 "taskforces": {
                                     "description": "a list of taskforce objects",
                                     "type": "array",
-                                    "uniqueItems": true,
+                                    // "uniqueItems": true, // not unique b/c resp values have 'projection' applied
                                     "items": {
                                         "$ref": "#/components/schemas/TaskforceObject"
                                     },

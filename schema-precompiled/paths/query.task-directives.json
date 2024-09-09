@@ -22,7 +22,7 @@
                                 "task_directives": {
                                     "description": "a list of task directive objects",
                                     "type": "array",
-                                    "uniqueItems": true,
+                                    // "uniqueItems": true, // not unique b/c resp values have 'projection' applied
                                     "items": {
                                         "$ref": "#/components/schemas/TaskDirectiveObject"
                                     },
