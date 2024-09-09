@@ -6,6 +6,7 @@
 | **cluster\_locations** | **List** | The HTCondor pool(s) where the taskforce(s) will run. | [default to null] |
 | **task\_image** | **String** | The Docker/Singularity/Apptainer image to run for each event. Apptainer images in directory (sandbox) format will start fastest; other formats will first be converted to this format on each worker CPU. | [default to null] |
 | **task\_args** | **String** | The argument string to pass to the task image. | [default to null] |
+| **task\_env** | [**Object**](.md) |  | [optional] [default to null] |
 | **input\_queue\_aliases** | **List** |  | [default to null] |
 | **output\_queue\_aliases** | **List** |  | [default to null] |
 | **pilot\_config** | [**TaskforceObject_pilot_config**](TaskforceObject_pilot_config.md) |  | [optional] [default to null] |
