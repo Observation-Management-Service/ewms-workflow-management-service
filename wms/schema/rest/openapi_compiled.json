@@ -1364,7 +1364,6 @@
                                                     "items": {
                                                         "type": "string"
                                                     },
-                                                    "minItems": 0,
                                                     "minProperties": 0
                                                 },
                                                 "input_queue_aliases": {
