@@ -53,6 +53,7 @@
                             "properties": {
                                 "results": {
                                     "type": "array",
+                                    "uniqueItems": true,
                                     "items": {
                                         "type": "object",
                                         "properties": {
@@ -89,6 +90,7 @@
                             "properties": {
                                 "results": {
                                     "type": "array",
+                                    "uniqueItems": true,
                                     "items": {
                                         "type": "object",
                                         "properties": {

@@ -22,6 +22,7 @@
                                 "taskforces": {
                                     "description": "a list of taskforce objects",
                                     "type": "array",
+                                    "uniqueItems": true,
                                     "items": {
                                         "$ref": "#/components/schemas/TaskforceObject"
                                     },

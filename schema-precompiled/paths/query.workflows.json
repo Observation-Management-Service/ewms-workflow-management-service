@@ -22,6 +22,7 @@
                                 "workflows": {
                                     "description": "a list of workflow objects",
                                     "type": "array",
+                                    "uniqueItems": true,
                                     "items": {
                                         "$ref": "#/components/schemas/WorkflowObject"
                                     },

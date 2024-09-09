@@ -10,6 +10,7 @@
                         "properties": {
                             "tasks": {
                                 "type": "array",
+                                "uniqueItems": true,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -31,6 +32,7 @@
                                         },
                                         "input_queue_aliases": {
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "type": "string"
                                             },
@@ -38,6 +40,7 @@
                                         },
                                         "output_queue_aliases": {
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "type": "string"
                                             },
@@ -67,6 +70,7 @@
                             },
                             "public_queue_aliases": {
                                 "type": "array",
+                                "uniqueItems": true,
                                 "items": {
                                     "type": "string"
                                 },
@@ -95,6 +99,7 @@
                                 },
                                 "task_directives": {
                                     "type": "array",
+                                    "uniqueItems": true,
                                     "items": {
                                         "$ref": "#/components/schemas/TaskDirectiveObject"
                                     },
@@ -102,6 +107,7 @@
                                 },
                                 "taskforces": {
                                     "type": "array",
+                                    "uniqueItems": true,
                                     "items": {
                                         "$ref": "#/components/schemas/TaskforceObject"
                                     },

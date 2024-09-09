@@ -12,6 +12,7 @@
         },
         "cluster_locations": {
             "type": "array",
+            "uniqueItems": true,
             "description": "The HTCondor pool(s) where the taskforce(s) will run.",
             "items": {
                 "type": "string"
@@ -32,6 +33,7 @@
         },
         "input_queues": {
             "type": "array",
+            "uniqueItems": true,
             "description": "The message queue(s) that this task will use for event input.",
             "items": {
                 "type": "string"
@@ -40,6 +42,7 @@
         },
         "output_queues": {
             "type": "array",
+            "uniqueItems": true,
             "description": "The message queue(s) that this task will use for event output.",
             "items": {
                 "type": "string"

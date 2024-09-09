@@ -70,6 +70,7 @@
                 },
                 "input_files": {
                     "type": "array",
+                    "uniqueItems": true,
                     "description": "Paths to files to make available to the task container. These files must already be accessible on the AP.",
                     "items": {
                         "type": "string"

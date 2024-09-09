@@ -98,6 +98,7 @@
                     },
                     "cluster_locations": {
                         "type": "array",
+                        "uniqueItems": true,
                         "description": "The HTCondor pool(s) where the taskforce(s) will run.",
                         "items": {
                             "type": "string"
@@ -118,6 +119,7 @@
                     },
                     "input_queues": {
                         "type": "array",
+                        "uniqueItems": true,
                         "description": "The message queue(s) that this task will use for event input.",
                         "items": {
                             "type": "string"
@@ -126,6 +128,7 @@
                     },
                     "output_queues": {
                         "type": "array",
+                        "uniqueItems": true,
                         "description": "The message queue(s) that this task will use for event output.",
                         "items": {
                             "type": "string"
@@ -208,6 +211,7 @@
                             },
                             "input_files": {
                                 "type": "array",
+                                "uniqueItems": true,
                                 "description": "Paths to files to make available to the task container. These files must already be accessible on the AP.",
                                 "items": {
                                     "type": "string"
@@ -349,6 +353,7 @@
                     "projection": {
                         "description": "the fields to include in the response",
                         "type": "array",
+                        "uniqueItems": true,
                         "items": {
                             "type": "string"
                         },
@@ -426,6 +431,7 @@
                                         "task_directives": {
                                             "description": "a list of task directive objects",
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "$ref": "#/components/schemas/TaskDirectiveObject"
                                             },
@@ -492,6 +498,7 @@
                                         "taskforces": {
                                             "description": "a list of taskforce objects",
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "$ref": "#/components/schemas/TaskforceObject"
                                             },
@@ -558,6 +565,7 @@
                                         "workflows": {
                                             "description": "a list of workflow objects",
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "$ref": "#/components/schemas/WorkflowObject"
                                             },
@@ -1230,6 +1238,7 @@
                                     "properties": {
                                         "results": {
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "type": "object",
                                                 "properties": {
@@ -1266,6 +1275,7 @@
                                     "properties": {
                                         "results": {
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "type": "object",
                                                 "properties": {
@@ -1336,6 +1346,7 @@
                                 "properties": {
                                     "tasks": {
                                         "type": "array",
+                                        "uniqueItems": true,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -1358,6 +1369,7 @@
                                                 },
                                                 "input_queue_aliases": {
                                                     "type": "array",
+                                                    "uniqueItems": true,
                                                     "items": {
                                                         "type": "string"
                                                     },
@@ -1365,6 +1377,7 @@
                                                 },
                                                 "output_queue_aliases": {
                                                     "type": "array",
+                                                    "uniqueItems": true,
                                                     "items": {
                                                         "type": "string"
                                                     },
@@ -1394,6 +1407,7 @@
                                     },
                                     "public_queue_aliases": {
                                         "type": "array",
+                                        "uniqueItems": true,
                                         "items": {
                                             "type": "string"
                                         },
@@ -1422,6 +1436,7 @@
                                         },
                                         "task_directives": {
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "$ref": "#/components/schemas/TaskDirectiveObject"
                                             },
@@ -1429,6 +1444,7 @@
                                         },
                                         "taskforces": {
                                             "type": "array",
+                                            "uniqueItems": true,
                                             "items": {
                                                 "$ref": "#/components/schemas/TaskforceObject"
                                             },
