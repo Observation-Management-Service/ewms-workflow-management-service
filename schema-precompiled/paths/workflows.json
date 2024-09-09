@@ -24,6 +24,7 @@
                                             "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                         },
                                         "task_env": {
+                                            "description": "Environment variables (and values) to set in the task instance.",
                                             "type": "object",
                                             "items": {
                                                 "type": "string"
@@ -31,6 +32,7 @@
                                             "minProperties": 0
                                         },
                                         "input_queue_aliases": {
+                                            "description": "The queues that this task will use for input event communication. Each queue will have a globally-unqiue identifier generated, however these aliases can be used for more-easily locate and refer to each. These names are used in 'public_queue_aliases'.",
                                             "type": "array",
                                             "uniqueItems": true,
                                             "items": {
@@ -39,6 +41,7 @@
                                             "minItems": 0
                                         },
                                         "output_queue_aliases": {
+                                            "description": "The queues that this task will use for output event communication. Each queue will have a globally-unqiue identifier generated, however these aliases can be used for more-easily locate and refer to each. These names are used in 'public_queue_aliases'.",
                                             "type": "array",
                                             "uniqueItems": true,
                                             "items": {
@@ -69,6 +72,7 @@
                                 "minItems": 1
                             },
                             "public_queue_aliases": {
+                                "description": "Aliases for the queues that are listed in each task entry's 'input_queue_aliases' and 'output_queue_aliases' that are deemed for external use.",
                                 "type": "array",
                                 "uniqueItems": true,
                                 "items": {
