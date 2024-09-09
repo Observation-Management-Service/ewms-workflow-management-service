@@ -31,6 +31,20 @@
                                             },
                                             "minProperties": 0
                                         },
+                                        "init_image": {
+                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_image"
+                                        },
+                                        "init_args": {
+                                            "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
+                                        },
+                                        "init_env": {
+                                            "description": "Environment variables (and values) to set in the task instance.",
+                                            "type": "object",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "minProperties": 0
+                                        },
                                         "input_queue_aliases": {
                                             "description": "User-defined aliases for input event queues. Globally-unique IDs for the queues will be generated after submission.",
                                             "type": "array",
