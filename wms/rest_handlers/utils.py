@@ -1,5 +1,5 @@
 """Utils for REST routes."""
-
+import json
 import logging
 
 from .. import config
@@ -18,6 +18,10 @@ def add_values_to_pilot_config(task_input: dict) -> dict:
         {
             "EWMS_PILOT_TASK_IMAGE": task_input["task_image"],
             "EWMS_PILOT_TASK_ARGS": task_input["task_args"],
+            "EWMS_PILOT_TASK_ENV_JSON": json.dumps(
+                json.loads(dicto["environment"]["EWMS_PILOT_TASK_ENV_JSON"])
+                | task_input["task_env"]
+            ),
         }
     )
 

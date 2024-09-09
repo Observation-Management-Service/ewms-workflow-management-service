@@ -1,5 +1,4 @@
 """REST handlers for task-related routes."""
-
 import logging
 import time
 

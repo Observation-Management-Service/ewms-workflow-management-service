@@ -40,6 +40,31 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
 
         Create a new workflow.
         """
+
+        # Advanced validation -- not possible in json schema (FUTURE: if it is, then move to .json)
+        for i, task_input in enumerate(self.get_argument("tasks")):
+            for forbidden_envvar in [
+                # pilot-task config
+                "EWMS_PILOT_TASK_IMAGE",
+                "EWMS_PILOT_TASK_ARGS",
+                "EWMS_PILOT_TASK_ENV_JSON",
+                # pilot-init config
+                "EWMS_PILOT_INIT_IMAGE",
+                "EWMS_PILOT_INIT_ARGS",
+                "EWMS_PILOT_INIT_ENV_JSON",
+            ]:
+                if forbidden_envvar in task_input["pilot_config"]["environment"]:
+                    msg = (
+                        f"tasks[{i}].pilot_config.environment cannot include the attribute "
+                        f"'{forbidden_envvar}'. Use the top-level equivalent attribute instead."
+                    )
+                    raise web.HTTPError(
+                        status_code=400,
+                        log_message=msg,  # to stderr
+                        reason=msg,  # to client
+                    )
+
+        # Assemble
         workflow = {
             # IMMUTABLE
             "workflow_id": IDFactory.generate_workflow_id(),
