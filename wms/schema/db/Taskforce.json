@@ -202,7 +202,15 @@
                     "description": "Whether this phase change succeeded."
                 }
             },
-            "additionalProperties": false
+            "additionalProperties": false,
+            "required": [
+                "target_phase",
+                "timestamp",
+                "description",
+                "actor",
+                "was_successful"
+            ],
+            "minItems": 0
         },
         "compound_statuses": {
             "type": "object",
@@ -240,6 +248,7 @@
         "job_event_log_fpath",
         "condor_complete_ts",
         "phase",
+        "phase_change_log",
         "compound_statuses",
         "top_task_errors"
     ],

@@ -318,6 +318,41 @@
                             "condor-rm"
                         ]
                     },
+                    "phase_change_log": {
+                        "type": "array",
+                        "description": "A history of all attempted phase changes.",
+                        "properties": {
+                            "target_phase": {
+                                "type": "string",
+                                "description": "The phase meant to be changed to."
+                            },
+                            "timestamp": {
+                                "type": "number",
+                                "description": "The epoch time when this occurred."
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "Further details on what happened."
+                            },
+                            "actor": {
+                                "type": "string",
+                                "description": "Who caused this change."
+                            },
+                            "was_successful": {
+                                "type": "boolean",
+                                "description": "Whether this phase change succeeded."
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                            "target_phase",
+                            "timestamp",
+                            "description",
+                            "actor",
+                            "was_successful"
+                        ],
+                        "minItems": 0
+                    },
                     "compound_statuses": {
                         "type": "object",
                         "description": "Aggregated status of the workers, represented as a nested dictionary mapping HTCondor states to EWMS pilot states and their counts.",
