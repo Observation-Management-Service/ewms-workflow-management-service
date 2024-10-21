@@ -151,8 +151,23 @@ async def advance_database(
                 )
             # update phase
             await wms_db.taskforces_collection.update_many(
-                {"workflow_id": workflow_id},
-                {"$set": {"phase": TaskforcePhase.PRE_LAUNCH}},
+                {
+                    "workflow_id": workflow_id,
+                },
+                {
+                    "$set": {
+                        "phase": TaskforcePhase.PRE_LAUNCH,
+                    },
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.PRE_LAUNCH,
+                            "timestamp": time.time(),
+                            "was_successful": True,
+                            "actor": "Workflow MQ Activator",
+                            "description": "",
+                        },
+                    },
+                },
                 session=s,
             )
 

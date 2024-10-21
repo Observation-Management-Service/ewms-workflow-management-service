@@ -1,6 +1,7 @@
 """REST handlers for taskforce-related routes."""
 
 import logging
+import time
 
 from pymongo import ASCENDING, DESCENDING
 from rest_tools.server import validate_request
@@ -160,6 +161,10 @@ class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
         except DocumentNotFoundException:
             taskforce = {}
 
+        # NOTE: the taskforce's phase is not advanced until the TMS sends condor-submit
+        #   info. This is so the TMS can die and restart well (statelessness).
+        #   See POST @ .../tms/condor-submit/taskforces/{taskforce_uuid}
+
         self.write(taskforce)
 
 
@@ -192,7 +197,16 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                         "submit_dict": self.get_argument("submit_dict"),
                         "job_event_log_fpath": self.get_argument("job_event_log_fpath"),
                         "phase": TaskforcePhase.CONDOR_SUBMIT,
-                    }
+                    },
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.CONDOR_SUBMIT,
+                            "timestamp": time.time(),
+                            "was_successful": True,
+                            "actor": "TMS",
+                            "description": "",
+                        },
+                    },
                 },
             )
         except DocumentNotFoundException as e:
@@ -264,7 +278,18 @@ class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
                     # NOTE: any taskforce can be marked as 'condor-rm' regardless of state
                 },
                 {
-                    "$set": {"phase": TaskforcePhase.CONDOR_RM},
+                    "$set": {
+                        "phase": TaskforcePhase.CONDOR_RM,
+                    },
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.CONDOR_RM,
+                            "timestamp": time.time(),
+                            "was_successful": True,
+                            "actor": "TMS",
+                            "description": "",
+                        },
+                    },
                 },
             )
         except DocumentNotFoundException as e:

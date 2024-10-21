@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import time
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING, DESCENDING
@@ -32,7 +33,18 @@ async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[val
                     "phase": TaskforcePhase.PRE_LAUNCH,
                 },
                 {
-                    "$set": {"phase": TaskforcePhase.PENDING_STARTER},
+                    "$set": {
+                        "phase": TaskforcePhase.PENDING_STARTER,
+                    },
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.PENDING_STARTER,
+                            "timestamp": time.time(),
+                            "was_successful": True,
+                            "actor": "Taskforce Launch Control",
+                            "description": "",
+                        },
+                    },
                 },
                 sort=[
                     ("worker_config.priority", DESCENDING),  # first, highest priority

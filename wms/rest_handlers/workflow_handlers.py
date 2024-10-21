@@ -225,7 +225,20 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                                 },
                             ],
                         },
-                        {"$set": {"phase": TaskforcePhase.PENDING_STOPPER}},
+                        {
+                            "$set": {
+                                "phase": TaskforcePhase.PENDING_STOPPER,
+                            },
+                            "$push": {
+                                "phase_change_log": {
+                                    "target_phase": TaskforcePhase.PENDING_STOPPER,
+                                    "timestamp": time.time(),
+                                    "was_successful": True,
+                                    "actor": "User",
+                                    "description": "User aborted task",
+                                },
+                            },
+                        },
                         session=s,
                     )
                 except DocumentNotFoundException:

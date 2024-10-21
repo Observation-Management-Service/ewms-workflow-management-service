@@ -1,4 +1,5 @@
 """REST handlers for task-related routes."""
+
 import logging
 import time
 
@@ -95,6 +96,15 @@ async def create_task_directive_and_taskforces(
                 # updated by taskforce_launch_control, tms
                 # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)
                 "phase": TaskforcePhase.PRE_MQ_ACTIVATOR,
+                "phase_change_log": [
+                    {
+                        "target_phase": TaskforcePhase.PRE_MQ_ACTIVATOR,
+                        "timestamp": time.time(),
+                        "was_successful": True,
+                        "actor": "User",
+                        "description": "During initial workflow creation.",
+                    }
+                ],
                 #
                 # updated by tms SEVERAL times
                 "compound_statuses": {},
