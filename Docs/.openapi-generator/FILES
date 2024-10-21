@@ -6,6 +6,7 @@ Models/TaskforceObject.md
 Models/TaskforceObject_cluster_id.md
 Models/TaskforceObject_condor_complete_ts.md
 Models/TaskforceObject_n_workers.md
+Models/TaskforceObject_phase_change_log.md
 Models/TaskforceObject_pilot_config.md
 Models/TaskforceObject_pilot_config_environment_value.md
 Models/TaskforceObject_submit_dict_value.md
