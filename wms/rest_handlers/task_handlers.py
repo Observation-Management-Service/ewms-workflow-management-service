@@ -90,8 +90,6 @@ async def create_task_directive_and_taskforces(
                 "cluster_id": None,
                 "submit_dict": {},
                 "job_event_log_fpath": "",
-                # set ONCE by tms's watcher
-                "condor_complete_ts": None,
                 #
                 # updated by taskforce_launch_control, tms
                 # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)

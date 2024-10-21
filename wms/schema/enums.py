@@ -19,3 +19,4 @@ class TaskforcePhase(enum.StrEnum):  # attrs are str sub-types! (no `.value` nee
     CONDOR_SUBMIT = "condor-submit"
     PENDING_STOPPER = "pending-stopper"
     CONDOR_RM = "condor-rm"
+    CONDOR_COMPLETE = "condor-complete"

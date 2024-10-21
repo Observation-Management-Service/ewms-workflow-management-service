@@ -207,23 +207,15 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     n_tfs_updated = await self.wms_db.taskforces_collection.update_many(
                         {
                             "workflow_id": workflow_id,
-                            "$and": [
-                                # not already aborted
-                                # NOTE - we don't care whether the taskforce has started up (see /tms/pending-stopper/taskforces)
-                                {
-                                    "phase": {
-                                        "$nin": [
-                                            TaskforcePhase.PENDING_STOPPER,
-                                            TaskforcePhase.CONDOR_RM,
-                                        ]
-                                    },  # "not in"
-                                },
-                                # AND
-                                # not condor-completed
-                                {
-                                    "condor_complete_ts": None,  # int -> condor-completed
-                                },
-                            ],
+                            # not already aborted
+                            # NOTE - we don't care whether the taskforce has started up (see /tms/pending-stopper/taskforces)
+                            "phase": {
+                                "$nin": [
+                                    TaskforcePhase.PENDING_STOPPER,
+                                    TaskforcePhase.CONDOR_RM,
+                                    TaskforcePhase.CONDOR_COMPLETE,
+                                ]
+                            },  # "not in"
                         },
                         {
                             "$set": {

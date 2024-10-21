@@ -326,10 +326,20 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
             await self.wms_db.taskforces_collection.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
-                    "condor_complete_ts": None,
                 },
                 {
-                    "$set": {"condor_complete_ts": timestamp},
+                    "$set": {
+                        "phase": TaskforcePhase.CONDOR_COMPLETE,
+                    },
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.CONDOR_COMPLETE,
+                            "timestamp": time.time(),
+                            "was_successful": True,
+                            "actor": "TMS",
+                            "description": f"condor time: {timestamp}",
+                        },
+                    },
                 },
             )
         except DocumentNotFoundException as e:
