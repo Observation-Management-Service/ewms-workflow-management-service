@@ -210,8 +210,8 @@ async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
                     {
                         "query": {"workflow_id": workflow_id},
                         "projection": [
-                            "condor_complete_ts",
                             "phase",
+                            "phase_change_log",
                             "compound_statuses",
                             "top_task_errors",
                             "taskforce_uuid",

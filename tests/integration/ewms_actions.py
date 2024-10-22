@@ -245,7 +245,7 @@ async def tms_starter(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["phase"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
@@ -436,7 +436,7 @@ async def tms_stopper(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["phase"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
