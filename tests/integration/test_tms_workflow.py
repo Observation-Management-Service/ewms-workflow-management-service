@@ -138,7 +138,7 @@ async def test_000(rc: RestClient) -> None:
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
@@ -263,7 +263,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
@@ -385,7 +385,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
@@ -488,7 +488,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
@@ -589,7 +589,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
@@ -705,7 +705,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
