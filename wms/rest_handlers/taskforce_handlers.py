@@ -228,12 +228,48 @@ class TMSTaskforceCondorSubmitUUIDFailedHandler(BaseWMSHandler):
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
 
+    @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    async def post(self, taskforce_uuid: str) -> None:
+        """Handle POST."""
+        try:
+            await self.wms_db.taskforces_collection.find_one_and_update(
+                {
+                    "taskforce_uuid": taskforce_uuid,
+                    "phase": {"$in": [TaskforcePhase.PENDING_STARTER]},
+                },
+                {
+                    # no "$set" needed, the phase is not changing
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.CONDOR_SUBMIT,
+                            "timestamp": time.time(),
+                            "was_successful": False,  # it failed!
+                            "source_event_time": None,
+                            "source_entity": "TMS",
+                            "description": "",
+                        },
+                    },
+                },
+            )
+        except DocumentNotFoundException as e:
+            raise web.HTTPError(
+                status_code=404,
+                reason=f"no 'pending-starter' taskforce found with uuid: {taskforce_uuid}",  # to client
+            ) from e
+
+        self.write(
+            {
+                "taskforce_uuid": taskforce_uuid,
+            }
+        )
+
 
 # ----------------------------------------------------------------------------
 
 
 class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
-    """Handle actions for the top taskforce designated to be stopped."""
+    """Handle actions for the top (next) taskforce designated to be stopped."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces$"
 
@@ -293,6 +329,48 @@ class TMSTaskforcePendingStopperUUIDHandler(BaseWMSHandler):
                             "target_phase": TaskforcePhase.CONDOR_RM,
                             "timestamp": time.time(),
                             "was_successful": True,
+                            "source_event_time": None,
+                            "source_entity": "TMS",
+                            "description": "",
+                        },
+                    },
+                },
+            )
+        except DocumentNotFoundException as e:
+            raise web.HTTPError(
+                status_code=404,
+                reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
+            ) from e
+
+        self.write(
+            {
+                "taskforce_uuid": taskforce_uuid,
+            }
+        )
+
+
+class TMSTaskforcePendingStopperUUIDFailedHandler(BaseWMSHandler):
+    """Handle actions with the taskforce designated to be stopped failed to stop."""
+
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
+
+    @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    async def post(self, taskforce_uuid: str) -> None:
+        """Handle POST."""
+        try:
+            await self.wms_db.taskforces_collection.find_one_and_update(
+                {
+                    "taskforce_uuid": taskforce_uuid,
+                    # NOTE: any taskforce can be marked as 'condor-rm' regardless of state
+                },
+                {
+                    # no "$set" needed, the phase is not changing
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.CONDOR_RM,
+                            "timestamp": time.time(),
+                            "was_successful": False,  # it failed!
                             "source_event_time": None,
                             "source_entity": "TMS",
                             "description": "",
