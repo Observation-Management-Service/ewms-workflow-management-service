@@ -295,17 +295,6 @@
                         "type": "string",
                         "description": "The file path on the HTCondor AP containing job event logs."
                     },
-                    "condor_complete_ts": {
-                        "anyOf": [
-                            {
-                                "type": "integer",
-                                "description": "The epoch time when the HTCondor cluster completed. If null, the cluster has not yet completed."
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ]
-                    },
                     "phase": {
                         "type": "string",
                         "description": "The current phase of the taskforce within the workflow's lifetime. Not all taskforces will enter every phase.",
@@ -315,7 +304,8 @@
                             "pending-starter",
                             "condor-submit",
                             "pending-stopper",
-                            "condor-rm"
+                            "condor-rm",
+                            "condor-complete"
                         ]
                     },
                     "phase_change_log": {
