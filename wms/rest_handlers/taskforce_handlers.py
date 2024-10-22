@@ -19,7 +19,7 @@ LOGGER = logging.getLogger(__name__)
 # ----------------------------------------------------------------------------
 
 
-class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TMSTaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with statuses for taskforce(s)."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/statuses/taskforces$"
@@ -134,7 +134,7 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TMSTaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a pending taskforce."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces$"
@@ -171,7 +171,7 @@ class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TMSTaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a condor-submitted taskforce."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)$"
@@ -226,7 +226,7 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TMSTaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions for the top taskforce designated to be stopped."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces$"
@@ -259,7 +259,7 @@ class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TMSTaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a taskforce designated to be stopped."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces/(?P<taskforce_uuid>[\w-]+)$"
@@ -310,7 +310,7 @@ class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
 # ----------------------------------------------------------------------------
 
 
-class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TMSTaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     """Handle actions with a condor-completed taskforce."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-complete/taskforces/(?P<taskforce_uuid>[\w-]+)$"
