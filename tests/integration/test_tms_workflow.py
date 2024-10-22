@@ -699,7 +699,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
     for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "condor-rm"
+        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
         assert tf["phase_change_log"][-1]["was_successful"] is False
     # fmt: on
     for loc in CONDOR_LOCATIONS.values():

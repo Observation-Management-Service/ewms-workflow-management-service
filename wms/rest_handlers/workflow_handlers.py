@@ -246,9 +246,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                             "phase": {"$in": already_ending_or_finished_phases},
                         },
                         {
-                            "$set": {
-                                "phase": TaskforcePhase.PENDING_STOPPER,
-                            },
+                            # no "$set" needed, the phase is not changing
                             "$push": {
                                 "phase_change_log": {
                                     "target_phase": TaskforcePhase.PENDING_STOPPER,
