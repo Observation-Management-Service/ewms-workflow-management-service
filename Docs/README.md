@@ -33,6 +33,7 @@
  - [TaskforceObject_cluster_id](./Models/TaskforceObject_cluster_id.md)
  - [TaskforceObject_n_workers](./Models/TaskforceObject_n_workers.md)
  - [TaskforceObject_phase_change_log](./Models/TaskforceObject_phase_change_log.md)
+ - [TaskforceObject_phase_change_log_source_event_time](./Models/TaskforceObject_phase_change_log_source_event_time.md)
  - [TaskforceObject_pilot_config](./Models/TaskforceObject_pilot_config.md)
  - [TaskforceObject_pilot_config_environment_value](./Models/TaskforceObject_pilot_config_environment_value.md)
  - [TaskforceObject_submit_dict_value](./Models/TaskforceObject_submit_dict_value.md)
