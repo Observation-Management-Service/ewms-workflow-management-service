@@ -16,7 +16,7 @@ from ..schema.enums import TaskforcePhase
 LOGGER = logging.getLogger(__name__)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 class TMSTaskforcesReportHandler(BaseWMSHandler):
@@ -106,7 +106,7 @@ class TMSTaskforcesReportHandler(BaseWMSHandler):
         )
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 class TaskforcesFindHandler(BaseWMSHandler):
@@ -131,7 +131,7 @@ class TaskforcesFindHandler(BaseWMSHandler):
         self.write({"taskforces": matches})
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
@@ -168,7 +168,7 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
         self.write(taskforce)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 class TMSTaskforceCondorSubmitUUIDHandler(BaseWMSHandler):
@@ -265,7 +265,7 @@ class TMSTaskforceCondorSubmitUUIDFailedHandler(BaseWMSHandler):
         )
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
@@ -298,7 +298,7 @@ class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
         self.write(taskforce)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 class TMSTaskforcePendingStopperUUIDHandler(BaseWMSHandler):
@@ -391,7 +391,7 @@ class TMSTaskforcePendingStopperUUIDFailedHandler(BaseWMSHandler):
         )
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 class TMSTaskforceCondorCompleteUUIDHandler(BaseWMSHandler):
@@ -442,7 +442,7 @@ class TMSTaskforceCondorCompleteUUIDHandler(BaseWMSHandler):
         )
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 class TaskforceUUIDHandler(BaseWMSHandler):
@@ -472,4 +472,4 @@ class TaskforceUUIDHandler(BaseWMSHandler):
         self.write(taskforce)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------

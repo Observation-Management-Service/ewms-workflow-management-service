@@ -16,7 +16,7 @@ from ..utils import IDFactory
 LOGGER = logging.getLogger(__name__)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 async def create_task_directive_and_taskforces(
@@ -114,7 +114,7 @@ async def create_task_directive_and_taskforces(
     return task_directive, taskforces
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 class TaskDirectiveIDHandler(BaseWMSHandler):
@@ -144,7 +144,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):
         self.write(task_directive)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 class TaskDirectivesFindHandler(BaseWMSHandler):
@@ -169,4 +169,4 @@ class TaskDirectivesFindHandler(BaseWMSHandler):
         self.write({"task_directives": matches})
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
