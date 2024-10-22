@@ -482,7 +482,7 @@ async def tms_condor_clusters_done(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["taskforce_uuid", "condor_complete_ts"],
+            "projection": ["taskforce_uuid", "phase_change_log"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locs_w_jel)
