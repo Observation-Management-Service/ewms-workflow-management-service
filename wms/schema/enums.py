@@ -20,3 +20,11 @@ class TaskforcePhase(enum.StrEnum):  # attrs are str sub-types! (no `.value` nee
     PENDING_STOPPER = "pending-stopper"
     CONDOR_RM = "condor-rm"
     CONDOR_COMPLETE = "condor-complete"
+
+
+ENDING_OR_FINISHED_TASKFORCE_PHASES = [
+    # these indicate the taskforce is ending or finished
+    TaskforcePhase.PENDING_STOPPER,
+    TaskforcePhase.CONDOR_RM,
+    TaskforcePhase.CONDOR_COMPLETE,
+]

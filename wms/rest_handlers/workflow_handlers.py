@@ -11,7 +11,7 @@ from .base_handlers import BaseWMSHandler
 from .task_handlers import create_task_directive_and_taskforces
 from .. import config
 from ..database.client import DocumentNotFoundException
-from ..schema.enums import TaskforcePhase
+from ..schema.enums import ENDING_OR_FINISHED_TASKFORCE_PHASES, TaskforcePhase
 from ..utils import IDFactory
 
 LOGGER = logging.getLogger(__name__)
@@ -200,12 +200,6 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                         reason=f"no non-aborted workflow found with {workflow_id=}",  # to client
                     ) from e
 
-                already_ending_or_finished_phases = [
-                    TaskforcePhase.PENDING_STOPPER,
-                    TaskforcePhase.CONDOR_RM,
-                    TaskforcePhase.CONDOR_COMPLETE,
-                ]
-
                 # TASKFORCES
                 # -> set all not-already-ending/finished taskforces to pending-stopper
                 n_tfs_updated = 0  # in no taskforces to stop (excepted exception)
@@ -215,7 +209,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                             "workflow_id": workflow_id,
                             # NOTE: we don't care whether the taskforce's condor cluster
                             #   has started up (see /tms/pending-stopper/taskforces)
-                            "phase": {"$nin": already_ending_or_finished_phases},
+                            "phase": {"$nin": ENDING_OR_FINISHED_TASKFORCE_PHASES},
                         },
                         {
                             "$set": {
@@ -243,7 +237,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     await self.wms_db.taskforces_collection.update_many(
                         {
                             "workflow_id": workflow_id,
-                            "phase": {"$in": already_ending_or_finished_phases},
+                            "phase": {"$in": ENDING_OR_FINISHED_TASKFORCE_PHASES},
                         },
                         {
                             # no "$set" needed, the phase is not changing
@@ -257,7 +251,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                                     "description": (
                                         f"User aborted workflow but taskforce "
                                         f"is already ending/finished "
-                                        f"({", ".join(already_ending_or_finished_phases)})"
+                                        f"({", ".join(ENDING_OR_FINISHED_TASKFORCE_PHASES)})"
                                     ),
                                 },
                             },
