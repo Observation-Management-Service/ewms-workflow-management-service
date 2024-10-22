@@ -82,8 +82,17 @@ def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
         "cluster_id": None,
         "submit_dict": {},
         "job_event_log_fpath": "",
-        "condor_complete_ts": None,
         "phase": schema.enums.TaskforcePhase.PRE_MQ_ACTIVATOR,
+        "phase_change_log": [
+            {
+                "target_phase": schema.enums.TaskforcePhase.PRE_MQ_ACTIVATOR,
+                "timestamp": time.time(),
+                "source_event_time": None,
+                "was_successful": True,
+                "source_entity": "User",
+                "description": "During initial workflow creation.",
+            }
+        ],
         "compound_statuses": {},
         "top_task_errors": {},
     }
