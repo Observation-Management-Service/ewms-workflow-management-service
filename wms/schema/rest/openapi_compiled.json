@@ -867,7 +867,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "the uuid of the updated taskforce objects",
+                        "description": "the uuid of the updated taskforce object",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -954,7 +954,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "the uuid of the updated taskforce objects",
+                        "description": "the uuid of the updated taskforce object",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1150,7 +1150,7 @@
                 "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
                 "responses": {
                     "200": {
-                        "description": "the uuid of the updated taskforce objects",
+                        "description": "the uuid of the updated taskforce object",
                         "content": {
                             "application/json": {
                                 "schema": {

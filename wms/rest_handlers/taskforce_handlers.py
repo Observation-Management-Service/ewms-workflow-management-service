@@ -232,6 +232,7 @@ class TMSTaskforceCondorSubmitUUIDFailedHandler(BaseWMSHandler):
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
+        error = self.get_argument("error")
         try:
             await self.wms_db.taskforces_collection.find_one_and_update(
                 {
@@ -247,7 +248,7 @@ class TMSTaskforceCondorSubmitUUIDFailedHandler(BaseWMSHandler):
                             "was_successful": False,  # it failed!
                             "source_event_time": None,
                             "source_entity": "TMS",
-                            "description": "",
+                            "description": f"ERROR: {error}",
                         },
                     },
                 },
@@ -349,15 +350,16 @@ class TMSTaskforcePendingStopperUUIDHandler(BaseWMSHandler):
         )
 
 
-class TMSTaskforcePendingStopperUUIDFailedHandler(BaseWMSHandler):
+class TMSTaskforceCondorRmUUIDFailedHandler(BaseWMSHandler):
     """Handle actions with the taskforce designated to be stopped failed to stop."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-rm/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
+        error = self.get_argument("error")
         try:
             await self.wms_db.taskforces_collection.find_one_and_update(
                 {
@@ -373,7 +375,7 @@ class TMSTaskforcePendingStopperUUIDFailedHandler(BaseWMSHandler):
                             "was_successful": False,  # it failed!
                             "source_event_time": None,
                             "source_entity": "TMS",
-                            "description": "",
+                            "description": f"ERROR: {error}",
                         },
                     },
                 },

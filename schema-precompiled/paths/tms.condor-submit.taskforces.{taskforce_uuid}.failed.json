@@ -4,8 +4,25 @@
             "$ref": "#/components/parameters/TaskforceUUIDParam"
         }
     ],
-    "delete": {
-        "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
+    "post": {
+        "description": "For internal use only (TMS): Communicates that a taskforce failed to be submitted to HTCondor for execution.",
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "description": "a description of why the taskforce failed to be submitted",
+                                "type": "string"
+                            }
+                        },
+                        "required": [],
+                        "additionalProperties": false
+                    }
+                }
+            }
+        },
         "responses": {
             "200": {
                 "description": "the uuid of the updated taskforce object",

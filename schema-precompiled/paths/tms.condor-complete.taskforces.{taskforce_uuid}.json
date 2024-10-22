@@ -27,7 +27,7 @@
         },
         "responses": {
             "200": {
-                "description": "the uuid of the updated taskforce objects",
+                "description": "the uuid of the updated taskforce object",
                 "content": {
                     "application/json": {
                         "schema": {
