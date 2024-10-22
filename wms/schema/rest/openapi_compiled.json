@@ -935,6 +935,101 @@
                 }
             }
         },
+        "/v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/TaskforceUUIDParam"
+                }
+            ],
+            "post": {
+                "description": "For internal use only (TMS): Communicates that a taskforce failed to be removed on HTCondor.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "error": {
+                                        "description": "a description of why the taskforce failed to be removed on HTCondor",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "the uuid of the updated taskforce object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce_uuid": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v0/tms/condor-submit/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
@@ -948,6 +1043,101 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/TaskforceObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "the uuid of the updated taskforce object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce_uuid": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/TaskforceUUIDParam"
+                }
+            ],
+            "post": {
+                "description": "For internal use only (TMS): Communicates that a taskforce failed to be submitted to HTCondor for execution.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "error": {
+                                        "description": "a description of why the taskforce failed to be submitted",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [],
+                                "additionalProperties": false
                             }
                         }
                     }
