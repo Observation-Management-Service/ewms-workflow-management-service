@@ -323,7 +323,7 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         Supply the timestamp for when the taskforce's condor cluster
         finished, regardless if it ended in success or failure.
         """
-        timestamp = int(self.get_argument("condor_complete_ts"))
+        source_event_time = int(self.get_argument("condor_complete_ts"))
         try:
             await self.wms_db.taskforces_collection.find_one_and_update(
                 {
@@ -338,9 +338,9 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
                             "target_phase": TaskforcePhase.CONDOR_COMPLETE,
                             "timestamp": time.time(),
                             "was_successful": True,
-                            "source_event_time": None,
+                            "source_event_time": source_event_time,
                             "source_entity": "TMS",
-                            "description": f"condor time: {timestamp}",
+                            "description": "",
                         },
                     },
                 },
