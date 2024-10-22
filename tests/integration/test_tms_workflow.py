@@ -501,9 +501,9 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         },
     )
     # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
+    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
     for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "condor-rm"
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
     # fmt: on
     resp = await _request_and_validate_and_print(
         rc,
@@ -604,9 +604,9 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         },
     )
     # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
+    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
     for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "condor-rm"
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
     # fmt: on
     resp = await _request_and_validate_and_print(
         rc,
@@ -676,9 +676,9 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
     )
     # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
+    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
     for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "condor-submit"
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
     # fmt: on
 
     # ABORT!
@@ -697,12 +697,13 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
     )
     # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
+    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
     for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "condor-submit"
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-rm"
+        assert tf["phase_change_log"][-1]["was_successful"] is False
     # fmt: on
     for loc in CONDOR_LOCATIONS.values():
-        # make sure there is NOTHING to stop (taskforces are 'condor-submit' not 'pending-stopper')
+        # make sure there is NOTHING to stop (taskforces are not 'pending-stopper')
         taskforce = await _request_and_validate_and_print(
             rc,
             openapi_spec,
@@ -713,25 +714,13 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         assert not taskforce
 
     # CHECK FINAL STATES...
-    resp = await _request_and_validate_and_print(
-        rc,
-        openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["phase", "phase_change_log"],
-        },
-    )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "condor-submit"
-    # fmt: on
+    # NOTE: already checked final taskforce states above
+    # workflow:
     resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
+    # the workflow was aborted even though all taskforces' condor cluster had completed
     assert resp["aborted"] is True

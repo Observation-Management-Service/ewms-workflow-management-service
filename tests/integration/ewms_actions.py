@@ -394,6 +394,32 @@ async def user_aborts_workflow(
     )
     assert resp["aborted"] is True
 
+    if aborted_after_condor:
+        return
+
+    #
+    # USER...
+    # check above
+    #
+    resp = await _request_and_validate_and_print(
+        rc,
+        openapi_spec,
+        "POST",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
+        {
+            "query": {
+                "task_id": task_id,
+            },
+            "projection": ["phase", "phase_change_log"],
+        },
+    )
+    assert len(resp["taskforces"]) == len(condor_locations)
+    assert all(tf["phase"] == "pending-stopper" for tf in resp["taskforces"])
+    assert all(
+        tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
+        for tf in resp["taskforces"]
+    )
+
 
 async def tms_stopper(
     rc: RestClient,
