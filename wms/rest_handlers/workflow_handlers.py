@@ -225,8 +225,9 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                                 "phase_change_log": {
                                     "target_phase": TaskforcePhase.PENDING_STOPPER,
                                     "timestamp": time.time(),
+                                    "source_event_time": None,
                                     "was_successful": True,
-                                    "actor": "User",
+                                    "source_entity": "User",
                                     "description": "User aborted task",
                                 },
                             },

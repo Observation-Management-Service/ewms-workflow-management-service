@@ -487,6 +487,11 @@ async def tms_condor_clusters_done(
     )
     assert len(resp["taskforces"]) == len(condor_locs_w_jel)
     assert all(
-        tf["condor_complete_ts"] == hash(tf["taskforce_uuid"]) % 1700000000  # see above
+        list(
+            pcl["source_event_time"]
+            for pcl in tf["phase_change_log"]
+            if pcl["target_phase"] == "condor-complete"
+        )  # this will also check if there is only 1 matching entry
+        == [hash(tf["taskforce_uuid"]) % 1700000000]  # see above
         for tf in resp["taskforces"]
     )

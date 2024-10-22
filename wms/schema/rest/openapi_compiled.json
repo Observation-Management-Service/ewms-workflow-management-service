@@ -334,7 +334,7 @@
                                 "type": "string",
                                 "description": "Further details on what happened."
                             },
-                            "actor": {
+                            "source_entity": {
                                 "type": "string",
                                 "description": "Who caused this change."
                             },
@@ -348,7 +348,7 @@
                             "target_phase",
                             "timestamp",
                             "description",
-                            "actor",
+                            "source_entity",
                             "was_successful"
                         ],
                         "minItems": 0

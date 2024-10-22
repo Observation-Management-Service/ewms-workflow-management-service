@@ -98,8 +98,9 @@ async def create_task_directive_and_taskforces(
                     {
                         "target_phase": TaskforcePhase.PRE_MQ_ACTIVATOR,
                         "timestamp": time.time(),
+                        "source_event_time": None,
                         "was_successful": True,
-                        "actor": "User",
+                        "source_entity": "User",
                         "description": "During initial workflow creation.",
                     }
                 ],
