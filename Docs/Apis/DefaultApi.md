@@ -12,6 +12,8 @@ All URIs are relative to *http://localhost*
 | [_details_](DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} |  |
 | [_details_](DefaultApi.md#get-v0taskforcestaskforce_uuid) | **GET** /v0/taskforces/{taskforce_uuid} |  |
 | [_details_](DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce_uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
+| [_details_](DefaultApi.md#post-v0tmscondor-rmtaskforcestaskforce_uuidfailed) | **POST** /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed |  |
+| [_details_](DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuidfailed) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed |  |
 | [_details_](DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuid) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} |  |
 | [_details_](DefaultApi.md#get-v0tmspending-startertaskforces) | **GET** /v0/tms/pending-starter/taskforces |  |
 | [_details_](DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces |  |
@@ -212,6 +214,60 @@ This endpoint does not need any parameter.
 |------------- | ------------- | ------------- | -------------|
 | **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
 | **\_v0\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request** | [**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_request**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_request.md)|  | [optional] |
+
+### Return type
+
+[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
+
+### Authorization
+
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+<a name="POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed"></a>
+# **POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed**
+> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed(taskforce\_uuid, \_v0\_tms\_condor\_rm\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request)
+
+
+
+    For internal use only (TMS): Communicates that a taskforce failed to be removed on HTCondor.
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
+| **\_v0\_tms\_condor\_rm\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request** | [**_v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request**](../Models/_v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request.md)|  | [optional] |
+
+### Return type
+
+[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
+
+### Authorization
+
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+<a name="POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed"></a>
+# **POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed**
+> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed(taskforce\_uuid, \_v0\_tms\_condor\_submit\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request)
+
+
+
+    For internal use only (TMS): Communicates that a taskforce failed to be submitted to HTCondor for execution.
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
+| **\_v0\_tms\_condor\_submit\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request** | [**_v0_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request**](../Models/_v0_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request.md)|  | [optional] |
 
 ### Return type
 
