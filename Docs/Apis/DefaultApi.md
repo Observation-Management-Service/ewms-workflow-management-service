@@ -13,11 +13,11 @@ All URIs are relative to *http://localhost*
 | [_details_](DefaultApi.md#get-v0taskforcestaskforce_uuid) | **GET** /v0/taskforces/{taskforce_uuid} |  |
 | [_details_](DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce_uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
 | [_details_](DefaultApi.md#post-v0tmscondor-rmtaskforcestaskforce_uuidfailed) | **POST** /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed |  |
+| [_details_](DefaultApi.md#post-v0tmscondor-rmtaskforcestaskforce_uuid) | **POST** /v0/tms/condor-rm/taskforces/{taskforce_uuid} |  |
 | [_details_](DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuidfailed) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed |  |
 | [_details_](DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuid) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} |  |
 | [_details_](DefaultApi.md#get-v0tmspending-startertaskforces) | **GET** /v0/tms/pending-starter/taskforces |  |
 | [_details_](DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces |  |
-| [_details_](DefaultApi.md#delete-v0tmspending-stoppertaskforcestaskforce_uuid) | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} |  |
 | [_details_](DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces |  |
 | [_details_](DefaultApi.md#post-v0workflows) | **POST** /v0/workflows |  |
 | [_details_](DefaultApi.md#delete-v0workflowsworkflow_id) | **DELETE** /v0/workflows/{workflow_id} |  |
@@ -254,6 +254,32 @@ This endpoint does not need any parameter.
 - **Content-Type**: application/json
 - **Accept**: application/json
 
+<a name="POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}"></a>
+# **POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}**
+> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}(taskforce\_uuid)
+
+
+
+    For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
+
+### Return type
+
+[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
+
+### Authorization
+
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
 <a name="POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed"></a>
 # **POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed**
 > _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed(taskforce\_uuid, \_v0\_tms\_condor\_submit\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request)
@@ -353,32 +379,6 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**_v0_tms_pending_starter_taskforces_get_200_response**](../Models/_v0_tms_pending_starter_taskforces_get_200_response.md)
-
-### Authorization
-
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-<a name="DELETE /v0/tms/pending-stopper/taskforces/{taskforce_uuid}"></a>
-# **DELETE /v0/tms/pending-stopper/taskforces/{taskforce_uuid}**
-> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response DELETE /v0/tms/pending-stopper/taskforces/{taskforce_uuid}(taskforce\_uuid)
-
-
-
-    For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.
-
-### Parameters
-
-|Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
-
-### Return type
-
-[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
 
 ### Authorization
 
