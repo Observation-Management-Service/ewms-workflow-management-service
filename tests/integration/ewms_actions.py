@@ -92,6 +92,10 @@ async def user_requests_new_workflow(
     assert len(workflow_resp["taskforces"]) == 2
     # taskforce checks
     assert all(tf["phase"] == "pre-mq-activation" for tf in workflow_resp["taskforces"])
+    assert all(
+        tf["phase_change_log"][-1]["target_phase"] == "pre-mq-activation"
+        for tf in workflow_resp["taskforces"]
+    )
     assert len(workflow_resp["taskforces"]) == len(condor_locations)
     assert sorted(  # check locations were translated correctly to collector+schedd
         (tf["collector"], tf["schedd"]) for tf in workflow_resp["taskforces"]
@@ -156,6 +160,10 @@ async def user_requests_new_workflow(
         },
     )
     assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
+    assert all(
+        tf["phase_change_log"][-1]["target_phase"] == "pending-starter"
+        for tf in resp["taskforces"]
+    )
     assert all(
         tf["pilot_config"]["environment"]
         == {
@@ -242,6 +250,10 @@ async def tms_starter(
     )
     assert len(resp["taskforces"]) == len(condor_locations)
     assert all(tf["phase"] == "condor-submit" for tf in resp["taskforces"])
+    assert all(
+        tf["phase_change_log"][-1]["target_phase"] == "condor-submit"
+        for tf in resp["taskforces"]
+    )
     # check directive reflects startup (runtime-assembled list of taskforces)
     resp = await _request_and_validate_and_print(
         rc,
@@ -429,6 +441,10 @@ async def tms_stopper(
     )
     assert len(resp["taskforces"]) == len(condor_locations)
     assert all(tf["phase"] == "condor-rm" for tf in resp["taskforces"])
+    assert all(
+        tf["phase_change_log"][-1]["target_phase"] == "condor-rm"
+        for tf in resp["taskforces"]
+    )
 
 
 async def tms_condor_clusters_done(

@@ -142,8 +142,9 @@ async def test_000(rc: RestClient) -> None:
         },
     )
     # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
     # fmt: on
     resp = await _request_and_validate_and_print(
         rc,
@@ -267,7 +268,8 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] is None for tf in resp["taskforces"])
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
     # fmt: on
 
 
@@ -388,7 +390,8 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] is None for tf in resp["taskforces"])
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
     # fmt: on
     resp = await _request_and_validate_and_print(
         rc,
@@ -490,7 +493,8 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-rm"
     # fmt: on
     resp = await _request_and_validate_and_print(
         rc,
@@ -590,7 +594,8 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-rm"
     # fmt: on
     resp = await _request_and_validate_and_print(
         rc,
@@ -705,7 +710,8 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-submit"
     # fmt: on
     resp = await _request_and_validate_and_print(
         rc,
