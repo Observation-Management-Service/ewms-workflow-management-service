@@ -12,6 +12,8 @@ from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
 from rest_tools.client.utils import request_and_validate
 
+from utils import _request_and_validate_and_print
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -22,6 +24,7 @@ ROUTE_VERSION_PREFIX = "v0"
 
 
 async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
+    """Get the OpenAPI schema."""
     resp = await request_and_validate(
         rc,
         # only read json file for this request
@@ -60,7 +63,7 @@ async def user_requests_new_workflow(
     # USER...
     # requests new workflow
     #
-    workflow_resp = await request_and_validate(
+    workflow_resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -125,14 +128,14 @@ async def user_requests_new_workflow(
     # query about task directive
     task_directive = workflow_resp["task_directives"][0]
     task_id = task_directive["task_id"]
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/task-directives/{task_id}",
     )
     assert resp == task_directive
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -143,7 +146,7 @@ async def user_requests_new_workflow(
     assert resp["task_directives"][0] == task_directive
 
     # look at taskforces
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -190,7 +193,7 @@ async def tms_starter(
     #
     for shortname, loc in condor_locations.items():
         # get next to start
-        taskforce = await request_and_validate(
+        taskforce = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -200,7 +203,7 @@ async def tms_starter(
         assert taskforce
         taskforce_uuid = taskforce["taskforce_uuid"]
         # check that it's still pending
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -209,7 +212,7 @@ async def tms_starter(
         assert resp["phase"] == "pending-starter"
         # confirm it has started
         condor_locs_w_jel[shortname]["jel"] = "/home/the_job_event_log_fpath"
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
@@ -225,7 +228,7 @@ async def tms_starter(
     #
     # USER...
     # check above
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -240,7 +243,7 @@ async def tms_starter(
     assert len(resp["taskforces"]) == len(condor_locations)
     assert all(tf["phase"] == "condor-submit" for tf in resp["taskforces"])
     # check directive reflects startup (runtime-assembled list of taskforces)
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -272,7 +275,7 @@ async def tms_watcher_sends_status_update(
     # jobs in action!
     #
     for shortname, loc in condor_locs_w_jel.items():
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
@@ -288,7 +291,7 @@ async def tms_watcher_sends_status_update(
         )
         assert len(resp["taskforces"]) == 1
         taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
@@ -308,7 +311,7 @@ async def tms_watcher_sends_status_update(
     # USER...
     # check above
     #
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -324,7 +327,6 @@ async def tms_watcher_sends_status_update(
             ],
         },
     )
-    print(json.dumps(resp, indent=4))
     assert len(resp["taskforces"]) == len(condor_locs_w_jel)
     for tf in resp["taskforces"]:
         for shortname, loc in condor_locs_w_jel.items():
@@ -350,7 +352,7 @@ async def user_aborts_workflow(
     # USER...
     # stop workflow
     #
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -362,7 +364,7 @@ async def user_aborts_workflow(
     )
     assert len(resp["task_directives"]) == 1
     workflow_id = resp["task_directives"][0]["workflow_id"]
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "DELETE",
@@ -372,7 +374,7 @@ async def user_aborts_workflow(
         "workflow_id": workflow_id,
         "n_taskforces": len(condor_locations) if not aborted_after_condor else 0,
     }
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
@@ -393,7 +395,7 @@ async def tms_stopper(
     #
     for loc in condor_locations.values():
         # get next to stop
-        taskforce = await request_and_validate(
+        taskforce = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -402,7 +404,7 @@ async def tms_stopper(
         )
         assert taskforce
         # confirm it has stopped
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "DELETE",
@@ -413,7 +415,7 @@ async def tms_stopper(
     # USER...
     # check above
     #
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -440,7 +442,7 @@ async def tms_condor_clusters_done(
     # taskforces' condor clusters are done
     #
     for loc in condor_locs_w_jel.values():
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
@@ -455,7 +457,7 @@ async def tms_condor_clusters_done(
             },
         )
         assert len(resp["taskforces"]) == 1
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
@@ -473,7 +475,7 @@ async def tms_condor_clusters_done(
     # USER...
     # check above
     #
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",

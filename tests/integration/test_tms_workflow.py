@@ -3,9 +3,9 @@
 import logging
 
 from rest_tools.client import RestClient
-from rest_tools.client.utils import request_and_validate
 
 import ewms_actions
+from utils import _request_and_validate_and_print
 
 LOGGER = logging.getLogger(__name__)
 
@@ -131,7 +131,7 @@ async def test_000(rc: RestClient) -> None:
     )
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -145,7 +145,7 @@ async def test_000(rc: RestClient) -> None:
     assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
     assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
     # fmt: on
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
@@ -174,7 +174,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         task_id,
         CONDOR_LOCATIONS,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -186,7 +186,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     # fmt: on
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to start
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -195,7 +195,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         )
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to stop
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -204,7 +204,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         )
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to start
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -255,7 +255,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     # )
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -288,7 +288,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         task_id,
         CONDOR_LOCATIONS,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -300,7 +300,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
     # fmt: on
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to start
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -309,7 +309,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         )
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to stop
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -318,7 +318,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         )
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to start
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -376,7 +376,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
     # )
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -390,7 +390,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
     assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
     assert all(tf["condor_complete_ts"] is None for tf in resp["taskforces"])
     # fmt: on
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
@@ -434,7 +434,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         task_id,
         CONDOR_LOCATIONS,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -478,7 +478,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -492,7 +492,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
     assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
     # fmt: on
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
@@ -552,7 +552,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         task_id,
         CONDOR_LOCATIONS,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -578,7 +578,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -592,7 +592,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
     assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
     assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
     # fmt: on
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
@@ -652,7 +652,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         task_id,
         condor_locs_w_jel,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -671,7 +671,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
         aborted_after_condor=True,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -683,7 +683,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
     # fmt: on
     for loc in CONDOR_LOCATIONS.values():
         # make sure there is NOTHING to stop (taskforces are 'condor-submit' not 'pending-stopper')
-        taskforce = await request_and_validate(
+        taskforce = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -693,7 +693,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         assert not taskforce
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -707,7 +707,7 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
     assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
     assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
     # fmt: on
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
