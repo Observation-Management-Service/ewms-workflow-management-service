@@ -14,7 +14,7 @@ from .schema.enums import TaskforcePhase
 LOGGER = logging.getLogger(__name__)
 
 
-async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
+async def run(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
     """Start up the daemon task."""
     LOGGER.info("Starting up taskforce_launch_control...")
 
