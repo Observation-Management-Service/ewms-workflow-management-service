@@ -208,9 +208,10 @@
             "required": [
                 "target_phase",
                 "timestamp",
-                "description",
+                "was_successful",
+                "source_event_time",
                 "source_entity",
-                "was_successful"
+                "description"
             ],
             "minItems": 0
         },

@@ -310,36 +310,49 @@
                     },
                     "phase_change_log": {
                         "type": "array",
-                        "description": "A history of all attempted phase changes.",
+                        "description": "A record of all attempted phase changes, including both successful and unsuccessful ones.",
                         "properties": {
                             "target_phase": {
                                 "type": "string",
-                                "description": "The phase meant to be changed to."
+                                "description": "The phase that the system was attempting to transition to."
                             },
                             "timestamp": {
                                 "type": "number",
-                                "description": "The epoch time when this occurred."
-                            },
-                            "description": {
-                                "type": "string",
-                                "description": "Further details on what happened."
-                            },
-                            "source_entity": {
-                                "type": "string",
-                                "description": "Who caused this change."
+                                "description": "The epoch timestamp when this phase change attempt was recorded in the system."
                             },
                             "was_successful": {
                                 "type": "boolean",
-                                "description": "Whether this phase change succeeded."
+                                "description": "Indicates whether the phase change was completed successfully, i.e. did it actually change?"
+                            },
+                            "source_event_time": {
+                                "anyOf": [
+                                    {
+                                        "type": "number",
+                                        "description": "The epoch timestamp of the external event that led to this phase change attempt."
+                                    },
+                                    {
+                                        "type": "null",
+                                        "description": "Indicates no specific external event was tied to this phase change."
+                                    }
+                                ]
+                            },
+                            "source_entity": {
+                                "type": "string",
+                                "description": "The entity (person, system, or process) responsible for the external event that triggered this phase change attempt."
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "Additional information or context about the phase change attempt."
                             }
                         },
                         "additionalProperties": false,
                         "required": [
                             "target_phase",
                             "timestamp",
-                            "description",
+                            "was_successful",
+                            "source_event_time",
                             "source_entity",
-                            "was_successful"
+                            "description"
                         ],
                         "minItems": 0
                     },
