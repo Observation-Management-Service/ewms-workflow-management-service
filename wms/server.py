@@ -31,7 +31,7 @@ HANDLERS = [
     rest_handlers.taskforce_handlers.TMSTaskforceCondorSubmitUUIDHandler,
     rest_handlers.taskforce_handlers.TMSTaskforceCondorSubmitUUIDFailedHandler,
     rest_handlers.taskforce_handlers.TMSTaskforcePendingStopperHandler,
-    rest_handlers.taskforce_handlers.TMSTaskforcePendingStopperUUIDHandler,
+    rest_handlers.taskforce_handlers.TMSTaskforceCondorRmUUIDHandler,
     rest_handlers.taskforce_handlers.TMSTaskforceCondorRmUUIDFailedHandler,
     rest_handlers.taskforce_handlers.TMSTaskforceCondorCompleteUUIDHandler,
 ]

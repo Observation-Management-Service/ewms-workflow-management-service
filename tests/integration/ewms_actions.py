@@ -445,8 +445,8 @@ async def tms_stopper(
         resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
-            "DELETE",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces/{taskforce['taskforce_uuid']}",
+            "POST",
+            f"/{ROUTE_VERSION_PREFIX}/tms/condor-rm/taskforces/{taskforce['taskforce_uuid']}",
         )
 
     #

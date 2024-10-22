@@ -4,7 +4,7 @@
             "$ref": "#/components/parameters/TaskforceUUIDParam"
         }
     ],
-    "delete": {
+    "post": {
         "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
         "responses": {
             "200": {

@@ -302,15 +302,15 @@ class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
 # --------------------------------------------------------------------------------------
 
 
-class TMSTaskforcePendingStopperUUIDHandler(BaseWMSHandler):
+class TMSTaskforceCondorRmUUIDHandler(BaseWMSHandler):
     """Handle actions with a taskforce designated to be stopped."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces/(?P<taskforce_uuid>[\w-]+)$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-rm/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
-    async def delete(self, taskforce_uuid: str) -> None:
-        """Handle DELETE.
+    async def post(self, taskforce_uuid: str) -> None:
+        """Handle POST.
 
         Confirm that the taskforce has been stopped (condor_rm has been
         invoked).
