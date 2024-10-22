@@ -935,6 +935,84 @@
                 }
             }
         },
+        "/v0/tms/condor-rm/taskforces/{taskforce_uuid}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/TaskforceUUIDParam"
+                }
+            ],
+            "post": {
+                "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
+                "responses": {
+                    "200": {
+                        "description": "the uuid of the updated taskforce object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce_uuid": {
+                                            "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed": {
             "parameters": [
                 {
@@ -1304,84 +1382,6 @@
                     },
                     "400": {
                         "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v0/tms/pending-stopper/taskforces/{taskforce_uuid}": {
-            "parameters": [
-                {
-                    "$ref": "#/components/parameters/TaskforceUUIDParam"
-                }
-            ],
-            "delete": {
-                "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
-                "responses": {
-                    "200": {
-                        "description": "the uuid of the updated taskforce object",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "taskforce_uuid": {
-                                            "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
-                                        }
-                                    },
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
                         "content": {
                             "application/json": {
                                 "schema": {
