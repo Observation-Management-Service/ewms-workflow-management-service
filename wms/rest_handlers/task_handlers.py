@@ -117,7 +117,7 @@ async def create_task_directive_and_taskforces(
 # ----------------------------------------------------------------------------
 
 
-class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskDirectiveIDHandler(BaseWMSHandler):
     """Handle actions for a task's directive."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/task-directives/(?P<task_id>[\w-]+)$"
@@ -147,7 +147,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskDirectivesFindHandler(BaseWMSHandler):
     """Handle actions for finding task directives."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/query/task-directives$"

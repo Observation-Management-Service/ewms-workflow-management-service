@@ -4,18 +4,16 @@ import logging
 from typing import Any
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from rest_tools.server import RestHandler
-from rest_tools.server import validate_request
+from rest_tools.server import RestHandler, validate_request
 
 from . import auth
-from .. import config
-from .. import database
+from .. import config, database
 from ..utils import get_mqs_connection
 
 LOGGER = logging.getLogger(__name__)
 
 
-class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
+class BaseWMSHandler(RestHandler):
     """BaseWMSHandler is a RestHandler for all WMS routes."""
 
     def initialize(  # type: ignore  # pylint: disable=W0221
@@ -35,7 +33,7 @@ class BaseWMSHandler(RestHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class MainHandler(BaseWMSHandler):  # pylint: disable=W0223
+class MainHandler(BaseWMSHandler):
     """MainHandler is a BaseWMSHandler that handles the root route."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/$"

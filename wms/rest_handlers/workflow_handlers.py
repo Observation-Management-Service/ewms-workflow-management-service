@@ -28,7 +28,7 @@ def _get_all_queues(tasks: list[dict]) -> list[str]:
 # ----------------------------------------------------------------------------
 
 
-class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
+class WorkflowHandler(BaseWMSHandler):
     """Handle actions for adding a workflow."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows$"
@@ -147,7 +147,7 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class WorkflowIDHandler(BaseWMSHandler):
     """Handle actions for a workflow."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows/(?P<workflow_id>[\w-]+)$"
@@ -273,7 +273,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
 # ----------------------------------------------------------------------------
 
 
-class WorkflowsFindHandler(BaseWMSHandler):  # pylint: disable=W0223
+class WorkflowsFindHandler(BaseWMSHandler):
     """Handle actions for finding workflows."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/query/workflows$"
