@@ -16,6 +16,17 @@ from ..schema.enums import TaskforcePhase
 LOGGER = logging.getLogger(__name__)
 
 
+def _make_taskforce_404(taskforce_uuid: str, adjective: str = "") -> web.HTTPError:
+    adjective = adjective.strip()
+    if adjective:
+        adjective += " "  # spacing for below
+
+    return web.HTTPError(
+        status_code=404,
+        reason=f"no {adjective}taskforce found with uuid: {taskforce_uuid}",  # to client
+    )
+
+
 # --------------------------------------------------------------------------------------
 
 
@@ -211,10 +222,7 @@ class TMSTaskforceCondorSubmitUUIDHandler(BaseWMSHandler):
                 },
             )
         except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no 'pending-starter' taskforce found with uuid: {taskforce_uuid}",  # to client
-            ) from e
+            raise _make_taskforce_404(taskforce_uuid, "'pending-starter'") from e
 
         self.write(
             {
@@ -254,10 +262,7 @@ class TMSTaskforceCondorSubmitUUIDFailedHandler(BaseWMSHandler):
                 },
             )
         except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no 'pending-starter' taskforce found with uuid: {taskforce_uuid}",  # to client
-            ) from e
+            raise _make_taskforce_404(taskforce_uuid, "'pending-starter'") from e
 
         self.write(
             {
@@ -338,10 +343,7 @@ class TMSTaskforceCondorRmUUIDHandler(BaseWMSHandler):
                 },
             )
         except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
-            ) from e
+            raise _make_taskforce_404(taskforce_uuid) from e
 
         self.write(
             {
@@ -381,10 +383,7 @@ class TMSTaskforceCondorRmUUIDFailedHandler(BaseWMSHandler):
                 },
             )
         except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
-            ) from e
+            raise _make_taskforce_404(taskforce_uuid) from e
 
         self.write(
             {
@@ -432,10 +431,7 @@ class TMSTaskforceCondorCompleteUUIDHandler(BaseWMSHandler):
                 },
             )
         except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no non-condor-completed taskforce found with uuid: {taskforce_uuid}",  # to client
-            ) from e
+            raise _make_taskforce_404(taskforce_uuid, "non-condor-completed") from e
 
         self.write(
             {
@@ -466,10 +462,7 @@ class TaskforceUUIDHandler(BaseWMSHandler):
                 }
             )
         except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
-            ) from e
+            raise _make_taskforce_404(taskforce_uuid) from e
 
         self.write(taskforce)
 
