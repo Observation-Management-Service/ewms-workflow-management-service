@@ -27,6 +27,34 @@ def _make_taskforce_404(taskforce_uuid: str, adjective: str = "") -> web.HTTPErr
     )
 
 
+def _get_aggregate_pipeline_phasechangelog_n_failures_and_filter(
+    target_phase: str,
+    max_failures: int,
+) -> list[dict]:
+    return [
+        {
+            "$addFields": {
+                "n_failures": {
+                    "$size": {
+                        "$filter": {
+                            "input": "$phase_change_log",
+                            "as": "log",
+                            "cond": {
+                                "$and": [
+                                    {"$eq": ["$$log.target_phase", target_phase]},
+                                    {"$eq": ["$$log.was_successful", False]},
+                                ]
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        # filter out taskforces with more than X failures
+        {"$match": {"n_failures": {"$lte": max_failures}}},
+    ]
+
+
 # --------------------------------------------------------------------------------------
 
 
@@ -158,16 +186,27 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
         Get the next taskforce to START for the given condor location.
         """
         try:
-            taskforce = await self.wms_db.taskforces_collection.find_one(
-                {
-                    "collector": self.get_argument("collector"),
-                    "schedd": self.get_argument("schedd"),
-                    "phase": TaskforcePhase.PENDING_STARTER,
-                },
-                sort=[
-                    ("worker_config.priority", DESCENDING),  # first, highest priority
-                    ("timestamp", ASCENDING),  # then, oldest
-                ],
+            taskforce = await self.wms_db.taskforces_collection.aggregate_one(
+                [
+                    {
+                        "$match": {
+                            "collector": self.get_argument("collector"),
+                            "schedd": self.get_argument("schedd"),
+                            "phase": TaskforcePhase.PENDING_STARTER,
+                        }
+                    },
+                    *_get_aggregate_pipeline_phasechangelog_n_failures_and_filter(
+                        "condor-submit",
+                        max_failures=config.ENV.TMS_ACTION_RETRIES,
+                    ),
+                    {
+                        "$sort": {
+                            "worker_config.priority": DESCENDING,  # first, highest priority
+                            "n_failures": ASCENDING,  # then, fewer failed attempts
+                            "timestamp": ASCENDING,  # finally, oldest
+                        }
+                    },
+                ]
             )
         except DocumentNotFoundException:
             taskforce = {}
@@ -287,16 +326,31 @@ class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
         Get the next taskforce to STOP for the given condor location.
         """
         try:
-            taskforce = await self.wms_db.taskforces_collection.find_one(
-                {
-                    "collector": self.get_argument("collector"),
-                    "schedd": self.get_argument("schedd"),
-                    "phase": TaskforcePhase.PENDING_STOPPER,
-                    "cluster_id": {"$ne": None},  # there has to be something to stop
-                },
-                sort=[
-                    ("timestamp", ASCENDING),  # oldest first
-                ],
+            taskforce = await self.wms_db.taskforces_collection.aggregate_one(
+                [
+                    {
+                        "$match": {
+                            "collector": self.get_argument("collector"),
+                            "schedd": self.get_argument("schedd"),
+                            "phase": TaskforcePhase.PENDING_STOPPER,
+                            "cluster_id": {"$ne": None},
+                            # ^^^ there has to be something to stop
+                        }
+                    },
+                    *_get_aggregate_pipeline_phasechangelog_n_failures_and_filter(
+                        "condor-rm",
+                        max_failures=config.ENV.TMS_ACTION_RETRIES,
+                    ),
+                    {
+                        "$sort": {
+                            # Assumption: Failed taskforces are due to transient errors
+                            #   in condor, iow it's not due to the nature of the
+                            #   taskforce. So, we may as well respect only age, and not
+                            #   sort with `n_failures`.
+                            "timestamp": ASCENDING,  # then, oldest
+                        }
+                    },
+                ]
             )
         except DocumentNotFoundException:
             taskforce = {}
