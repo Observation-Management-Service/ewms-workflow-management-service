@@ -206,6 +206,7 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
                             "timestamp": ASCENDING,  # finally, oldest
                         }
                     },
+                    {"$project": {"n_failures": 0}},  # remove the computed field
                 ]
             )
         except DocumentNotFoundException:
@@ -350,6 +351,7 @@ class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
                             "timestamp": ASCENDING,  # then, oldest
                         }
                     },
+                    {"$project": {"n_failures": 0}},  # remove the computed field
                 ]
             )
         except DocumentNotFoundException:
