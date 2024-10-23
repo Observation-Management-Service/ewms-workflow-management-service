@@ -15,8 +15,8 @@
 | **cluster\_id** | [**TaskforceObject_cluster_id**](TaskforceObject_cluster_id.md) |  | [optional] [default to null] |
 | **submit\_dict** | [**Map**](TaskforceObject_submit_dict_value.md) | The actual HTCondor submit class ad. | [optional] [default to null] |
 | **job\_event\_log\_fpath** | **String** | The file path on the HTCondor AP containing job event logs. | [optional] [default to null] |
-| **condor\_complete\_ts** | [**TaskforceObject_condor_complete_ts**](TaskforceObject_condor_complete_ts.md) |  | [optional] [default to null] |
 | **phase** | **String** | The current phase of the taskforce within the workflow&#39;s lifetime. Not all taskforces will enter every phase. | [optional] [default to null] |
+| **phase\_change\_log** | [**List**](AnyType.md) | A record of all attempted phase changes, including both successful and unsuccessful ones. | [optional] [default to null] |
 | **compound\_statuses** | [**Map**](map.md) | Aggregated status of the workers, represented as a nested dictionary mapping HTCondor states to EWMS pilot states and their counts. | [optional] [default to null] |
 | **top\_task\_errors** | **Map** | The most common errors encountered by workers, paired with their occurrence counts. | [optional] [default to null] |
 

@@ -186,12 +186,39 @@ class MongoValidatedCollection:
         """Find all matching the query."""
         self.logger.debug(f"finding with query: {query}")
 
-        doc = {}
+        i = 0
         async for doc in self._collection.find(query, projection, **kwargs):
+            i += 1
             # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
             doc.pop("_id")
             self.logger.debug(f"found {doc}")
             yield doc
 
-        if not doc:
-            self.logger.debug(f"found nothing matching query: {query}")
+        self.logger.debug(f"found {i} docs")
+
+    async def aggregate(self, pipeline: list[dict]) -> AsyncIterator[dict]:
+        """Find all matching the aggregate pipeline."""
+        self.logger.debug(f"finding with aggregate pipeline: {pipeline}")
+
+        i = 0
+        async for doc in self._collection.aggregate(pipeline):
+            i += 1
+            # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
+            doc.pop("_id")
+            self.logger.debug(f"found {doc}")
+            yield doc
+
+        self.logger.debug(f"found {i} docs")
+
+    async def aggregate_one(self, pipeline: list[dict]) -> dict:
+        """Find one matching the aggregate pipeline.
+
+        Appends `{"$limit": 1}` to pipeline.
+        """
+        self.logger.debug(f"finding one with aggregate pipeline: {pipeline}")
+
+        pipeline.append({"$limit": 1})  # optimization
+        async for doc in self.aggregate(pipeline):
+            return doc
+
+        raise DocumentNotFoundException()

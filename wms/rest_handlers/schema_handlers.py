@@ -11,7 +11,7 @@ from .. import config
 LOGGER = logging.getLogger(__name__)
 
 
-class SchemaHandler(BaseWMSHandler):  # pylint: disable=W0223
+class SchemaHandler(BaseWMSHandler):
     """The sole handler for retrieving the OpenAPI schema."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/schema/openapi$"

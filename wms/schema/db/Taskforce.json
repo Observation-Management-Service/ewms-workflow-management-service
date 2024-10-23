@@ -154,17 +154,6 @@
             "type": "string",
             "description": "The file path on the HTCondor AP containing job event logs."
         },
-        "condor_complete_ts": {
-            "anyOf": [
-                {
-                    "type": "integer",
-                    "description": "The epoch time when the HTCondor cluster completed. If null, the cluster has not yet completed."
-                },
-                {
-                    "type": "null"
-                }
-            ]
-        },
         "phase": {
             "type": "string",
             "description": "The current phase of the taskforce within the workflow's lifetime. Not all taskforces will enter every phase.",
@@ -174,8 +163,57 @@
                 "pending-starter",
                 "condor-submit",
                 "pending-stopper",
-                "condor-rm"
+                "condor-rm",
+                "condor-complete"
             ]
+        },
+        "phase_change_log": {
+            "type": "array",
+            "description": "A record of all attempted phase changes, including both successful and unsuccessful ones.",
+            "properties": {
+                "target_phase": {
+                    "type": "string",
+                    "description": "The phase that the system was attempting to transition to."
+                },
+                "timestamp": {
+                    "type": "number",
+                    "description": "The epoch timestamp when this phase change attempt was recorded in the system."
+                },
+                "was_successful": {
+                    "type": "boolean",
+                    "description": "Indicates whether the phase change was completed successfully, i.e. did it actually change?"
+                },
+                "source_event_time": {
+                    "anyOf": [
+                        {
+                            "type": "number",
+                            "description": "The epoch timestamp of the external event that led to this phase change attempt."
+                        },
+                        {
+                            "type": "null",
+                            "description": "Indicates no specific external event was tied to this phase change."
+                        }
+                    ]
+                },
+                "source_entity": {
+                    "type": "string",
+                    "description": "The entity (person, system, or process) responsible for the external event that triggered this phase change attempt."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Additional information or context about the phase change attempt."
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "target_phase",
+                "timestamp",
+                "was_successful",
+                "source_event_time",
+                "source_entity",
+                "description"
+            ],
+            "minItems": 0
         },
         "compound_statuses": {
             "type": "object",
@@ -211,8 +249,8 @@
         "cluster_id",
         "submit_dict",
         "job_event_log_fpath",
-        "condor_complete_ts",
         "phase",
+        "phase_change_log",
         "compound_statuses",
         "top_task_errors"
     ],

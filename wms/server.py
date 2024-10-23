@@ -23,15 +23,17 @@ HANDLERS = [
     rest_handlers.task_handlers.TaskDirectivesFindHandler,  # must be before ID handler for regex
     rest_handlers.task_handlers.TaskDirectiveIDHandler,  # ^^^
     #
-    rest_handlers.taskforce_handlers.TaskforcesReportHandler,
+    rest_handlers.taskforce_handlers.TMSTaskforcesReportHandler,
     rest_handlers.taskforce_handlers.TaskforcesFindHandler,  # must be before ID handler for regex
     rest_handlers.taskforce_handlers.TaskforceUUIDHandler,  # ^^^
     #
-    rest_handlers.taskforce_handlers.TaskforcePendingStarterHandler,
-    rest_handlers.taskforce_handlers.TaskforceCondorSubmitUUIDHandler,
-    rest_handlers.taskforce_handlers.TaskforcePendingStopperHandler,
-    rest_handlers.taskforce_handlers.TaskforcePendingStopperUUIDHandler,
-    rest_handlers.taskforce_handlers.TaskforceCondorCompleteUUIDHandler,
+    rest_handlers.taskforce_handlers.TMSTaskforcePendingStarterHandler,
+    rest_handlers.taskforce_handlers.TMSTaskforceCondorSubmitUUIDHandler,
+    rest_handlers.taskforce_handlers.TMSTaskforceCondorSubmitUUIDFailedHandler,
+    rest_handlers.taskforce_handlers.TMSTaskforcePendingStopperHandler,
+    rest_handlers.taskforce_handlers.TMSTaskforceCondorRmUUIDHandler,
+    rest_handlers.taskforce_handlers.TMSTaskforceCondorRmUUIDFailedHandler,
+    rest_handlers.taskforce_handlers.TMSTaskforceCondorCompleteUUIDHandler,
 ]
 
 

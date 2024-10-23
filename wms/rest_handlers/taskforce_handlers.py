@@ -1,6 +1,7 @@
 """REST handlers for taskforce-related routes."""
 
 import logging
+import time
 
 from pymongo import ASCENDING, DESCENDING
 from rest_tools.server import validate_request
@@ -15,10 +16,49 @@ from ..schema.enums import TaskforcePhase
 LOGGER = logging.getLogger(__name__)
 
 
-# ----------------------------------------------------------------------------
+def _make_taskforce_404(taskforce_uuid: str, adjective: str = "") -> web.HTTPError:
+    adjective = adjective.strip()
+    if adjective:
+        adjective += " "  # spacing for below
+
+    return web.HTTPError(
+        status_code=404,
+        reason=f"no {adjective}taskforce found with uuid: {taskforce_uuid}",  # to client
+    )
 
 
-class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
+def _get_aggregate_pipeline_phasechangelog_n_failures_and_filter(
+    target_phase: str,
+    max_failures: int,
+) -> list[dict]:
+    return [
+        {
+            "$addFields": {
+                "n_failures": {
+                    "$size": {
+                        "$filter": {
+                            "input": "$phase_change_log",
+                            "as": "log",
+                            "cond": {
+                                "$and": [
+                                    {"$eq": ["$$log.target_phase", target_phase]},
+                                    {"$eq": ["$$log.was_successful", False]},
+                                ]
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        # filter out taskforces with more than X failures
+        {"$match": {"n_failures": {"$lte": max_failures}}},
+    ]
+
+
+# --------------------------------------------------------------------------------------
+
+
+class TMSTaskforcesReportHandler(BaseWMSHandler):
     """Handle actions with statuses for taskforce(s)."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/statuses/taskforces$"
@@ -105,10 +145,10 @@ class TaskforcesReportHandler(BaseWMSHandler):  # pylint: disable=W0223
         )
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
-class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskforcesFindHandler(BaseWMSHandler):
     """Handle actions for finding taskforces."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/query/taskforces$"
@@ -130,10 +170,10 @@ class TaskforcesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         self.write({"taskforces": matches})
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
-class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
     """Handle actions with a pending taskforce."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces$"
@@ -146,27 +186,43 @@ class TaskforcePendingStarterHandler(BaseWMSHandler):  # pylint: disable=W0223
         Get the next taskforce to START for the given condor location.
         """
         try:
-            taskforce = await self.wms_db.taskforces_collection.find_one(
-                {
-                    "collector": self.get_argument("collector"),
-                    "schedd": self.get_argument("schedd"),
-                    "phase": TaskforcePhase.PENDING_STARTER,
-                },
-                sort=[
-                    ("worker_config.priority", DESCENDING),  # first, highest priority
-                    ("timestamp", ASCENDING),  # then, oldest
-                ],
+            taskforce = await self.wms_db.taskforces_collection.aggregate_one(
+                [
+                    {
+                        "$match": {
+                            "collector": self.get_argument("collector"),
+                            "schedd": self.get_argument("schedd"),
+                            "phase": TaskforcePhase.PENDING_STARTER,
+                        }
+                    },
+                    *_get_aggregate_pipeline_phasechangelog_n_failures_and_filter(
+                        "condor-submit",
+                        max_failures=config.ENV.TMS_ACTION_RETRIES,
+                    ),
+                    {
+                        "$sort": {
+                            "worker_config.priority": DESCENDING,  # first, highest priority
+                            "n_failures": ASCENDING,  # then, fewer failed attempts
+                            "timestamp": ASCENDING,  # finally, oldest
+                        }
+                    },
+                    {"$project": {"n_failures": 0}},  # remove the computed field
+                ]
             )
         except DocumentNotFoundException:
             taskforce = {}
 
+        # NOTE: the taskforce's phase is not advanced until the TMS sends condor-submit
+        #   info. This is so the TMS can die and restart well (statelessness).
+        #   See POST @ .../tms/condor-submit/taskforces/{taskforce_uuid}
+
         self.write(taskforce)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
-class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TMSTaskforceCondorSubmitUUIDHandler(BaseWMSHandler):
     """Handle actions with a condor-submitted taskforce."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)$"
@@ -192,14 +248,21 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                         "submit_dict": self.get_argument("submit_dict"),
                         "job_event_log_fpath": self.get_argument("job_event_log_fpath"),
                         "phase": TaskforcePhase.CONDOR_SUBMIT,
-                    }
+                    },
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.CONDOR_SUBMIT,
+                            "timestamp": time.time(),
+                            "was_successful": True,
+                            "source_event_time": None,
+                            "source_entity": "TMS",
+                            "description": "",
+                        },
+                    },
                 },
             )
         except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no 'pending-starter' taskforce found with uuid: {taskforce_uuid}",  # to client
-            ) from e
+            raise _make_taskforce_404(taskforce_uuid, "'pending-starter'") from e
 
         self.write(
             {
@@ -208,11 +271,51 @@ class TaskforceCondorSubmitUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         )
 
 
-# ----------------------------------------------------------------------------
+class TMSTaskforceCondorSubmitUUIDFailedHandler(BaseWMSHandler):
+    """Handle when a taskforce fails to be condor-submitted."""
+
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
+
+    @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    async def post(self, taskforce_uuid: str) -> None:
+        """Handle POST."""
+        error = self.get_argument("error")
+        try:
+            await self.wms_db.taskforces_collection.find_one_and_update(
+                {
+                    "taskforce_uuid": taskforce_uuid,
+                    "phase": {"$in": [TaskforcePhase.PENDING_STARTER]},
+                },
+                {
+                    # no "$set" needed, the phase is not changing
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.CONDOR_SUBMIT,
+                            "timestamp": time.time(),
+                            "was_successful": False,  # it failed!
+                            "source_event_time": None,
+                            "source_entity": "TMS",
+                            "description": f"ERROR: {error}",
+                        },
+                    },
+                },
+            )
+        except DocumentNotFoundException as e:
+            raise _make_taskforce_404(taskforce_uuid, "'pending-starter'") from e
+
+        self.write(
+            {
+                "taskforce_uuid": taskforce_uuid,
+            }
+        )
 
 
-class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
-    """Handle actions for the top taskforce designated to be stopped."""
+# --------------------------------------------------------------------------------------
+
+
+class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
+    """Handle actions for the top (next) taskforce designated to be stopped."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces$"
 
@@ -224,16 +327,32 @@ class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
         Get the next taskforce to STOP for the given condor location.
         """
         try:
-            taskforce = await self.wms_db.taskforces_collection.find_one(
-                {
-                    "collector": self.get_argument("collector"),
-                    "schedd": self.get_argument("schedd"),
-                    "phase": TaskforcePhase.PENDING_STOPPER,
-                    "cluster_id": {"$ne": None},  # there has to be something to stop
-                },
-                sort=[
-                    ("timestamp", ASCENDING),  # oldest first
-                ],
+            taskforce = await self.wms_db.taskforces_collection.aggregate_one(
+                [
+                    {
+                        "$match": {
+                            "collector": self.get_argument("collector"),
+                            "schedd": self.get_argument("schedd"),
+                            "phase": TaskforcePhase.PENDING_STOPPER,
+                            "cluster_id": {"$ne": None},
+                            # ^^^ there has to be something to stop
+                        }
+                    },
+                    *_get_aggregate_pipeline_phasechangelog_n_failures_and_filter(
+                        "condor-rm",
+                        max_failures=config.ENV.TMS_ACTION_RETRIES,
+                    ),
+                    {
+                        "$sort": {
+                            # Assumption: Failed taskforces are due to transient errors
+                            #   in condor, iow it's not due to the nature of the
+                            #   taskforce. So, we may as well respect only age, and not
+                            #   sort with `n_failures`.
+                            "timestamp": ASCENDING,  # then, oldest
+                        }
+                    },
+                    {"$project": {"n_failures": 0}},  # remove the computed field
+                ]
             )
         except DocumentNotFoundException:
             taskforce = {}
@@ -241,18 +360,18 @@ class TaskforcePendingStopperHandler(BaseWMSHandler):  # pylint: disable=W0223
         self.write(taskforce)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
-class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TMSTaskforceCondorRmUUIDHandler(BaseWMSHandler):
     """Handle actions with a taskforce designated to be stopped."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces/(?P<taskforce_uuid>[\w-]+)$"
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-rm/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
-    async def delete(self, taskforce_uuid: str) -> None:
-        """Handle DELETE.
+    async def post(self, taskforce_uuid: str) -> None:
+        """Handle POST.
 
         Confirm that the taskforce has been stopped (condor_rm has been
         invoked).
@@ -264,14 +383,23 @@ class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
                     # NOTE: any taskforce can be marked as 'condor-rm' regardless of state
                 },
                 {
-                    "$set": {"phase": TaskforcePhase.CONDOR_RM},
+                    "$set": {
+                        "phase": TaskforcePhase.CONDOR_RM,
+                    },
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.CONDOR_RM,
+                            "timestamp": time.time(),
+                            "was_successful": True,
+                            "source_event_time": None,
+                            "source_entity": "TMS",
+                            "description": "",
+                        },
+                    },
                 },
             )
         except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
-            ) from e
+            raise _make_taskforce_404(taskforce_uuid) from e
 
         self.write(
             {
@@ -280,10 +408,50 @@ class TaskforcePendingStopperUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         )
 
 
-# ----------------------------------------------------------------------------
+class TMSTaskforceCondorRmUUIDFailedHandler(BaseWMSHandler):
+    """Handle actions with the taskforce designated to be stopped failed to stop."""
+
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-rm/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
+
+    @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    async def post(self, taskforce_uuid: str) -> None:
+        """Handle POST."""
+        error = self.get_argument("error")
+        try:
+            await self.wms_db.taskforces_collection.find_one_and_update(
+                {
+                    "taskforce_uuid": taskforce_uuid,
+                    # NOTE: any taskforce can be marked as 'condor-rm' regardless of state
+                },
+                {
+                    # no "$set" needed, the phase is not changing
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.CONDOR_RM,
+                            "timestamp": time.time(),
+                            "was_successful": False,  # it failed!
+                            "source_event_time": None,
+                            "source_entity": "TMS",
+                            "description": f"ERROR: {error}",
+                        },
+                    },
+                },
+            )
+        except DocumentNotFoundException as e:
+            raise _make_taskforce_404(taskforce_uuid) from e
+
+        self.write(
+            {
+                "taskforce_uuid": taskforce_uuid,
+            }
+        )
 
 
-class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+# --------------------------------------------------------------------------------------
+
+
+class TMSTaskforceCondorCompleteUUIDHandler(BaseWMSHandler):
     """Handle actions with a condor-completed taskforce."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-complete/taskforces/(?P<taskforce_uuid>[\w-]+)$"
@@ -296,22 +464,30 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         Supply the timestamp for when the taskforce's condor cluster
         finished, regardless if it ended in success or failure.
         """
-        timestamp = int(self.get_argument("condor_complete_ts"))
+        source_event_time = int(self.get_argument("condor_complete_ts"))
         try:
             await self.wms_db.taskforces_collection.find_one_and_update(
                 {
                     "taskforce_uuid": taskforce_uuid,
-                    "condor_complete_ts": None,
                 },
                 {
-                    "$set": {"condor_complete_ts": timestamp},
+                    "$set": {
+                        "phase": TaskforcePhase.CONDOR_COMPLETE,
+                    },
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.CONDOR_COMPLETE,
+                            "timestamp": time.time(),
+                            "was_successful": True,
+                            "source_event_time": source_event_time,
+                            "source_entity": "TMS",
+                            "description": "",
+                        },
+                    },
                 },
             )
         except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no non-condor-completed taskforce found with uuid: {taskforce_uuid}",  # to client
-            ) from e
+            raise _make_taskforce_404(taskforce_uuid, "non-condor-completed") from e
 
         self.write(
             {
@@ -320,10 +496,10 @@ class TaskforceCondorCompleteUUIDHandler(BaseWMSHandler):  # pylint: disable=W02
         )
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
-class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskforceUUIDHandler(BaseWMSHandler):
     """Handle actions for a taskforce."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/taskforces/(?P<taskforce_uuid>[\w-]+)$"
@@ -342,12 +518,9 @@ class TaskforceUUIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                 }
             )
         except DocumentNotFoundException as e:
-            raise web.HTTPError(
-                status_code=404,
-                reason=f"no taskforce found with uuid: {taskforce_uuid}",  # to client
-            ) from e
+            raise _make_taskforce_404(taskforce_uuid) from e
 
         self.write(taskforce)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------

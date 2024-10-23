@@ -14,10 +14,12 @@
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} | Retrieves the task directive that matches the specified task ID. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0taskforcestaskforce_uuid) | **GET** /v0/taskforces/{taskforce_uuid} | Retrieves the taskforce object that matches the specified taskforce UUID. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce_uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} | For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-rmtaskforcestaskforce_uuidfailed) | **POST** /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed | For internal use only (TMS): Communicates that a taskforce failed to be removed on HTCondor. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-rmtaskforcestaskforce_uuid) | **POST** /v0/tms/condor-rm/taskforces/{taskforce_uuid} | For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuidfailed) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed | For internal use only (TMS): Communicates that a taskforce failed to be submitted to HTCondor for execution. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuid) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} | For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-startertaskforces) | **GET** /v0/tms/pending-starter/taskforces | For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces | For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0tmspending-stoppertaskforcestaskforce_uuid) | **DELETE** /v0/tms/pending-stopper/taskforces/{taskforce_uuid} | For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces | For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflows) | **POST** /v0/workflows | Creates a new workflow along with its associated task directives and taskforces. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0workflowsworkflow_id) | **DELETE** /v0/workflows/{workflow_id} | Aborts the specified workflow and updates the associated taskforces. |
@@ -31,8 +33,9 @@
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
  - [TaskforceObject_cluster_id](./Models/TaskforceObject_cluster_id.md)
- - [TaskforceObject_condor_complete_ts](./Models/TaskforceObject_condor_complete_ts.md)
  - [TaskforceObject_n_workers](./Models/TaskforceObject_n_workers.md)
+ - [TaskforceObject_phase_change_log](./Models/TaskforceObject_phase_change_log.md)
+ - [TaskforceObject_phase_change_log_source_event_time](./Models/TaskforceObject_phase_change_log_source_event_time.md)
  - [TaskforceObject_pilot_config](./Models/TaskforceObject_pilot_config.md)
  - [TaskforceObject_pilot_config_environment_value](./Models/TaskforceObject_pilot_config_environment_value.md)
  - [TaskforceObject_submit_dict_value](./Models/TaskforceObject_submit_dict_value.md)
@@ -45,6 +48,8 @@
  - [_v0_query_workflows_post_200_response](./Models/_v0_query_workflows_post_200_response.md)
  - [_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response](./Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
  - [_v0_tms_condor_complete_taskforces__taskforce_uuid__post_request](./Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_request.md)
+ - [_v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request](./Models/_v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request.md)
+ - [_v0_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request](./Models/_v0_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request.md)
  - [_v0_tms_pending_starter_taskforces_get_200_response](./Models/_v0_tms_pending_starter_taskforces_get_200_response.md)
  - [_v0_tms_statuses_taskforces_post_200_response](./Models/_v0_tms_statuses_taskforces_post_200_response.md)
  - [_v0_tms_statuses_taskforces_post_200_response_results_inner](./Models/_v0_tms_statuses_taskforces_post_200_response_results_inner.md)

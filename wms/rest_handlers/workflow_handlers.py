@@ -11,7 +11,7 @@ from .base_handlers import BaseWMSHandler
 from .task_handlers import create_task_directive_and_taskforces
 from .. import config
 from ..database.client import DocumentNotFoundException
-from ..schema.enums import TaskforcePhase
+from ..schema.enums import ENDING_OR_FINISHED_TASKFORCE_PHASES, TaskforcePhase
 from ..utils import IDFactory
 
 LOGGER = logging.getLogger(__name__)
@@ -25,10 +25,10 @@ def _get_all_queues(tasks: list[dict]) -> list[str]:
     return list(set(all_queues))
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
-class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
+class WorkflowHandler(BaseWMSHandler):
     """Handle actions for adding a workflow."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows$"
@@ -144,10 +144,10 @@ class WorkflowHandler(BaseWMSHandler):  # pylint: disable=W0223
         )
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
-class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class WorkflowIDHandler(BaseWMSHandler):
     """Handle actions for a workflow."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows/(?P<workflow_id>[\w-]+)$"
@@ -178,7 +178,7 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
     async def delete(self, workflow_id: str) -> None:
         """Handle DELETE.
 
-        Abort all tasks in workflow.
+        Abort all taskforces in workflow.
         """
         async with await self.wms_db.mongo_client.start_session() as s:
             async with s.start_transaction():  # atomic
@@ -201,38 +201,67 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
                     ) from e
 
                 # TASKFORCES
-                # set all corresponding taskforces to pending-stopper
+                # -> set all not-already-ending/finished taskforces to pending-stopper
                 n_tfs_updated = 0  # in no taskforces to stop (excepted exception)
                 try:
                     n_tfs_updated = await self.wms_db.taskforces_collection.update_many(
                         {
                             "workflow_id": workflow_id,
-                            "$and": [
-                                # not already aborted
-                                # NOTE - we don't care whether the taskforce has started up (see /tms/pending-stopper/taskforces)
-                                {
-                                    "phase": {
-                                        "$nin": [
-                                            TaskforcePhase.PENDING_STOPPER,
-                                            TaskforcePhase.CONDOR_RM,
-                                        ]
-                                    },  # "not in"
-                                },
-                                # AND
-                                # not condor-completed
-                                {
-                                    "condor_complete_ts": None,  # int -> condor-completed
-                                },
-                            ],
+                            # NOTE: we don't care whether the taskforce's condor cluster
+                            #   has started up (see /tms/pending-stopper/taskforces)
+                            "phase": {"$nin": ENDING_OR_FINISHED_TASKFORCE_PHASES},
                         },
-                        {"$set": {"phase": TaskforcePhase.PENDING_STOPPER}},
+                        {
+                            "$set": {
+                                "phase": TaskforcePhase.PENDING_STOPPER,
+                            },
+                            "$push": {
+                                "phase_change_log": {
+                                    "target_phase": TaskforcePhase.PENDING_STOPPER,
+                                    "timestamp": time.time(),
+                                    "source_event_time": None,
+                                    "was_successful": True,
+                                    "source_entity": "User",
+                                    "description": "User aborted workflow",
+                                },
+                            },
+                        },
                         session=s,
                     )
                 except DocumentNotFoundException:
                     LOGGER.info(
-                        "okay scenario: workflow's tasks aborted but no taskforces needed to be stopped"
+                        "okay scenario: workflow aborted but no taskforces needed to be stopped"
                     )
+                # -> set any taskforces that *ARE* already ending/finished
+                try:
+                    await self.wms_db.taskforces_collection.update_many(
+                        {
+                            "workflow_id": workflow_id,
+                            "phase": {"$in": ENDING_OR_FINISHED_TASKFORCE_PHASES},
+                        },
+                        {
+                            # no "$set" needed, the phase is not changing
+                            "$push": {
+                                "phase_change_log": {
+                                    "target_phase": TaskforcePhase.PENDING_STOPPER,
+                                    "timestamp": time.time(),
+                                    "source_event_time": None,
+                                    "was_successful": False,
+                                    "source_entity": "User",
+                                    "description": (
+                                        f"User aborted workflow but taskforce "
+                                        f"is already ending/finished "
+                                        f"({", ".join(ENDING_OR_FINISHED_TASKFORCE_PHASES)})"
+                                    ),
+                                },
+                            },
+                        },
+                        session=s,
+                    )
+                except DocumentNotFoundException:
+                    pass  # it's actually a good thing if there were no matches
 
+        # all done
         self.write(
             {
                 "workflow_id": workflow_id,
@@ -241,10 +270,10 @@ class WorkflowIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         )
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
-class WorkflowsFindHandler(BaseWMSHandler):  # pylint: disable=W0223
+class WorkflowsFindHandler(BaseWMSHandler):
     """Handle actions for finding workflows."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/query/workflows$"
@@ -266,4 +295,4 @@ class WorkflowsFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         self.write({"workflows": matches})
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------

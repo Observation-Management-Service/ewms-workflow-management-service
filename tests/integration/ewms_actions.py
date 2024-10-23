@@ -12,6 +12,8 @@ from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
 from rest_tools.client.utils import request_and_validate
 
+from utils import _request_and_validate_and_print
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -22,6 +24,7 @@ ROUTE_VERSION_PREFIX = "v0"
 
 
 async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
+    """Get the OpenAPI schema."""
     resp = await request_and_validate(
         rc,
         # only read json file for this request
@@ -60,7 +63,7 @@ async def user_requests_new_workflow(
     # USER...
     # requests new workflow
     #
-    workflow_resp = await request_and_validate(
+    workflow_resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -89,6 +92,10 @@ async def user_requests_new_workflow(
     assert len(workflow_resp["taskforces"]) == 2
     # taskforce checks
     assert all(tf["phase"] == "pre-mq-activation" for tf in workflow_resp["taskforces"])
+    assert all(
+        tf["phase_change_log"][-1]["target_phase"] == "pre-mq-activation"
+        for tf in workflow_resp["taskforces"]
+    )
     assert len(workflow_resp["taskforces"]) == len(condor_locations)
     assert sorted(  # check locations were translated correctly to collector+schedd
         (tf["collector"], tf["schedd"]) for tf in workflow_resp["taskforces"]
@@ -125,14 +132,14 @@ async def user_requests_new_workflow(
     # query about task directive
     task_directive = workflow_resp["task_directives"][0]
     task_id = task_directive["task_id"]
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/task-directives/{task_id}",
     )
     assert resp == task_directive
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -143,7 +150,7 @@ async def user_requests_new_workflow(
     assert resp["task_directives"][0] == task_directive
 
     # look at taskforces
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -153,6 +160,10 @@ async def user_requests_new_workflow(
         },
     )
     assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
+    assert all(
+        tf["phase_change_log"][-1]["target_phase"] == "pending-starter"
+        for tf in resp["taskforces"]
+    )
     assert all(
         tf["pilot_config"]["environment"]
         == {
@@ -190,7 +201,7 @@ async def tms_starter(
     #
     for shortname, loc in condor_locations.items():
         # get next to start
-        taskforce = await request_and_validate(
+        taskforce = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -200,7 +211,7 @@ async def tms_starter(
         assert taskforce
         taskforce_uuid = taskforce["taskforce_uuid"]
         # check that it's still pending
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -209,7 +220,7 @@ async def tms_starter(
         assert resp["phase"] == "pending-starter"
         # confirm it has started
         condor_locs_w_jel[shortname]["jel"] = "/home/the_job_event_log_fpath"
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
@@ -225,7 +236,7 @@ async def tms_starter(
     #
     # USER...
     # check above
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -234,13 +245,17 @@ async def tms_starter(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["phase"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
     assert all(tf["phase"] == "condor-submit" for tf in resp["taskforces"])
+    assert all(
+        tf["phase_change_log"][-1]["target_phase"] == "condor-submit"
+        for tf in resp["taskforces"]
+    )
     # check directive reflects startup (runtime-assembled list of taskforces)
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -272,7 +287,7 @@ async def tms_watcher_sends_status_update(
     # jobs in action!
     #
     for shortname, loc in condor_locs_w_jel.items():
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
@@ -288,7 +303,7 @@ async def tms_watcher_sends_status_update(
         )
         assert len(resp["taskforces"]) == 1
         taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
@@ -308,7 +323,7 @@ async def tms_watcher_sends_status_update(
     # USER...
     # check above
     #
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -324,7 +339,6 @@ async def tms_watcher_sends_status_update(
             ],
         },
     )
-    print(json.dumps(resp, indent=4))
     assert len(resp["taskforces"]) == len(condor_locs_w_jel)
     for tf in resp["taskforces"]:
         for shortname, loc in condor_locs_w_jel.items():
@@ -350,7 +364,7 @@ async def user_aborts_workflow(
     # USER...
     # stop workflow
     #
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -362,7 +376,7 @@ async def user_aborts_workflow(
     )
     assert len(resp["task_directives"]) == 1
     workflow_id = resp["task_directives"][0]["workflow_id"]
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "DELETE",
@@ -372,13 +386,39 @@ async def user_aborts_workflow(
         "workflow_id": workflow_id,
         "n_taskforces": len(condor_locations) if not aborted_after_condor else 0,
     }
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp["aborted"] is True
+
+    if aborted_after_condor:
+        return
+
+    #
+    # USER...
+    # check above
+    #
+    resp = await _request_and_validate_and_print(
+        rc,
+        openapi_spec,
+        "POST",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
+        {
+            "query": {
+                "task_id": task_id,
+            },
+            "projection": ["phase", "phase_change_log"],
+        },
+    )
+    assert len(resp["taskforces"]) == len(condor_locations)
+    assert all(tf["phase"] == "pending-stopper" for tf in resp["taskforces"])
+    assert all(
+        tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
+        for tf in resp["taskforces"]
+    )
 
 
 async def tms_stopper(
@@ -393,7 +433,7 @@ async def tms_stopper(
     #
     for loc in condor_locations.values():
         # get next to stop
-        taskforce = await request_and_validate(
+        taskforce = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -402,18 +442,18 @@ async def tms_stopper(
         )
         assert taskforce
         # confirm it has stopped
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
-            "DELETE",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces/{taskforce['taskforce_uuid']}",
+            "POST",
+            f"/{ROUTE_VERSION_PREFIX}/tms/condor-rm/taskforces/{taskforce['taskforce_uuid']}",
         )
 
     #
     # USER...
     # check above
     #
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -422,11 +462,15 @@ async def tms_stopper(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["phase"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locations)
     assert all(tf["phase"] == "condor-rm" for tf in resp["taskforces"])
+    assert all(
+        tf["phase_change_log"][-1]["target_phase"] == "condor-rm"
+        for tf in resp["taskforces"]
+    )
 
 
 async def tms_condor_clusters_done(
@@ -440,7 +484,7 @@ async def tms_condor_clusters_done(
     # taskforces' condor clusters are done
     #
     for loc in condor_locs_w_jel.values():
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
@@ -455,7 +499,7 @@ async def tms_condor_clusters_done(
             },
         )
         assert len(resp["taskforces"]) == 1
-        resp = await request_and_validate(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
@@ -473,7 +517,7 @@ async def tms_condor_clusters_done(
     # USER...
     # check above
     #
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
@@ -482,11 +526,16 @@ async def tms_condor_clusters_done(
             "query": {
                 "task_id": task_id,
             },
-            "projection": ["taskforce_uuid", "condor_complete_ts"],
+            "projection": ["taskforce_uuid", "phase_change_log"],
         },
     )
     assert len(resp["taskforces"]) == len(condor_locs_w_jel)
     assert all(
-        tf["condor_complete_ts"] == hash(tf["taskforce_uuid"]) % 1700000000  # see above
+        list(
+            pcl["source_event_time"]
+            for pcl in tf["phase_change_log"]
+            if pcl["target_phase"] == "condor-complete"
+        )  # this will also check if there is only 1 matching entry
+        == [hash(tf["taskforce_uuid"]) % 1700000000]  # see above
         for tf in resp["taskforces"]
     )

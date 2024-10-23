@@ -21,11 +21,11 @@ async def main() -> None:
     async with asyncio.TaskGroup() as tg:
         # taskforce_launch_control
         LOGGER.info("Starting taskforce_launch_control in background...")
-        tg.create_task(taskforce_launch_control.startup(mongo_client))
+        tg.create_task(taskforce_launch_control.run(mongo_client))
 
         # workflow_mq_activator
         LOGGER.info("Starting workflow_mq_activator in background...")
-        tg.create_task(workflow_mq_activator.startup(mongo_client))
+        tg.create_task(workflow_mq_activator.run(mongo_client))
 
         # REST Server
         LOGGER.info("Setting up REST server...")

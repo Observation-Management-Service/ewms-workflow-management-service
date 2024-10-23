@@ -3,9 +3,9 @@
 import logging
 
 from rest_tools.client import RestClient
-from rest_tools.client.utils import request_and_validate
 
 import ewms_actions
+from utils import _request_and_validate_and_print
 
 LOGGER = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ CONDOR_LOCATIONS = {
 }
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 COMPOUND_STATUSES__1 = {  # type: ignore[var-annotated]
@@ -75,7 +75,7 @@ TOP_TASK_ERRORS__3 = {
 }
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 async def test_000(rc: RestClient) -> None:
@@ -131,21 +131,22 @@ async def test_000(rc: RestClient) -> None:
     )
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
     # fmt: on
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
@@ -154,7 +155,7 @@ async def test_000(rc: RestClient) -> None:
     assert resp["aborted"] is False
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 async def test_100__aborted_before_condor(rc: RestClient) -> None:
@@ -174,19 +175,21 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         task_id,
         CONDOR_LOCATIONS,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase"]},
+        {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
     # fmt: on
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to start
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -195,7 +198,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         )
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to stop
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -204,7 +207,7 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         )
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to start
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -255,19 +258,20 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     # )
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] is None for tf in resp["taskforces"])
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
     # fmt: on
 
 
@@ -288,19 +292,21 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         task_id,
         CONDOR_LOCATIONS,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase"]},
+        {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
     # fmt: on
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to start
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -309,7 +315,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         )
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to stop
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -318,7 +324,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         )
     for loc in CONDOR_LOCATIONS.values():
         # check that there is NOTHING to start
-        assert not await request_and_validate(
+        assert not await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -376,21 +382,22 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
     # )
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] is None for tf in resp["taskforces"])
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
     # fmt: on
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
@@ -434,15 +441,20 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         task_id,
         CONDOR_LOCATIONS,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase"]},
+        {
+            "query": {"task_id": task_id},
+            "projection": ["phase", "phase_change_log"],
+        },
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
     # fmt: on
     await ewms_actions.tms_stopper(
         rc,
@@ -478,21 +490,22 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
     # fmt: on
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
@@ -552,15 +565,17 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         task_id,
         CONDOR_LOCATIONS,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase"]},
+        {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
     )
     # fmt: off
     assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
     # fmt: on
     await ewms_actions.tms_stopper(
         rc,
@@ -578,21 +593,22 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
     )
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
+            "projection": ["phase", "phase_change_log"],
         },
     )
     # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-rm"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
+    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
     # fmt: on
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
@@ -652,15 +668,17 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         task_id,
         condor_locs_w_jel,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase"]},
+        {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
     )
     # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
+    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
     # fmt: on
 
     # ABORT!
@@ -671,19 +689,22 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
         aborted_after_condor=True,
     )
-    resp = await request_and_validate(
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase"]},
+        {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
     )
     # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
+    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
+    for tf in resp["taskforces"]:
+        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
+        assert tf["phase_change_log"][-1]["was_successful"] is False
     # fmt: on
     for loc in CONDOR_LOCATIONS.values():
-        # make sure there is NOTHING to stop (taskforces are 'condor-submit' not 'pending-stopper')
-        taskforce = await request_and_validate(
+        # make sure there is NOTHING to stop (taskforces are not 'pending-stopper')
+        taskforce = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
@@ -693,24 +714,13 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         assert not taskforce
 
     # CHECK FINAL STATES...
-    resp = await request_and_validate(
-        rc,
-        openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["phase", "condor_complete_ts"],
-        },
-    )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-submit"] * len(CONDOR_LOCATIONS)
-    assert all(tf["condor_complete_ts"] for tf in resp["taskforces"])
-    # fmt: on
-    resp = await request_and_validate(
+    # NOTE: already checked final taskforce states above
+    # workflow:
+    resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
+    # the workflow was aborted even though all taskforces' condor cluster had completed
     assert resp["aborted"] is True

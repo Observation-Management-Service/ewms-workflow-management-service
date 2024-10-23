@@ -1,8 +1,9 @@
-# TaskforceObject_condor_complete_ts
+# _v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
+| **error** | **String** | a description of why the taskforce failed to be removed on HTCondor | [optional] [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

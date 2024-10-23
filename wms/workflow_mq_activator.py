@@ -151,8 +151,24 @@ async def advance_database(
                 )
             # update phase
             await wms_db.taskforces_collection.update_many(
-                {"workflow_id": workflow_id},
-                {"$set": {"phase": TaskforcePhase.PRE_LAUNCH}},
+                {
+                    "workflow_id": workflow_id,
+                },
+                {
+                    "$set": {
+                        "phase": TaskforcePhase.PRE_LAUNCH,
+                    },
+                    "$push": {
+                        "phase_change_log": {
+                            "target_phase": TaskforcePhase.PRE_LAUNCH,
+                            "timestamp": time.time(),
+                            "was_successful": True,
+                            "source_event_time": None,
+                            "source_entity": "Workflow MQ Activator",
+                            "description": "",
+                        },
+                    },
+                },
                 session=s,
             )
 
@@ -182,7 +198,7 @@ async def set_mq_activation_retry_at_ts(
     )
 
 
-async def startup(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
+async def run(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
     """Start up the daemon task."""
     LOGGER.info("Starting up workflow_mq_activator...")
 

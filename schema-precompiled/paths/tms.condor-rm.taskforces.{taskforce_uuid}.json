@@ -5,26 +5,7 @@
         }
     ],
     "post": {
-        "description": "For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster.",
-        "requestBody": {
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "condor_complete_ts": {
-                                "description": "the time that the taskforce's condor cluster was ended/terminated/aborted",
-                                "type": "integer"
-                            }
-                        },
-                        "required": [
-                            "condor_complete_ts"
-                        ],
-                        "additionalProperties": false
-                    }
-                }
-            }
-        },
+        "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
         "responses": {
             "200": {
                 "description": "the uuid of the updated taskforce object",

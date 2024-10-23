@@ -1,4 +1,5 @@
 """REST handlers for task-related routes."""
+
 import logging
 import time
 
@@ -15,7 +16,7 @@ from ..utils import IDFactory
 LOGGER = logging.getLogger(__name__)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 async def create_task_directive_and_taskforces(
@@ -89,12 +90,20 @@ async def create_task_directive_and_taskforces(
                 "cluster_id": None,
                 "submit_dict": {},
                 "job_event_log_fpath": "",
-                # set ONCE by tms's watcher
-                "condor_complete_ts": None,
                 #
                 # updated by taskforce_launch_control, tms
                 # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)
                 "phase": TaskforcePhase.PRE_MQ_ACTIVATOR,
+                "phase_change_log": [
+                    {
+                        "target_phase": TaskforcePhase.PRE_MQ_ACTIVATOR,
+                        "timestamp": time.time(),
+                        "source_event_time": None,
+                        "was_successful": True,
+                        "source_entity": "User",
+                        "description": "During initial workflow creation.",
+                    }
+                ],
                 #
                 # updated by tms SEVERAL times
                 "compound_statuses": {},
@@ -105,10 +114,10 @@ async def create_task_directive_and_taskforces(
     return task_directive, taskforces
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
-class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskDirectiveIDHandler(BaseWMSHandler):
     """Handle actions for a task's directive."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/task-directives/(?P<task_id>[\w-]+)$"
@@ -135,10 +144,10 @@ class TaskDirectiveIDHandler(BaseWMSHandler):  # pylint: disable=W0223
         self.write(task_directive)
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
-class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
+class TaskDirectivesFindHandler(BaseWMSHandler):
     """Handle actions for finding task directives."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/query/task-directives$"
@@ -160,4 +169,4 @@ class TaskDirectivesFindHandler(BaseWMSHandler):  # pylint: disable=W0223
         self.write({"task_directives": matches})
 
 
-# ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------

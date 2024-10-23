@@ -58,6 +58,8 @@ class EnvConfig:
     WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT: int = 60
     TASKFORCE_LAUNCH_CONTROL_DELAY: int = 1
 
+    TMS_ACTION_RETRIES: int = 2  # 2 retries -> 3 total attempts
+
 
 ENV = from_environment_as_dataclass(EnvConfig)
 
