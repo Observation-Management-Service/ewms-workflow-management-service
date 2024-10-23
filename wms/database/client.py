@@ -186,12 +186,12 @@ class MongoValidatedCollection:
         """Find all matching the query."""
         self.logger.debug(f"finding with query: {query}")
 
-        doc = {}
+        i = 0
         async for doc in self._collection.find(query, projection, **kwargs):
+            i += 1
             # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
             doc.pop("_id")
             self.logger.debug(f"found {doc}")
             yield doc
 
-        if not doc:
-            self.logger.debug(f"found nothing matching query: {query}")
+        self.logger.debug(f"found {i} docs")
