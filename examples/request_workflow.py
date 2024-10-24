@@ -128,7 +128,7 @@ async def request_workflow(
                         "pilot_config": {
                             "environment": {},
                             "input_files": [],
-                            "image": pilot_cvmfs_image_tag,
+                            "tag": pilot_cvmfs_image_tag,
                         }
                     }
                     if pilot_cvmfs_image_tag

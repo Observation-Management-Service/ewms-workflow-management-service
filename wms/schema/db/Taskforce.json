@@ -41,10 +41,10 @@
             "type": "object",
             "description": "Configuration settings for the EWMS pilot.",
             "properties": {
-                "image": {
+                "tag": {
                     "type": "string",
-                    "description": "The image tag to use (e.g., 'v#.#.#' or 'latest'). This is useful for repeatability.",
-                    "pattern": "^(v[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})|(latest)$"
+                    "description": "The image tag to use (e.g., '#.#.#', 'latest', or a test branch tag). This is useful for repeatability.",
+                    "pattern": "^[a-z0-9._-]{1,128}$"
                 },
                 "environment": {
                     "type": "object",

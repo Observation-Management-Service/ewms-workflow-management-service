@@ -106,7 +106,7 @@ async def user_requests_new_workflow(
     assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
     for tf in workflow_resp["taskforces"]:
         expected = {
-            "image": os.environ["TEST_PILOT_IMAGE_LATEST_TAG"],
+            "tag": os.environ["TEST_PILOT_IMAGE_LATEST_TAG"],
             "environment": {
                 **environment,
                 "EWMS_PILOT_TASK_IMAGE": task_image,

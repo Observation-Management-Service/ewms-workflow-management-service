@@ -1,4 +1,5 @@
 """Utils for REST routes."""
+
 import json
 import logging
 
@@ -33,7 +34,7 @@ def add_values_to_pilot_config(task_input: dict) -> dict:
 
     # attach defaults
     return {
-        "image": config.get_pilot_image(pilot_config.get("image", "latest")),
+        "tag": config.get_pilot_tag(pilot_config.get("tag", "latest")),
         "environment": pilot_config["environment"],
         "input_files": pilot_config.get("input_files", []),
     }
