@@ -80,7 +80,7 @@
             },
             "additionalProperties": false,
             "required": [
-                "image",
+                "tag",
                 "environment",
                 "input_files"
             ]
