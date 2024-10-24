@@ -33,9 +33,8 @@ async def add_values_to_pilot_config(task_input: dict) -> dict:
         pilot_config["environment"]["EWMS_PILOT_INIT_ENV_JSON"] = json.dumps(val)
 
     # attach defaults
-    tag = await config.get_pilot_tag(pilot_config.get("tag", "latest"))
     return {
-        "tag": tag,
+        "tag": await config.get_pilot_tag(pilot_config.get("tag", "latest")),
         "environment": pilot_config["environment"],
         "input_files": pilot_config.get("input_files", []),
     }
