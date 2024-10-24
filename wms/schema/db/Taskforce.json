@@ -43,8 +43,8 @@
             "properties": {
                 "tag": {
                     "type": "string",
-                    "description": "The image tag to use (e.g., 'v#.#.#', 'latest', or a feature branch tag). This field is useful for repeatability.",
-                    "pattern": "^((v[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})|(latest)|((?!^[0-9.]+$)[a-z0-9._-]{1,128}))$"
+                    "description": "The image tag to use (e.g., '#.#.#', 'latest', or a feature branch tag). Note: tags like # or #.# are disallowed since these are mutable. This field is useful for repeatability.",
+                    "pattern": "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})|(latest)|((?!^[0-9.]+$)[a-z0-9._-]{1,128})$"
                 },
                 "environment": {
                     "type": "object",
