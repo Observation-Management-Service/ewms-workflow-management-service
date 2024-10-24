@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.2 (2024-10-24)
+
+### Other
+
+* Fix Pilot Tag Validation ([#51](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/51)) ([`f95cc0f`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/f95cc0f89dd6e031abb8c00d43617b7ce68b0cbd))
+
 ## v0.4.1 (2024-10-24)
 
 ### Other
