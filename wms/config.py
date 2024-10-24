@@ -1,6 +1,5 @@
 """Config settings."""
 
-import asyncio
 import dataclasses as dc
 import json
 import logging
@@ -130,7 +129,7 @@ GH_API_PILOT_URL = (
 
 
 @cachetools.func.ttl_cache(ttl=1 * 60)
-async def get_pilot_tag(tag: str) -> str:
+def get_pilot_tag(tag: str) -> str:
     """Get/validate the tag of the pilot image."""
     if tag == "latest":  # convert to immutable version tag
         url = f"{GH_API_PILOT_URL}/releases/latest"
@@ -154,7 +153,6 @@ async def get_pilot_tag(tag: str) -> str:
         #    so, grab the commit sha from it and see if that exists.
         #    Ex: apptainer-debug-68594b0 -> 68594b0
         elif "-" in tag:
-            await asyncio.sleep(1)  # don't re-hit server too quickly
             commit_sha = tag.split("-")[-1]
             url = f"{GH_API_PILOT_URL}/commits/{commit_sha}"
             response = requests.get(url)
