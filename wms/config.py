@@ -3,6 +3,7 @@
 import dataclasses as dc
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
@@ -127,6 +128,10 @@ GH_API_PILOT_URL = (
     "https://api.github.com/repos/Observation-Management-Service/ewms-pilot"
 )
 
+# these are from Taskforce.json
+_PILOT_VERSION_PATTERN = re.compile(r"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$")
+_PILOT_BRANCH_FEATURE_PATTERN = re.compile(r"^[a-z0-9._-]+-[a-z0-9]{1,128}$")
+
 
 @cachetools.func.ttl_cache(ttl=1 * 60)
 def get_pilot_tag(tag: str) -> str:
@@ -134,43 +139,41 @@ def get_pilot_tag(tag: str) -> str:
     if tag == "latest":  # convert to immutable version tag
         url = f"{GH_API_PILOT_URL}/releases/latest"
         LOGGER.info(f"Retrieving pilot image info from {url} ...")
-        tag = requests.get(url).json()["tag_name"]
+        tag = requests.get(url).json()["tag_name"].lstrip("v")
         LOGGER.info(f"latest pilot tag is {tag}")
         return tag
 
-    # look at github api for this tag
-    else:
-        # FIRST, assume this tag is also a release tag
-        url = f"{GH_API_PILOT_URL}/releases/{tag}"
+    elif _PILOT_VERSION_PATTERN.match(tag):
+        url = f"{GH_API_PILOT_URL}/releases"  # -> list
         LOGGER.info(f"Retrieving pilot image info from {url} ...")
         all_em = [a["tag_name"] for a in requests.get(url).json()]
-        LOGGER.debug(f"all available pilot tags: {all_em}")
-        if tag in all_em:
+        if f"v{tag}" in all_em:  # in releases, the tags have a preceding "v"
             LOGGER.debug(f"found pilot image tag {tag} at {url}")
             return tag
 
+    elif _PILOT_BRANCH_FEATURE_PATTERN.match(tag):
         # NOW, we're going to assume that the image tag is a branch tag,
         #    so, grab the commit sha from it and see if that exists.
         #    Ex: apptainer-debug-68594b0 -> 68594b0
-        elif "-" in tag:
-            commit_sha = tag.split("-")[-1]
-            url = f"{GH_API_PILOT_URL}/commits/{commit_sha}"
-            response = requests.get(url)
-            if response.status_code == 200:
-                LOGGER.debug(f"found pilot image tag {tag} at {url}")
-                return tag
+        commit_sha = tag.split("-")[-1]
+        url = f"{GH_API_PILOT_URL}/commits/{commit_sha}"
+        LOGGER.info(f"Retrieving pilot image info from {url} ...")
+        response = requests.get(url)
+        if response.status_code == 200:
+            LOGGER.debug(f"found pilot image tag {tag} at {url}")
+            return tag
 
-        # fall through
-        msg = (
-            "Pilot image tag not found. "
-            "It is possible that the image has not finished uploading to its registry. "
-            "If this error persists, contact an EWMS admin."
-        )
-        raise web.HTTPError(
-            status_code=400,
-            log_message=msg,
-            reason=msg,  # to client
-        )
+    # fall through
+    msg = (
+        "Pilot image tag not found. "
+        "It is possible that the image has not finished uploading to its registry. "
+        "If this error persists, contact an EWMS admin."
+    )
+    raise web.HTTPError(
+        status_code=400,
+        log_message=msg,
+        reason=msg,  # to client
+    )
 
 
 # --------------------------------------------------------------------------------------
