@@ -131,8 +131,8 @@ GH_API_PILOT_RELEASES_URL = (  # can't end in '/'
 
 
 @cachetools.func.ttl_cache(ttl=1 * 60)
-def get_pilot_image(tag: str) -> str:
-    """Get the uri to the pilot image."""
+def get_pilot_tag(tag: str) -> str:
+    """Get/validate the tag of the pilot image."""
     if tag == "latest":  # convert to immutable version tag
         url = urljoin(GH_API_PILOT_RELEASES_URL + "/", "latest")
         LOGGER.info(f"Retrieving pilot image info from {url} ...")
