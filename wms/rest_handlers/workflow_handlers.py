@@ -109,7 +109,7 @@ class WorkflowHandler(BaseWMSHandler):
                     if p["alias"] in task_input["output_queue_aliases"]
                 ],
                 #
-                utils.add_values_to_pilot_config(task_input),
+                await utils.add_values_to_pilot_config(task_input),
                 task_input["worker_config"],
                 task_input["n_workers"],
             )

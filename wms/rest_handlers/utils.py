@@ -8,7 +8,7 @@ from .. import config
 LOGGER = logging.getLogger(__name__)
 
 
-def add_values_to_pilot_config(task_input: dict) -> dict:
+async def add_values_to_pilot_config(task_input: dict) -> dict:
     """Add values (default and detected) to the pilot config dictionary."""
     pilot_config = task_input.get("pilot_config", {})
 
@@ -34,7 +34,7 @@ def add_values_to_pilot_config(task_input: dict) -> dict:
 
     # attach defaults
     return {
-        "tag": config.get_pilot_tag(pilot_config.get("tag", "latest")),
+        "tag": await config.get_pilot_tag(pilot_config.get("tag", "latest")),
         "environment": pilot_config["environment"],
         "input_files": pilot_config.get("input_files", []),
     }

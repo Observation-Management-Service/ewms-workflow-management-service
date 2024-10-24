@@ -1,11 +1,11 @@
 """Config settings."""
 
+import asyncio
 import dataclasses as dc
 import json
 import logging
 from pathlib import Path
 from typing import Any
-from urllib.parse import urljoin
 
 import cachetools.func
 import jsonschema
@@ -124,33 +124,55 @@ if ENV.CI:  # just for testing -- can remove when we have 2+ clusters
 
 # --------------------------------------------------------------------------------------
 
-
-GH_API_PILOT_RELEASES_URL = (  # can't end in '/'
-    "https://api.github.com/repos/Observation-Management-Service/ewms-pilot/releases"
+GH_API_PILOT_URL = (
+    "https://api.github.com/repos/Observation-Management-Service/ewms-pilot"
 )
 
 
 @cachetools.func.ttl_cache(ttl=1 * 60)
-def get_pilot_tag(tag: str) -> str:
+async def get_pilot_tag(tag: str) -> str:
     """Get/validate the tag of the pilot image."""
     if tag == "latest":  # convert to immutable version tag
-        url = urljoin(GH_API_PILOT_RELEASES_URL + "/", "latest")
+        url = f"{GH_API_PILOT_URL}/releases/latest"
         LOGGER.info(f"Retrieving pilot image info from {url} ...")
         tag = requests.get(url).json()["tag_name"]
         LOGGER.info(f"latest pilot tag is {tag}")
-    else:
-        LOGGER.info(f"Retrieving pilot image info from {GH_API_PILOT_RELEASES_URL} ...")
-        all_em = [a["tag_name"] for a in requests.get(GH_API_PILOT_RELEASES_URL).json()]
-        LOGGER.debug(f"all available pilot tags: {all_em}")
-        if tag not in all_em:
-            msg = f"pilot image not found: {tag}"
-            raise web.HTTPError(
-                status_code=400,
-                log_message=msg,
-                reason=msg,  # to client
-            )
+        return tag
 
-    return tag
+    # look at github api for this tag
+    else:
+        # FIRST, assume this tag is also a release tag
+        url = f"{GH_API_PILOT_URL}/releases/{tag}"
+        LOGGER.info(f"Retrieving pilot image info from {url} ...")
+        all_em = [a["tag_name"] for a in requests.get(url).json()]
+        LOGGER.debug(f"all available pilot tags: {all_em}")
+        if tag in all_em:
+            LOGGER.debug(f"found pilot image tag {tag} at {url}")
+            return tag
+
+        # NOW, we're going to assume that the image tag is a branch tag,
+        #    so, grab the commit sha from it and see if that exists.
+        #    Ex: apptainer-debug-68594b0 -> 68594b0
+        elif "-" in tag:
+            await asyncio.sleep(1)  # don't re-hit server too quickly
+            commit_sha = tag.split("-")[-1]
+            url = f"{GH_API_PILOT_URL}/commits/{commit_sha}"
+            response = requests.get(url)
+            if response.status_code == 200:
+                LOGGER.debug(f"found pilot image tag {tag} at {url}")
+                return tag
+
+        # fall through
+        msg = (
+            "Pilot image tag not found. "
+            "It is possible that the image has not finished uploading to its registry. "
+            "If this error persists, contact an EWMS admin."
+        )
+        raise web.HTTPError(
+            status_code=400,
+            log_message=msg,
+            reason=msg,  # to client
+        )
 
 
 # --------------------------------------------------------------------------------------
