@@ -78,6 +78,7 @@ class WorkflowHandler(BaseWMSHandler):
             "mq_activated_ts": None,  # updated by workflow_mq_activator
             "_mq_activation_retry_at_ts": config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by workflow_mq_activator,
             "deactivated": None,
+            "deactivated_ts": None,
         }
 
         # Reserve queues with MQS -- map to aliases
@@ -194,7 +195,10 @@ class WorkflowIDHandler(BaseWMSHandler):
                             "deactivated": None,  # aka not deactivated
                         },
                         {
-                            "$set": {"deactivated": WorkflowDeactivatedType.ABORTED},
+                            "$set": {
+                                "deactivated": WorkflowDeactivatedType.ABORTED,
+                                "deactivated_ts": time.time(),
+                            },
                         },
                         session=s,
                     )
