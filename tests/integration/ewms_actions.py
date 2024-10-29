@@ -379,8 +379,8 @@ async def user_aborts_workflow(
     resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
-        "DELETE",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        "POST",
+        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}/actions/abort",
     )
     assert resp == {
         "workflow_id": workflow_id,

@@ -153,7 +153,7 @@ class WorkflowHandler(BaseWMSHandler):
 
 
 class WorkflowIDHandler(BaseWMSHandler):
-    """Handle actions for a workflow."""
+    """Handle basic actions on a workflow."""
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows/(?P<workflow_id>[\w-]+)$"
 
@@ -178,10 +178,19 @@ class WorkflowIDHandler(BaseWMSHandler):
 
         self.write(workflow)
 
+
+# --------------------------------------------------------------------------------------
+
+
+class WorkflowIDActionsAbortHandler(BaseWMSHandler):
+    """Handle aborting a workflow."""
+
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows/(?P<workflow_id>[\w-]+)/actions/abort$"
+
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
-    async def delete(self, workflow_id: str) -> None:
-        """Handle DELETE.
+    async def post(self, workflow_id: str) -> None:
+        """Handle POST.
 
         Abort all taskforces in workflow.
         """
