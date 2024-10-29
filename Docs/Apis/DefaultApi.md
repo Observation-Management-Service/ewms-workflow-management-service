@@ -446,7 +446,7 @@ This endpoint does not need any parameter.
 
 
 
-    Aborts the specified workflow and updates the associated taskforces.
+    Aborts the specified workflow and sends stop commands to the associated taskforces.
 
 ### Parameters
 
