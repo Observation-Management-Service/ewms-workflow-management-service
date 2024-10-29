@@ -76,9 +76,9 @@
                         "type": "number",
                         "description": "For internal use only: The epoch time to retry requesting message queues from MQS."
                     },
-                    "aborted": {
+                    "deactivated": {
                         "type": "boolean",
-                        "description": "Indicates whether the workflow has been aborted."
+                        "description": "Indicates whether the workflow has been deactivated."
                     }
                 },
                 "required": [],
@@ -853,7 +853,7 @@
                                 "type": "object",
                                 "properties": {
                                     "condor_complete_ts": {
-                                        "description": "the time that the taskforce's condor cluster was ended/terminated/aborted",
+                                        "description": "the time that the taskforce's condor cluster ended",
                                         "type": "integer"
                                     }
                                 },

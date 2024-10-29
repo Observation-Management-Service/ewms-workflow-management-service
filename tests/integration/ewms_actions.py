@@ -392,7 +392,7 @@ async def user_aborts_workflow(
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
-    assert resp["aborted"] is True
+    assert resp["deactivated"] is True
 
     if aborted_after_condor:
         return

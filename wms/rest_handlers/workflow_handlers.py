@@ -73,7 +73,7 @@ class WorkflowHandler(BaseWMSHandler):
             # MUTABLE
             "mq_activated_ts": None,  # updated by workflow_mq_activator
             "_mq_activation_retry_at_ts": config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by workflow_mq_activator,
-            "aborted": False,
+            "deactivated": False,
         }
 
         # Reserve queues with MQS -- map to aliases
@@ -178,7 +178,7 @@ class WorkflowIDHandler(BaseWMSHandler):
     async def delete(self, workflow_id: str) -> None:
         """Handle DELETE.
 
-        Abort all taskforces in workflow.
+        Stop all taskforces in workflow.
         """
         async with await self.wms_db.mongo_client.start_session() as s:
             async with s.start_transaction():  # atomic
@@ -187,17 +187,17 @@ class WorkflowIDHandler(BaseWMSHandler):
                     await self.wms_db.workflows_collection.find_one_and_update(
                         {
                             "workflow_id": workflow_id,
-                            "aborted": {"$nin": [True]},  # "not in"
+                            "deactivated": {"$nin": [True]},  # "not in"
                         },
                         {
-                            "$set": {"aborted": True},
+                            "$set": {"deactivated": True},
                         },
                         session=s,
                     )
                 except DocumentNotFoundException as e:
                     raise web.HTTPError(
                         status_code=404,
-                        reason=f"no non-aborted workflow found with {workflow_id=}",  # to client
+                        reason=f"no non-deactivated workflow found with {workflow_id=}",  # to client
                     ) from e
 
                 # TASKFORCES
@@ -230,7 +230,7 @@ class WorkflowIDHandler(BaseWMSHandler):
                     )
                 except DocumentNotFoundException:
                     LOGGER.info(
-                        "okay scenario: workflow aborted but no taskforces needed to be stopped"
+                        "okay scenario: workflow deactivated but no taskforces needed to be stopped"
                     )
                 # -> set any taskforces that *ARE* already ending/finished
                 try:

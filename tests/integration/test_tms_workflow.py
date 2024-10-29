@@ -152,7 +152,7 @@ async def test_000(rc: RestClient) -> None:
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
-    assert resp["aborted"] is False
+    assert resp["deactivated"] is False
 
 
 # --------------------------------------------------------------------------------------
@@ -403,7 +403,7 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
-    assert resp["aborted"] is True
+    assert resp["deactivated"] is True
 
 
 async def test_110__aborted_during_condor(rc: RestClient) -> None:
@@ -511,7 +511,7 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
-    assert resp["aborted"] is True
+    assert resp["deactivated"] is True
 
 
 async def test_111__aborted_during_condor(rc: RestClient) -> None:
@@ -614,7 +614,7 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
-    assert resp["aborted"] is True
+    assert resp["deactivated"] is True
 
 
 async def test_120__aborted_after_condor(rc: RestClient) -> None:
@@ -723,4 +723,4 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     # the workflow was aborted even though all taskforces' condor cluster had completed
-    assert resp["aborted"] is True
+    assert resp["deactivated"] is True

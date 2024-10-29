@@ -13,7 +13,7 @@
                         "type": "object",
                         "properties": {
                             "condor_complete_ts": {
-                                "description": "the time that the taskforce's condor cluster was ended/terminated/aborted",
+                                "description": "the time that the taskforce's condor cluster ended",
                                 "type": "integer"
                             }
                         },
