@@ -70,6 +70,24 @@
                     "query"
                 ],
                 "additionalProperties": false
+            },
+            "DeactivatedWorkflowResponseObject": {
+                "type": "object",
+                "properties": {
+                    "workflow_id": {
+                        "description": "the workflow id",
+                        "type": "string"
+                    },
+                    "n_taskforces": {
+                        "description": "number of to-be stopped taskforces",
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "workflow_id",
+                    "n_taskforces"
+                ],
+                "additionalProperties": false
             }
         }
     },

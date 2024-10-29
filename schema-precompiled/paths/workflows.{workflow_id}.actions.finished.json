@@ -11,7 +11,7 @@
         }
     ],
     "post": {
-        "description": "Aborts the specified workflow (and marks as 'deactivated'), then sends stop commands to the associated taskforces.",
+        "description": "Marks the specified workflow as finished (and 'deactivated'), then sends stop commands to the associated taskforces.",
         "responses": {
             "200": {
                 "description": "the matching task directive",

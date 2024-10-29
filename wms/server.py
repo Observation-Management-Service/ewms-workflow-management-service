@@ -20,6 +20,7 @@ HANDLERS = [
     rest_handlers.workflow_handlers.WorkflowsFindHandler,  # must be before ID handler for regex
     rest_handlers.workflow_handlers.WorkflowIDHandler,  # ^^^
     rest_handlers.workflow_handlers.WorkflowIDActionsAbortHandler,  # ^^^
+    rest_handlers.workflow_handlers.WorkflowIDActionsFinishedHandler,  # ^^^
     #
     rest_handlers.task_handlers.TaskDirectivesFindHandler,  # must be before ID handler for regex
     rest_handlers.task_handlers.TaskDirectiveIDHandler,  # ^^^

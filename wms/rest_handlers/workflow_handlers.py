@@ -290,12 +290,32 @@ class WorkflowIDActionsAbortHandler(BaseWMSHandler):
     async def post(self, workflow_id: str) -> None:
         """Handle POST.
 
-        Abort all taskforces in workflow.
+        Deactivate workflow (type: abort) and stop taskforces.
         """
         out = await deactivate_workflow(
             self.wms_db,
             workflow_id,
             WorkflowDeactivatedType.ABORTED,
+        )
+        self.write(out)
+
+
+class WorkflowIDActionsFinishedHandler(BaseWMSHandler):
+    """Handle marking a workflow as finished."""
+
+    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows/(?P<workflow_id>[\w-]+)/actions/finished$"
+
+    @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
+    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    async def post(self, workflow_id: str) -> None:
+        """Handle POST.
+
+        Deactivate workflow (type: mark as 'finished') and stop taskforces.
+        """
+        out = await deactivate_workflow(
+            self.wms_db,
+            workflow_id,
+            WorkflowDeactivatedType.FINISHED,
         )
         self.write(out)
 
