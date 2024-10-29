@@ -29,9 +29,31 @@
             "type": "number",
             "description": "For internal use only: The epoch time to retry requesting message queues from MQS."
         },
-        "aborted": {
-            "type": "boolean",
-            "description": "Indicates whether the workflow has been aborted."
+        "deactivated": {
+            "anyOf": [
+                {
+                    "type": "string",
+                    "description": "Indicates why the workflow was deactivated.",
+                    "enum": [
+                        "ABORTED",
+                        "FINISHED"
+                    ]
+                },
+                {
+                    "type": "null"
+                }
+            ]
+        },
+        "deactivated_ts": {
+            "anyOf": [
+                {
+                    "type": "number",
+                    "description": "The epoch time when this workflow was deactivated."
+                },
+                {
+                    "type": "null"
+                }
+            ]
         }
     },
     "required": [
@@ -40,7 +62,8 @@
         "priority",
         "mq_activated_ts",
         "_mq_activation_retry_at_ts",
-        "aborted"
+        "deactivated",
+        "deactivated_ts"
     ],
     "additionalProperties": false
 }

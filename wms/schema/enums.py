@@ -28,3 +28,10 @@ ENDING_OR_FINISHED_TASKFORCE_PHASES = [
     TaskforcePhase.CONDOR_RM,
     TaskforcePhase.CONDOR_COMPLETE,
 ]
+
+
+class WorkflowDeactivatedType(enum.StrEnum):  # see comment above on enum.StrEnum
+    """The enum values used for 'deactivated'."""
+
+    ABORTED = "ABORTED"
+    FINISHED = "FINISHED"

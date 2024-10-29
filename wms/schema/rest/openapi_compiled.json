@@ -76,9 +76,31 @@
                         "type": "number",
                         "description": "For internal use only: The epoch time to retry requesting message queues from MQS."
                     },
-                    "aborted": {
-                        "type": "boolean",
-                        "description": "Indicates whether the workflow has been aborted."
+                    "deactivated": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "description": "Indicates why the workflow was deactivated.",
+                                "enum": [
+                                    "ABORTED",
+                                    "FINISHED"
+                                ]
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "deactivated_ts": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "description": "The epoch time when this workflow was deactivated."
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
                     }
                 },
                 "required": [],
@@ -400,6 +422,24 @@
                 },
                 "required": [
                     "query"
+                ],
+                "additionalProperties": false
+            },
+            "DeactivatedWorkflowResponseObject": {
+                "type": "object",
+                "properties": {
+                    "workflow_id": {
+                        "description": "the workflow id",
+                        "type": "string"
+                    },
+                    "n_taskforces": {
+                        "description": "number of to-be stopped taskforces",
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "workflow_id",
+                    "n_taskforces"
                 ],
                 "additionalProperties": false
             }
@@ -853,7 +893,7 @@
                                 "type": "object",
                                 "properties": {
                                     "condor_complete_ts": {
-                                        "description": "the time that the taskforce's condor cluster was ended/terminated/aborted",
+                                        "description": "the time that the taskforce's condor cluster ended",
                                         "type": "integer"
                                     }
                                 },
@@ -1804,31 +1844,107 @@
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "Aborts the specified workflow and updates the associated taskforces.",
+            }
+        },
+        "/v0/workflows/{workflow_id}/actions/abort": {
+            "parameters": [
+                {
+                    "name": "workflow_id",
+                    "in": "path",
+                    "required": true,
+                    "description": "the id of the workflow object",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "post": {
+                "description": "Aborts the specified workflow (and marks as 'deactivated'), then sends stop commands to the associated taskforces.",
                 "responses": {
                     "200": {
-                        "description": "the matching workflow object",
+                        "description": "the matching task directive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeactivatedWorkflowResponseObject"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "workflow_id": {
-                                            "description": "the workflow id",
-                                            "type": "string"
-                                        },
-                                        "n_taskforces": {
-                                            "description": "number of updated taskforces",
+                                        "code": {
+                                            "description": "http error code",
                                             "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
                                         }
                                     },
                                     "required": [
-                                        "workflow_id",
-                                        "n_taskforces"
+                                        "code",
+                                        "error"
                                     ],
                                     "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v0/workflows/{workflow_id}/actions/finished": {
+            "parameters": [
+                {
+                    "name": "workflow_id",
+                    "in": "path",
+                    "required": true,
+                    "description": "the id of the workflow object",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "post": {
+                "description": "Marks the specified workflow as finished (and 'deactivated'), then sends stop commands to the associated taskforces.",
+                "responses": {
+                    "200": {
+                        "description": "the matching task directive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeactivatedWorkflowResponseObject"
                                 }
                             }
                         }

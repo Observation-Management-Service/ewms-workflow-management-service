@@ -1,5 +1,6 @@
 .openapi-generator-ignore
 Apis/DefaultApi.md
+Models/DeactivatedWorkflowResponseObject.md
 Models/FindObject.md
 Models/TaskDirectiveObject.md
 Models/TaskforceObject.md
@@ -27,7 +28,6 @@ Models/_v0_tms_statuses_taskforces_post_200_response_results_inner.md
 Models/_v0_tms_statuses_taskforces_post_207_response.md
 Models/_v0_tms_statuses_taskforces_post_207_response_results_inner.md
 Models/_v0_tms_statuses_taskforces_post_request.md
-Models/_v0_workflows__workflow_id__delete_200_response.md
 Models/_v0_workflows_post_200_response.md
 Models/_v0_workflows_post_request.md
 Models/_v0_workflows_post_request_tasks_inner.md

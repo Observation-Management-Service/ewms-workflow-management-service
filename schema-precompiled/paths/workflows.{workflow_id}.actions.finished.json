@@ -1,49 +1,30 @@
 {
     "parameters": [
         {
-            "$ref": "#/components/parameters/TaskforceUUIDParam"
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "description": "the id of the workflow object",
+            "schema": {
+                "type": "string"
+            }
         }
     ],
     "post": {
-        "description": "For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster.",
-        "requestBody": {
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "condor_complete_ts": {
-                                "description": "the time that the taskforce's condor cluster ended",
-                                "type": "integer"
-                            }
-                        },
-                        "required": [
-                            "condor_complete_ts"
-                        ],
-                        "additionalProperties": false
-                    }
-                }
-            }
-        },
+        "description": "Marks the specified workflow as finished (and 'deactivated'), then sends stop commands to the associated taskforces.",
         "responses": {
             "200": {
-                "description": "the uuid of the updated taskforce object",
+                "description": "the matching task directive",
                 "content": {
                     "application/json": {
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "taskforce_uuid": {
-                                    "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
-                                }
-                            },
-                            "additionalProperties": false
+                            "$ref": "#/components/schemas/DeactivatedWorkflowResponseObject"
                         }
                     }
                 }
             },
-            "400": {
-                "description": "invalid request arguments",
+            "404": {
+                "description": "not found",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -67,8 +48,8 @@
                     }
                 }
             },
-            "404": {
-                "description": "not found",
+            "400": {
+                "description": "invalid request arguments",
                 "content": {
                     "application/json": {
                         "schema": {

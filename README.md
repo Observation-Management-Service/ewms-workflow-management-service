@@ -37,6 +37,8 @@ As described [above](#ewms-workflow-management-service), the WMS has several con
 5. When ready, the TMS initiates HTCondor jobs for the taskforce(s).
 6. The TMS relays live, aggregated runtime statuses to the WMS until the workflow's taskforces are completed.
     - See [`Taskforce.compound_statuses`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md) and/or [`Taskforce.top_task_errors`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Models/TaskforceObject.md)
+7. The user tells EWMS that the workflow has finished. The workflow is deactivated, and the TMS stops the associated taskforces.
+    - [POST @ /v0/workflows/{workflow_id}/actions/finished](https://github.com/Observation-Management-Service/ewms-message-queue-service/blob/main/Docs/Apis/DefaultApi.md#post-v0workflowsworkflow_idactionsfinished)
 
 This "story" is also detailed in [request_workflow.py](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/examples/request_workflow.py). However, this script may not suit all your needs. It is recommended to have a solid understanding of the user-facing [API endpoints](https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main/Docs#documentation-for-api-endpoints) and [objects](https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main/Docs#documentation-for-models).
 

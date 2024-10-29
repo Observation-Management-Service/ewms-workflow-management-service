@@ -339,6 +339,10 @@ async def main() -> None:
     )
 
     # wait at end, so monitor thread can get some final updates
+    await rc.request(  # stop the workers
+        "POST",
+        f"/v0/workflows/{workflow_id}/actions/finished",
+    )
     await asyncio.sleep(60)
 
 
