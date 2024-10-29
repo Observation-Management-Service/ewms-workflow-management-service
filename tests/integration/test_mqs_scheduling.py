@@ -25,6 +25,7 @@ TEST_WORKFLOWS = [
         "mq_activated_ts": None,
         "_mq_activation_retry_at_ts": config.MQS_RETRY_AT_TS_DEFAULT_VALUE,
         "deactivated": None,
+        "deactivated_ts": None,
     }
     for i, workflow_id in enumerate(
         # NOTE: naming format matters for _make_test_task_directives()
