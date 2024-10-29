@@ -418,7 +418,7 @@ async def test_101__deactivated_before_condor(
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
-    assert resp["deactivated"] == "ABORTED"
+    assert resp["deactivated"] == kind_of_deactivation
 
 
 @pytest.mark.parametrize(
@@ -533,7 +533,7 @@ async def test_110__deactivated_during_condor(
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
-    assert resp["deactivated"] == "ABORTED"
+    assert resp["deactivated"] == kind_of_deactivation
 
 
 @pytest.mark.parametrize(
@@ -643,7 +643,7 @@ async def test_111__deactivated_during_condor(
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
-    assert resp["deactivated"] == "ABORTED"
+    assert resp["deactivated"] == kind_of_deactivation
 
 
 @pytest.mark.parametrize(
@@ -759,4 +759,4 @@ async def test_120__deactivated_after_condor(
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     # the workflow was aborted even though all taskforces' condor cluster had completed
-    assert resp["deactivated"] == "ABORTED"
+    assert resp["deactivated"] == kind_of_deactivation
