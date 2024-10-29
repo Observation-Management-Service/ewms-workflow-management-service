@@ -5,6 +5,7 @@ import copy
 import json
 import logging
 import os
+import time
 from pathlib import Path
 
 import openapi_core
@@ -353,12 +354,13 @@ async def tms_watcher_sends_status_update(
         # fmt: on
 
 
-async def user_aborts_workflow(
+async def user_deactivates_workflow(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
+    kind_of_deactivation: str,
     task_id: str,
     condor_locations: dict,
-    aborted_after_condor: bool = False,
+    deactivated_after_condor_stopped: bool = False,
 ) -> None:
     #
     # USER...
@@ -376,15 +378,23 @@ async def user_aborts_workflow(
     )
     assert len(resp["task_directives"]) == 1
     workflow_id = resp["task_directives"][0]["workflow_id"]
+    then = time.time()
     resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
         "POST",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}/actions/abort",
+        (
+            {
+                "ABORT": f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}/actions/abort",
+                "FINISHED": f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}/actions/finished",
+            }[kind_of_deactivation]
+        ),
     )
     assert resp == {
         "workflow_id": workflow_id,
-        "n_taskforces": len(condor_locations) if not aborted_after_condor else 0,
+        "n_taskforces": (
+            len(condor_locations) if not deactivated_after_condor_stopped else 0
+        ),
     }
     resp = await _request_and_validate_and_print(
         rc,
@@ -392,9 +402,10 @@ async def user_aborts_workflow(
         "GET",
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
-    assert resp["deactivated"] == "ABORTED"
+    assert resp["deactivated"] == kind_of_deactivation
+    assert then < resp["deactivated_ts"] < time.time()
 
-    if aborted_after_condor:
+    if deactivated_after_condor_stopped:
         return
 
     #

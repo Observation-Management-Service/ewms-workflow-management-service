@@ -2,6 +2,7 @@
 
 import logging
 
+import pytest
 from rest_tools.client import RestClient
 
 import ewms_actions
@@ -158,8 +159,14 @@ async def test_000(rc: RestClient) -> None:
 # --------------------------------------------------------------------------------------
 
 
-async def test_100__aborted_before_condor(rc: RestClient) -> None:
-    """Aborted workflow."""
+@pytest.mark.parametrize(
+    "kind_of_deactivation",
+    ["ABORTED", "FINISHED"],
+)
+async def test_100__deactivated_before_condor(
+    rc: RestClient, kind_of_deactivation: str
+) -> None:
+    """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
     workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
@@ -168,10 +175,11 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
-    # ABORT!
-    await ewms_actions.user_aborts_workflow(
+    # DEACTIVATE!
+    await ewms_actions.user_deactivates_workflow(
         rc,
         openapi_spec,
+        kind_of_deactivation,
         task_id,
         CONDOR_LOCATIONS,
     )
@@ -275,8 +283,14 @@ async def test_100__aborted_before_condor(rc: RestClient) -> None:
     # fmt: on
 
 
-async def test_101__aborted_before_condor(rc: RestClient) -> None:
-    """Aborted workflow."""
+@pytest.mark.parametrize(
+    "kind_of_deactivation",
+    ["ABORTED", "FINISHED"],
+)
+async def test_101__deactivated_before_condor(
+    rc: RestClient, kind_of_deactivation: str
+) -> None:
+    """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
     workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
@@ -285,10 +299,11 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
         CONDOR_LOCATIONS,
     )
 
-    # ABORT!
-    await ewms_actions.user_aborts_workflow(
+    # DEACTIVATE!
+    await ewms_actions.user_deactivates_workflow(
         rc,
         openapi_spec,
+        kind_of_deactivation,
         task_id,
         CONDOR_LOCATIONS,
     )
@@ -406,8 +421,14 @@ async def test_101__aborted_before_condor(rc: RestClient) -> None:
     assert resp["deactivated"] == "ABORTED"
 
 
-async def test_110__aborted_during_condor(rc: RestClient) -> None:
-    """Aborted workflow."""
+@pytest.mark.parametrize(
+    "kind_of_deactivation",
+    ["ABORTED", "FINISHED"],
+)
+async def test_110__deactivated_during_condor(
+    rc: RestClient, kind_of_deactivation: str
+) -> None:
+    """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
     workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
@@ -434,10 +455,11 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
         COMPOUND_STATUSES__1,
     )
 
-    # ABORT!
-    await ewms_actions.user_aborts_workflow(
+    # DEACTIVATE!
+    await ewms_actions.user_deactivates_workflow(
         rc,
         openapi_spec,
+        kind_of_deactivation,
         task_id,
         CONDOR_LOCATIONS,
     )
@@ -514,8 +536,14 @@ async def test_110__aborted_during_condor(rc: RestClient) -> None:
     assert resp["deactivated"] == "ABORTED"
 
 
-async def test_111__aborted_during_condor(rc: RestClient) -> None:
-    """Aborted workflow."""
+@pytest.mark.parametrize(
+    "kind_of_deactivation",
+    ["ABORTED", "FINISHED"],
+)
+async def test_111__deactivated_during_condor(
+    rc: RestClient, kind_of_deactivation: str
+) -> None:
+    """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
     workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
@@ -558,10 +586,11 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
         COMPOUND_STATUSES__3,
     )
 
-    # ABORT!
-    await ewms_actions.user_aborts_workflow(
+    # DEACTIVATE!
+    await ewms_actions.user_deactivates_workflow(
         rc,
         openapi_spec,
+        kind_of_deactivation,
         task_id,
         CONDOR_LOCATIONS,
     )
@@ -617,8 +646,14 @@ async def test_111__aborted_during_condor(rc: RestClient) -> None:
     assert resp["deactivated"] == "ABORTED"
 
 
-async def test_120__aborted_after_condor(rc: RestClient) -> None:
-    """Aborted workflow."""
+@pytest.mark.parametrize(
+    "kind_of_deactivation",
+    ["ABORTED", "FINISHED"],
+)
+async def test_120__deactivated_after_condor(
+    rc: RestClient, kind_of_deactivation: str
+) -> None:
+    """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
     workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
@@ -681,13 +716,14 @@ async def test_120__aborted_after_condor(rc: RestClient) -> None:
         assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
     # fmt: on
 
-    # ABORT!
-    await ewms_actions.user_aborts_workflow(
+    # DEACTIVATE!
+    await ewms_actions.user_deactivates_workflow(
         rc,
         openapi_spec,
+        kind_of_deactivation,
         task_id,
         CONDOR_LOCATIONS,
-        aborted_after_condor=True,
+        deactivated_after_condor_stopped=True,
     )
     resp = await _request_and_validate_and_print(
         rc,
