@@ -21,6 +21,7 @@ All URIs are relative to *http://localhost*
 | [_details_](DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces |  |
 | [_details_](DefaultApi.md#post-v0workflows) | **POST** /v0/workflows |  |
 | [_details_](DefaultApi.md#post-v0workflowsworkflow_idactionsabort) | **POST** /v0/workflows/{workflow_id}/actions/abort |  |
+| [_details_](DefaultApi.md#post-v0workflowsworkflow_idactionsfinished) | **POST** /v0/workflows/{workflow_id}/actions/finished |  |
 | [_details_](DefaultApi.md#get-v0workflowsworkflow_id) | **GET** /v0/workflows/{workflow_id} |  |
 
 
@@ -442,11 +443,11 @@ This endpoint does not need any parameter.
 
 <a name="POST /v0/workflows/{workflow_id}/actions/abort"></a>
 # **POST /v0/workflows/{workflow_id}/actions/abort**
-> _v0_workflows__workflow_id__actions_abort_post_200_response POST /v0/workflows/{workflow_id}/actions/abort(workflow\_id)
+> DeactivatedWorkflowResponseObject POST /v0/workflows/{workflow_id}/actions/abort(workflow\_id)
 
 
 
-    Aborts the specified workflow and sends stop commands to the associated taskforces.
+    Aborts the specified workflow (and marks as &#39;deactivated&#39;), then sends stop commands to the associated taskforces.
 
 ### Parameters
 
@@ -456,7 +457,33 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**_v0_workflows__workflow_id__actions_abort_post_200_response**](../Models/_v0_workflows__workflow_id__actions_abort_post_200_response.md)
+[**DeactivatedWorkflowResponseObject**](../Models/DeactivatedWorkflowResponseObject.md)
+
+### Authorization
+
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+<a name="POST /v0/workflows/{workflow_id}/actions/finished"></a>
+# **POST /v0/workflows/{workflow_id}/actions/finished**
+> DeactivatedWorkflowResponseObject POST /v0/workflows/{workflow_id}/actions/finished(workflow\_id)
+
+
+
+    Marks the specified workflow as finished (and &#39;deactivated&#39;), then sends stop commands to the associated taskforces.
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **workflow\_id** | **String**| the id of the workflow object | [default to null] |
+
+### Return type
+
+[**DeactivatedWorkflowResponseObject**](../Models/DeactivatedWorkflowResponseObject.md)
 
 ### Authorization
 
