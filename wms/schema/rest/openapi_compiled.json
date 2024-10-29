@@ -82,8 +82,8 @@
                                 "type": "string",
                                 "description": "Indicates why the workflow was deactivated.",
                                 "enum": [
-                                    "WORKFLOW_ABORTED",
-                                    "WORKFLOW_FINISHED"
+                                    "ABORTED",
+                                    "FINISHED"
                                 ]
                             },
                             {
