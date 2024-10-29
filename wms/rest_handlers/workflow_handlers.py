@@ -6,6 +6,7 @@ import time
 from rest_tools.server import validate_request
 from tornado import web
 
+from wms import database
 from . import auth, utils
 from .base_handlers import BaseWMSHandler
 from .task_handlers import create_task_directive_and_taskforces
@@ -182,6 +183,103 @@ class WorkflowIDHandler(BaseWMSHandler):
 # --------------------------------------------------------------------------------------
 
 
+async def deactivate_workflow(
+    wms_db: database.client.WMSMongoValidatedDatabase,
+    workflow_id: str,
+    deactivated_type: WorkflowDeactivatedType,
+):
+    """Stop the workflow and mark the taskforces for 'pending-stopper'."""
+    async with await wms_db.mongo_client.start_session() as s:
+        async with s.start_transaction():  # atomic
+            # WORKFLOW
+            try:
+                await wms_db.workflows_collection.find_one_and_update(
+                    {
+                        "workflow_id": workflow_id,
+                        "deactivated": None,  # aka not deactivated
+                    },
+                    {
+                        "$set": {
+                            "deactivated": deactivated_type,
+                            "deactivated_ts": time.time(),
+                        },
+                    },
+                    session=s,
+                )
+            except DocumentNotFoundException as e:
+                raise web.HTTPError(
+                    status_code=404,
+                    reason=f"no non-deactivated workflow found with {workflow_id=}",  # to client
+                ) from e
+
+            # TASKFORCES
+            # -> set all not-already-ending/finished taskforces to pending-stopper
+            n_tfs_updated = 0  # in no taskforces to stop (excepted exception)
+            try:
+                n_tfs_updated = await wms_db.taskforces_collection.update_many(
+                    {
+                        "workflow_id": workflow_id,
+                        # NOTE: we don't care whether the taskforce's condor cluster
+                        #   has started up (see /tms/pending-stopper/taskforces)
+                        "phase": {"$nin": ENDING_OR_FINISHED_TASKFORCE_PHASES},
+                    },
+                    {
+                        "$set": {
+                            "phase": TaskforcePhase.PENDING_STOPPER,
+                        },
+                        "$push": {
+                            "phase_change_log": {
+                                "target_phase": TaskforcePhase.PENDING_STOPPER,
+                                "timestamp": time.time(),
+                                "source_event_time": None,
+                                "was_successful": True,
+                                "source_entity": "User",
+                                "description": "User deactivated workflow",
+                            },
+                        },
+                    },
+                    session=s,
+                )
+            except DocumentNotFoundException:
+                LOGGER.info(
+                    "okay scenario: workflow deactivated but no taskforces needed to be stopped"
+                )
+            # -> set any taskforces that *ARE* already ending/finished
+            try:
+                await wms_db.taskforces_collection.update_many(
+                    {
+                        "workflow_id": workflow_id,
+                        "phase": {"$in": ENDING_OR_FINISHED_TASKFORCE_PHASES},
+                    },
+                    {
+                        # no "$set" needed, the phase is not changing
+                        "$push": {
+                            "phase_change_log": {
+                                "target_phase": TaskforcePhase.PENDING_STOPPER,
+                                "timestamp": time.time(),
+                                "source_event_time": None,
+                                "was_successful": False,
+                                "source_entity": "User",
+                                "description": (
+                                    f"User deactivated workflow but taskforce "
+                                    f"is already ending/finished "
+                                    f"({", ".join(ENDING_OR_FINISHED_TASKFORCE_PHASES)})"
+                                ),
+                            },
+                        },
+                    },
+                    session=s,
+                )
+            except DocumentNotFoundException:
+                pass  # it's actually a good thing if there were no matches
+
+    # all done
+    return {
+        "workflow_id": workflow_id,
+        "n_taskforces": n_tfs_updated,
+    }
+
+
 class WorkflowIDActionsAbortHandler(BaseWMSHandler):
     """Handle aborting a workflow."""
 
@@ -194,97 +292,12 @@ class WorkflowIDActionsAbortHandler(BaseWMSHandler):
 
         Abort all taskforces in workflow.
         """
-        async with await self.wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():  # atomic
-                # WORKFLOW
-                try:
-                    await self.wms_db.workflows_collection.find_one_and_update(
-                        {
-                            "workflow_id": workflow_id,
-                            "deactivated": None,  # aka not deactivated
-                        },
-                        {
-                            "$set": {
-                                "deactivated": WorkflowDeactivatedType.ABORTED,
-                                "deactivated_ts": time.time(),
-                            },
-                        },
-                        session=s,
-                    )
-                except DocumentNotFoundException as e:
-                    raise web.HTTPError(
-                        status_code=404,
-                        reason=f"no non-deactivated workflow found with {workflow_id=}",  # to client
-                    ) from e
-
-                # TASKFORCES
-                # -> set all not-already-ending/finished taskforces to pending-stopper
-                n_tfs_updated = 0  # in no taskforces to stop (excepted exception)
-                try:
-                    n_tfs_updated = await self.wms_db.taskforces_collection.update_many(
-                        {
-                            "workflow_id": workflow_id,
-                            # NOTE: we don't care whether the taskforce's condor cluster
-                            #   has started up (see /tms/pending-stopper/taskforces)
-                            "phase": {"$nin": ENDING_OR_FINISHED_TASKFORCE_PHASES},
-                        },
-                        {
-                            "$set": {
-                                "phase": TaskforcePhase.PENDING_STOPPER,
-                            },
-                            "$push": {
-                                "phase_change_log": {
-                                    "target_phase": TaskforcePhase.PENDING_STOPPER,
-                                    "timestamp": time.time(),
-                                    "source_event_time": None,
-                                    "was_successful": True,
-                                    "source_entity": "User",
-                                    "description": "User aborted workflow",
-                                },
-                            },
-                        },
-                        session=s,
-                    )
-                except DocumentNotFoundException:
-                    LOGGER.info(
-                        "okay scenario: workflow deactivated but no taskforces needed to be stopped"
-                    )
-                # -> set any taskforces that *ARE* already ending/finished
-                try:
-                    await self.wms_db.taskforces_collection.update_many(
-                        {
-                            "workflow_id": workflow_id,
-                            "phase": {"$in": ENDING_OR_FINISHED_TASKFORCE_PHASES},
-                        },
-                        {
-                            # no "$set" needed, the phase is not changing
-                            "$push": {
-                                "phase_change_log": {
-                                    "target_phase": TaskforcePhase.PENDING_STOPPER,
-                                    "timestamp": time.time(),
-                                    "source_event_time": None,
-                                    "was_successful": False,
-                                    "source_entity": "User",
-                                    "description": (
-                                        f"User aborted workflow but taskforce "
-                                        f"is already ending/finished "
-                                        f"({", ".join(ENDING_OR_FINISHED_TASKFORCE_PHASES)})"
-                                    ),
-                                },
-                            },
-                        },
-                        session=s,
-                    )
-                except DocumentNotFoundException:
-                    pass  # it's actually a good thing if there were no matches
-
-        # all done
-        self.write(
-            {
-                "workflow_id": workflow_id,
-                "n_taskforces": n_tfs_updated,
-            }
+        out = await deactivate_workflow(
+            self.wms_db,
+            workflow_id,
+            WorkflowDeactivatedType.ABORTED,
         )
+        self.write(out)
 
 
 # --------------------------------------------------------------------------------------
