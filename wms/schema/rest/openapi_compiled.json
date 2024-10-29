@@ -1841,7 +1841,7 @@
                 }
             ],
             "post": {
-                "description": "Aborts the specified workflow and updates the associated taskforces.",
+                "description": "Aborts the specified workflow and sends stop commands to the associated taskforces.",
                 "responses": {
                     "200": {
                         "description": "the matching workflow object",
@@ -1855,7 +1855,7 @@
                                             "type": "string"
                                         },
                                         "n_taskforces": {
-                                            "description": "number of updated taskforces",
+                                            "description": "number of to-be stopped taskforces",
                                             "type": "integer"
                                         }
                                     },
