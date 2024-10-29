@@ -424,6 +424,24 @@
                     "query"
                 ],
                 "additionalProperties": false
+            },
+            "DeactivatedWorkflowResponseObject": {
+                "type": "object",
+                "properties": {
+                    "workflow_id": {
+                        "description": "the workflow id",
+                        "type": "string"
+                    },
+                    "n_taskforces": {
+                        "description": "number of to-be stopped taskforces",
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "workflow_id",
+                    "n_taskforces"
+                ],
+                "additionalProperties": false
             }
         }
     },
@@ -1841,29 +1859,92 @@
                 }
             ],
             "post": {
-                "description": "Aborts the specified workflow and sends stop commands to the associated taskforces.",
+                "description": "Aborts the specified workflow (and marks as 'deactivated'), then sends stop commands to the associated taskforces.",
                 "responses": {
                     "200": {
-                        "description": "the matching workflow object",
+                        "description": "the matching task directive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeactivatedWorkflowResponseObject"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "workflow_id": {
-                                            "description": "the workflow id",
-                                            "type": "string"
-                                        },
-                                        "n_taskforces": {
-                                            "description": "number of to-be stopped taskforces",
+                                        "code": {
+                                            "description": "http error code",
                                             "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
                                         }
                                     },
                                     "required": [
-                                        "workflow_id",
-                                        "n_taskforces"
+                                        "code",
+                                        "error"
                                     ],
                                     "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v0/workflows/{workflow_id}/actions/finished": {
+            "parameters": [
+                {
+                    "name": "workflow_id",
+                    "in": "path",
+                    "required": true,
+                    "description": "the id of the workflow object",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "post": {
+                "description": "Marks the specified workflow as finished (and 'deactivated'), then sends stop commands to the associated taskforces.",
+                "responses": {
+                    "200": {
+                        "description": "the matching task directive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeactivatedWorkflowResponseObject"
                                 }
                             }
                         }
