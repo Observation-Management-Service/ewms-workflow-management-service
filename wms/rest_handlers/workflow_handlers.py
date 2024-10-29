@@ -11,7 +11,11 @@ from .base_handlers import BaseWMSHandler
 from .task_handlers import create_task_directive_and_taskforces
 from .. import config
 from ..database.client import DocumentNotFoundException
-from ..schema.enums import ENDING_OR_FINISHED_TASKFORCE_PHASES, TaskforcePhase
+from ..schema.enums import (
+    ENDING_OR_FINISHED_TASKFORCE_PHASES,
+    TaskforcePhase,
+    WorkflowDeactivatedType,
+)
 from ..utils import IDFactory
 
 LOGGER = logging.getLogger(__name__)
@@ -73,7 +77,7 @@ class WorkflowHandler(BaseWMSHandler):
             # MUTABLE
             "mq_activated_ts": None,  # updated by workflow_mq_activator
             "_mq_activation_retry_at_ts": config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by workflow_mq_activator,
-            "deactivated": False,
+            "deactivated": None,
         }
 
         # Reserve queues with MQS -- map to aliases
@@ -178,7 +182,7 @@ class WorkflowIDHandler(BaseWMSHandler):
     async def delete(self, workflow_id: str) -> None:
         """Handle DELETE.
 
-        Stop all taskforces in workflow.
+        Abort all taskforces in workflow.
         """
         async with await self.wms_db.mongo_client.start_session() as s:
             async with s.start_transaction():  # atomic
@@ -187,10 +191,10 @@ class WorkflowIDHandler(BaseWMSHandler):
                     await self.wms_db.workflows_collection.find_one_and_update(
                         {
                             "workflow_id": workflow_id,
-                            "deactivated": {"$nin": [True]},  # "not in"
+                            "deactivated": None,  # aka not deactivated
                         },
                         {
-                            "$set": {"deactivated": True},
+                            "$set": {"deactivated": WorkflowDeactivatedType.ABORTED},
                         },
                         session=s,
                     )

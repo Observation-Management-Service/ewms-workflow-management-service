@@ -30,8 +30,30 @@
             "description": "For internal use only: The epoch time to retry requesting message queues from MQS."
         },
         "deactivated": {
-            "type": "boolean",
-            "description": "Indicates whether the workflow has been deactivated."
+            "anyOf": [
+                {
+                    "type": "string",
+                    "description": "Indicates why the workflow was deactivated.",
+                    "enum": [
+                        "WORKFLOW_ABORTED",
+                        "WORKFLOW_FINISHED"
+                    ]
+                },
+                {
+                    "type": "null"
+                }
+            ]
+        },
+        "deactivated_ts": {
+            "anyOf": [
+                {
+                    "type": "number",
+                    "description": "The epoch time when this workflow was deactivated."
+                },
+                {
+                    "type": "null"
+                }
+            ]
         }
     },
     "required": [
