@@ -1,4 +1,4 @@
-# _v0_workflows__workflow_id__delete_200_response
+# _v0_workflows__workflow_id__actions_abort_post_200_response
 ## Properties
 
 | Name | Type | Description | Notes |

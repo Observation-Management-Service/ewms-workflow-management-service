@@ -20,7 +20,7 @@ All URIs are relative to *http://localhost*
 | [_details_](DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces |  |
 | [_details_](DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces |  |
 | [_details_](DefaultApi.md#post-v0workflows) | **POST** /v0/workflows |  |
-| [_details_](DefaultApi.md#delete-v0workflowsworkflow_id) | **DELETE** /v0/workflows/{workflow_id} |  |
+| [_details_](DefaultApi.md#post-v0workflowsworkflow_idactionsabort) | **POST** /v0/workflows/{workflow_id}/actions/abort |  |
 | [_details_](DefaultApi.md#get-v0workflowsworkflow_id) | **GET** /v0/workflows/{workflow_id} |  |
 
 
@@ -440,9 +440,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="DELETE /v0/workflows/{workflow_id}"></a>
-# **DELETE /v0/workflows/{workflow_id}**
-> _v0_workflows__workflow_id__delete_200_response DELETE /v0/workflows/{workflow_id}(workflow\_id)
+<a name="POST /v0/workflows/{workflow_id}/actions/abort"></a>
+# **POST /v0/workflows/{workflow_id}/actions/abort**
+> _v0_workflows__workflow_id__actions_abort_post_200_response POST /v0/workflows/{workflow_id}/actions/abort(workflow\_id)
 
 
 
@@ -456,7 +456,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**_v0_workflows__workflow_id__delete_200_response**](../Models/_v0_workflows__workflow_id__delete_200_response.md)
+[**_v0_workflows__workflow_id__actions_abort_post_200_response**](../Models/_v0_workflows__workflow_id__actions_abort_post_200_response.md)
 
 ### Authorization
 

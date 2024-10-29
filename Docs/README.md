@@ -22,7 +22,7 @@
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces | For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces | For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflows) | **POST** /v0/workflows | Creates a new workflow along with its associated task directives and taskforces. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#delete-v0workflowsworkflow_id) | **DELETE** /v0/workflows/{workflow_id} | Aborts the specified workflow and updates the associated taskforces. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflowsworkflow_idactionsabort) | **POST** /v0/workflows/{workflow_id}/actions/abort | Aborts the specified workflow and updates the associated taskforces. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0workflowsworkflow_id) | **GET** /v0/workflows/{workflow_id} | Retrieves the workflow object that matches the specified workflow ID. |
 
 
@@ -56,7 +56,7 @@
  - [_v0_tms_statuses_taskforces_post_207_response](./Models/_v0_tms_statuses_taskforces_post_207_response.md)
  - [_v0_tms_statuses_taskforces_post_207_response_results_inner](./Models/_v0_tms_statuses_taskforces_post_207_response_results_inner.md)
  - [_v0_tms_statuses_taskforces_post_request](./Models/_v0_tms_statuses_taskforces_post_request.md)
- - [_v0_workflows__workflow_id__delete_200_response](./Models/_v0_workflows__workflow_id__delete_200_response.md)
+ - [_v0_workflows__workflow_id__actions_abort_post_200_response](./Models/_v0_workflows__workflow_id__actions_abort_post_200_response.md)
  - [_v0_workflows_post_200_response](./Models/_v0_workflows_post_200_response.md)
  - [_v0_workflows_post_request](./Models/_v0_workflows_post_request.md)
  - [_v0_workflows_post_request_tasks_inner](./Models/_v0_workflows_post_request_tasks_inner.md)
