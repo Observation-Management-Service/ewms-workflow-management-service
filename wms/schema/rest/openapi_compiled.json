@@ -1826,8 +1826,21 @@
                         }
                     }
                 }
-            },
-            "delete": {
+            }
+        },
+        "/v0/workflows/{workflow_id}/actions/abort": {
+            "parameters": [
+                {
+                    "name": "workflow_id",
+                    "in": "path",
+                    "required": true,
+                    "description": "the id of the workflow object",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "post": {
                 "description": "Aborts the specified workflow and updates the associated taskforces.",
                 "responses": {
                     "200": {
