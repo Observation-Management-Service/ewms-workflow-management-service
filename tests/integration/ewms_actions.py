@@ -385,7 +385,7 @@ async def user_deactivates_workflow(
         "POST",
         (
             {
-                "ABORT": f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}/actions/abort",
+                "ABORTED": f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}/actions/abort",
                 "FINISHED": f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}/actions/finished",
             }[kind_of_deactivation]
         ),
