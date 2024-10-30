@@ -213,7 +213,38 @@ async def deactivate_workflow(
                 ) from e
 
             # TASKFORCES
-            # -> set all not-already-ending/finished taskforces to pending-stopper
+            # -> push "failed phase change" for any taskforces that *ARE* already ending/finished
+            # NOTE: this db call has to happen before the "set to pending-stopper" b/c
+            #   otherwise, each taskforce would get "set to pending-stopper" then "failed phase change"
+            try:
+                await wms_db.taskforces_collection.update_many(
+                    {
+                        "workflow_id": workflow_id,
+                        "phase": {"$in": ENDING_OR_FINISHED_TASKFORCE_PHASES},
+                    },
+                    {
+                        # no "$set" needed, the phase is not changing
+                        "$push": {
+                            "phase_change_log": {
+                                "target_phase": TaskforcePhase.PENDING_STOPPER,
+                                "timestamp": time.time(),
+                                "source_event_time": None,
+                                "was_successful": False,
+                                "source_entity": "User",
+                                "description": (
+                                    f"User deactivated workflow but taskforce "
+                                    f"is already ending/finished "
+                                    f"({", ".join(ENDING_OR_FINISHED_TASKFORCE_PHASES)})"
+                                ),
+                            },
+                        },
+                    },
+                    session=s,
+                )
+            except DocumentNotFoundException:
+                pass  # it's actually a good thing if there were no matches
+            #
+            # -> now, set all not-already-ending/finished taskforces to pending-stopper
             n_tfs_updated = 0  # in no taskforces to stop (excepted exception)
             try:
                 n_tfs_updated = await wms_db.taskforces_collection.update_many(
@@ -244,34 +275,6 @@ async def deactivate_workflow(
                 LOGGER.info(
                     "okay scenario: workflow deactivated but no taskforces needed to be stopped"
                 )
-            # -> set any taskforces that *ARE* already ending/finished
-            try:
-                await wms_db.taskforces_collection.update_many(
-                    {
-                        "workflow_id": workflow_id,
-                        "phase": {"$in": ENDING_OR_FINISHED_TASKFORCE_PHASES},
-                    },
-                    {
-                        # no "$set" needed, the phase is not changing
-                        "$push": {
-                            "phase_change_log": {
-                                "target_phase": TaskforcePhase.PENDING_STOPPER,
-                                "timestamp": time.time(),
-                                "source_event_time": None,
-                                "was_successful": False,
-                                "source_entity": "User",
-                                "description": (
-                                    f"User deactivated workflow but taskforce "
-                                    f"is already ending/finished "
-                                    f"({", ".join(ENDING_OR_FINISHED_TASKFORCE_PHASES)})"
-                                ),
-                            },
-                        },
-                    },
-                    session=s,
-                )
-            except DocumentNotFoundException:
-                pass  # it's actually a good thing if there were no matches
 
     # all done
     return {
