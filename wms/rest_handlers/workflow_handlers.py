@@ -232,7 +232,8 @@ async def deactivate_workflow(
                                 "was_successful": False,
                                 "source_entity": "User",
                                 "description": (
-                                    f"User deactivated workflow but taskforce "
+                                    f"User deactivated ({deactivated_type}) "
+                                    f"workflow but taskforce "
                                     f"is already ending/finished "
                                     f"({", ".join(ENDING_OR_FINISHED_TASKFORCE_PHASES)})"
                                 ),
