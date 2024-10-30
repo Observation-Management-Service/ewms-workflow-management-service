@@ -266,7 +266,7 @@ async def deactivate_workflow(
                                 "source_event_time": None,
                                 "was_successful": True,
                                 "source_entity": "User",
-                                "description": "User deactivated workflow",
+                                "description": f"User deactivated ({deactivated_type}) workflow",
                             },
                         },
                     },
