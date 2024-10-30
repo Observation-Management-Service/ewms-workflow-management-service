@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.1 (2024-10-30)
+
+### Other
+
+* Fix DB Order of Operations for Stopping Taskforces ([#54](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/54)) ([`3963fb3`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/3963fb3a9a1ccee9d6512147a54b0d0127973b88))
+
 ## v0.5.0 (2024-10-29)
 
 
