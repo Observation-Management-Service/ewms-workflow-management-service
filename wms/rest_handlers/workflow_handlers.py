@@ -9,7 +9,7 @@ from tornado import web
 from wms import database
 from . import auth, utils
 from .base_handlers import BaseWMSHandler
-from .task_handlers import create_task_directive_and_taskforces
+from .task_directive_handlers import make_task_directive_object_and_taskforce_objects
 from .. import config
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import (
@@ -97,7 +97,7 @@ class WorkflowHandler(BaseWMSHandler):
         task_directives = []
         taskforces = []
         for task_input in self.get_argument("tasks"):
-            td, tfs = await create_task_directive_and_taskforces(
+            td, tfs = await make_task_directive_object_and_taskforce_objects(
                 workflow["workflow_id"],  # type: ignore
                 #
                 task_input["cluster_locations"],
@@ -117,7 +117,7 @@ class WorkflowHandler(BaseWMSHandler):
                 #
                 utils.add_values_to_pilot_config(task_input),
                 task_input["worker_config"],
-                task_input["n_workers"],
+                task_input["n_workers"],  # TODO: make optional/smart
             )
             task_directives.append(td)
             taskforces.extend(tfs)
