@@ -11,6 +11,7 @@
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces | Queries and returns a list of taskforce objects based on the provided criteria. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows | Queries and returns a list of workflow objects based on the provided criteria. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi | Returns the OpenAPI schema. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0task-directivestask_idactionsadd-workers) | **POST** /v0/task-directives/{task_id}/actions/add-workers | Creates a new taskforce (and associated workers) for an existing task directive. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} | Retrieves the task directive that matches the specified task ID. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0taskforcestaskforce_uuid) | **GET** /v0/taskforces/{taskforce_uuid} | Retrieves the taskforce object that matches the specified taskforce UUID. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce_uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} | For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster. |
@@ -48,6 +49,7 @@
  - [_v0_query_task_directives_post_400_response](./Models/_v0_query_task_directives_post_400_response.md)
  - [_v0_query_taskforces_post_200_response](./Models/_v0_query_taskforces_post_200_response.md)
  - [_v0_query_workflows_post_200_response](./Models/_v0_query_workflows_post_200_response.md)
+ - [_v0_task_directives__task_id__actions_add_workers_post_request](./Models/_v0_task_directives__task_id__actions_add_workers_post_request.md)
  - [_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response](./Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
  - [_v0_tms_condor_complete_taskforces__taskforce_uuid__post_request](./Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_request.md)
  - [_v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request](./Models/_v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request.md)
