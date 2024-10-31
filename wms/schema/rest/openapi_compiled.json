@@ -412,11 +412,11 @@
                 "description": "The fields and values used to search.",
                 "properties": {
                     "query": {
-                        "description": "the search criteria (MongoDB-filter syntax)",
+                        "description": "The search criteria (MongoDB-filter syntax)",
                         "type": "object"
                     },
                     "projection": {
-                        "description": "the fields to include in the response",
+                        "description": "The fields to include in the response",
                         "type": "array",
                         "uniqueItems": true,
                         "items": {
@@ -434,7 +434,7 @@
                 "type": "object",
                 "properties": {
                     "workflow_id": {
-                        "description": "the workflow id",
+                        "description": "The workflow id",
                         "type": "string"
                     },
                     "n_taskforces": {
@@ -694,7 +694,7 @@
                 "description": "Returns the OpenAPI schema.",
                 "responses": {
                     "200": {
-                        "description": "the openapi schema",
+                        "description": "The openapi schema",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -739,7 +739,7 @@
                     "name": "task_id",
                     "in": "path",
                     "required": true,
-                    "description": "the id of the task directive",
+                    "description": "The ID of the task directive",
                     "schema": {
                         "type": "string"
                     }
@@ -749,7 +749,7 @@
                 "description": "Retrieves the task directive that matches the specified task ID.",
                 "responses": {
                     "200": {
-                        "description": "the matching task directive",
+                        "description": "The matching task directive",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -821,7 +821,7 @@
                 "description": "Retrieves the taskforce object that matches the specified taskforce UUID.",
                 "responses": {
                     "200": {
-                        "description": "the matching taskforce object",
+                        "description": "The matching taskforce object",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -898,7 +898,7 @@
                                 "type": "object",
                                 "properties": {
                                     "condor_complete_ts": {
-                                        "description": "the time that the taskforce's condor cluster ended",
+                                        "description": "The time that the taskforce's condor cluster ended",
                                         "type": "integer"
                                     }
                                 },
@@ -912,7 +912,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "the uuid of the updated taskforce object",
+                        "description": "The UUID of the updated taskforce object",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -990,7 +990,7 @@
                 "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
                 "responses": {
                     "200": {
-                        "description": "the uuid of the updated taskforce object",
+                        "description": "The UUID of the updated taskforce object",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1085,7 +1085,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "the uuid of the updated taskforce object",
+                        "description": "The UUID of the updated taskforce object",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1172,7 +1172,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "the uuid of the updated taskforce object",
+                        "description": "The UUID of the updated taskforce object",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1267,7 +1267,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "the uuid of the updated taskforce object",
+                        "description": "The UUID of the updated taskforce object",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1349,7 +1349,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "the next taskforce to start at the condor location",
+                        "description": "The next taskforce to start at the condor location",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1408,7 +1408,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "the next taskforce to stop at the condor location",
+                        "description": "The next taskforce to stop at the condor location",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1464,7 +1464,7 @@
                                 "type": "object",
                                 "properties": {
                                     "top_task_errors_by_taskforce": {
-                                        "description": "the top errors (paired with a count) for each indicated taskforce",
+                                        "description": "The top errors (paired with a count) for each indicated taskforce",
                                         "type": "object",
                                         "items": {
                                             "type": "object",
@@ -1476,7 +1476,7 @@
                                         "minProperties": 1
                                     },
                                     "compound_statuses_by_taskforce": {
-                                        "description": "the compound statuses (status -> state -> count) for the indicated taskforces",
+                                        "description": "The compound statuses (status -> state -> count) for the indicated taskforces",
                                         "type": "object",
                                         "items": {
                                             "type": "object",
@@ -1779,7 +1779,7 @@
                     "name": "workflow_id",
                     "in": "path",
                     "required": true,
-                    "description": "the id of the workflow object",
+                    "description": "The ID of the workflow object",
                     "schema": {
                         "type": "string"
                     }
@@ -1789,7 +1789,7 @@
                 "description": "Retrieves the workflow object that matches the specified workflow ID.",
                 "responses": {
                     "200": {
-                        "description": "the matching workflow object",
+                        "description": "The matching workflow object",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1857,7 +1857,7 @@
                     "name": "workflow_id",
                     "in": "path",
                     "required": true,
-                    "description": "the id of the workflow object",
+                    "description": "The ID of the workflow object",
                     "schema": {
                         "type": "string"
                     }
@@ -1867,7 +1867,7 @@
                 "description": "Aborts the specified workflow (and marks as 'deactivated'), then sends stop commands to the associated taskforces.",
                 "responses": {
                     "200": {
-                        "description": "the matching task directive",
+                        "description": "The matching task directive",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1935,7 +1935,7 @@
                     "name": "workflow_id",
                     "in": "path",
                     "required": true,
-                    "description": "the id of the workflow object",
+                    "description": "The ID of the workflow object",
                     "schema": {
                         "type": "string"
                     }
@@ -1945,7 +1945,7 @@
                 "description": "Marks the specified workflow as finished (and 'deactivated'), then sends stop commands to the associated taskforces.",
                 "responses": {
                     "200": {
-                        "description": "the matching task directive",
+                        "description": "The matching task directive",
                         "content": {
                             "application/json": {
                                 "schema": {

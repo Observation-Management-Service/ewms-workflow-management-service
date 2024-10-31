@@ -13,7 +13,7 @@
                         "type": "object",
                         "properties": {
                             "condor_complete_ts": {
-                                "description": "the time that the taskforce's condor cluster ended",
+                                "description": "The time that the taskforce's condor cluster ended",
                                 "type": "integer"
                             }
                         },
@@ -27,7 +27,7 @@
         },
         "responses": {
             "200": {
-                "description": "the uuid of the updated taskforce object",
+                "description": "The UUID of the updated taskforce object",
                 "content": {
                     "application/json": {
                         "schema": {

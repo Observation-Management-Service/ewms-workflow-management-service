@@ -4,7 +4,7 @@
             "name": "workflow_id",
             "in": "path",
             "required": true,
-            "description": "the id of the workflow object",
+            "description": "The ID of the workflow object",
             "schema": {
                 "type": "string"
             }
@@ -14,7 +14,7 @@
         "description": "Aborts the specified workflow (and marks as 'deactivated'), then sends stop commands to the associated taskforces.",
         "responses": {
             "200": {
-                "description": "the matching task directive",
+                "description": "The matching task directive",
                 "content": {
                     "application/json": {
                         "schema": {

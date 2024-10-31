@@ -252,23 +252,23 @@ async def main() -> None:
         "--n-input-events",
         required=True,
         type=int,
-        help="the number of input events to put into EWMS",
+        help="The number of input events to put into EWMS",
     )
     parser.add_argument(
         "--pilot-cvmfs-image-tag",
         default="",
-        help="the tag (version) of the pilot example image that the workers will use. Ex: 0.1.11",
+        help="The tag (version) of the pilot example image that the workers will use. Ex: 0.1.11",
     )
     parser.add_argument(
         "--n-workers",
         default=5,
         type=int,
-        help="the number of workers to use",
+        help="The number of workers to use",
     )
     parser.add_argument(
         "--monitor-workflow-id",
         default="",
-        help="the workflow id to resume monitoring instead of requesting a new workflow",
+        help="The workflow id to resume monitoring instead of requesting a new workflow",
     )
     args = parser.parse_args()
     wipac_dev_tools.logging_tools.log_argparse_args(args)

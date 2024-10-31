@@ -4,7 +4,7 @@
             "name": "task_id",
             "in": "path",
             "required": true,
-            "description": "the id of the task directive",
+            "description": "The ID of the task directive",
             "schema": {
                 "type": "string"
             }
@@ -14,7 +14,7 @@
         "description": "Retrieves the task directive that matches the specified task ID.",
         "responses": {
             "200": {
-                "description": "the matching task directive",
+                "description": "The matching task directive",
                 "content": {
                     "application/json": {
                         "schema": {
