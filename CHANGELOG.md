@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.2 (2024-10-31)
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`69db97f`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/69db97f47e46be09c5284a8e188b99b45a3afb3f))
+* Add `worker_config.condor_requirements` ([#55](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/55)) ([`3e26ae7`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/3e26ae755c9e5d8cb3132a5921af0d0abbfdca7a))
+
 ## v0.5.1 (2024-10-30)
 
 ### Other
