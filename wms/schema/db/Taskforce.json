@@ -125,7 +125,8 @@
                 "n_cores",
                 "priority",
                 "worker_disk",
-                "worker_memory"
+                "worker_memory",
+                "condor_requirements"
             ]
         },
         "cluster_id": {
