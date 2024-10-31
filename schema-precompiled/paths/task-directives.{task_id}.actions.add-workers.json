@@ -1,0 +1,113 @@
+{
+    "parameters": [
+        {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the task directive to which the taskforce (and workers) will be added.",
+            "schema": {
+                "type": "string"
+            }
+        }
+    ],
+    "post": {
+        "description": "Creates a new taskforce (and associated workers) for an existing task directive.",
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "workflow_id": {
+                                "type": "string",
+                                "description": "The ID of the workflow to which this taskforce belongs."
+                            },
+                            "cluster_locations": {
+                                "$ref": "#/components/schemas/TaskDirectiveObject/properties/cluster_locations"
+                            },
+                            "pilot_config": {
+                                "$ref": "#/components/schemas/TaskforceObject/properties/pilot_config"
+                            },
+                            "worker_config": {
+                                "$ref": "#/components/schemas/TaskforceObject/properties/worker_config"
+                            },
+                            "n_workers": {
+                                "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"
+                            }
+                        },
+                        "required": [
+                            "workflow_id",
+                            "cluster_locations",
+                            "pilot_config",
+                            "worker_config",
+                            "n_workers"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "The created taskforce object with its details.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/TaskforceObject"
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "HTTP error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "HTTP error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "Task directive or workflow not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "HTTP error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "HTTP error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
