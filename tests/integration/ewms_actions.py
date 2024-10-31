@@ -46,7 +46,7 @@ async def user_requests_new_workflow(
     condor_locations: dict,
 ) -> tuple[str, str]:
     """Return workflow and task ids."""
-    task_image = "icecube/earthpilot"
+    task_image = "icecube/earthpassenger"
     task_args = "aaa bbb --ccc 123"
     n_workers = 99
     worker_config = {
@@ -56,6 +56,7 @@ async def user_requests_new_workflow(
         "priority": 1,
         "worker_disk": "1G",
         "worker_memory": "512M",
+        "condor_requirements": "bar && baz",
     }
     environment: dict[str, str] = {}
     input_files: list[str] = []
