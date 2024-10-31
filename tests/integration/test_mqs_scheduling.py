@@ -79,6 +79,7 @@ def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
             "priority": 99,
             "worker_disk": "512M",
             "worker_memory": "512M",
+            "condor_requirements": "foo && bar",
         },
         "cluster_id": None,
         "submit_dict": {},

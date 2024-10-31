@@ -112,6 +112,10 @@
                 "worker_memory": {
                     "type": "string",
                     "description": "The amount of memory to request per HTCondor worker."
+                },
+                "condor_requirements": {
+                    "type": "string",
+                    "description": "The 'requirements' string given to the HTCondor submission."
                 }
             },
             "additionalProperties": false,
@@ -121,7 +125,8 @@
                 "n_cores",
                 "priority",
                 "worker_disk",
-                "worker_memory"
+                "worker_memory",
+                "condor_requirements"
             ]
         },
         "cluster_id": {
