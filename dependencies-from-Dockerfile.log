@@ -58,7 +58,7 @@ thrift==0.21.0
 tornado==6.4.1
 typing_extensions==4.12.2
 urllib3==2.2.3
-Werkzeug==3.0.6
+Werkzeug==3.1.0
 wipac-dev-tools==1.13.0
 wipac-rest-tools==1.8.2
 wipac-telemetry==0.3.1
@@ -284,7 +284,7 @@ wms
 │   │       └── rfc3339-validator [required: Any, installed: 0.1.4]
 │   │           └── six [required: Any, installed: 1.16.0]
 │   ├── parse [required: Any, installed: 1.20.2]
-│   └── Werkzeug [required: Any, installed: 3.0.6]
+│   └── Werkzeug [required: Any, installed: 3.1.0]
 │       └── MarkupSafe [required: >=2.1.1, installed: 3.0.2]
 ├── wipac-dev-tools [required: Any, installed: 1.13.0]
 │   ├── requests [required: Any, installed: 2.32.3]
