@@ -9,6 +9,7 @@
 | **priority** | **Integer** | The priority level for the HTCondor submission. | [default to null] |
 | **worker\_disk** | **String** | The amount of disk space to request per HTCondor worker. | [default to null] |
 | **worker\_memory** | **String** | The amount of memory to request per HTCondor worker. | [default to null] |
+| **condor\_requirements** | **String** | The &#39;requirements&#39; string given to the HTCondor submission. | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
