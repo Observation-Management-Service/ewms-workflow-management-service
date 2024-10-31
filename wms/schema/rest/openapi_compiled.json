@@ -811,6 +811,106 @@
                 }
             }
         },
+        "/v0/task-directives/{task_id}/actions/add-workers": {
+            "parameters": [
+                {
+                    "name": "task_id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The ID of the task directive to which the taskforce (and workers) will be added.",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "post": {
+                "description": "Creates a new taskforce (and associated workers) for an existing task directive.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "cluster_location": {
+                                        "$ref": "#/components/schemas/TaskDirectiveObject/properties/cluster_locations/items"
+                                    },
+                                    "n_workers": {
+                                        "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"
+                                    }
+                                },
+                                "required": [
+                                    "cluster_location",
+                                    "n_workers"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The created taskforce object with its details.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskforceObject"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "description": "http error code",
+                                            "type": "integer"
+                                        },
+                                        "error": {
+                                            "description": "http error reason",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "error"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v0/taskforces/{taskforce_uuid}": {
             "parameters": [
                 {
