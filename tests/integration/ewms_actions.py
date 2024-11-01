@@ -13,7 +13,7 @@ from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
 from rest_tools.client.utils import request_and_validate
 
-from utils import _request_and_validate_and_print
+from utils import ROUTE_VERSION_PREFIX, _request_and_validate_and_print
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,7 +21,6 @@ LOGGER = logging.getLogger(__name__)
 _OPENAPI_JSON = (
     Path(__file__).parent / "../../wms/" / os.environ["REST_OPENAPI_SPEC_FPATH"]
 )
-ROUTE_VERSION_PREFIX = "v0"
 
 
 async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
