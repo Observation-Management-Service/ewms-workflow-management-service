@@ -231,7 +231,7 @@ async def deactivate_workflow(
                                 "source_event_time": None,
                                 "was_successful": False,
                                 "source_entity": "User",
-                                "description": (
+                                "context": (
                                     f"User deactivated ({deactivated_type}) "
                                     f"workflow but taskforce "
                                     f"is already ending/finished "
@@ -266,7 +266,7 @@ async def deactivate_workflow(
                                 "source_event_time": None,
                                 "was_successful": True,
                                 "source_entity": "User",
-                                "description": f"User deactivated ({deactivated_type}) workflow",
+                                "context": f"User deactivated ({deactivated_type}) workflow",
                             },
                         },
                     },

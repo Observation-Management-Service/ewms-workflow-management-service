@@ -23,6 +23,9 @@ def _make_taskforce_object(
     pilot_config: dict,
     worker_config: dict,
     n_workers: int,
+    #
+    source_entity: str,
+    creation_reason: str,
 ) -> dict:
     """Make a taskforce object from user-supplied data."""
     return {
@@ -59,8 +62,8 @@ def _make_taskforce_object(
                 "timestamp": time.time(),
                 "source_event_time": None,
                 "was_successful": True,
-                "source_entity": "User",
-                "description": "During initial workflow creation.",
+                "source_entity": source_entity,
+                "context": creation_reason,
             }
         ],
         #
@@ -122,6 +125,8 @@ async def make_task_directive_object_and_taskforce_objects(
                 pilot_config,
                 worker_config,
                 n_workers,
+                "USER",
+                "Created during initial workflow request.",
             )
         )
 
@@ -217,6 +222,8 @@ class TaskDirectiveIDActionsAddWorkersHandler(BaseWMSHandler):
                     an_existing_taskforce["pilot_config"],
                     an_existing_taskforce["worker_config"],
                     self.get_argument("n_workers"),  # TODO: make optional/smart?
+                    auth.AuthAccounts(self.auth_roles[0]).name,  # type: ignore
+                    "Created when adding more workers for this task directive.",
                 )
                 taskforce = await self.wms_db.taskforces_collection.insert_one(
                     taskforce,

@@ -94,7 +94,7 @@ def _make_test_taskforce(task_directive: dict, location: str, i: int) -> dict:
                 "source_event_time": None,
                 "was_successful": True,
                 "source_entity": "User",
-                "description": "During initial workflow creation.",
+                "context": "During initial workflow creation.",
             }
         ],
         "compound_statuses": {},
@@ -391,10 +391,10 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
                         "source_event_time": None,
                         "was_successful": True,
                         "source_entity": "User",
-                        "description": "During initial workflow creation.",
+                        "context": "During initial workflow creation.",
                     },
                     {
-                        "description": "",
+                        "context": "",
                         "source_entity": "Workflow MQ Activator",
                         "source_event_time": None,
                         "target_phase": schema.enums.TaskforcePhase.PRE_LAUNCH.value,
