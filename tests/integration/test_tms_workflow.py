@@ -15,8 +15,6 @@ from utils import (
 
 LOGGER = logging.getLogger(__name__)
 
-ROUTE_VERSION_PREFIX = "v0"
-
 CONDOR_LOCATIONS = {
     "test-alpha": {
         "collector": "COLLECTOR1",
