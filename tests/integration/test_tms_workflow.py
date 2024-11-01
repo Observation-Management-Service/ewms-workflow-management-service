@@ -9,6 +9,7 @@ import ewms_actions
 from utils import (
     _request_and_validate_and_print,
     check_nothing_to_start,
+    check_nothing_to_stop,
     check_taskforce_states,
     check_workflow_deactivation,
 )
