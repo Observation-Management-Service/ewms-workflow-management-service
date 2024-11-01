@@ -8,6 +8,7 @@ from rest_tools.client import RestClient
 import ewms_actions
 from utils import (
     _request_and_validate_and_print,
+    check_nothing_to_start,
     check_taskforce_states,
     check_workflow_deactivation,
 )
@@ -187,33 +188,9 @@ async def test_100__deactivated_before_condor(
         "pending-stopper",
         ("pending-stopper", True),
     )
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to start
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to stop
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to start
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS)
+    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS)
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS)
 
     # NOTE - since the taskforce(s) aren't started, there are no updates from a JEL
 
@@ -306,33 +283,9 @@ async def test_101__deactivated_before_condor(
         "pending-stopper",
         ("pending-stopper", True),
     )
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to start
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to stop
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to start
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS)
+    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS)
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS)
 
     # await ewms_actions.taskforce_launch_control_marks_taskforces_pending_starter(
     #     rc,

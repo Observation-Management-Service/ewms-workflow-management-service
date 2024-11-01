@@ -62,3 +62,35 @@ async def check_workflow_deactivation(
         f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
     )
     assert resp["deactivated"] == kind_of_deactivation
+
+
+async def check_nothing_to_start(
+    rc: RestClient,
+    openapi_spec: openapi_core.OpenAPI,
+    condor_locations: dict[str, Any],
+) -> None:
+    for loc in condor_locations.values():
+        # check that there is NOTHING to start
+        assert not await _request_and_validate_and_print(
+            rc,
+            openapi_spec,
+            "GET",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
+        )
+
+
+async def check_nothing_to_stop(
+    rc: RestClient,
+    openapi_spec: openapi_core.OpenAPI,
+    condor_locations: dict[str, Any],
+) -> None:
+    for loc in condor_locations.values():
+        # check that there is NOTHING to stop
+        assert not await _request_and_validate_and_print(
+            rc,
+            openapi_spec,
+            "GET",
+            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
+            {"collector": loc["collector"], "schedd": loc["schedd"]},
+        )
