@@ -13,7 +13,11 @@ from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
 from rest_tools.client.utils import request_and_validate
 
-from utils import ROUTE_VERSION_PREFIX, _request_and_validate_and_print
+from utils import (
+    ROUTE_VERSION_PREFIX,
+    _request_and_validate_and_print,
+    check_taskforce_states,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -237,23 +241,13 @@ async def tms_starter(
     #
     # USER...
     # check above
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {
-                "task_id": task_id,
-            },
-            "projection": ["phase", "phase_change_log"],
-        },
-    )
-    assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(tf["phase"] == "condor-submit" for tf in resp["taskforces"])
-    assert all(
-        tf["phase_change_log"][-1]["target_phase"] == "condor-submit"
-        for tf in resp["taskforces"]
+        task_id,
+        len(condor_locations),
+        "condor-submit",
+        ("condor-submit", True),
     )
     # check directive reflects startup (runtime-assembled list of taskforces)
     resp = await _request_and_validate_and_print(
@@ -412,23 +406,13 @@ async def user_deactivates_workflow(
     # USER...
     # check above
     #
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {
-                "task_id": task_id,
-            },
-            "projection": ["phase", "phase_change_log"],
-        },
-    )
-    assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(tf["phase"] == "pending-stopper" for tf in resp["taskforces"])
-    assert all(
-        tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
-        for tf in resp["taskforces"]
+        task_id,
+        len(condor_locations),
+        "pending-stopper",
+        ("pending-stopper", True),
     )
 
 
@@ -464,23 +448,13 @@ async def tms_stopper(
     # USER...
     # check above
     #
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {
-                "task_id": task_id,
-            },
-            "projection": ["phase", "phase_change_log"],
-        },
-    )
-    assert len(resp["taskforces"]) == len(condor_locations)
-    assert all(tf["phase"] == "condor-rm" for tf in resp["taskforces"])
-    assert all(
-        tf["phase_change_log"][-1]["target_phase"] == "condor-rm"
-        for tf in resp["taskforces"]
+        task_id,
+        len(condor_locations),
+        "condor-rm",
+        ("condor-rm", True),
     )
 
 
