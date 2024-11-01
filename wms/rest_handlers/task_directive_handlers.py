@@ -214,7 +214,22 @@ class TaskDirectiveIDActionsAddWorkersHandler(BaseWMSHandler):
                     )
                 )
 
-                # make & put into db
+                # first, check that the workflow is not deactivated
+                workflow = await self.wms_db.workflows_collection.find_one(
+                    {"workflow_id": an_existing_taskforce["workflow_id"]},
+                    session=s,
+                )
+                if workflow["deactivated"] is not None:
+                    # adding a taskforce to a deactivated workflow is logically invalid
+                    raise web.HTTPError(
+                        status_code=422,  # Unprocessable Entity
+                        reason=(  # to client
+                            f"cannot add a taskforce to a deactivated workflow "
+                            f"({an_existing_taskforce["workflow_id"]})"
+                        ),
+                    )
+
+                # make taskforce & put it into db
                 taskforce = _make_taskforce_object(
                     an_existing_taskforce["workflow_id"],
                     an_existing_taskforce["task_id"],  # could also use 'task_id' arg
