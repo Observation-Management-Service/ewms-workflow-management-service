@@ -216,7 +216,7 @@
                 "was_successful",
                 "source_event_time",
                 "source_entity",
-                "description"
+                "context"
             ],
             "minItems": 0
         },

@@ -367,9 +367,9 @@
                                 "type": "string",
                                 "description": "The entity (person, system, or process) responsible for the external event that triggered this phase change attempt."
                             },
-                            "description": {
+                            "context": {
                                 "type": "string",
-                                "description": "Additional information or context about the phase change attempt."
+                                "description": "The circumstances or background information about the phase change attempt."
                             }
                         },
                         "additionalProperties": false,
@@ -379,7 +379,7 @@
                             "was_successful",
                             "source_event_time",
                             "source_entity",
-                            "description"
+                            "context"
                         ],
                         "minItems": 0
                     },
