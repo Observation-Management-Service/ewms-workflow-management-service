@@ -437,7 +437,7 @@ async def tms_stopper(
         )
         assert taskforce
         # confirm it has stopped
-        resp = await _request_and_validate_and_print(
+        await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "POST",
