@@ -6,7 +6,11 @@ import pytest
 from rest_tools.client import RestClient
 
 import ewms_actions
-from utils import _request_and_validate_and_print, check_taskforce_states
+from utils import (
+    _request_and_validate_and_print,
+    check_taskforce_states,
+    check_workflow_deactivation,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -140,13 +144,12 @@ async def test_000(rc: RestClient) -> None:
         "condor-complete",
         ("condor-complete", True),
     )
-    resp = await _request_and_validate_and_print(
+    await check_workflow_deactivation(
         rc,
         openapi_spec,
-        "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        workflow_id,
+        None,
     )
-    assert resp["deactivated"] is None
 
 
 # --------------------------------------------------------------------------------------
@@ -263,6 +266,12 @@ async def test_100__deactivated_before_condor(
         "pending-stopper",
         ("pending-stopper", True),
     )
+    await check_workflow_deactivation(
+        rc,
+        openapi_spec,
+        workflow_id,
+        kind_of_deactivation,
+    )
 
 
 @pytest.mark.parametrize(
@@ -375,28 +384,20 @@ async def test_101__deactivated_before_condor(
     # )
 
     # CHECK FINAL STATES...
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["phase", "phase_change_log"],
-        },
+        task_id,
+        len(CONDOR_LOCATIONS),
+        "pending-stopper",
+        ("pending-stopper", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
-    # fmt: on
-    resp = await _request_and_validate_and_print(
+    await check_workflow_deactivation(
         rc,
         openapi_spec,
-        "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        workflow_id,
+        kind_of_deactivation,
     )
-    assert resp["deactivated"] == kind_of_deactivation
 
 
 @pytest.mark.parametrize(
@@ -441,21 +442,14 @@ async def test_110__deactivated_during_condor(
         task_id,
         CONDOR_LOCATIONS,
     )
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["phase", "phase_change_log"],
-        },
+        task_id,
+        len(CONDOR_LOCATIONS),
+        "pending-stopper",
+        ("pending-stopper", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
-    # fmt: on
     await ewms_actions.tms_stopper(
         rc,
         openapi_spec,
@@ -498,13 +492,12 @@ async def test_110__deactivated_during_condor(
         "condor-complete",
         ("condor-complete", True),
     )
-    resp = await _request_and_validate_and_print(
+    await check_workflow_deactivation(
         rc,
         openapi_spec,
-        "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        workflow_id,
+        kind_of_deactivation,
     )
-    assert resp["deactivated"] == kind_of_deactivation
 
 
 @pytest.mark.parametrize(
@@ -597,13 +590,12 @@ async def test_111__deactivated_during_condor(
         "condor-complete",
         ("condor-complete", True),
     )
-    resp = await _request_and_validate_and_print(
+    await check_workflow_deactivation(
         rc,
         openapi_spec,
-        "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        workflow_id,
+        kind_of_deactivation,
     )
-    assert resp["deactivated"] == kind_of_deactivation
 
 
 @pytest.mark.parametrize(
@@ -703,11 +695,9 @@ async def test_120__deactivated_after_condor(
     # CHECK FINAL STATES...
     # NOTE: ^^^ already checked final taskforce states above
     # workflow:
-    resp = await _request_and_validate_and_print(
+    await check_workflow_deactivation(
         rc,
         openapi_spec,
-        "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        workflow_id,
+        kind_of_deactivation,
     )
-    # the workflow was aborted even though all taskforces' condor cluster had completed
-    assert resp["deactivated"] == kind_of_deactivation

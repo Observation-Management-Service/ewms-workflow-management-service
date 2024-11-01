@@ -47,3 +47,18 @@ async def check_taskforce_states(
         assert tf["phase_change_log"][-1]["target_phase"] == last_phase_change[0]
         assert tf["phase_change_log"][-1]["was_successful"] is last_phase_change[1]
     # fmt: on
+
+
+async def check_workflow_deactivation(
+    rc: RestClient,
+    openapi_spec: openapi_core.OpenAPI,
+    workflow_id: str,
+    kind_of_deactivation: str | None,
+) -> None:
+    resp = await _request_and_validate_and_print(
+        rc,
+        openapi_spec,
+        "GET",
+        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+    )
+    assert resp["deactivated"] == kind_of_deactivation
