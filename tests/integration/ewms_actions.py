@@ -124,11 +124,7 @@ async def user_requests_new_workflow(
     for tf in workflow_resp["taskforces"]:
         expected = {
             "tag": os.environ["TEST_PILOT_IMAGE_LATEST_TAG"],
-            "environment": {
-                **environment,
-                "EWMS_PILOT_TASK_IMAGE": task_image,
-                "EWMS_PILOT_TASK_ARGS": task_args,
-            },
+            "environment": environment,
             "input_files": input_files,
         }
         print(tf["pilot_config"])
@@ -186,24 +182,7 @@ async def user_requests_new_workflow(
         },
     )
     assert all(
-        tf["pilot_config"]["environment"]
-        == {
-            **environment,
-            #
-            "EWMS_PILOT_TASK_IMAGE": task_image,
-            "EWMS_PILOT_TASK_ARGS": task_args,
-            #
-            "EWMS_PILOT_QUEUE_INCOMING": ["123qfoo"],
-            "EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": ["DUMMY_TOKEN"],
-            "EWMS_PILOT_QUEUE_INCOMING_BROKER_ADDRESS": ["DUMMY_BROKER_ADDRESS"],
-            "EWMS_PILOT_QUEUE_INCOMING_BROKER_TYPE": ["DUMMY_BROKER_TYPE"],
-            #
-            "EWMS_PILOT_QUEUE_OUTGOING": ["123qbar"],
-            "EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": ["DUMMY_TOKEN"],
-            "EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": ["DUMMY_BROKER_ADDRESS"],
-            "EWMS_PILOT_QUEUE_OUTGOING_BROKER_TYPE": ["DUMMY_BROKER_TYPE"],
-        }
-        for tf in resp["taskforces"]
+        tf["pilot_config"]["environment"] == environment for tf in resp["taskforces"]
     )
 
     return workflow_resp["workflow"]["workflow_id"], task_id, tms_states

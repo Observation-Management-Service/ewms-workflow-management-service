@@ -7,7 +7,7 @@ from rest_tools.server import validate_request
 from tornado import web
 
 from wms import database
-from . import auth, utils
+from . import auth
 from .base_handlers import BaseWMSHandler
 from .task_directive_handlers import make_task_directive_object_and_taskforce_objects
 from .. import config
@@ -118,7 +118,17 @@ class WorkflowHandler(BaseWMSHandler):
                     if p["alias"] in task_input["output_queue_aliases"]
                 ],
                 #
-                utils.add_values_to_pilot_config(task_input),
+                {  # add values (default and detected)
+                    "tag": config.get_pilot_tag(
+                        task_input.get("pilot_config", {}).get("tag", "latest")
+                    ),
+                    "environment": task_input.get("pilot_config", {}).get(
+                        "environment", {}
+                    ),
+                    "input_files": task_input.get("pilot_config", {}).get(
+                        "input_files", []
+                    ),
+                },
                 task_input["worker_config"],
                 task_input["n_workers"],  # TODO: make optional/smart
             )
