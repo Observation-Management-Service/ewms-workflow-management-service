@@ -1,6 +1,5 @@
 """Constants and tools for handling REST-requestor auth."""
 
-
 import enum
 import logging
 
@@ -23,10 +22,11 @@ ALL_AUTH_ACCOUNTS = list(AuthAccounts.__members__.values())
 
 if ENV.CI:
 
-    def service_account_auth(**kwargs):  # type: ignore
+    def service_account_auth(roles: list[str], **kwargs):  # type: ignore
         def make_wrapper(method):  # type: ignore[no-untyped-def]
             async def wrapper(self, *args, **kwargs):  # type: ignore[no-untyped-def]
                 LOGGER.warning("TESTING: auth disabled")
+                self.auth_roles = roles[0]
                 return await method(self, *args, **kwargs)
 
             return wrapper

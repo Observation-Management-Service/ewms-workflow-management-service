@@ -196,7 +196,7 @@ class TaskDirectiveIDActionsAddWorkersHandler(BaseWMSHandler):
 
     ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/task-directives/(?P<task_id>[\w-]+)/actions/add-workers$"
 
-    @auth.service_account_auth(roles=[auth.ALL_AUTH_ACCOUNTS])  # type: ignore
+    @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
     async def post(self, task_id: str) -> None:
         """Handle POST.
