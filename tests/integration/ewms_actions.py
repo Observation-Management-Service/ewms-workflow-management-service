@@ -592,13 +592,13 @@ async def add_more_workers(
     expected = {
         **existing_tf,  # near duplicate with a few differences
         **{
+            "taskforce_uuid": resp["taskforce_uuid"],  # don't check
+            "timestamp": resp["timestamp"],  # don't check
             "n_workers": 100,
             "phase_change_log": [
                 {
                     "target_phase": "pre-mq-activation",
-                    "timestamp": resp["phase_change_log"][0][
-                        "timestamp"
-                    ],  # don't check
+                    "timestamp": resp["phase_change_log"][0]["timestamp"],  # dont check
                     "source_event_time": None,
                     "was_successful": True,
                     "source_entity": "USER",
