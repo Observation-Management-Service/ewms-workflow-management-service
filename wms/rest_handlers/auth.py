@@ -26,7 +26,7 @@ if ENV.CI:
         def make_wrapper(method):  # type: ignore[no-untyped-def]
             async def wrapper(self, *args, **kwargs):  # type: ignore[no-untyped-def]
                 LOGGER.warning("TESTING: auth disabled")
-                self.auth_roles = roles[0]
+                self.auth_roles = [roles[0]]  # make as a list containing just 1st role
                 return await method(self, *args, **kwargs)
 
             return wrapper
