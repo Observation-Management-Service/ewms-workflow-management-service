@@ -18,6 +18,10 @@
             "type": "number",
             "description": "The epoch time when this taskforce was created."
         },
+        "priority": {
+            "type": "integer",
+            "description": "The priority level relative to other taskforces (usually, this value is inherited from the parent workflow object)."
+        },
         "collector": {
             "type": "string",
             "description": "The address of the HTCondor collector."

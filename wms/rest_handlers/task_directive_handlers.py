@@ -18,7 +18,10 @@ LOGGER = logging.getLogger(__name__)
 
 def _make_taskforce_object(
     workflow_id: str,
+    priority: int,
+    #
     task_id: str,
+    #
     cluster_location: str,
     pilot_config: dict,
     worker_config: dict,
@@ -35,6 +38,7 @@ def _make_taskforce_object(
         "task_id": task_id,
         "workflow_id": workflow_id,
         "timestamp": time.time(),
+        "priority": priority,
         "collector": config.KNOWN_CLUSTERS[cluster_location]["collector"],
         "schedd": config.KNOWN_CLUSTERS[cluster_location]["schedd"],
         #
@@ -54,7 +58,8 @@ def _make_taskforce_object(
         "job_event_log_fpath": "",
         #
         # updated by taskforce_launch_control, tms
-        # NOTE - for TMS-initiated additional taskforces, this would skip to pre-launch (or pending-starter)
+        # NOTE - for late-added taskforces, the taskforce obj is ushered quickly by the
+        #          background processes (mq-activator and launch-control)
         "phase": TaskforcePhase.PRE_MQ_ACTIVATOR,
         "phase_change_log": [
             {
@@ -75,6 +80,7 @@ def _make_taskforce_object(
 
 async def make_task_directive_object_and_taskforce_objects(
     workflow_id: str,
+    priority: int,
     #
     cluster_locations: list[str],
     task_image: str,
@@ -120,6 +126,7 @@ async def make_task_directive_object_and_taskforce_objects(
         taskforces.append(
             _make_taskforce_object(
                 task_directive["workflow_id"],  # type: ignore  # could also use 'workflow_id' var
+                priority,
                 task_directive["task_id"],  # type: ignore
                 location,
                 pilot_config,
@@ -232,11 +239,15 @@ class TaskDirectiveIDActionsAddWorkersHandler(BaseWMSHandler):
                 # make taskforce & put it into db
                 taskforce = _make_taskforce_object(
                     an_existing_taskforce["workflow_id"],
+                    an_existing_taskforce["priority"],  # TODO - increase since asap
+                    #
                     an_existing_taskforce["task_id"],  # could also use 'task_id' arg
+                    #
                     self.get_argument("cluster_location"),
                     an_existing_taskforce["pilot_config"],
                     an_existing_taskforce["worker_config"],
                     self.get_argument("n_workers"),  # TODO: make optional/smart?
+                    #
                     auth.AuthAccounts(self.auth_roles[0]).name,  # type: ignore
                     "Created when adding more workers for this task directive.",
                 )

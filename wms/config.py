@@ -25,6 +25,7 @@ REST_OPENAPI_SPEC_FPATH = Path(__file__).parent / "schema/rest/openapi_compiled.
 MQS_RETRY_AT_TS_DEFAULT_VALUE = float("inf")
 TASK_MQ_ACTIVATOR_SHORTEST_SLEEP = 1
 
+DEFAULT_WORKFLOW_PRIORITY = 50
 
 # --------------------------------------------------------------------------------------
 

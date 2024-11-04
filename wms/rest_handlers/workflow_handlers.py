@@ -11,6 +11,7 @@ from . import auth, utils
 from .base_handlers import BaseWMSHandler
 from .task_directive_handlers import make_task_directive_object_and_taskforce_objects
 from .. import config
+from ..config import DEFAULT_WORKFLOW_PRIORITY
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import (
     ENDING_OR_FINISHED_TASKFORCE_PHASES,
@@ -74,10 +75,8 @@ class WorkflowHandler(BaseWMSHandler):
             # IMMUTABLE
             "workflow_id": IDFactory.generate_workflow_id(),
             "timestamp": time.time(),
-            "priority": 10,  # TODO
+            "priority": self.get_argument("priority", DEFAULT_WORKFLOW_PRIORITY),
             # MUTABLE
-            "mq_activated_ts": None,  # updated by workflow_mq_activator
-            "_mq_activation_retry_at_ts": config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by workflow_mq_activator,
             "deactivated": None,
             "deactivated_ts": None,
         }
@@ -99,6 +98,7 @@ class WorkflowHandler(BaseWMSHandler):
         for task_input in self.get_argument("tasks"):
             td, tfs = await make_task_directive_object_and_taskforce_objects(
                 workflow["workflow_id"],  # type: ignore
+                workflow["priority"],
                 #
                 task_input["cluster_locations"],
                 task_input["task_image"],

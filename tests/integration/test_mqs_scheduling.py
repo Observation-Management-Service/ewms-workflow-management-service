@@ -22,8 +22,6 @@ TEST_WORKFLOWS = [
         "workflow_id": workflow_id,
         "timestamp": 1 + i,
         "priority": 10,
-        "mq_activated_ts": None,
-        "_mq_activation_retry_at_ts": config.MQS_RETRY_AT_TS_DEFAULT_VALUE,
         "deactivated": None,
         "deactivated_ts": None,
     }
@@ -366,10 +364,7 @@ async def test_000(mock_req_act_to_mqs: AsyncMock) -> None:
             w for w in TEST_WORKFLOWS if w["workflow_id"] == wf_db["workflow_id"]
         )
         # ignore the mq keys -- functionality is tested by MQSRESTCalls.request_activation_to_mqs
-        ignore = ["mq_activated_ts", "_mq_activation_retry_at_ts"]
-        assert {k: v for k, v in wf_db.items() if k not in ignore} == {
-            k: v for k, v in exp.items() if k not in ignore
-        }
+        assert wf_db == exp
         # look at task_directives by workflow_id
         n_asserted = 0
         async for td_db in task_directives_client.find_all(
