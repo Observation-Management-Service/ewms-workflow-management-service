@@ -589,7 +589,20 @@ async def add_more_workers(
             "n_workers": 100,
         },
     )
-    assert resp == existing_tf  # a near-duplicate
+    assert resp == dict(
+        **existing_tf,  # near duplicate with a few differences
+        n_workers=100,
+        phase_change_log=[
+            {
+                "target_phase": "pre-mq-activation",
+                "timestamp": resp["phase_change_log"][0]["timestamp"],  # don't check
+                "source_event_time": None,
+                "was_successful": True,
+                "source_entity": "USER",
+                "context": "Created when adding more workers for this task directive.",
+            }
+        ],
+    )
 
     # check that there are 2 taskforces at location now
     resp = await _request_and_validate_and_print(
