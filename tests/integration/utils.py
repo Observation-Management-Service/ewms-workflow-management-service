@@ -1,7 +1,9 @@
 """Test utility functions."""
 
+import asyncio
 import dataclasses
 import json
+import os
 from typing import Any
 
 import openapi_core
@@ -43,6 +45,18 @@ async def _request_and_validate_and_print(
     ret = await request_and_validate(rc, openapi_spec, method, path, args)
     print(json.dumps(ret, indent=4))
     return ret
+
+
+async def sleep_until_background_runners_advance_taskforces(n_taskforces: int) -> None:
+    ############################################
+    # mq activator & launch control runs...
+    #   it's going to be unreliable to try to intercept the middle phase, "pre-launch",
+    #   so just wait till both run
+    ############################################
+    await asyncio.sleep(int(os.environ["WORKFLOW_MQ_ACTIVATOR_DELAY"]) * 2)  # pad
+    await asyncio.sleep(
+        int(os.environ["TASKFORCE_LAUNCH_CONTROL_DELAY"]) * n_taskforces
+    )
 
 
 async def check_taskforce_states(

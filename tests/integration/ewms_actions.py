@@ -1,6 +1,5 @@
 """Common high-level actions that occur in many situations."""
 
-import asyncio
 import json
 import logging
 import os
@@ -18,6 +17,7 @@ from .utils import (
     StateForTMS,
     _request_and_validate_and_print,
     check_taskforce_states,
+    sleep_until_background_runners_advance_taskforces,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -135,16 +135,16 @@ async def user_requests_new_workflow(
         print(expected)
         assert tf["pilot_config"] == expected
 
-    ############################################
-    # mq activator & launch control runs...
-    #   it's going to be unreliable to try to intercept the middle phase, "pre-launch",
-    #   so just wait till both run
-    ############################################
-    await asyncio.sleep(int(os.environ["WORKFLOW_MQ_ACTIVATOR_DELAY"]) * 2)  # pad
-    await asyncio.sleep(
-        int(os.environ["TASKFORCE_LAUNCH_CONTROL_DELAY"])
-        * len(workflow_resp["taskforces"])
+    #
+    # background processes advance taskforces
+    #
+    await sleep_until_background_runners_advance_taskforces(
+        len(workflow_resp["taskforces"])
     )
+
+    #
+    # USER...
+    # check above
 
     # query about task directive
     task_directive = workflow_resp["task_directives"][0]
@@ -167,6 +167,14 @@ async def user_requests_new_workflow(
     assert resp["task_directives"][0] == task_directive
 
     # look at taskforces
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        len(workflow_resp["taskforces"]),
+        "pending-starter",
+        ("pending-starter", True),
+    )
     resp = await _request_and_validate_and_print(
         rc,
         openapi_spec,
@@ -174,12 +182,8 @@ async def user_requests_new_workflow(
         f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
+            "projection": ["pilot_config"],
         },
-    )
-    assert all(tf["phase"] == "pending-starter" for tf in resp["taskforces"])
-    assert all(
-        tf["phase_change_log"][-1]["target_phase"] == "pending-starter"
-        for tf in resp["taskforces"]
     )
     assert all(
         tf["pilot_config"]["environment"]
@@ -595,6 +599,7 @@ async def add_more_workers(
             "taskforce_uuid": resp["taskforce_uuid"],  # don't check
             "timestamp": resp["timestamp"],  # don't check
             "n_workers": 100,
+            "phase": "pre-mq-activation",
             "phase_change_log": [
                 {
                     "target_phase": "pre-mq-activation",
@@ -639,5 +644,22 @@ async def add_more_workers(
         )["taskforces"]
     )
     assert new_total_n_taskforces == total_n_taskforces + 1
+
+    #
+    # background processes advance taskforces
+    #
+    await sleep_until_background_runners_advance_taskforces(1)
+
+    #
+    # USER...
+    # check above
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        new_total_n_taskforces,
+        "pending-starter",
+        ("pending-starter", True),
+    )
 
     return tmss
