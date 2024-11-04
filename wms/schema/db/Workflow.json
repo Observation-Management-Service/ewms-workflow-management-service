@@ -45,8 +45,6 @@
         "workflow_id",
         "timestamp",
         "priority",
-        "mq_activated_ts",
-        "_mq_activation_retry_at_ts",
         "deactivated",
         "deactivated_ts"
     ],

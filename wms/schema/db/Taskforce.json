@@ -250,6 +250,7 @@
         "task_id",
         "workflow_id",
         "timestamp",
+        "priority",
         "collector",
         "schedd",
         "n_workers",

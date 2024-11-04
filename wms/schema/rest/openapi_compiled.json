@@ -61,21 +61,6 @@
                         "type": "integer",
                         "description": "The workflow's priority level relative to other workflows."
                     },
-                    "mq_activated_ts": {
-                        "anyOf": [
-                            {
-                                "type": "number",
-                                "description": "The epoch time when message queues were created for this workflow. If null, the queues have not yet been created."
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ]
-                    },
-                    "_mq_activation_retry_at_ts": {
-                        "type": "number",
-                        "description": "For internal use only: The epoch time to retry requesting message queues from MQS."
-                    },
                     "deactivated": {
                         "anyOf": [
                             {
@@ -180,6 +165,10 @@
                     "timestamp": {
                         "type": "number",
                         "description": "The epoch time when this taskforce was created."
+                    },
+                    "priority": {
+                        "type": "integer",
+                        "description": "The priority level relative to other taskforces (usually, this value is inherited from the parent workflow object)."
                     },
                     "collector": {
                         "type": "string",
@@ -1801,6 +1790,10 @@
                                             "type": "string"
                                         },
                                         "minItems": 0
+                                    },
+                                    "priority": {
+                                        "type": "integer",
+                                        "description": "The workflow's priority level relative to other workflows."
                                     }
                                 },
                                 "required": [
