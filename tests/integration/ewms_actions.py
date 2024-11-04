@@ -589,7 +589,7 @@ async def add_more_workers(
             "n_workers": 100,
         },
     )
-    assert resp == {
+    expected = {
         **existing_tf,  # near duplicate with a few differences
         **{
             "n_workers": 100,
@@ -607,6 +607,8 @@ async def add_more_workers(
             ],
         },
     }
+    print("expected:", expected)
+    assert resp == expected
 
     # check that there are 2 taskforces at location now
     resp = await _request_and_validate_and_print(
