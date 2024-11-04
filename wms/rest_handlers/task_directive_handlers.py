@@ -9,6 +9,7 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
+from ..config import MAX_WORKFLOW_PRIORITY
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TaskforcePhase
 from ..utils import IDFactory
@@ -239,7 +240,7 @@ class TaskDirectiveIDActionsAddWorkersHandler(BaseWMSHandler):
                 # make taskforce & put it into db
                 taskforce = _make_taskforce_object(
                     an_existing_taskforce["workflow_id"],
-                    an_existing_taskforce["priority"],  # TODO - increase since asap
+                    an_existing_taskforce["priority"] + MAX_WORKFLOW_PRIORITY,  # ASAP
                     #
                     an_existing_taskforce["task_id"],  # could also use 'task_id' arg
                     #

@@ -201,7 +201,7 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
                     ),
                     {
                         "$sort": {
-                            "worker_config.priority": DESCENDING,  # first, highest priority
+                            "priority": DESCENDING,  # first, highest priority
                             "n_failures": ASCENDING,  # then, fewer failed attempts
                             "timestamp": ASCENDING,  # finally, oldest
                         }

@@ -118,7 +118,7 @@ async def request_workflow(
                     "do_transfer_worker_stdouterr": True,
                     "max_worker_runtime": 60 * 10,
                     "n_cores": 1,
-                    "priority": 99,
+                    "priority": 51,
                     "worker_disk": "512M",
                     "worker_memory": "512M",
                 },

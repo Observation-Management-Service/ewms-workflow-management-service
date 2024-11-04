@@ -11,7 +11,7 @@ from . import auth, utils
 from .base_handlers import BaseWMSHandler
 from .task_directive_handlers import make_task_directive_object_and_taskforce_objects
 from .. import config
-from ..config import DEFAULT_WORKFLOW_PRIORITY
+from ..config import DEFAULT_WORKFLOW_PRIORITY, MAX_WORKFLOW_PRIORITY
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import (
     ENDING_OR_FINISHED_TASKFORCE_PHASES,
@@ -75,7 +75,10 @@ class WorkflowHandler(BaseWMSHandler):
             # IMMUTABLE
             "workflow_id": IDFactory.generate_workflow_id(),
             "timestamp": time.time(),
-            "priority": self.get_argument("priority", DEFAULT_WORKFLOW_PRIORITY),
+            "priority": max(
+                self.get_argument("priority", DEFAULT_WORKFLOW_PRIORITY),
+                MAX_WORKFLOW_PRIORITY,
+            ),
             # MUTABLE
             "deactivated": None,
             "deactivated_ts": None,
