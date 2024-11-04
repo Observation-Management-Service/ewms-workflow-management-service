@@ -7,6 +7,7 @@
 | **task\_id** | **String** | The identifier of the associated task directive object (N taskforces : 1 task directive). | [optional] [default to null] |
 | **workflow\_id** | **String** | The identifier of the overarching workflow object (N*M taskforces : M task directives : 1 workflow). | [optional] [default to null] |
 | **timestamp** | **BigDecimal** | The epoch time when this taskforce was created. | [optional] [default to null] |
+| **priority** | **Integer** | The priority level relative to other taskforces (usually, this value is inherited from the parent workflow object). | [optional] [default to null] |
 | **collector** | **String** | The address of the HTCondor collector. | [optional] [default to null] |
 | **schedd** | **String** | The address of the HTCondor schedd. | [optional] [default to null] |
 | **n\_workers** | [**TaskforceObject_n_workers**](TaskforceObject_n_workers.md) |  | [optional] [default to null] |
