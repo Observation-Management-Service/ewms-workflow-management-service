@@ -3,9 +3,7 @@
 import asyncio
 import logging
 import time
-from typing import Any
 
-import motor
 import requests
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING, DESCENDING
@@ -191,96 +189,15 @@ async def request_activation_to_mqs(
     )
 
 
-async def _update_taskforces_w_mqprofile_info(
-    wms_db: database.client.WMSMongoValidatedDatabase,
+async def advance_workflows_taskforces_to_prelaunch(
+    taskforces_client: database.client.MongoValidatedCollection,
     workflow_id: str,
-    mqprofile: dict[str, Any],
-    session: motor.motor_asyncio.AsyncIOMotorClientSession,
 ) -> None:
-    """Update all the taskforces with a queue (input or output) matching the mqprofile."""
-    LOGGER.debug(f"Updating taskforces for {workflow_id=} {mqprofile['mqid']=}")
-    mqid = mqprofile["mqid"]
-    auth_token = mqprofile["auth_token"]
-    broker_type = mqprofile["broker_type"]
-    broker_address = mqprofile["broker_address"]
-
-    # input/incoming
-    async for td in wms_db.task_directives_collection.find_all(
-        {
-            "workflow_id": workflow_id,
-            "input_queues": mqprofile["mqid"],  # mongo-speak for "is entry X in list?"
-        },
-        [],
-    ):
-        await wms_db.taskforces_collection.update_many(
-            {
-                "workflow_id": workflow_id,
-                "task_id": td["task_id"],
-            },
-            {
-                "$push": {  # mongo appends to list -- each attr's value is a list!
-                    "pilot_config.environment.EWMS_PILOT_QUEUE_INCOMING": mqid,
-                    "pilot_config.environment.EWMS_PILOT_QUEUE_INCOMING_AUTH_TOKEN": auth_token,
-                    "pilot_config.environment.EWMS_PILOT_QUEUE_INCOMING_BROKER_TYPE": broker_type,
-                    "pilot_config.environment.EWMS_PILOT_QUEUE_INCOMING_BROKER_ADDRESS": broker_address,
-                }
-            },
-            session=session,
-        )
-
-    # output/outgoing (same as above but for outgoing queues)
-    async for td in wms_db.task_directives_collection.find_all(
-        {
-            "workflow_id": workflow_id,
-            "output_queues": mqprofile["mqid"],  # mongo-speak for "is entry X in list?"
-        },
-        [],
-    ):
-        await wms_db.taskforces_collection.update_many(
-            {
-                "workflow_id": workflow_id,
-                "task_id": td["task_id"],
-            },
-            {
-                "$push": {  # mongo appends to list
-                    "pilot_config.environment.EWMS_PILOT_QUEUE_OUTGOING": mqid,
-                    "pilot_config.environment.EWMS_PILOT_QUEUE_OUTGOING_AUTH_TOKEN": auth_token,
-                    "pilot_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_TYPE": broker_type,
-                    "pilot_config.environment.EWMS_PILOT_QUEUE_OUTGOING_BROKER_ADDRESS": broker_address,
-                }
-            },
-            session=session,
-        )
-
-
-async def update_workflows_taskforces(
-    wms_db: database.client.WMSMongoValidatedDatabase,
-    workflow_id: str,
-    mqprofiles: list[dict[str, Any]],
-) -> None:
-    """Update the taskforces:
-
-    1. add queue ids and auth tokens to taskforces' env vars
-    2. advance taskforces' phases to TaskforcePhase.PRE_LAUNCH
-    """
-    async with await wms_db.mongo_client.start_session() as s:
-        async with s.start_transaction():
-            # match mqprofiles with taskforces (N:M)
-            for mqprofile in mqprofiles:
-                await _update_taskforces_w_mqprofile_info(
-                    wms_db,
-                    workflow_id,
-                    mqprofile,
-                    session=s,
-                )
-            # update phase
-            await wms_db.taskforces_collection.update_many(
-                {"workflow_id": workflow_id},
-                _mongo_syntax_advance_taskforce_to_prelaunch(),
-                session=s,
-            )
-
-    LOGGER.info(f"ACTIVATED queues for workflow_id={workflow_id}")
+    """Advance taskforces' phases to TaskforcePhase.PRE_LAUNCH."""
+    await taskforces_client.update_many(
+        {"workflow_id": workflow_id},
+        _mongo_syntax_advance_taskforce_to_prelaunch(),
+    )
     LOGGER.info(
         f"ADVANCED taskforces 'phase' TO {TaskforcePhase.PRE_LAUNCH} ({workflow_id=})"
     )
@@ -370,8 +287,7 @@ async def run(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-t
             short_sleep = True  # want to give other tasks a chance to start up
             continue
         else:
-            await update_workflows_taskforces(
-                wms_db,
+            await advance_workflows_taskforces_to_prelaunch(
+                wms_db.taskforces_collection,
                 workflow_id,
-                mqs_resp["mqprofiles"],
             )
