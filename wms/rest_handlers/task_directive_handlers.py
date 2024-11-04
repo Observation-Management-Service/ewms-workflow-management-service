@@ -208,7 +208,7 @@ class TaskDirectiveIDActionsAddWorkersHandler(BaseWMSHandler):
 
                 # grab fields from an existing taskforce -- copy over common fields
                 an_existing_taskforce = (
-                    await self.wms_db.task_directives_collection.find_one(
+                    await self.wms_db.taskforces_collection.find_one(
                         {"task_id": task_id},
                         session=s,
                     )
