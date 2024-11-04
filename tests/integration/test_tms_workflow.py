@@ -635,3 +635,86 @@ async def test_120__deactivated_after_condor(
         workflow_id,
         kind_of_deactivation,
     )
+
+
+# --------------------------------------------------------------------------------------
+
+
+async def test_200__add_workers_before_condor(rc: RestClient) -> None:
+    """Add workers to workflow."""
+    openapi_spec = await ewms_actions.query_for_schema(rc)
+
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
+    )
+
+    # ADD MORE WORKERS!
+    new_tmss = await ewms_actions.add_more_workers(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states[0].shortname,  # add to this location
+    )
+    tms_states.append(new_tmss)
+
+    # TMS STARTS TASKFORCES!
+    tms_states = await ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+    )
+
+    # SEND UPDATES FROM TMS (JEL)!
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    # CONDOR CLUSTERS FINISH UP!
+    await ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        len(tms_states),
+        "condor-complete",
+        ("condor-complete", True),
+    )
+
+    # CHECK FINAL STATES...
+    # NOTE: ^^^ already checked final taskforce states above
+    # workflow:
+    await check_workflow_deactivation(
+        rc,
+        openapi_spec,
+        workflow_id,
+        "FINISHED",
+    )

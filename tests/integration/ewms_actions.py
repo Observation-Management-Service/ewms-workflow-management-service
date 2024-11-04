@@ -531,3 +531,94 @@ async def tms_condor_clusters_done(
         == [hash(tf["taskforce_uuid"]) % 1700000000]  # see above
         for tf in resp["taskforces"]
     )
+
+
+async def add_more_workers(
+    rc: RestClient,
+    openapi_spec: openapi_core.OpenAPI,
+    task_id: str,
+    cluster_location: str,
+) -> StateForTMS:
+    tmss = StateForTMS(
+        cluster_location,
+        CONDOR_LOCATIONS_LOOKUP[cluster_location]["collector"],
+        CONDOR_LOCATIONS_LOOKUP[cluster_location]["schedd"],
+    )
+
+    # get total -- used at the very end of func
+    total_n_taskforces = len(
+        (
+            await _request_and_validate_and_print(
+                rc,
+                openapi_spec,
+                "POST",
+                f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
+                {"query": {"task_id": task_id}},
+            )
+        )["taskforces"]
+    )
+
+    # grab the existing taskforce at the location
+    resp = await _request_and_validate_and_print(
+        rc,
+        openapi_spec,
+        "POST",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
+        {
+            "query": {
+                "task_id": task_id,
+                "collector": tmss.collector,
+                "schedd": tmss.schedd,
+            },
+        },
+    )
+    assert len(resp["taskforces"]) == 1
+    existing_tf = resp["taskforces"][0]
+
+    #
+    # USER or TMS...
+    # make another taskforce for the task directive
+    #
+    resp = await _request_and_validate_and_print(
+        rc,
+        openapi_spec,
+        "POST",
+        f"/{ROUTE_VERSION_PREFIX}/task-directives/{task_id}/actions/add-workers",
+        {
+            "cluster_location": cluster_location,
+            "n_workers": 100,
+        },
+    )
+    assert resp == existing_tf  # a near-duplicate
+
+    # check that there are 2 taskforces at location now
+    resp = await _request_and_validate_and_print(
+        rc,
+        openapi_spec,
+        "POST",
+        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
+        {
+            "query": {
+                "task_id": task_id,
+                "collector": tmss.collector,
+                "schedd": tmss.schedd,
+            },
+        },
+    )
+    assert len(resp["taskforces"]) == 2
+
+    # check total only increased by 1 -- iow, the taskforce was only added to the 1 location
+    new_total_n_taskforces = len(
+        (
+            await _request_and_validate_and_print(
+                rc,
+                openapi_spec,
+                "POST",
+                f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
+                {"query": {"task_id": task_id}},
+            )
+        )["taskforces"]
+    )
+    assert new_total_n_taskforces == total_n_taskforces + 1
+
+    return tmss
