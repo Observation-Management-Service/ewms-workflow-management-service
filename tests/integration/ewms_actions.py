@@ -1,7 +1,6 @@
 """Common high-level actions that occur in many situations."""
 
 import asyncio
-import copy
 import json
 import logging
 import os
@@ -13,8 +12,10 @@ from jsonschema_path import SchemaPath
 from rest_tools.client import RestClient
 from rest_tools.client.utils import request_and_validate
 
-from utils import (
+from .utils import (
+    CONDOR_LOCATIONS_LOOKUP,
     ROUTE_VERSION_PREFIX,
+    StateForTMS,
     _request_and_validate_and_print,
     check_taskforce_states,
 )
@@ -46,8 +47,8 @@ async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
 async def user_requests_new_workflow(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
-    condor_locations: dict,
-) -> tuple[str, str]:
+    condor_locations: list[str],
+) -> tuple[str, str, list[StateForTMS]]:
     """Return workflow and task ids."""
     task_image = "icecube/earthpassenger"
     task_args = "aaa bbb --ccc 123"
@@ -64,6 +65,17 @@ async def user_requests_new_workflow(
     environment: dict[str, str] = {}
     input_files: list[str] = []
 
+    # so, technically, the tms has not seen these taskforces, but we can pre-assemble
+    #   this list to make the tests cleaner
+    tms_states = [
+        StateForTMS(
+            short_name,
+            CONDOR_LOCATIONS_LOOKUP[short_name]["collector"],
+            CONDOR_LOCATIONS_LOOKUP[short_name]["schedd"],
+        )
+        for short_name in condor_locations
+    ]
+
     #
     # USER...
     # requests new workflow
@@ -76,7 +88,7 @@ async def user_requests_new_workflow(
         {
             "tasks": [
                 {
-                    "cluster_locations": list(condor_locations.keys()),
+                    "cluster_locations": [tmss.shortname for tmss in tms_states],
                     "task_image": task_image,
                     "task_args": task_args,
                     "input_queue_aliases": ["qfoo"],
@@ -101,10 +113,10 @@ async def user_requests_new_workflow(
         tf["phase_change_log"][-1]["target_phase"] == "pre-mq-activation"
         for tf in workflow_resp["taskforces"]
     )
-    assert len(workflow_resp["taskforces"]) == len(condor_locations)
+    assert len(workflow_resp["taskforces"]) == len(tms_states)
     assert sorted(  # check locations were translated correctly to collector+schedd
         (tf["collector"], tf["schedd"]) for tf in workflow_resp["taskforces"]
-    ) == sorted((loc["collector"], loc["schedd"]) for loc in condor_locations.values())
+    ) == sorted((tmss.collector, tmss.schedd) for tmss in tms_states)
     assert all(
         tf["worker_config"] == worker_config for tf in workflow_resp["taskforces"]
     )
@@ -190,28 +202,26 @@ async def user_requests_new_workflow(
         for tf in resp["taskforces"]
     )
 
-    return workflow_resp["workflow"]["workflow_id"], task_id
+    return workflow_resp["workflow"]["workflow_id"], task_id, tms_states
 
 
 async def tms_starter(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
-    condor_locations: dict,
-) -> dict:
-    condor_locs_w_jel = copy.deepcopy(condor_locations)
-
+    tms_states: list[StateForTMS],
+) -> list[StateForTMS]:
     #
     # TMS(es) starter(s)...
     #
-    for shortname, loc in condor_locations.items():
+    for tmss in tms_states:
         # get next to start
         taskforce = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
             f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
+            {"collector": tmss.collector, "schedd": tmss.schedd},
         )
         assert taskforce
         taskforce_uuid = taskforce["taskforce_uuid"]
@@ -223,8 +233,8 @@ async def tms_starter(
             f"/{ROUTE_VERSION_PREFIX}/taskforces/{taskforce_uuid}",
         )
         assert resp["phase"] == "pending-starter"
-        # confirm it has started
-        condor_locs_w_jel[shortname]["jel"] = "/home/the_job_event_log_fpath"
+        # TMS confirms it has started...
+        tmss.job_event_log_fpath = "/home/the_job_event_log_fpath"
         resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
@@ -234,7 +244,7 @@ async def tms_starter(
                 "cluster_id": 123456,
                 "n_workers": 5600,
                 "submit_dict": {"foo": 123, "bar": "abc"},
-                "job_event_log_fpath": condor_locs_w_jel[shortname]["jel"],
+                "job_event_log_fpath": tmss.job_event_log_fpath,
             },
         )
 
@@ -245,7 +255,7 @@ async def tms_starter(
         rc,
         openapi_spec,
         task_id,
-        len(condor_locations),
+        len(tms_states),
         "condor-submit",
         ("condor-submit", True),
     )
@@ -260,20 +270,20 @@ async def tms_starter(
             "projection": ["collector", "schedd"],
         },
     )
-    assert len(resp["taskforces"]) == len(condor_locations)
-    for loc in condor_locations.values():
-        assert {"collector": loc["collector"], "schedd": loc["schedd"]} in resp[
+    assert len(resp["taskforces"]) == len(tms_states)
+    for tmss in tms_states:
+        assert {"collector": tmss.collector, "schedd": tmss.schedd} in resp[
             "taskforces"
         ]
 
-    return condor_locs_w_jel
+    return tms_states
 
 
 async def tms_watcher_sends_status_update(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
-    condor_locs_w_jel: dict,
+    tms_states: list[StateForTMS],
     top_task_errors_by_locshortname: dict,
     compound_statuses_by_locshortname: dict,
 ) -> None:
@@ -281,7 +291,7 @@ async def tms_watcher_sends_status_update(
     # TMS(es) watcher(s)...
     # jobs in action!
     #
-    for shortname, loc in condor_locs_w_jel.items():
+    for tmss in tms_states:
         resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
@@ -289,9 +299,9 @@ async def tms_watcher_sends_status_update(
             f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
             {
                 "query": {
-                    "collector": loc["collector"],
-                    "schedd": loc["schedd"],
-                    "job_event_log_fpath": loc["jel"],
+                    "collector": tmss.collector,
+                    "schedd": tmss.schedd,
+                    "job_event_log_fpath": tmss.job_event_log_fpath,
                 },
                 "projection": ["taskforce_uuid", "cluster_id"],
             },
@@ -305,10 +315,10 @@ async def tms_watcher_sends_status_update(
             f"/{ROUTE_VERSION_PREFIX}/tms/statuses/taskforces",
             {
                 "top_task_errors_by_taskforce": {
-                    taskforce_uuid: top_task_errors_by_locshortname[shortname],
+                    taskforce_uuid: top_task_errors_by_locshortname[tmss.shortname],
                 },
                 "compound_statuses_by_taskforce": {
-                    taskforce_uuid: compound_statuses_by_locshortname[shortname]
+                    taskforce_uuid: compound_statuses_by_locshortname[tmss.shortname]
                 },
             },
         )
@@ -334,17 +344,17 @@ async def tms_watcher_sends_status_update(
             ],
         },
     )
-    assert len(resp["taskforces"]) == len(condor_locs_w_jel)
+    assert len(resp["taskforces"]) == len(tms_states)
     for tf in resp["taskforces"]:
-        for shortname, loc in condor_locs_w_jel.items():
-            if loc["collector"] == tf["collector"] and loc["schedd"] == tf["schedd"]:
+        for tmss in tms_states:
+            if tmss.collector == tf["collector"] and tmss.schedd == tf["schedd"]:
                 break
         else:
             assert 0  # -> did not find it
         # fmt: off
         # has new vals
-        assert tf["compound_statuses"] == compound_statuses_by_locshortname[shortname]
-        assert tf["top_task_errors"] == top_task_errors_by_locshortname[shortname]
+        assert tf["compound_statuses"] == compound_statuses_by_locshortname[tmss.shortname]
+        assert tf["top_task_errors"] == top_task_errors_by_locshortname[tmss.shortname]
         # fmt: on
 
 
@@ -353,8 +363,7 @@ async def user_deactivates_workflow(
     openapi_spec: openapi_core.OpenAPI,
     kind_of_deactivation: str,
     task_id: str,
-    condor_locations: dict,
-    deactivated_after_condor_stopped: bool = False,
+    n_taskforces_stopped: int,
 ) -> None:
     #
     # USER...
@@ -386,9 +395,7 @@ async def user_deactivates_workflow(
     )
     assert resp == {
         "workflow_id": workflow_id,
-        "n_taskforces": (
-            len(condor_locations) if not deactivated_after_condor_stopped else 0
-        ),
+        "n_taskforces": n_taskforces_stopped,
     }
     resp = await _request_and_validate_and_print(
         rc,
@@ -399,7 +406,7 @@ async def user_deactivates_workflow(
     assert resp["deactivated"] == kind_of_deactivation
     assert then < resp["deactivated_ts"] < time.time()
 
-    if deactivated_after_condor_stopped:
+    if not n_taskforces_stopped:
         return
 
     #
@@ -410,7 +417,7 @@ async def user_deactivates_workflow(
         rc,
         openapi_spec,
         task_id,
-        len(condor_locations),
+        n_taskforces_stopped,
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -420,20 +427,20 @@ async def tms_stopper(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
-    condor_locations: dict,
+    tms_states: list[StateForTMS],
 ) -> None:
     #
     # TMS(es) stopper(s)...
     # this happens even if task aborted before condor
     #
-    for loc in condor_locations.values():
+    for tmss in tms_states:
         # get next to stop
         taskforce = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
             f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
+            {"collector": tmss.collector, "schedd": tmss.schedd},
         )
         assert taskforce
         # confirm it has stopped
@@ -452,7 +459,7 @@ async def tms_stopper(
         rc,
         openapi_spec,
         task_id,
-        len(condor_locations),
+        len(tms_states),
         "condor-rm",
         ("condor-rm", True),
     )
@@ -462,13 +469,13 @@ async def tms_condor_clusters_done(
     rc: RestClient,
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
-    condor_locs_w_jel: dict,
+    tms_states: list[StateForTMS],
 ) -> None:
     #
     # TMS(es) watcher(s)...
     # taskforces' condor clusters are done
     #
-    for loc in condor_locs_w_jel.values():
+    for tmss in tms_states:
         resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
@@ -476,9 +483,9 @@ async def tms_condor_clusters_done(
             f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
             {
                 "query": {
-                    "collector": loc["collector"],
-                    "schedd": loc["schedd"],
-                    "job_event_log_fpath": loc["jel"],
+                    "collector": tmss.collector,
+                    "schedd": tmss.schedd,
+                    "job_event_log_fpath": tmss.job_event_log_fpath,
                 },
                 "projection": ["taskforce_uuid"],
             },
@@ -514,7 +521,7 @@ async def tms_condor_clusters_done(
             "projection": ["taskforce_uuid", "phase_change_log"],
         },
     )
-    assert len(resp["taskforces"]) == len(condor_locs_w_jel)
+    assert len(resp["taskforces"]) == len(tms_states)
     assert all(
         list(
             pcl["source_event_time"]

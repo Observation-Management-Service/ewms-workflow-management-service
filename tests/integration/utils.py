@@ -1,5 +1,6 @@
 """Test utility functions."""
 
+import dataclasses
 import json
 from typing import Any
 
@@ -8,6 +9,27 @@ from rest_tools.client import RestClient
 from rest_tools.client.utils import request_and_validate
 
 ROUTE_VERSION_PREFIX = "v0"
+
+CONDOR_LOCATIONS_LOOKUP = {
+    "test-alpha": {
+        "collector": "COLLECTOR1",
+        "schedd": "SCHEDD1",
+    },
+    "test-beta": {
+        "collector": "COLLECTOR2",
+        "schedd": "SCHEDD2",
+    },
+}
+
+
+@dataclasses.dataclass
+class StateForTMS:
+    """Complicated tests are bad, but strange dicts are worse."""
+
+    shortname: str
+    collector: str
+    schedd: str
+    job_event_log_fpath: str = ""
 
 
 async def _request_and_validate_and_print(

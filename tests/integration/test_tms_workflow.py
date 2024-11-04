@@ -5,8 +5,9 @@ import logging
 import pytest
 from rest_tools.client import RestClient
 
-import ewms_actions
-from utils import (
+from . import ewms_actions
+from .utils import (
+    CONDOR_LOCATIONS_LOOKUP,
     check_nothing_to_start,
     check_nothing_to_stop,
     check_taskforce_states,
@@ -14,17 +15,6 @@ from utils import (
 )
 
 LOGGER = logging.getLogger(__name__)
-
-CONDOR_LOCATIONS = {
-    "test-alpha": {
-        "collector": "COLLECTOR1",
-        "schedd": "SCHEDD1",
-    },
-    "test-beta": {
-        "collector": "COLLECTOR2",
-        "schedd": "SCHEDD2",
-    },
-}
 
 
 # --------------------------------------------------------------------------------------
@@ -86,18 +76,18 @@ async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # TMS STARTS TASKFORCES!
-    condor_locs_w_jel = await ewms_actions.tms_starter(
+    tms_states = await ewms_actions.tms_starter(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
     )
 
     # SEND UPDATES FROM TMS (JEL)!
@@ -105,7 +95,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
@@ -113,7 +103,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
@@ -121,7 +111,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__3,
         COMPOUND_STATUSES__3,
     )
@@ -131,7 +121,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
     )
 
     # CHECK FINAL STATES...
@@ -139,7 +129,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "condor-complete",
         ("condor-complete", True),
     )
@@ -149,6 +139,9 @@ async def test_000(rc: RestClient) -> None:
         workflow_id,
         None,
     )
+
+    # in a complete workflow, the user would then 'finish' the workflow
+    #   -> this is tested in the 1XX-tests
 
 
 # --------------------------------------------------------------------------------------
@@ -164,10 +157,10 @@ async def test_100__deactivated_before_condor(
     """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # DEACTIVATE!
@@ -176,23 +169,23 @@ async def test_100__deactivated_before_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        CONDOR_LOCATIONS,
+        len(tms_states),
     )
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
-    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS)
-    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS)
-    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS)
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
+    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
 
     # NOTE - since the taskforce(s) aren't started, there are no updates from a JEL
 
-    # condor_locs_w_jel = await ewms_actions.tms_starter(
+    # tms_states = await ewms_actions.tms_starter(
     #     rc,
     #     openapi_spec,
     #     task_id,
@@ -204,7 +197,7 @@ async def test_100__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__1,
     #     COMPOUND_STATUSES__1,
     # )
@@ -212,7 +205,7 @@ async def test_100__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__2,
     #     COMPOUND_STATUSES__2,
     # )
@@ -220,7 +213,7 @@ async def test_100__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__3,
     #     COMPOUND_STATUSES__3,
     # )
@@ -229,7 +222,7 @@ async def test_100__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     # )
 
     # CHECK FINAL STATES...
@@ -237,7 +230,7 @@ async def test_100__deactivated_before_condor(
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -259,10 +252,10 @@ async def test_101__deactivated_before_condor(
     """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # DEACTIVATE!
@@ -271,19 +264,19 @@ async def test_101__deactivated_before_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        CONDOR_LOCATIONS,
+        len(tms_states),
     )
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
-    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS)
-    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS)
-    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS)
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
+    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
 
     # await ewms_actions.taskforce_launch_control_marks_taskforces_pending_starter(
     #     rc,
@@ -294,7 +287,7 @@ async def test_101__deactivated_before_condor(
 
     # NOTE - since the taskforce(s) aren't started, there are no updates from a JEL
 
-    # condor_locs_w_jel = await ewms_actions.tms_starter(
+    # tms_states = await ewms_actions.tms_starter(
     #     rc,
     #     openapi_spec,
     #     task_id,
@@ -306,7 +299,7 @@ async def test_101__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__1,
     #     COMPOUND_STATUSES__1,
     # )
@@ -314,7 +307,7 @@ async def test_101__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__2,
     #     COMPOUND_STATUSES__2,
     # )
@@ -322,7 +315,7 @@ async def test_101__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__3,
     #     COMPOUND_STATUSES__3,
     # )
@@ -331,7 +324,7 @@ async def test_101__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     # )
 
     # CHECK FINAL STATES...
@@ -339,7 +332,7 @@ async def test_101__deactivated_before_condor(
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -361,18 +354,18 @@ async def test_110__deactivated_during_condor(
     """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # TMS STARTS TASKFORCES!
-    condor_locs_w_jel = await ewms_actions.tms_starter(
+    tms_states = await ewms_actions.tms_starter(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
     )
 
     # SEND UPDATES FROM TMS (JEL)!
@@ -380,7 +373,7 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
@@ -391,13 +384,13 @@ async def test_110__deactivated_during_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        CONDOR_LOCATIONS,
+        len(tms_states),
     )
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -405,7 +398,7 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
     )
 
     # continue, SEND UPDATES FROM TMS (JEL)
@@ -413,7 +406,7 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
@@ -421,7 +414,7 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__3,
         COMPOUND_STATUSES__3,
     )
@@ -431,7 +424,7 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
     )
 
     # CHECK FINAL STATES...
@@ -439,7 +432,7 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "condor-complete",
         ("condor-complete", True),
     )
@@ -461,18 +454,18 @@ async def test_111__deactivated_during_condor(
     """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # TMS STARTS TASKFORCES!
-    condor_locs_w_jel = await ewms_actions.tms_starter(
+    tms_states = await ewms_actions.tms_starter(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
     )
 
     # SEND UPDATES FROM TMS (JEL)!
@@ -480,7 +473,7 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
@@ -488,7 +481,7 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
@@ -496,7 +489,7 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__3,
         COMPOUND_STATUSES__3,
     )
@@ -507,13 +500,13 @@ async def test_111__deactivated_during_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        CONDOR_LOCATIONS,
+        len(tms_states),
     )
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -521,7 +514,7 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
     )
 
     # CONDOR CLUSTERS FINISH UP!
@@ -529,7 +522,7 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
     )
 
     # CHECK FINAL STATES...
@@ -537,7 +530,7 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "condor-complete",
         ("condor-complete", True),
     )
@@ -559,18 +552,18 @@ async def test_120__deactivated_after_condor(
     """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # TMS STARTS TASKFORCES!
-    condor_locs_w_jel = await ewms_actions.tms_starter(
+    tms_states = await ewms_actions.tms_starter(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
     )
 
     # SEND UPDATES FROM TMS (JEL)!
@@ -578,7 +571,7 @@ async def test_120__deactivated_after_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
@@ -586,7 +579,7 @@ async def test_120__deactivated_after_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
@@ -594,7 +587,7 @@ async def test_120__deactivated_after_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__3,
         COMPOUND_STATUSES__3,
     )
@@ -604,13 +597,13 @@ async def test_120__deactivated_after_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
     )
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "condor-complete",
         ("condor-complete", True),
     )
@@ -621,18 +614,17 @@ async def test_120__deactivated_after_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        CONDOR_LOCATIONS,
-        deactivated_after_condor_stopped=True,
+        0,  # no taskforces will actually need to be stopped
     )
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
-        len(CONDOR_LOCATIONS),
+        len(tms_states),
         "condor-complete",
         ("pending-stopper", False),
     )
-    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS)
+    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
 
     # CHECK FINAL STATES...
     # NOTE: ^^^ already checked final taskforce states above
