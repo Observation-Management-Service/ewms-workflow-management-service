@@ -72,6 +72,7 @@ async def user_requests_new_workflow(
             short_name,
             CONDOR_LOCATIONS_LOOKUP[short_name]["collector"],
             CONDOR_LOCATIONS_LOOKUP[short_name]["schedd"],
+            1,
         )
         for short_name in condor_locations
     ]
@@ -275,7 +276,7 @@ async def tms_watcher_sends_status_update(
     # TMS(es) watcher(s)...
     # jobs in action!
     #
-    for tmss in tms_states:
+    for tmss in tms_states:  # iterate over the unique tms locations
         resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
@@ -290,7 +291,7 @@ async def tms_watcher_sends_status_update(
                 "projection": ["taskforce_uuid", "cluster_id"],
             },
         )
-        assert len(resp["taskforces"]) == 1
+        assert len(resp["taskforces"]) == tmss.n_taskforces
         taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
         resp = await _request_and_validate_and_print(
             rc,
@@ -522,12 +523,8 @@ async def add_more_workers(
     openapi_spec: openapi_core.OpenAPI,
     task_id: str,
     cluster_location: str,
-) -> StateForTMS:
-    tmss = StateForTMS(
-        cluster_location,
-        CONDOR_LOCATIONS_LOOKUP[cluster_location]["collector"],
-        CONDOR_LOCATIONS_LOOKUP[cluster_location]["schedd"],
-    )
+    tms_states: list[StateForTMS],
+) -> list[StateForTMS]:
 
     # get total -- used at the very end of func
     total_n_taskforces = len(
@@ -541,6 +538,7 @@ async def add_more_workers(
             )
         )["taskforces"]
     )
+    assert total_n_taskforces == sum(tms.n_taskforces for tms in tms_states)
 
     # grab the existing taskforce at the location
     resp = await _request_and_validate_and_print(
@@ -551,12 +549,14 @@ async def add_more_workers(
         {
             "query": {
                 "task_id": task_id,
-                "collector": tmss.collector,
-                "schedd": tmss.schedd,
+                "collector": CONDOR_LOCATIONS_LOOKUP[cluster_location]["collector"],
+                "schedd": CONDOR_LOCATIONS_LOOKUP[cluster_location]["schedd"],
             },
         },
     )
-    assert len(resp["taskforces"]) == 1
+    assert len(resp["taskforces"]) == next(
+        tms.n_taskforces for tms in tms_states if tms.shortname == cluster_location
+    )
     existing_tf = resp["taskforces"][0]
 
     #
@@ -605,12 +605,18 @@ async def add_more_workers(
         {
             "query": {
                 "task_id": task_id,
-                "collector": tmss.collector,
-                "schedd": tmss.schedd,
+                "collector": CONDOR_LOCATIONS_LOOKUP[cluster_location]["collector"],
+                "schedd": CONDOR_LOCATIONS_LOOKUP[cluster_location]["schedd"],
             },
         },
     )
-    assert len(resp["taskforces"]) == 2
+    assert (
+        len(resp["taskforces"])
+        == next(
+            tms.n_taskforces for tms in tms_states if tms.shortname == cluster_location
+        )
+        + 1
+    )
 
     # check total only increased by 1 -- iow, the taskforce was only added to the 1 location
     new_total_n_taskforces = len(
@@ -643,4 +649,8 @@ async def add_more_workers(
         ("pending-starter", True),
     )
 
-    return tmss
+    # increment count then return
+    for tmss in tms_states:
+        if tmss.shortname == cluster_location:
+            tmss.n_taskforces += 1
+    return tms_states

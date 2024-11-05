@@ -31,6 +31,7 @@ class StateForTMS:
     shortname: str
     collector: str
     schedd: str
+    n_taskforces: int
     job_event_log_fpath: str = ""
 
 

@@ -651,13 +651,13 @@ async def test_200__add_workers_before_condor(rc: RestClient) -> None:
     )
 
     # ADD MORE WORKERS!
-    new_tmss = await ewms_actions.add_more_workers(
+    tms_states = await ewms_actions.add_more_workers(
         rc,
         openapi_spec,
         task_id,
         tms_states[0].shortname,  # add to this location
+        tms_states,
     )
-    tms_states.append(new_tmss)
 
     # TMS STARTS TASKFORCES!
     tms_states = await ewms_actions.tms_starter(
