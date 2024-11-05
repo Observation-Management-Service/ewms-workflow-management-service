@@ -778,7 +778,9 @@ async def test_210__add_workers_during_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        [StateForTMS(**asdict(tms_states[0]), n_taskforces=1)],  # just the newbie
+        [  # include just the newbie, aka with n_taskforces=1
+            StateForTMS(**{**asdict(tms_states[0]), **{"n_taskforces": 1}})
+        ],
     )
     # SEND MORE UPDATES FROM TMS (JEL)!
     await ewms_actions.tms_watcher_sends_status_update(
