@@ -693,6 +693,15 @@ async def test_200__add_workers_before_condor(rc: RestClient) -> None:
         COMPOUND_STATUSES__3,
     )
 
+    # USER FINISHES WORKFLOW
+    await ewms_actions.user_deactivates_workflow(
+        rc,
+        openapi_spec,
+        "FINISHED",
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+    )
+
     # CONDOR CLUSTERS FINISH UP!
     await ewms_actions.tms_condor_clusters_done(
         rc,
@@ -707,15 +716,6 @@ async def test_200__add_workers_before_condor(rc: RestClient) -> None:
         sum(s.n_taskforces for s in tms_states),
         "condor-complete",
         ("condor-complete", True),
-    )
-
-    # USER FINISHES WORKFLOW
-    await ewms_actions.user_deactivates_workflow(
-        rc,
-        openapi_spec,
-        "FINISHED",
-        task_id,
-        sum(s.n_taskforces for s in tms_states),
     )
 
     # CHECK FINAL STATES...
