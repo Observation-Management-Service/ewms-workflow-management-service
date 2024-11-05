@@ -91,6 +91,14 @@ async def test_000(rc: RestClient) -> None:
         task_id,
         tms_states,
     )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
 
     # SEND UPDATES FROM TMS (JEL)!
     await ewms_actions.tms_watcher_sends_status_update(
@@ -369,6 +377,14 @@ async def test_110__deactivated_during_condor(
         task_id,
         tms_states,
     )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
 
     # SEND UPDATES FROM TMS (JEL)!
     await ewms_actions.tms_watcher_sends_status_update(
@@ -469,6 +485,14 @@ async def test_111__deactivated_during_condor(
         task_id,
         tms_states,
     )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
 
     # SEND UPDATES FROM TMS (JEL)!
     await ewms_actions.tms_watcher_sends_status_update(
@@ -566,6 +590,14 @@ async def test_120__deactivated_after_condor(
         openapi_spec,
         task_id,
         tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
     )
 
     # SEND UPDATES FROM TMS (JEL)!
@@ -668,6 +700,14 @@ async def test_200__add_workers_before_condor(rc: RestClient) -> None:
         task_id,
         tms_states,
     )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
 
     # SEND UPDATES FROM TMS (JEL)!
     await ewms_actions.tms_watcher_sends_status_update(
@@ -748,6 +788,14 @@ async def test_210__add_workers_during_condor(rc: RestClient) -> None:
         task_id,
         tms_states,
     )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
 
     # SEND UPDATES FROM TMS (JEL)!
     await ewms_actions.tms_watcher_sends_status_update(
@@ -781,6 +829,14 @@ async def test_210__add_workers_during_condor(rc: RestClient) -> None:
         [  # include just the newbie, aka with n_taskforces=1
             StateForTMS(**{**asdict(tms_states[0]), **{"n_taskforces": 1}})
         ],
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
     )
     # SEND MORE UPDATES FROM TMS (JEL)!
     await ewms_actions.tms_watcher_sends_status_update(

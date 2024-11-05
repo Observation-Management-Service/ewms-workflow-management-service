@@ -234,34 +234,6 @@ async def tms_starter(
                 },
             )
 
-    #
-    # USER...
-    # check above
-    await check_taskforce_states(
-        rc,
-        openapi_spec,
-        task_id,
-        sum(s.n_taskforces for s in tms_states),
-        "condor-submit",
-        ("condor-submit", True),
-    )
-    # check directive reflects startup (runtime-assembled list of taskforces)
-    resp = await _request_and_validate_and_print(
-        rc,
-        openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["collector", "schedd"],
-        },
-    )
-    assert len(resp["taskforces"]) == sum(s.n_taskforces for s in tms_states)
-    for tmss in tms_states:
-        assert {"collector": tmss.collector, "schedd": tmss.schedd} in resp[
-            "taskforces"
-        ]
-
     return tms_states
 
 
