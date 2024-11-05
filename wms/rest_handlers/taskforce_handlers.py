@@ -211,6 +211,7 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
             )
         except DocumentNotFoundException:
             self.write({})
+            return
 
         # TMS needs some info from the task directive
         task_directive = await self.wms_db.task_directives_collection.find_one(
