@@ -392,7 +392,7 @@ This endpoint does not need any parameter.
 
 <a name="GET /v0/tms/pending-stopper/taskforces"></a>
 # **GET /v0/tms/pending-stopper/taskforces**
-> _v0_tms_pending_starter_taskforces_get_200_response GET /v0/tms/pending-stopper/taskforces(collector, schedd)
+> _v0_tms_pending_stopper_taskforces_get_200_response GET /v0/tms/pending-stopper/taskforces(collector, schedd)
 
 
 
@@ -407,7 +407,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**_v0_tms_pending_starter_taskforces_get_200_response**](../Models/_v0_tms_pending_starter_taskforces_get_200_response.md)
+[**_v0_tms_pending_stopper_taskforces_get_200_response**](../Models/_v0_tms_pending_stopper_taskforces_get_200_response.md)
 
 ### Authorization
 

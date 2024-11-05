@@ -55,6 +55,8 @@
  - [_v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request](./Models/_v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request.md)
  - [_v0_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request](./Models/_v0_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request.md)
  - [_v0_tms_pending_starter_taskforces_get_200_response](./Models/_v0_tms_pending_starter_taskforces_get_200_response.md)
+ - [_v0_tms_pending_starter_taskforces_get_200_response_anyOf](./Models/_v0_tms_pending_starter_taskforces_get_200_response_anyOf.md)
+ - [_v0_tms_pending_stopper_taskforces_get_200_response](./Models/_v0_tms_pending_stopper_taskforces_get_200_response.md)
  - [_v0_tms_statuses_taskforces_post_200_response](./Models/_v0_tms_statuses_taskforces_post_200_response.md)
  - [_v0_tms_statuses_taskforces_post_200_response_results_inner](./Models/_v0_tms_statuses_taskforces_post_200_response_results_inner.md)
  - [_v0_tms_statuses_taskforces_post_207_response](./Models/_v0_tms_statuses_taskforces_post_207_response.md)
