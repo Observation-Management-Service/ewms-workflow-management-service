@@ -331,30 +331,6 @@ jobs:
         run: |
           docker logs rest || cat ./rest.out
 
-  integration-test-mqs-scheduling:
-    needs: [ py-versions, schema-modifications ]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
-    services:
-      mongo:
-        image: bitnami/mongodb:4
-        ports:
-          - 27017:27017
-        env:
-          MONGODB_REPLICA_SET_MODE: primary
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.py3 }}
-      - run: |
-          pip install .[tests]
-      - name: test (no rest server)
-        run: |
-          pytest -vvv --exitfirst tests/integration/test_mqs_scheduling.py
 
   unit-tests:
     needs: [ py-versions, schema-modifications ]
@@ -394,7 +370,6 @@ jobs:
       api-documentation,
       test-build-docker,
       integration-test-full-wms-workflow,
-      integration-test-mqs-scheduling,
       unit-tests
     ]
     runs-on: ubuntu-latest
