@@ -587,8 +587,16 @@ async def add_more_workers(
         **{
             "taskforce_uuid": resp["taskforce_uuid"],  # don't check
             "timestamp": resp["timestamp"],  # don't check
-            "priority": existing_tf["priority"] + 100,
+            "priority": existing_tf["priority"] + 100,  # bumped by the handler
             "n_workers": resp["n_workers"],  # don't check
+            #
+            # these are only set once the TMS picks up the TF
+            "cluster_id": None,
+            "submit_dict": {},
+            "job_event_log_fpath": "",
+            "compound_statuses": {},
+            "top_task_errors": {},
+            #
             "phase": "pre-mq-activation",
             "phase_change_log": [
                 {
