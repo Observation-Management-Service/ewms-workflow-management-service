@@ -199,39 +199,40 @@ async def tms_starter(
     # TMS(es) starter(s)...
     #
     for tmss in tms_states:
-        # get next to start
-        resp = await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": tmss.collector, "schedd": tmss.schedd},
-        )
-        assert resp["taskforce"]
-        assert resp["task_directive"]
-        taskforce_uuid = resp["taskforce"]["taskforce_uuid"]
-        # check that it's still pending
-        resp = await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/taskforces/{taskforce_uuid}",
-        )
-        assert resp["phase"] == "pending-starter"
-        # TMS confirms it has started...
-        tmss.job_event_log_fpath = "/home/the_job_event_log_fpath"
-        resp = await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "POST",
-            f"/{ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/{taskforce_uuid}",
-            {
-                "cluster_id": 123456,
-                "n_workers": 5600,
-                "submit_dict": {"foo": 123, "bar": "abc"},
-                "job_event_log_fpath": tmss.job_event_log_fpath,
-            },
-        )
+        for i in range(tmss.n_taskforces):
+            # get next to start
+            resp = await _request_and_validate_and_print(
+                rc,
+                openapi_spec,
+                "GET",
+                f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
+                {"collector": tmss.collector, "schedd": tmss.schedd},
+            )
+            assert resp["taskforce"]
+            assert resp["task_directive"]
+            taskforce_uuid = resp["taskforce"]["taskforce_uuid"]
+            # check that it's still pending
+            resp = await _request_and_validate_and_print(
+                rc,
+                openapi_spec,
+                "GET",
+                f"/{ROUTE_VERSION_PREFIX}/taskforces/{taskforce_uuid}",
+            )
+            assert resp["phase"] == "pending-starter"
+            # TMS confirms it has started...
+            tmss.job_event_log_fpath = "/home/the_job_event_log_fpath"  # keep constant
+            resp = await _request_and_validate_and_print(
+                rc,
+                openapi_spec,
+                "POST",
+                f"/{ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/{taskforce_uuid}",
+                {
+                    "cluster_id": 123456,
+                    "n_workers": 5600,
+                    "submit_dict": {"foo": 123, "bar": "abc"},
+                    "job_event_log_fpath": tmss.job_event_log_fpath,
+                },
+            )
 
     #
     # USER...
@@ -292,22 +293,28 @@ async def tms_watcher_sends_status_update(
             },
         )
         assert len(resp["taskforces"]) == tmss.n_taskforces
-        taskforce_uuid = resp["taskforces"][0]["taskforce_uuid"]
-        resp = await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "POST",
-            f"/{ROUTE_VERSION_PREFIX}/tms/statuses/taskforces",
-            {
-                "top_task_errors_by_taskforce": {
-                    taskforce_uuid: top_task_errors_by_locshortname[tmss.shortname],
+        for tf in resp["taskforces"]:
+            resp = await _request_and_validate_and_print(
+                rc,
+                openapi_spec,
+                "POST",
+                f"/{ROUTE_VERSION_PREFIX}/tms/statuses/taskforces",
+                {
+                    "top_task_errors_by_taskforce": {
+                        tf["taskforce_uuid"]: top_task_errors_by_locshortname[
+                            tmss.shortname
+                        ],
+                    },
+                    "compound_statuses_by_taskforce": {
+                        tf["taskforce_uuid"]: compound_statuses_by_locshortname[
+                            tmss.shortname
+                        ]
+                    },
                 },
-                "compound_statuses_by_taskforce": {
-                    taskforce_uuid: compound_statuses_by_locshortname[tmss.shortname]
-                },
-            },
-        )
-        assert resp["results"] == [{"uuid": taskforce_uuid, "status": "updated"}]
+            )
+            assert resp["results"] == [
+                {"uuid": tf["taskforce_uuid"], "status": "updated"}
+            ]
 
     #
     # USER...
@@ -419,22 +426,23 @@ async def tms_stopper(
     # this happens even if task aborted before condor
     #
     for tmss in tms_states:
-        # get next to stop
-        taskforce = await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
-            {"collector": tmss.collector, "schedd": tmss.schedd},
-        )
-        assert taskforce
-        # confirm it has stopped
-        await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "POST",
-            f"/{ROUTE_VERSION_PREFIX}/tms/condor-rm/taskforces/{taskforce['taskforce_uuid']}",
-        )
+        for _ in range(tmss.n_taskforces):
+            # get next to stop
+            taskforce = await _request_and_validate_and_print(
+                rc,
+                openapi_spec,
+                "GET",
+                f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
+                {"collector": tmss.collector, "schedd": tmss.schedd},
+            )
+            assert taskforce
+            # confirm it has stopped
+            await _request_and_validate_and_print(
+                rc,
+                openapi_spec,
+                "POST",
+                f"/{ROUTE_VERSION_PREFIX}/tms/condor-rm/taskforces/{taskforce['taskforce_uuid']}",
+            )
 
     #
     # USER...
@@ -475,20 +483,21 @@ async def tms_condor_clusters_done(
                 "projection": ["taskforce_uuid"],
             },
         )
-        assert len(resp["taskforces"]) == 1
-        resp = await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "POST",
-            f"/{ROUTE_VERSION_PREFIX}/tms/condor-complete/taskforces/{resp['taskforces'][0]['taskforce_uuid']}",
-            {
-                "condor_complete_ts": (
-                    # NOTE: need a unique timestamp that we don't need to rely on the timing of this test
-                    hash(resp["taskforces"][0]["taskforce_uuid"])
-                    % 1700000000
-                ),
-            },
-        )
+        assert len(resp["taskforces"]) == tmss.n_taskforces
+        for tf in resp["taskforces"]:
+            resp = await _request_and_validate_and_print(
+                rc,
+                openapi_spec,
+                "POST",
+                f"/{ROUTE_VERSION_PREFIX}/tms/condor-complete/taskforces/{tf['taskforce_uuid']}",
+                {
+                    "condor_complete_ts": (
+                        # NOTE: need a unique timestamp that we don't need to rely on the timing of this test
+                        hash(tf["taskforce_uuid"])
+                        % 1700000000
+                    ),
+                },
+            )
 
     #
     # USER...
