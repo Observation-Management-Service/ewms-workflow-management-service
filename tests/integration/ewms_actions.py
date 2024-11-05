@@ -578,7 +578,7 @@ async def add_more_workers(
         **{
             "taskforce_uuid": resp["taskforce_uuid"],  # don't check
             "timestamp": resp["timestamp"],  # don't check
-            "n_workers": 100,
+            "n_workers": existing_tf["n_workers"] + 100,
             "phase": "pre-mq-activation",
             "phase_change_log": [
                 {
