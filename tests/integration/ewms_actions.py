@@ -199,7 +199,7 @@ async def tms_starter(
     # TMS(es) starter(s)...
     #
     for tmss in tms_states:
-        for i in range(tmss.n_taskforces):
+        for _ in range(tmss.n_taskforces):
             # get next to start
             resp = await _request_and_validate_and_print(
                 rc,

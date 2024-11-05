@@ -1,6 +1,7 @@
 """Mimic a TMS workflow, hitting the expected REST endpoints."""
 
 import logging
+from dataclasses import asdict
 
 import pytest
 from rest_tools.client import RestClient
@@ -8,6 +9,7 @@ from rest_tools.client import RestClient
 from . import ewms_actions
 from .utils import (
     CONDOR_LOCATIONS_LOOKUP,
+    StateForTMS,
     check_nothing_to_start,
     check_nothing_to_stop,
     check_taskforce_states,
@@ -771,6 +773,12 @@ async def test_210__add_workers_during_condor(rc: RestClient) -> None:
         task_id,
         tms_states[0].shortname,  # add to this location
         tms_states,
+    )
+    _ = await ewms_actions.tms_starter(  # don't keep the return val -- its an incomplete list
+        rc,
+        openapi_spec,
+        task_id,
+        [StateForTMS(**asdict(tms_states[0]), n_taskforces=1)],  # just the newbie
     )
     # SEND MORE UPDATES FROM TMS (JEL)!
     await ewms_actions.tms_watcher_sends_status_update(
