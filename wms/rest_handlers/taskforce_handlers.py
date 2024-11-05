@@ -219,12 +219,12 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
         )
 
         # TMS needs the mq-profiles for each queue
-        # TODO - replace with new MQS endpoint for grabbing in bulk
+        # TODO - replace with a new MQS endpoint's path for grabbing in bulk
         mqprofiles = []
         for mqid in set(
             task_directive["input_queues"] + task_directive["output_queues"]
         ):
-            resp = await self.mqs_rc.request("POST", f"/v0/mqs/mq-profiles/{mqid}")
+            resp = await self.mqs_rc.request("GET", f"/v0/mqs/mq-profiles/{mqid}")
             mqprofiles.append(resp)
 
         # NOTE: the taskforce's phase is not advanced until the TMS sends condor-submit
