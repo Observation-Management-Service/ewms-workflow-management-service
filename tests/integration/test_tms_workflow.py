@@ -709,6 +709,15 @@ async def test_200__add_workers_before_condor(rc: RestClient) -> None:
         ("condor-complete", True),
     )
 
+    # USER FINISHES WORKFLOW
+    await ewms_actions.user_deactivates_workflow(
+        rc,
+        openapi_spec,
+        "FINISHED",
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+    )
+
     # CHECK FINAL STATES...
     # NOTE: ^^^ already checked final taskforce states above
     # workflow:
