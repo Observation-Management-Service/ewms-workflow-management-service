@@ -582,13 +582,14 @@ async def add_more_workers(
             "n_workers": 100,
         },
     )
+    taskforce_uuid = resp["taskforce_uuid"]
     expected = {
         **existing_tf,  # near duplicate with a few differences
         **{
-            "taskforce_uuid": resp["taskforce_uuid"],  # don't check
-            "timestamp": resp["timestamp"],  # don't check
+            "taskforce_uuid": taskforce_uuid,  # iow don't check
+            "timestamp": resp["timestamp"],  # iow don't check
             "priority": existing_tf["priority"] + 100,  # bumped by the handler
-            "n_workers": resp["n_workers"],  # don't check
+            "n_workers": resp["n_workers"],  # iow don't check
             #
             # these are only set once the TMS picks up the TF
             "cluster_id": None,
@@ -653,18 +654,16 @@ async def add_more_workers(
     # background processes advance taskforces
     #
     await sleep_until_background_runners_advance_taskforces(1)
-
-    #
-    # USER...
     # check above
-    await check_taskforce_states(
+    tf = await _request_and_validate_and_print(
         rc,
         openapi_spec,
-        task_id,
-        new_total_n_taskforces,
-        "pending-starter",
-        ("pending-starter", True),
+        "GET",
+        f"/{ROUTE_VERSION_PREFIX}/taskforces/{taskforce_uuid}",
     )
+    assert tf["phase"] == "pending-starter"
+    assert tf["phase_change_log"][-1]["target_phase"] == "pending-starter"
+    assert tf["phase_change_log"][-1]["was_successful"] is True
 
     # increment count then return
     for tmss in tms_states:
