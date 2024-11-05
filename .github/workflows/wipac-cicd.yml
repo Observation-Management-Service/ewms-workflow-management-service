@@ -322,7 +322,8 @@ jobs:
           
           sleep 10
           export TEST_PILOT_IMAGE_LATEST_TAG=$( python -c 'import requests; print(requests.get("https://api.github.com/repos/Observation-Management-Service/ewms-pilot/releases/latest").json()["tag_name"].lstrip("v"))' )
-          pytest -vvv --exitfirst tests/integration/test_tms_workflow.py
+          pip install pytest-reverse  # this way, the newer tests go first
+          pytest -vvv --exitfirst --reverse tests/integration/test_tms_workflow.py
       #
       - if: always()
         run: |
