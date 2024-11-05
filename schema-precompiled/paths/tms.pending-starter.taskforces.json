@@ -18,7 +18,15 @@
                         "schema": {
                             "anyOf": [
                                 {
-                                    "$ref": "#/components/schemas/TaskforceObject"
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce": {
+                                            "$ref": "#/components/schemas/TaskforceObject"
+                                        },
+                                        "task_directive": {
+                                            "$ref": "#/components/schemas/TaskDirectiveObject"
+                                        }
+                                    }
                                 },
                                 {
                                     "type": "object",

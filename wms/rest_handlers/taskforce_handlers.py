@@ -210,13 +210,23 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
                 ]
             )
         except DocumentNotFoundException:
-            taskforce = {}
+            self.write({})
+
+        # TMS needs some info from the task directive
+        task_directive = await self.wms_db.task_directives_collection.find_one(
+            {"task_id": taskforce["task_id"]}
+        )
 
         # NOTE: the taskforce's phase is not advanced until the TMS sends condor-submit
         #   info. This is so the TMS can die and restart well (statelessness).
         #   See POST @ .../tms/condor-submit/taskforces/{taskforce_uuid}
 
-        self.write(taskforce)
+        self.write(
+            {
+                "taskforce": taskforce,
+                "task_directive": task_directive,
+            }
+        )
 
 
 # --------------------------------------------------------------------------------------

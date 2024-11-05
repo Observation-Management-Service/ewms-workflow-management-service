@@ -199,15 +199,16 @@ async def tms_starter(
     #
     for tmss in tms_states:
         # get next to start
-        taskforce = await _request_and_validate_and_print(
+        resp = await _request_and_validate_and_print(
             rc,
             openapi_spec,
             "GET",
             f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
             {"collector": tmss.collector, "schedd": tmss.schedd},
         )
-        assert taskforce
-        taskforce_uuid = taskforce["taskforce_uuid"]
+        assert resp["taskforce"]
+        assert resp["task_directive"]
+        taskforce_uuid = resp["taskforce"]["taskforce_uuid"]
         # check that it's still pending
         resp = await _request_and_validate_and_print(
             rc,
