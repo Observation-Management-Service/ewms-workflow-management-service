@@ -129,7 +129,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "condor-complete",
         ("condor-complete", True),
     )
@@ -169,13 +169,13 @@ async def test_100__deactivated_before_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
     )
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -230,7 +230,7 @@ async def test_100__deactivated_before_condor(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -264,13 +264,13 @@ async def test_101__deactivated_before_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
     )
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -332,7 +332,7 @@ async def test_101__deactivated_before_condor(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -384,13 +384,13 @@ async def test_110__deactivated_during_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
     )
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -432,7 +432,7 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "condor-complete",
         ("condor-complete", True),
     )
@@ -500,13 +500,13 @@ async def test_111__deactivated_during_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
     )
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "pending-stopper",
         ("pending-stopper", True),
     )
@@ -530,7 +530,7 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "condor-complete",
         ("condor-complete", True),
     )
@@ -603,7 +603,7 @@ async def test_120__deactivated_after_condor(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "condor-complete",
         ("condor-complete", True),
     )
@@ -620,7 +620,7 @@ async def test_120__deactivated_after_condor(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "condor-complete",
         ("pending-stopper", False),
     )
@@ -704,7 +704,7 @@ async def test_200__add_workers_before_condor(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "condor-complete",
         ("condor-complete", True),
     )

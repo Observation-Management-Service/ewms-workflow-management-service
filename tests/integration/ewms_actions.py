@@ -114,7 +114,7 @@ async def user_requests_new_workflow(
         tf["phase_change_log"][-1]["target_phase"] == "pre-mq-activation"
         for tf in workflow_resp["taskforces"]
     )
-    assert len(workflow_resp["taskforces"]) == len(tms_states)
+    assert len(workflow_resp["taskforces"]) == sum(s.n_taskforces for s in tms_states)
     assert sorted(  # check locations were translated correctly to collector+schedd
         (tf["collector"], tf["schedd"]) for tf in workflow_resp["taskforces"]
     ) == sorted((tmss.collector, tmss.schedd) for tmss in tms_states)
@@ -240,7 +240,7 @@ async def tms_starter(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "condor-submit",
         ("condor-submit", True),
     )
@@ -255,7 +255,7 @@ async def tms_starter(
             "projection": ["collector", "schedd"],
         },
     )
-    assert len(resp["taskforces"]) == len(tms_states)
+    assert len(resp["taskforces"]) == sum(s.n_taskforces for s in tms_states)
     for tmss in tms_states:
         assert {"collector": tmss.collector, "schedd": tmss.schedd} in resp[
             "taskforces"
@@ -329,7 +329,7 @@ async def tms_watcher_sends_status_update(
             ],
         },
     )
-    assert len(resp["taskforces"]) == len(tms_states)
+    assert len(resp["taskforces"]) == sum(s.n_taskforces for s in tms_states)
     for tf in resp["taskforces"]:
         for tmss in tms_states:
             if tmss.collector == tf["collector"] and tmss.schedd == tf["schedd"]:
@@ -444,7 +444,7 @@ async def tms_stopper(
         rc,
         openapi_spec,
         task_id,
-        len(tms_states),
+        sum(s.n_taskforces for s in tms_states),
         "condor-rm",
         ("condor-rm", True),
     )
@@ -506,7 +506,7 @@ async def tms_condor_clusters_done(
             "projection": ["taskforce_uuid", "phase_change_log"],
         },
     )
-    assert len(resp["taskforces"]) == len(tms_states)
+    assert len(resp["taskforces"]) == sum(s.n_taskforces for s in tms_states)
     assert all(
         list(
             pcl["source_event_time"]
