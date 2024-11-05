@@ -210,6 +210,7 @@ async def tms_starter(
             )
             assert resp["taskforce"]
             assert resp["task_directive"]
+            assert resp["mqprofiles"]
             taskforce_uuid = resp["taskforce"]["taskforce_uuid"]
             # check that it's still pending
             resp = await _request_and_validate_and_print(

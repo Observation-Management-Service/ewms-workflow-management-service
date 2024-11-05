@@ -25,6 +25,14 @@
                                         },
                                         "task_directive": {
                                             "$ref": "#/components/schemas/TaskDirectiveObject"
+                                        },
+                                        "mqprofiles": {
+                                            "type": "array",
+                                            "description": "A list of the mq-profiles relevant for this taskforce (see https://github.com/Observation-Management-Service/ewms-message-queue-service/blob/main/Docs/Models/MQProfileObject.md).",
+                                            "items": {
+                                                "type": "object"
+                                            },
+                                            "minItems": 1
                                         }
                                     }
                                 },
