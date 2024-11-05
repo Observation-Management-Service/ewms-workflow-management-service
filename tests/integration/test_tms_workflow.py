@@ -1,9 +1,11 @@
 """Mimic a TMS workflow, hitting the expected REST endpoints."""
 
 import logging
+import re
 from dataclasses import asdict
 
 import pytest
+import requests
 from rest_tools.client import RestClient
 
 from . import ewms_actions
@@ -1074,28 +1076,29 @@ async def test_220__add_workers_after_condor(rc: RestClient) -> None:
     )
 
     # ADD MORE WORKERS!
-    tms_states = await ewms_actions.add_more_workers(
-        rc,
-        openapi_spec,
-        task_id,
-        tms_states[0].shortname,  # add to this location
-        tms_states,
-    )
-    _ = await ewms_actions.tms_starter(  # don't keep the return val -- its an incomplete list
-        rc,
-        openapi_spec,
-        task_id,
-        [  # include just the newbie, aka with n_taskforces=1
-            StateForTMS(**{**asdict(tms_states[0]), **{"n_taskforces": 1}})
-        ],
-    )
+    with pytest.raises(
+        requests.exceptions.HTTPError,
+        match=re.escape(
+            f"422 Client Error: cannot add a taskforce to a deactivated workflow "
+            f"({workflow_id}) for url: http://localhost:8080/v0/task-directives/{task_id}/actions/add-workers"
+        ),
+    ):
+        await ewms_actions.add_more_workers(
+            rc,
+            openapi_spec,
+            task_id,
+            tms_states[0].shortname,  # add to this location
+            tms_states,
+        )
+
+    # re-check that nothing inadvertently changed
     await check_taskforce_states(
         rc,
         openapi_spec,
         task_id,
         sum(s.n_taskforces for s in tms_states),
-        "condor-submit",
-        ("condor-submit", True),
+        "condor-complete",
+        ("condor-complete", True),
     )
 
     # CHECK FINAL STATES...
