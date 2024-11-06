@@ -86,11 +86,11 @@ async def make_task_directive_object_and_taskforce_objects(
     cluster_locations: list[str],
     #
     task_image: str,
-    task_args: list[str],
+    task_args: str,
     task_env: dict | None,
     #
     init_image: str | None,
-    init_args: list[str] | None,
+    init_args: str | None,
     init_env: dict | None,
     #
     input_queues: list[str],
@@ -116,7 +116,7 @@ async def make_task_directive_object_and_taskforce_objects(
         "task_env": task_env or {},
         #
         "init_image": init_image or "",
-        "init_args": init_args or [],
+        "init_args": init_args or "",
         "init_env": init_env or {},
         #
         "input_queues": input_queues,

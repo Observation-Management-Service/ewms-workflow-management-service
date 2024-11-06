@@ -52,6 +52,10 @@ async def user_requests_new_workflow(
     """Return workflow and task ids."""
     task_image = "icecube/earthpassenger"
     task_args = "aaa bbb --ccc 123"
+    # no task_env
+    init_image = "icecube/spacecaptain"
+    # no init_args
+    init_env = {"foo": "bar", "baz": "789"}
     n_workers = 99
     worker_config = {
         "do_transfer_worker_stdouterr": False,
@@ -62,8 +66,11 @@ async def user_requests_new_workflow(
         "worker_memory": "512M",
         "condor_requirements": "bar && baz",
     }
-    environment: dict[str, str] = {}
-    input_files: list[str] = []
+    pilot_config = {
+        "tag": "latest",
+        "environment": {},
+        "input_files": [],
+    }
 
     # so, technically, the tms has not seen these taskforces, but we can pre-assemble
     #   this list to make the tests cleaner
@@ -92,13 +99,16 @@ async def user_requests_new_workflow(
                     "cluster_locations": [tmss.shortname for tmss in tms_states],
                     "task_image": task_image,
                     "task_args": task_args,
+                    # no task_env
+                    "init_image": init_image,
+                    # no init_args
+                    "init_env": init_env,
                     "input_queue_aliases": ["qfoo"],
                     "output_queue_aliases": ["qbar"],
                     #
                     "n_workers": n_workers,
                     "worker_config": worker_config,
-                    # environment=environment,  # empty
-                    # input_files=input_files,  # empty
+                    "pilot_config": pilot_config,
                 }
             ],
             "public_queue_aliases": ["qfoo", "qbar"],
@@ -108,29 +118,28 @@ async def user_requests_new_workflow(
     assert workflow_resp["workflow"]
     assert len(workflow_resp["task_directives"]) == 1
     assert len(workflow_resp["taskforces"]) == 2
+    #
     # taskforce checks
-    assert all(tf["phase"] == "pre-mq-activation" for tf in workflow_resp["taskforces"])
-    assert all(
-        tf["phase_change_log"][-1]["target_phase"] == "pre-mq-activation"
-        for tf in workflow_resp["taskforces"]
-    )
     assert len(workflow_resp["taskforces"]) == sum(s.n_taskforces for s in tms_states)
     assert sorted(  # check locations were translated correctly to collector+schedd
         (tf["collector"], tf["schedd"]) for tf in workflow_resp["taskforces"]
     ) == sorted((tmss.collector, tmss.schedd) for tmss in tms_states)
-    assert all(
-        tf["worker_config"] == worker_config for tf in workflow_resp["taskforces"]
-    )
-    assert all(tf["n_workers"] == n_workers for tf in workflow_resp["taskforces"])
     for tf in workflow_resp["taskforces"]:
-        expected = {
-            "tag": os.environ["TEST_PILOT_IMAGE_LATEST_TAG"],
-            "environment": environment,
-            "input_files": input_files,
+        assert tf["task_image"] == task_image
+        assert tf["task_args"] == task_args
+        assert tf["task_env"] == {}
+        assert tf["init_image"] == init_image
+        assert tf["init_args"] == ""
+        assert tf["init_env"] == init_env
+
+        assert tf["phase"] == "pre-mq-activation"
+        assert tf["phase_change_log"][-1]["target_phase"] == "pre-mq-activation"
+        assert tf["worker_config"] == worker_config
+        assert tf["n_workers"] == n_workers
+        assert tf["pilot_config"] == {
+            **pilot_config,
+            **{"tag": os.environ["TEST_PILOT_IMAGE_LATEST_TAG"]},
         }
-        print(tf["pilot_config"])
-        print(expected)
-        assert tf["pilot_config"] == expected
 
     #
     # background processes advance taskforces
@@ -183,7 +192,8 @@ async def user_requests_new_workflow(
         },
     )
     assert all(
-        tf["pilot_config"]["environment"] == environment for tf in resp["taskforces"]
+        tf["pilot_config"]["environment"] == pilot_config["environment"]
+        for tf in resp["taskforces"]
     )
 
     return workflow_resp["workflow"]["workflow_id"], task_id, tms_states

@@ -107,11 +107,11 @@ class WorkflowHandler(BaseWMSHandler):
                 #
                 task_input["task_image"],
                 task_input["task_args"],
-                task_input.get("task_env"),
+                task_input.get("task_env"),  # optional
                 #
-                task_input.get("init_image"),
-                task_input.get("init_args"),
-                task_input.get("init_env"),
+                task_input.get("init_image"),  # optional
+                task_input.get("init_args"),  # optional
+                task_input.get("init_env"),  # optional
                 #
                 #
                 [  # map aliases to ids
