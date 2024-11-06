@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.1 (2024-11-06)
+
+### Other
+
+* Add Task/Pilot-Based Attrs to TaskDirective ([#57](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/57)) ([`8bfb50e`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/8bfb50e64e96ce8be4ae0f6d39069ef393a38bfa))
+
 ## v0.6.0 (2024-11-06)
 
 
