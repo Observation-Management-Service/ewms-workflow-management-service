@@ -91,17 +91,17 @@ The init container runs once on a worker before any task/event is processed. Thi
 
 The [workflow request object's](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/Docs/Apis/DefaultApi.md#post-v0workflows) fields are mostly persisted in similarly-named fields the [`TaskDirective`](#task-directive) object. However, some are located in other places:
 
-| POST @ `/v0/workflows` Field | Persisted Destination                                                                      |
-|------------------------------|--------------------------------------------------------------------------------------------|
-| `task_image`                 | `TaskDirective.task_image` and `Taskforce.pilot_config.environment.EWMS_PILOT_TASK_IMAGE`  |
-| `task_args`                  | `TaskDirective.task_args` and `Taskforce.pilot_config.environment.EWMS_PILOT_TASK_ARGS`    |
-| `task_env`                   | `Taskforce.pilot_config.environment.EWMS_PILOT_TASK_ENV_JSON` (as a JSON-string)           |
-| `init_image`                 | `Taskforce.pilot_config.environment.EWMS_PILOT_INIT_IMAGE`                                 |
-| `init_args`                  | `Taskforce.pilot_config.environment.EWMS_PILOT_INIT_ARGS`                                  |
-| `init_env`                   | `Taskforce.pilot_config.environment.EWMS_PILOT_INIT_ENV_JSON` (as a JSON-string)           |
-| `pilot_config`               | `Taskforce.pilot_config` (with additions to the `environment` sub-field, like those above) |
-| `worker_config`              | `Taskforce.worker_config`                                                                  |
-| `n_workers`                  | `Taskforce.n_workers`                                                                      |
+| POST @ `/v0/workflows` Field | Persisted Destination      |
+|------------------------------|----------------------------|
+| `task_image`                 | `TaskDirective.task_image` |
+| `task_args`                  | `TaskDirective.task_args`  |
+| `task_env`                   | `TaskDirective.task_env`   |
+| `init_image`                 | `TaskDirective.init_image` |
+| `init_args`                  | `TaskDirective.init_args`  |
+| `init_env`                   | `TaskDirective.init_env`   |
+| `pilot_config`               | `Taskforce.pilot_config`   |
+| `worker_config`              | `Taskforce.worker_config`  |
+| `n_workers`                  | `Taskforce.n_workers`      |
 
 ### Interacting with First-Order Objects using API Endpoints
 

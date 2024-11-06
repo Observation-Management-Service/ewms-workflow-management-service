@@ -104,8 +104,15 @@ class WorkflowHandler(BaseWMSHandler):
                 workflow["priority"],
                 #
                 task_input["cluster_locations"],
+                #
                 task_input["task_image"],
                 task_input["task_args"],
+                task_input.get("task_env"),  # optional
+                #
+                task_input.get("init_image"),  # optional
+                task_input.get("init_args"),  # optional
+                task_input.get("init_env"),  # optional
+                #
                 #
                 [  # map aliases to ids
                     p["mqid"]
@@ -118,7 +125,7 @@ class WorkflowHandler(BaseWMSHandler):
                     if p["alias"] in task_input["output_queue_aliases"]
                 ],
                 #
-                {  # add values (default and detected)
+                {  # add values (default and/or detected)
                     "tag": config.get_pilot_tag(
                         task_input.get("pilot_config", {}).get("tag", "latest")
                     ),

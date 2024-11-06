@@ -84,8 +84,14 @@ async def make_task_directive_object_and_taskforce_objects(
     priority: int,
     #
     cluster_locations: list[str],
+    #
     task_image: str,
-    task_args: list[str],
+    task_args: str,
+    task_env: dict | None,
+    #
+    init_image: str | None,
+    init_args: str | None,
+    init_env: dict | None,
     #
     input_queues: list[str],
     output_queues: list[str],
@@ -104,13 +110,20 @@ async def make_task_directive_object_and_taskforce_objects(
         "timestamp": time.time(),
         #
         "cluster_locations": cluster_locations,
+        #
         "task_image": task_image,
         "task_args": task_args,
+        "task_env": task_env or {},
+        #
+        "init_image": init_image or "",
+        "init_args": init_args or "",
+        "init_env": init_env or {},
         #
         "input_queues": input_queues,
         "output_queues": output_queues,
         #
         # MUTABLE
+        # none!
     }
 
     # first, check that locations are legit
