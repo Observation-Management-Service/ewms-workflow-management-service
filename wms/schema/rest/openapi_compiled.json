@@ -120,6 +120,30 @@
                         "type": "string",
                         "description": "The argument string to pass to the task image."
                     },
+                    "task_env": {
+                        "type": "object",
+                        "description": "Environment variables (and values) to set in the task instance.",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minProperties": 0
+                    },
+                    "init_image": {
+                        "type": "string",
+                        "description": "The Docker/Singularity/Apptainer image for the init container. See 'task_image' for caveats/optimizations regarding the image format."
+                    },
+                    "init_args": {
+                        "type": "string",
+                        "description": "The argument string to pass to the init container."
+                    },
+                    "init_env": {
+                        "type": "object",
+                        "description": "Environment variables (and values) to set in the init container.",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minProperties": 0
+                    },
                     "timestamp": {
                         "type": "number",
                         "description": "The epoch time when this task was created."
@@ -1760,28 +1784,16 @@
                                                     "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_args"
                                                 },
                                                 "task_env": {
-                                                    "description": "Environment variables (and values) to set in the task instance.",
-                                                    "type": "object",
-                                                    "items": {
-                                                        "type": "string"
-                                                    },
-                                                    "minProperties": 0
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/task_env"
                                                 },
                                                 "init_image": {
-                                                    "type": "string",
-                                                    "description": "The Docker/Singularity/Apptainer image for the init container. See 'task_image' for caveats/optimizations regarding the image format."
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/init_image"
                                                 },
                                                 "init_args": {
-                                                    "type": "string",
-                                                    "description": "The argument string to pass to the init container."
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/init_args"
                                                 },
                                                 "init_env": {
-                                                    "description": "Environment variables (and values) to set in the init container.",
-                                                    "type": "object",
-                                                    "items": {
-                                                        "type": "string"
-                                                    },
-                                                    "minProperties": 0
+                                                    "$ref": "#/components/schemas/TaskDirectiveObject/properties/init_env"
                                                 },
                                                 "input_queue_aliases": {
                                                     "description": "User-defined aliases for input event queues. Globally-unique IDs for the queues will be generated after submission.",

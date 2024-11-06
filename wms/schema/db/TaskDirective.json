@@ -80,6 +80,10 @@
         "cluster_locations",
         "task_image",
         "task_args",
+        "task_env",
+        "init_image",
+        "init_args",
+        "init_env",
         "timestamp",
         "input_queues",
         "output_queues"
