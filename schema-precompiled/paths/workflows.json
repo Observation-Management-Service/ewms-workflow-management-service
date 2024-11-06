@@ -95,6 +95,10 @@
                                     "type": "string"
                                 },
                                 "minItems": 0
+                            },
+                            "priority": {
+                                "type": "integer",
+                                "description": "The workflow's priority level relative to other workflows."
                             }
                         },
                         "required": [

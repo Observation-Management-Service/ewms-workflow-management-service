@@ -12,13 +12,29 @@
         ],
         "responses": {
             "200": {
-                "description": "the next taskforce to start at the condor location",
+                "description": "The next taskforce to start at the condor location",
                 "content": {
                     "application/json": {
                         "schema": {
                             "anyOf": [
                                 {
-                                    "$ref": "#/components/schemas/TaskforceObject"
+                                    "type": "object",
+                                    "properties": {
+                                        "taskforce": {
+                                            "$ref": "#/components/schemas/TaskforceObject"
+                                        },
+                                        "task_directive": {
+                                            "$ref": "#/components/schemas/TaskDirectiveObject"
+                                        },
+                                        "mqprofiles": {
+                                            "type": "array",
+                                            "description": "A list of the mq-profiles relevant for this taskforce (see https://github.com/Observation-Management-Service/ewms-message-queue-service/blob/main/Docs/Models/MQProfileObject.md).",
+                                            "items": {
+                                                "type": "object"
+                                            },
+                                            "minItems": 1
+                                        }
+                                    }
                                 },
                                 {
                                     "type": "object",

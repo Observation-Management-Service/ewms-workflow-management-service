@@ -9,7 +9,7 @@
                         "type": "object",
                         "properties": {
                             "top_task_errors_by_taskforce": {
-                                "description": "the top errors (paired with a count) for each indicated taskforce",
+                                "description": "The top errors (paired with a count) for each indicated taskforce",
                                 "type": "object",
                                 "items": {
                                     "type": "object",
@@ -21,7 +21,7 @@
                                 "minProperties": 1
                             },
                             "compound_statuses_by_taskforce": {
-                                "description": "the compound statuses (status -> state -> count) for the indicated taskforces",
+                                "description": "The compound statuses (status -> state -> count) for the indicated taskforces",
                                 "type": "object",
                                 "items": {
                                     "type": "object",

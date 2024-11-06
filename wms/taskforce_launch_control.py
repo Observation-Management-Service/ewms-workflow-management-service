@@ -43,12 +43,12 @@ async def run(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-t
                             "was_successful": True,
                             "source_event_time": None,
                             "source_entity": "Taskforce Launch Control",
-                            "description": "",
+                            "context": "",
                         },
                     },
                 },
                 sort=[
-                    ("worker_config.priority", DESCENDING),  # first, highest priority
+                    ("priority", DESCENDING),  # first, highest priority
                     ("timestamp", ASCENDING),  # then, oldest
                 ],
             )

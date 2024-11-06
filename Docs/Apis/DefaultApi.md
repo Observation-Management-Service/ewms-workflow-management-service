@@ -9,6 +9,7 @@ All URIs are relative to *http://localhost*
 | [_details_](DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces |  |
 | [_details_](DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows |  |
 | [_details_](DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi |  |
+| [_details_](DefaultApi.md#post-v0task-directivestask_idactionsadd-workers) | **POST** /v0/task-directives/{task_id}/actions/add-workers |  |
 | [_details_](DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} |  |
 | [_details_](DefaultApi.md#get-v0taskforcestaskforce_uuid) | **GET** /v0/taskforces/{taskforce_uuid} |  |
 | [_details_](DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce_uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
@@ -149,6 +150,33 @@ This endpoint does not need any parameter.
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
+<a name="POST /v0/task-directives/{task_id}/actions/add-workers"></a>
+# **POST /v0/task-directives/{task_id}/actions/add-workers**
+> TaskforceObject POST /v0/task-directives/{task_id}/actions/add-workers(task\_id, \_v0\_task\_directives\_\_task\_id\_\_actions\_add\_workers\_post\_request)
+
+
+
+    Creates a new taskforce (and associated workers) for an existing task directive.
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **task\_id** | **String**| The ID of the task directive to which the taskforce (and workers) will be added. | [default to null] |
+| **\_v0\_task\_directives\_\_task\_id\_\_actions\_add\_workers\_post\_request** | [**_v0_task_directives__task_id__actions_add_workers_post_request**](../Models/_v0_task_directives__task_id__actions_add_workers_post_request.md)|  | [optional] |
+
+### Return type
+
+[**TaskforceObject**](../Models/TaskforceObject.md)
+
+### Authorization
+
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
 <a name="GET /v0/task-directives/{task_id}"></a>
 # **GET /v0/task-directives/{task_id}**
 > TaskDirectiveObject GET /v0/task-directives/{task_id}(task\_id)
@@ -161,7 +189,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **task\_id** | **String**| the id of the task directive | [default to null] |
+| **task\_id** | **String**| The ID of the task directive | [default to null] |
 
 ### Return type
 
@@ -364,7 +392,7 @@ This endpoint does not need any parameter.
 
 <a name="GET /v0/tms/pending-stopper/taskforces"></a>
 # **GET /v0/tms/pending-stopper/taskforces**
-> _v0_tms_pending_starter_taskforces_get_200_response GET /v0/tms/pending-stopper/taskforces(collector, schedd)
+> _v0_tms_pending_stopper_taskforces_get_200_response GET /v0/tms/pending-stopper/taskforces(collector, schedd)
 
 
 
@@ -379,7 +407,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**_v0_tms_pending_starter_taskforces_get_200_response**](../Models/_v0_tms_pending_starter_taskforces_get_200_response.md)
+[**_v0_tms_pending_stopper_taskforces_get_200_response**](../Models/_v0_tms_pending_stopper_taskforces_get_200_response.md)
 
 ### Authorization
 
@@ -453,7 +481,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **workflow\_id** | **String**| the id of the workflow object | [default to null] |
+| **workflow\_id** | **String**| The ID of the workflow object | [default to null] |
 
 ### Return type
 
@@ -479,7 +507,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **workflow\_id** | **String**| the id of the workflow object | [default to null] |
+| **workflow\_id** | **String**| The ID of the workflow object | [default to null] |
 
 ### Return type
 
@@ -505,7 +533,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **workflow\_id** | **String**| the id of the workflow object | [default to null] |
+| **workflow\_id** | **String**| The ID of the workflow object | [default to null] |
 
 ### Return type
 

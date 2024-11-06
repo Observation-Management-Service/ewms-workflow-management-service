@@ -71,6 +71,8 @@ class MongoValidatedCollection:
         else:
             self.logger = logging.getLogger(f"{__name__}.{collection_name.lower()}")
 
+        self.collection_name = collection_name
+
     ####################################################################
     # WRITES
     ####################################################################
@@ -196,12 +198,16 @@ class MongoValidatedCollection:
 
         self.logger.debug(f"found {i} docs")
 
-    async def aggregate(self, pipeline: list[dict]) -> AsyncIterator[dict]:
+    async def aggregate(
+        self,
+        pipeline: list[dict],
+        **kwargs: Any,
+    ) -> AsyncIterator[dict]:
         """Find all matching the aggregate pipeline."""
         self.logger.debug(f"finding with aggregate pipeline: {pipeline}")
 
         i = 0
-        async for doc in self._collection.aggregate(pipeline):
+        async for doc in self._collection.aggregate(pipeline, **kwargs):
             i += 1
             # https://pymongo.readthedocs.io/en/stable/faq.html#writes-and-ids
             doc.pop("_id")
@@ -210,7 +216,11 @@ class MongoValidatedCollection:
 
         self.logger.debug(f"found {i} docs")
 
-    async def aggregate_one(self, pipeline: list[dict]) -> dict:
+    async def aggregate_one(
+        self,
+        pipeline: list[dict],
+        **kwargs: Any,
+    ) -> dict:
         """Find one matching the aggregate pipeline.
 
         Appends `{"$limit": 1}` to pipeline.
@@ -218,7 +228,7 @@ class MongoValidatedCollection:
         self.logger.debug(f"finding one with aggregate pipeline: {pipeline}")
 
         pipeline.append({"$limit": 1})  # optimization
-        async for doc in self.aggregate(pipeline):
+        async for doc in self.aggregate(pipeline, **kwargs):
             return doc
 
         raise DocumentNotFoundException()

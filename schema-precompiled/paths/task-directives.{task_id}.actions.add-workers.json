@@ -4,21 +4,68 @@
             "name": "task_id",
             "in": "path",
             "required": true,
-            "description": "The ID of the task directive",
+            "description": "The ID of the task directive to which the taskforce (and workers) will be added.",
             "schema": {
                 "type": "string"
             }
         }
     ],
-    "get": {
-        "description": "Retrieves the task directive that matches the specified task ID.",
+    "post": {
+        "description": "Creates a new taskforce (and associated workers) for an existing task directive.",
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "cluster_location": {
+                                "$ref": "#/components/schemas/TaskDirectiveObject/properties/cluster_locations/items"
+                            },
+                            "n_workers": {
+                                "$ref": "#/components/schemas/TaskforceObject/properties/n_workers"
+                            }
+                        },
+                        "required": [
+                            "cluster_location",
+                            "n_workers"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            }
+        },
         "responses": {
             "200": {
-                "description": "The matching task directive",
+                "description": "The created taskforce object with its details.",
                 "content": {
                     "application/json": {
                         "schema": {
-                            "$ref": "#/components/schemas/TaskDirectiveObject"
+                            "$ref": "#/components/schemas/TaskforceObject"
+                        }
+                    }
+                }
+            },
+            "422": {
+                "description": "Unprocessable Entity",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "http error code",
+                                    "type": "integer"
+                                },
+                                "error": {
+                                    "description": "http error reason",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "error"
+                            ],
+                            "additionalProperties": false
                         }
                     }
                 }

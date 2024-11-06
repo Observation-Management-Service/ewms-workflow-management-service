@@ -201,7 +201,7 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
                     ),
                     {
                         "$sort": {
-                            "worker_config.priority": DESCENDING,  # first, highest priority
+                            "priority": DESCENDING,  # first, highest priority
                             "n_failures": ASCENDING,  # then, fewer failed attempts
                             "timestamp": ASCENDING,  # finally, oldest
                         }
@@ -210,13 +210,34 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
                 ]
             )
         except DocumentNotFoundException:
-            taskforce = {}
+            self.write({})
+            return
+
+        # TMS needs some info from the task directive
+        task_directive = await self.wms_db.task_directives_collection.find_one(
+            {"task_id": taskforce["task_id"]}
+        )
+
+        # TMS needs the mq-profiles for each queue
+        # TODO - replace with a new MQS endpoint's path for grabbing in bulk
+        mqprofiles = []
+        for mqid in set(
+            task_directive["input_queues"] + task_directive["output_queues"]
+        ):
+            resp = await self.mqs_rc.request("GET", f"/v0/mqs/mq-profiles/{mqid}")
+            mqprofiles.append(resp)
 
         # NOTE: the taskforce's phase is not advanced until the TMS sends condor-submit
         #   info. This is so the TMS can die and restart well (statelessness).
         #   See POST @ .../tms/condor-submit/taskforces/{taskforce_uuid}
 
-        self.write(taskforce)
+        self.write(
+            {
+                "taskforce": taskforce,
+                "task_directive": task_directive,
+                "mqprofiles": mqprofiles,
+            }
+        )
 
 
 # --------------------------------------------------------------------------------------
@@ -256,7 +277,7 @@ class TMSTaskforceCondorSubmitUUIDHandler(BaseWMSHandler):
                             "was_successful": True,
                             "source_event_time": None,
                             "source_entity": "TMS",
-                            "description": "",
+                            "context": "",
                         },
                     },
                 },
@@ -296,7 +317,7 @@ class TMSTaskforceCondorSubmitUUIDFailedHandler(BaseWMSHandler):
                             "was_successful": False,  # it failed!
                             "source_event_time": None,
                             "source_entity": "TMS",
-                            "description": f"ERROR: {error}",
+                            "context": f"ERROR: {error}",
                         },
                     },
                 },
@@ -393,7 +414,7 @@ class TMSTaskforceCondorRmUUIDHandler(BaseWMSHandler):
                             "was_successful": True,
                             "source_event_time": None,
                             "source_entity": "TMS",
-                            "description": "",
+                            "context": "",
                         },
                     },
                 },
@@ -433,7 +454,7 @@ class TMSTaskforceCondorRmUUIDFailedHandler(BaseWMSHandler):
                             "was_successful": False,  # it failed!
                             "source_event_time": None,
                             "source_entity": "TMS",
-                            "description": f"ERROR: {error}",
+                            "context": f"ERROR: {error}",
                         },
                     },
                 },
@@ -481,7 +502,7 @@ class TMSTaskforceCondorCompleteUUIDHandler(BaseWMSHandler):
                             "was_successful": True,
                             "source_event_time": source_event_time,
                             "source_entity": "TMS",
-                            "description": "",
+                            "context": "",
                         },
                     },
                 },

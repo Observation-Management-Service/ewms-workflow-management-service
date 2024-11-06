@@ -7,10 +7,11 @@ from rest_tools.server import validate_request
 from tornado import web
 
 from wms import database
-from . import auth, utils
+from . import auth
 from .base_handlers import BaseWMSHandler
-from .task_handlers import create_task_directive_and_taskforces
+from .task_directive_handlers import make_task_directive_object_and_taskforce_objects
 from .. import config
+from ..config import DEFAULT_WORKFLOW_PRIORITY, MAX_WORKFLOW_PRIORITY
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import (
     ENDING_OR_FINISHED_TASKFORCE_PHASES,
@@ -74,10 +75,11 @@ class WorkflowHandler(BaseWMSHandler):
             # IMMUTABLE
             "workflow_id": IDFactory.generate_workflow_id(),
             "timestamp": time.time(),
-            "priority": 10,  # TODO
+            "priority": max(
+                self.get_argument("priority", DEFAULT_WORKFLOW_PRIORITY),
+                MAX_WORKFLOW_PRIORITY,
+            ),
             # MUTABLE
-            "mq_activated_ts": None,  # updated by workflow_mq_activator
-            "_mq_activation_retry_at_ts": config.MQS_RETRY_AT_TS_DEFAULT_VALUE,  # updated by workflow_mq_activator,
             "deactivated": None,
             "deactivated_ts": None,
         }
@@ -97,8 +99,9 @@ class WorkflowHandler(BaseWMSHandler):
         task_directives = []
         taskforces = []
         for task_input in self.get_argument("tasks"):
-            td, tfs = await create_task_directive_and_taskforces(
+            td, tfs = await make_task_directive_object_and_taskforce_objects(
                 workflow["workflow_id"],  # type: ignore
+                workflow["priority"],
                 #
                 task_input["cluster_locations"],
                 task_input["task_image"],
@@ -115,9 +118,19 @@ class WorkflowHandler(BaseWMSHandler):
                     if p["alias"] in task_input["output_queue_aliases"]
                 ],
                 #
-                utils.add_values_to_pilot_config(task_input),
+                {  # add values (default and detected)
+                    "tag": config.get_pilot_tag(
+                        task_input.get("pilot_config", {}).get("tag", "latest")
+                    ),
+                    "environment": task_input.get("pilot_config", {}).get(
+                        "environment", {}
+                    ),
+                    "input_files": task_input.get("pilot_config", {}).get(
+                        "input_files", []
+                    ),
+                },
                 task_input["worker_config"],
-                task_input["n_workers"],
+                task_input["n_workers"],  # TODO: make optional/smart
             )
             task_directives.append(td)
             taskforces.extend(tfs)
@@ -231,7 +244,7 @@ async def deactivate_workflow(
                                 "source_event_time": None,
                                 "was_successful": False,
                                 "source_entity": "User",
-                                "description": (
+                                "context": (
                                     f"User deactivated ({deactivated_type}) "
                                     f"workflow but taskforce "
                                     f"is already ending/finished "
@@ -266,7 +279,7 @@ async def deactivate_workflow(
                                 "source_event_time": None,
                                 "was_successful": True,
                                 "source_entity": "User",
-                                "description": f"User deactivated ({deactivated_type}) workflow",
+                                "context": f"User deactivated ({deactivated_type}) workflow",
                             },
                         },
                     },

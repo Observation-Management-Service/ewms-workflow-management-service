@@ -56,6 +56,19 @@ def dummy_mq_group_activation_post(workflow_id: str):
     return jsonify(stored)
 
 
+@app.route("/v0/mqs/mq-profiles/<mqid>", methods=["GET"])
+def dummy_mq_profiles_get(mqid: str):
+    # in the real mqs, there's a bunch of db logic, etc.
+
+    # this profile was stored in the "activation" endpoint (see above)
+
+    for workflow_id in DONT_CALL_IT_A_DB:
+        for profile in DONT_CALL_IT_A_DB[workflow_id]["mqprofiles"]:
+            if profile["mqid"] == mqid:
+                return jsonify(profile)
+    raise KeyError(f"no such mqid {mqid}")
+
+
 if __name__ == "__main__":
     app.run(
         debug=True,

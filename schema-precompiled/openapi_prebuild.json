@@ -53,11 +53,11 @@
                 "description": "The fields and values used to search.",
                 "properties": {
                     "query": {
-                        "description": "the search criteria (MongoDB-filter syntax)",
+                        "description": "The search criteria (MongoDB-filter syntax)",
                         "type": "object"
                     },
                     "projection": {
-                        "description": "the fields to include in the response",
+                        "description": "The fields to include in the response",
                         "type": "array",
                         "uniqueItems": true,
                         "items": {
@@ -75,7 +75,7 @@
                 "type": "object",
                 "properties": {
                     "workflow_id": {
-                        "description": "the workflow id",
+                        "description": "The workflow id",
                         "type": "string"
                     },
                     "n_taskforces": {

@@ -8,7 +8,7 @@
         "description": "Retrieves the taskforce object that matches the specified taskforce UUID.",
         "responses": {
             "200": {
-                "description": "the matching taskforce object",
+                "description": "The matching taskforce object",
                 "content": {
                     "application/json": {
                         "schema": {

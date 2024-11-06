@@ -3,7 +3,7 @@
 from . import (  # noqa: F401
     base_handlers,
     schema_handlers,
-    workflow_handlers,
-    task_handlers,
+    task_directive_handlers,
     taskforce_handlers,
+    workflow_handlers,
 )

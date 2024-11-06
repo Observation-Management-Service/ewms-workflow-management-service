@@ -18,6 +18,10 @@
             "type": "number",
             "description": "The epoch time when this taskforce was created."
         },
+        "priority": {
+            "type": "integer",
+            "description": "The priority level relative to other taskforces (usually, this value is inherited from the parent workflow object)."
+        },
         "collector": {
             "type": "string",
             "description": "The address of the HTCondor collector."
@@ -204,9 +208,9 @@
                     "type": "string",
                     "description": "The entity (person, system, or process) responsible for the external event that triggered this phase change attempt."
                 },
-                "description": {
+                "context": {
                     "type": "string",
-                    "description": "Additional information or context about the phase change attempt."
+                    "description": "The circumstances or background information about the phase change attempt."
                 }
             },
             "additionalProperties": false,
@@ -216,7 +220,7 @@
                 "was_successful",
                 "source_event_time",
                 "source_entity",
-                "description"
+                "context"
             ],
             "minItems": 0
         },
@@ -246,6 +250,7 @@
         "task_id",
         "workflow_id",
         "timestamp",
+        "priority",
         "collector",
         "schedd",
         "n_workers",

@@ -4,7 +4,7 @@
         "description": "Returns the OpenAPI schema.",
         "responses": {
             "200": {
-                "description": "the openapi schema",
+                "description": "The openapi schema",
                 "content": {
                     "application/json": {
                         "schema": {

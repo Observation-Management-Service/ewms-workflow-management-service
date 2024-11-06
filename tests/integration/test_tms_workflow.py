@@ -1,27 +1,24 @@
 """Mimic a TMS workflow, hitting the expected REST endpoints."""
 
 import logging
+import re
+from dataclasses import asdict
 
 import pytest
+import requests
 from rest_tools.client import RestClient
 
-import ewms_actions
-from utils import _request_and_validate_and_print
+from . import ewms_actions
+from .utils import (
+    CONDOR_LOCATIONS_LOOKUP,
+    StateForTMS,
+    check_nothing_to_start,
+    check_nothing_to_stop,
+    check_taskforce_states,
+    check_workflow_deactivation,
+)
 
 LOGGER = logging.getLogger(__name__)
-
-ROUTE_VERSION_PREFIX = "v0"
-
-CONDOR_LOCATIONS = {
-    "test-alpha": {
-        "collector": "COLLECTOR1",
-        "schedd": "SCHEDD1",
-    },
-    "test-beta": {
-        "collector": "COLLECTOR2",
-        "schedd": "SCHEDD2",
-    },
-}
 
 
 # --------------------------------------------------------------------------------------
@@ -83,18 +80,26 @@ async def test_000(rc: RestClient) -> None:
     """Regular workflow."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # TMS STARTS TASKFORCES!
-    condor_locs_w_jel = await ewms_actions.tms_starter(
+    tms_states = await ewms_actions.tms_starter(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
     )
 
     # SEND UPDATES FROM TMS (JEL)!
@@ -102,7 +107,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
@@ -110,7 +115,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
@@ -118,7 +123,7 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__3,
         COMPOUND_STATUSES__3,
     )
@@ -128,32 +133,27 @@ async def test_000(rc: RestClient) -> None:
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
     )
 
     # CHECK FINAL STATES...
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["phase", "phase_change_log"],
-        },
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-complete",
+        ("condor-complete", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
-    # fmt: on
-    resp = await _request_and_validate_and_print(
+    await check_workflow_deactivation(
         rc,
         openapi_spec,
-        "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        workflow_id,
+        None,
     )
-    assert resp["deactivated"] is None
+
+    # in a complete workflow, the user would then 'finish' the workflow
+    #   -> this is tested in the 1XX-tests
 
 
 # --------------------------------------------------------------------------------------
@@ -169,10 +169,10 @@ async def test_100__deactivated_before_condor(
     """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # DEACTIVATE!
@@ -181,51 +181,23 @@ async def test_100__deactivated_before_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        CONDOR_LOCATIONS,
+        sum(s.n_taskforces for s in tms_states),
     )
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "pending-stopper",
+        ("pending-stopper", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
-    # fmt: on
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to start
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to stop
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to start
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
+    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
 
     # NOTE - since the taskforce(s) aren't started, there are no updates from a JEL
 
-    # condor_locs_w_jel = await ewms_actions.tms_starter(
+    # tms_states = await ewms_actions.tms_starter(
     #     rc,
     #     openapi_spec,
     #     task_id,
@@ -237,7 +209,7 @@ async def test_100__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__1,
     #     COMPOUND_STATUSES__1,
     # )
@@ -245,7 +217,7 @@ async def test_100__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__2,
     #     COMPOUND_STATUSES__2,
     # )
@@ -253,7 +225,7 @@ async def test_100__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__3,
     #     COMPOUND_STATUSES__3,
     # )
@@ -262,25 +234,24 @@ async def test_100__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     # )
 
     # CHECK FINAL STATES...
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["phase", "phase_change_log"],
-        },
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "pending-stopper",
+        ("pending-stopper", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
-    # fmt: on
+    await check_workflow_deactivation(
+        rc,
+        openapi_spec,
+        workflow_id,
+        kind_of_deactivation,
+    )
 
 
 @pytest.mark.parametrize(
@@ -293,10 +264,10 @@ async def test_101__deactivated_before_condor(
     """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # DEACTIVATE!
@@ -305,47 +276,19 @@ async def test_101__deactivated_before_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        CONDOR_LOCATIONS,
+        sum(s.n_taskforces for s in tms_states),
     )
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "pending-stopper",
+        ("pending-stopper", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
-    # fmt: on
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to start
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to stop
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
-    for loc in CONDOR_LOCATIONS.values():
-        # check that there is NOTHING to start
-        assert not await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
+    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
+    await check_nothing_to_start(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
 
     # await ewms_actions.taskforce_launch_control_marks_taskforces_pending_starter(
     #     rc,
@@ -356,7 +299,7 @@ async def test_101__deactivated_before_condor(
 
     # NOTE - since the taskforce(s) aren't started, there are no updates from a JEL
 
-    # condor_locs_w_jel = await ewms_actions.tms_starter(
+    # tms_states = await ewms_actions.tms_starter(
     #     rc,
     #     openapi_spec,
     #     task_id,
@@ -368,7 +311,7 @@ async def test_101__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__1,
     #     COMPOUND_STATUSES__1,
     # )
@@ -376,7 +319,7 @@ async def test_101__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__2,
     #     COMPOUND_STATUSES__2,
     # )
@@ -384,7 +327,7 @@ async def test_101__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     #     TOP_TASK_ERRORS__3,
     #     COMPOUND_STATUSES__3,
     # )
@@ -393,32 +336,24 @@ async def test_101__deactivated_before_condor(
     #     rc,
     #     openapi_spec,
     #     task_id,
-    #     condor_locs_w_jel,
+    #     tms_states,
     # )
 
     # CHECK FINAL STATES...
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["phase", "phase_change_log"],
-        },
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "pending-stopper",
+        ("pending-stopper", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
-    # fmt: on
-    resp = await _request_and_validate_and_print(
+    await check_workflow_deactivation(
         rc,
         openapi_spec,
-        "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        workflow_id,
+        kind_of_deactivation,
     )
-    assert resp["deactivated"] == kind_of_deactivation
 
 
 @pytest.mark.parametrize(
@@ -431,18 +366,26 @@ async def test_110__deactivated_during_condor(
     """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # TMS STARTS TASKFORCES!
-    condor_locs_w_jel = await ewms_actions.tms_starter(
+    tms_states = await ewms_actions.tms_starter(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
     )
 
     # SEND UPDATES FROM TMS (JEL)!
@@ -450,7 +393,7 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
@@ -461,28 +404,21 @@ async def test_110__deactivated_during_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        CONDOR_LOCATIONS,
+        sum(s.n_taskforces for s in tms_states),
     )
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["phase", "phase_change_log"],
-        },
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "pending-stopper",
+        ("pending-stopper", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
-    # fmt: on
     await ewms_actions.tms_stopper(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
     )
 
     # continue, SEND UPDATES FROM TMS (JEL)
@@ -490,7 +426,7 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
@@ -498,7 +434,7 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__3,
         COMPOUND_STATUSES__3,
     )
@@ -508,32 +444,24 @@ async def test_110__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
     )
 
     # CHECK FINAL STATES...
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["phase", "phase_change_log"],
-        },
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-complete",
+        ("condor-complete", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
-    # fmt: on
-    resp = await _request_and_validate_and_print(
+    await check_workflow_deactivation(
         rc,
         openapi_spec,
-        "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        workflow_id,
+        kind_of_deactivation,
     )
-    assert resp["deactivated"] == kind_of_deactivation
 
 
 @pytest.mark.parametrize(
@@ -546,18 +474,26 @@ async def test_111__deactivated_during_condor(
     """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # TMS STARTS TASKFORCES!
-    condor_locs_w_jel = await ewms_actions.tms_starter(
+    tms_states = await ewms_actions.tms_starter(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
     )
 
     # SEND UPDATES FROM TMS (JEL)!
@@ -565,7 +501,7 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
@@ -573,7 +509,7 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
@@ -581,7 +517,7 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__3,
         COMPOUND_STATUSES__3,
     )
@@ -592,25 +528,21 @@ async def test_111__deactivated_during_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        CONDOR_LOCATIONS,
+        sum(s.n_taskforces for s in tms_states),
     )
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "pending-stopper",
+        ("pending-stopper", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["pending-stopper"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
-    # fmt: on
     await ewms_actions.tms_stopper(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
     )
 
     # CONDOR CLUSTERS FINISH UP!
@@ -618,32 +550,24 @@ async def test_111__deactivated_during_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
     )
 
     # CHECK FINAL STATES...
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {
-            "query": {"task_id": task_id},
-            "projection": ["phase", "phase_change_log"],
-        },
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-complete",
+        ("condor-complete", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
-    # fmt: on
-    resp = await _request_and_validate_and_print(
+    await check_workflow_deactivation(
         rc,
         openapi_spec,
-        "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        workflow_id,
+        kind_of_deactivation,
     )
-    assert resp["deactivated"] == kind_of_deactivation
 
 
 @pytest.mark.parametrize(
@@ -656,18 +580,26 @@ async def test_120__deactivated_after_condor(
     """Deactivated workflow (see param for kind_of_deactivation)."""
     openapi_spec = await ewms_actions.query_for_schema(rc)
 
-    workflow_id, task_id = await ewms_actions.user_requests_new_workflow(
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
         rc,
         openapi_spec,
-        CONDOR_LOCATIONS,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
     )
 
     # TMS STARTS TASKFORCES!
-    condor_locs_w_jel = await ewms_actions.tms_starter(
+    tms_states = await ewms_actions.tms_starter(
         rc,
         openapi_spec,
         task_id,
-        CONDOR_LOCATIONS,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
     )
 
     # SEND UPDATES FROM TMS (JEL)!
@@ -675,7 +607,7 @@ async def test_120__deactivated_after_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__1,
         COMPOUND_STATUSES__1,
     )
@@ -683,7 +615,7 @@ async def test_120__deactivated_after_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__2,
         COMPOUND_STATUSES__2,
     )
@@ -691,7 +623,7 @@ async def test_120__deactivated_after_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
         TOP_TASK_ERRORS__3,
         COMPOUND_STATUSES__3,
     )
@@ -701,20 +633,16 @@ async def test_120__deactivated_after_condor(
         rc,
         openapi_spec,
         task_id,
-        condor_locs_w_jel,
+        tms_states,
     )
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-complete",
+        ("condor-complete", True),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "condor-complete"
-    # fmt: on
 
     # DEACTIVATE!
     await ewms_actions.user_deactivates_workflow(
@@ -722,41 +650,463 @@ async def test_120__deactivated_after_condor(
         openapi_spec,
         kind_of_deactivation,
         task_id,
-        CONDOR_LOCATIONS,
-        deactivated_after_condor_stopped=True,
+        0,  # no taskforces will actually need to be stopped
     )
-    resp = await _request_and_validate_and_print(
+    await check_taskforce_states(
         rc,
         openapi_spec,
-        "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
-        {"query": {"task_id": task_id}, "projection": ["phase", "phase_change_log"]},
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-complete",
+        ("pending-stopper", False),
     )
-    # fmt: off
-    assert [tf["phase"] for tf in resp["taskforces"]] == ["condor-complete"] * len(CONDOR_LOCATIONS)
-    for tf in resp["taskforces"]:
-        assert tf["phase_change_log"][-1]["target_phase"] == "pending-stopper"
-        assert tf["phase_change_log"][-1]["was_successful"] is False
-    # fmt: on
-    for loc in CONDOR_LOCATIONS.values():
-        # make sure there is NOTHING to stop (taskforces are not 'pending-stopper')
-        taskforce = await _request_and_validate_and_print(
-            rc,
-            openapi_spec,
-            "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
-        )
-        assert not taskforce
+    await check_nothing_to_stop(rc, openapi_spec, CONDOR_LOCATIONS_LOOKUP)
 
     # CHECK FINAL STATES...
-    # NOTE: already checked final taskforce states above
+    # NOTE: ^^^ already checked final taskforce states above
     # workflow:
-    resp = await _request_and_validate_and_print(
+    await check_workflow_deactivation(
         rc,
         openapi_spec,
-        "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        workflow_id,
+        kind_of_deactivation,
     )
-    # the workflow was aborted even though all taskforces' condor cluster had completed
-    assert resp["deactivated"] == kind_of_deactivation
+
+
+# --------------------------------------------------------------------------------------
+
+
+async def test_200__add_workers_before_condor(rc: RestClient) -> None:
+    """Add workers to workflow."""
+    openapi_spec = await ewms_actions.query_for_schema(rc)
+
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
+    )
+
+    # ADD MORE WORKERS!
+    tms_states = await ewms_actions.add_more_workers(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states[0].shortname,  # add to this location
+        tms_states,
+    )
+
+    # TMS STARTS TASKFORCES!
+    tms_states = await ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
+
+    # SEND UPDATES FROM TMS (JEL)!
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    # USER FINISHES WORKFLOW
+    await ewms_actions.user_deactivates_workflow(
+        rc,
+        openapi_spec,
+        "FINISHED",
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+    )
+
+    # CONDOR CLUSTERS FINISH UP!
+    await ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-complete",
+        ("condor-complete", True),
+    )
+
+    # CHECK FINAL STATES...
+    # NOTE: ^^^ already checked final taskforce states above
+    # workflow:
+    await check_workflow_deactivation(
+        rc,
+        openapi_spec,
+        workflow_id,
+        "FINISHED",
+    )
+
+
+async def test_210__add_workers_during_condor(rc: RestClient) -> None:
+    """Add workers to workflow."""
+    openapi_spec = await ewms_actions.query_for_schema(rc)
+
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
+    )
+
+    # TMS STARTS TASKFORCES!
+    tms_states = await ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
+
+    # SEND UPDATES FROM TMS (JEL)!
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+    # ADD MORE WORKERS!
+    tms_states = await ewms_actions.add_more_workers(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states[0].shortname,  # add to this location
+        tms_states,
+    )
+    _ = await ewms_actions.tms_starter(  # don't keep the return val -- its an incomplete list
+        rc,
+        openapi_spec,
+        task_id,
+        [  # include just the newbie, aka with n_taskforces=1
+            StateForTMS(**{**asdict(tms_states[0]), **{"n_taskforces": 1}})
+        ],
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
+    # SEND MORE UPDATES FROM TMS (JEL)!
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    # USER FINISHES WORKFLOW
+    await ewms_actions.user_deactivates_workflow(
+        rc,
+        openapi_spec,
+        "FINISHED",
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+    )
+
+    # CONDOR CLUSTERS FINISH UP!
+    await ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-complete",
+        ("condor-complete", True),
+    )
+
+    # CHECK FINAL STATES...
+    # NOTE: ^^^ already checked final taskforce states above
+    # workflow:
+    await check_workflow_deactivation(
+        rc,
+        openapi_spec,
+        workflow_id,
+        "FINISHED",
+    )
+
+
+async def test_211__add_workers_during_condor(rc: RestClient) -> None:
+    """Add workers to workflow."""
+    openapi_spec = await ewms_actions.query_for_schema(rc)
+
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
+    )
+
+    # TMS STARTS TASKFORCES!
+    tms_states = await ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
+
+    # SEND UPDATES FROM TMS (JEL)!
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+    # ADD MORE WORKERS!
+    tms_states = await ewms_actions.add_more_workers(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states[0].shortname,  # add to this location
+        tms_states,
+    )
+    _ = await ewms_actions.tms_starter(  # don't keep the return val -- its an incomplete list
+        rc,
+        openapi_spec,
+        task_id,
+        [  # include just the newbie, aka with n_taskforces=1
+            StateForTMS(**{**asdict(tms_states[0]), **{"n_taskforces": 1}})
+        ],
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
+
+    # USER FINISHES WORKFLOW
+    await ewms_actions.user_deactivates_workflow(
+        rc,
+        openapi_spec,
+        "FINISHED",
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+    )
+
+    # CONDOR CLUSTERS FINISH UP!
+    await ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-complete",
+        ("condor-complete", True),
+    )
+
+    # CHECK FINAL STATES...
+    # NOTE: ^^^ already checked final taskforce states above
+    # workflow:
+    await check_workflow_deactivation(
+        rc,
+        openapi_spec,
+        workflow_id,
+        "FINISHED",
+    )
+
+
+async def test_220__add_workers_after_condor(rc: RestClient) -> None:
+    """Add workers to workflow."""
+    openapi_spec = await ewms_actions.query_for_schema(rc)
+
+    workflow_id, task_id, tms_states = await ewms_actions.user_requests_new_workflow(
+        rc,
+        openapi_spec,
+        list(CONDOR_LOCATIONS_LOOKUP.keys()),
+    )
+
+    # TMS STARTS TASKFORCES!
+    tms_states = await ewms_actions.tms_starter(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-submit",
+        ("condor-submit", True),
+    )
+
+    # SEND UPDATES FROM TMS (JEL)!
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__1,
+        COMPOUND_STATUSES__1,
+    )
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__2,
+        COMPOUND_STATUSES__2,
+    )
+    await ewms_actions.tms_watcher_sends_status_update(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+        TOP_TASK_ERRORS__3,
+        COMPOUND_STATUSES__3,
+    )
+
+    # USER FINISHES WORKFLOW
+    await ewms_actions.user_deactivates_workflow(
+        rc,
+        openapi_spec,
+        "FINISHED",
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+    )
+
+    # CONDOR CLUSTERS FINISH UP!
+    await ewms_actions.tms_condor_clusters_done(
+        rc,
+        openapi_spec,
+        task_id,
+        tms_states,
+    )
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-complete",
+        ("condor-complete", True),
+    )
+
+    # ADD MORE WORKERS!
+    with pytest.raises(
+        requests.exceptions.HTTPError,
+        match=re.escape(
+            f"422 Client Error: cannot add a taskforce to a deactivated workflow "
+            f"({workflow_id}) for url: http://localhost:8080/v0/task-directives/{task_id}/actions/add-workers"
+        ),
+    ):
+        await ewms_actions.add_more_workers(
+            rc,
+            openapi_spec,
+            task_id,
+            tms_states[0].shortname,  # add to this location
+            tms_states,
+        )
+
+    # re-check that nothing inadvertently changed
+    await check_taskforce_states(
+        rc,
+        openapi_spec,
+        task_id,
+        sum(s.n_taskforces for s in tms_states),
+        "condor-complete",
+        ("condor-complete", True),
+    )
+
+    # CHECK FINAL STATES...
+    # NOTE: ^^^ already checked final taskforce states above
+    # workflow:
+    await check_workflow_deactivation(
+        rc,
+        openapi_spec,
+        workflow_id,
+        "FINISHED",
+    )
