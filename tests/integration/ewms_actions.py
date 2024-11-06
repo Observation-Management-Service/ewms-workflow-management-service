@@ -119,19 +119,21 @@ async def user_requests_new_workflow(
     assert len(workflow_resp["task_directives"]) == 1
     assert len(workflow_resp["taskforces"]) == 2
     #
+    # task_directive checks
+    for td in workflow_resp["task_directives"]:
+        assert td["task_image"] == task_image
+        assert td["task_args"] == task_args
+        assert td["task_env"] == {}
+        assert td["init_image"] == init_image
+        assert td["init_args"] == ""
+        assert td["init_env"] == init_env
+    #
     # taskforce checks
     assert len(workflow_resp["taskforces"]) == sum(s.n_taskforces for s in tms_states)
     assert sorted(  # check locations were translated correctly to collector+schedd
         (tf["collector"], tf["schedd"]) for tf in workflow_resp["taskforces"]
     ) == sorted((tmss.collector, tmss.schedd) for tmss in tms_states)
     for tf in workflow_resp["taskforces"]:
-        assert tf["task_image"] == task_image
-        assert tf["task_args"] == task_args
-        assert tf["task_env"] == {}
-        assert tf["init_image"] == init_image
-        assert tf["init_args"] == ""
-        assert tf["init_env"] == init_env
-
         assert tf["phase"] == "pre-mq-activation"
         assert tf["phase_change_log"][-1]["target_phase"] == "pre-mq-activation"
         assert tf["worker_config"] == worker_config
