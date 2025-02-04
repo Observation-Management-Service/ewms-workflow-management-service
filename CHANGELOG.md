@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.3 (2025-02-04)
+
+### Other
+
+* Allow Integer Data Sizes as Attrs ([#62](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/62)) ([`dc25c80`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/dc25c80ae2f7cd73b85217ab3fc22e1a43231aaa))
+
 ## v0.6.2 (2025-02-04)
 
 ### Other
