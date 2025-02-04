@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.2 (2025-02-04)
+
+### Other
+
+* Bump CI Packages ([#61](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/61)) ([`351760d`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/351760d2788e3bbe54f1036200357e4f20837f49))
+* <ci> modify rest documentation ([`6de65cb`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/6de65cbcf7d4603613df6af90f8888487c21b8a9))
+* Update Role Auth for "`user`" Service Accounts ([`91f8faa`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/91f8faa5e9e0ac3b99660a42418312d358a69379))
+
 ## v0.6.1 (2024-11-06)
 
 ### Other
