@@ -282,12 +282,26 @@
                                 "description": "The priority level for the HTCondor submission."
                             },
                             "worker_disk": {
-                                "type": "string",
-                                "description": "The amount of disk space to request per HTCondor worker."
+                                "anyOf": [
+                                    {
+                                        "type": "string",
+                                        "description": "The amount of disk space to request per HTCondor worker."
+                                    },
+                                    {
+                                        "type": "integer"
+                                    }
+                                ]
                             },
                             "worker_memory": {
-                                "type": "string",
-                                "description": "The amount of memory to request per HTCondor worker."
+                                "anyOf": [
+                                    {
+                                        "type": "string",
+                                        "description": "The amount of memory to request per HTCondor worker."
+                                    },
+                                    {
+                                        "type": "integer"
+                                    }
+                                ]
                             },
                             "condor_requirements": {
                                 "type": "string",
