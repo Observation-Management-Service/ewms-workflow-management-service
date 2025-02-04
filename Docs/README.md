@@ -43,6 +43,8 @@
  - [TaskforceObject_pilot_config_environment_value](./Models/TaskforceObject_pilot_config_environment_value.md)
  - [TaskforceObject_submit_dict_value](./Models/TaskforceObject_submit_dict_value.md)
  - [TaskforceObject_worker_config](./Models/TaskforceObject_worker_config.md)
+ - [TaskforceObject_worker_config_worker_disk](./Models/TaskforceObject_worker_config_worker_disk.md)
+ - [TaskforceObject_worker_config_worker_memory](./Models/TaskforceObject_worker_config_worker_memory.md)
  - [WorkflowObject](./Models/WorkflowObject.md)
  - [_v0__get_400_response](./Models/_v0__get_400_response.md)
  - [_v0_query_task_directives_post_200_response](./Models/_v0_query_task_directives_post_200_response.md)
@@ -68,6 +70,8 @@
  - [pilot_config](./Models/pilot_config.md)
  - [pilot_config_environment_value](./Models/pilot_config_environment_value.md)
  - [worker_config](./Models/worker_config.md)
+ - [worker_config_worker_disk](./Models/worker_config_worker_disk.md)
+ - [worker_config_worker_memory](./Models/worker_config_worker_memory.md)
 
 
 <a name="documentation-for-authorization"></a>
