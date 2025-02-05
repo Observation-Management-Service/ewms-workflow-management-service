@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.4 (2025-02-05)
+
+### Other
+
+* Update CI ([`4bed6db`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/4bed6dba307da766b74ddb42422b066c57ce3a2a))
+
 ## v0.6.3 (2025-02-04)
 
 ### Other
