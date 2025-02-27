@@ -13,7 +13,7 @@ from . import database
 from .config import ENV, MQS_RETRY_AT_TS_DEFAULT_VALUE, TASK_MQ_ACTIVATOR_SHORTEST_SLEEP
 from .database.client import DocumentNotFoundException
 from .schema.enums import TaskforcePhase
-from .utils import get_mqs_connection
+from .utils import get_mqs_connection, resilient_daemon_task
 
 LOGGER = logging.getLogger(__name__)
 
@@ -237,6 +237,7 @@ async def record_mq_activation_failed(
 ########################################################################################
 
 
+@resilient_daemon_task(ENV.WORKFLOW_MQ_ACTIVATOR_DELAY, LOGGER)
 async def run(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
     """Start up the daemon task."""
     LOGGER.info("Starting up workflow_mq_activator...")

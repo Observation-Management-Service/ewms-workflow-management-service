@@ -1,12 +1,33 @@
 """Utils."""
 
+import asyncio
 import logging
 import time
 import uuid
+from functools import wraps
 
 from rest_tools.client import ClientCredentialsAuth, RestClient
 
 from wms.config import ENV
+
+
+def resilient_daemon_task(restart_delay: float, logger: logging.Logger):
+    """A decorator that makes an async function a resilient daemon task."""
+
+    def _decorator(func):
+        @wraps(func)
+        async def _wrapper(*args, **kwargs):
+            while True:
+                try:
+                    await func(*args, **kwargs)
+                except Exception as e:
+                    logger.exception("Daemon task encountered an error:", exc_info=e)
+                logger.info(f"Restarting daemon task after {restart_delay}s...")
+                await asyncio.sleep(restart_delay)
+
+        return _wrapper
+
+    return _decorator
 
 
 def get_mqs_connection(logger: logging.Logger) -> RestClient:
