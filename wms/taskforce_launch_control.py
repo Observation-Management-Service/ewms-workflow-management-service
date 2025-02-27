@@ -10,10 +10,12 @@ from pymongo import ASCENDING, DESCENDING
 from . import database
 from .config import ENV
 from .schema.enums import TaskforcePhase
+from .utils import resilient_daemon_task
 
 LOGGER = logging.getLogger(__name__)
 
 
+@resilient_daemon_task(ENV.TASKFORCE_LAUNCH_CONTROL_DELAY, LOGGER)
 async def run(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
     """Start up the daemon task."""
     LOGGER.info("Starting up taskforce_launch_control...")
