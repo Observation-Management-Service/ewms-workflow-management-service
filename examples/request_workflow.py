@@ -115,6 +115,7 @@ async def request_workflow(
                 "task_args": "cp {{INFILE}} {{OUTFILE}}",
                 "n_workers": n_workers,
                 "worker_config": {
+                    "condor_requirements": "",
                     "do_transfer_worker_stdouterr": True,
                     "max_worker_runtime": 60 * 10,
                     "n_cores": 1,
