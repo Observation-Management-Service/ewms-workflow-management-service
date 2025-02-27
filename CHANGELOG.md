@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.5 (2025-02-27)
+
+### Other
+
+* Auto-Revive Background Runners ([#63](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/63)) ([`efacf0c`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/efacf0c355264a521b2148d24b93b67a0d152107))
+* Add condor_requirements to get example working ([#58](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/58)) ([`164afbd`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/164afbd5944b472bf6c1d85f1d4e89a367941089))
+
 ## v0.6.4 (2025-02-05)
 
 ### Other
