@@ -12,7 +12,7 @@ certifi==2025.1.31
 cffi==1.17.1
 charset-normalizer==3.4.1
 coloredlogs==15.0.1
-cryptography==44.0.1
+cryptography==44.0.2
 Deprecated==1.2.18
 dnspython==2.7.0
 googleapis-common-protos==1.56.1
@@ -45,7 +45,7 @@ pathable==0.4.4
 protobuf==5.29.3
 pycparser==2.22
 PyJWT==2.10.1
-pymongo==4.11.1
+pymongo==4.11.2
 PyYAML==6.0.2
 qrcode==8.0
 referencing==0.36.2
@@ -67,7 +67,7 @@ zipp==3.21.0
 ########################################################################
 #  pipdeptree
 ########################################################################
-cryptography==44.0.1
+cryptography==44.0.2
 └── cffi [required: >=1.12, installed: 1.17.1]
     └── pycparser [required: Any, installed: 2.22]
 pipdeptree==2.25.0
@@ -202,7 +202,7 @@ wms
 │   │   └── typing_extensions [required: >=4.4.0, installed: 4.12.2]
 │   └── rpds-py [required: >=0.7.1, installed: 0.23.1]
 ├── motor [required: Any, installed: 3.7.0]
-│   └── pymongo [required: >=4.9,<5.0, installed: 4.11.1]
+│   └── pymongo [required: >=4.9,<5.0, installed: 4.11.2]
 │       └── dnspython [required: >=1.16.0,<3.0.0, installed: 2.7.0]
 ├── openapi-core [required: Any, installed: 0.19.4]
 │   ├── isodate [required: Any, installed: 0.7.2]
