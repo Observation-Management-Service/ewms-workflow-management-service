@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.6 (2025-03-04)
+
+### Other
+
+* Update Examples (`README.md` + `requirements.txt`) ([#64](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/64)) ([`2f976b4`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/2f976b4e407941b3256288193addadd7e3922ff5))
+
 ## v0.6.5 (2025-02-27)
 
 ### Other
