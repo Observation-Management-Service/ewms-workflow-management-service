@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.7 (2025-03-11)
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`ead176b`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/ead176b08e92feff3704fc0b69aa4a7a6ae08c95))
+* Helper Script: `get_workflow.py` ([`e863b4f`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/e863b4f3abf51dbb14a5801ac2f41af19df36aa5))
+
 ## v0.6.6 (2025-03-04)
 
 ### Other
