@@ -222,6 +222,13 @@
                                 "description": "The image tag to use (e.g., '#.#.#', 'latest', or a feature branch tag). Note: tags like # or #.# are disallowed since these are mutable. This field is useful for repeatability.",
                                 "pattern": "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})|(latest)|([a-z0-9._-]+-[a-z0-9]{1,128})$"
                             },
+                            "image_source": {
+                                "type": "string",
+                                "description": "the common name for the source of the image",
+                                "enum": [
+                                    "cvmfs"
+                                ]
+                            },
                             "environment": {
                                 "type": "object",
                                 "description": "Environment variables and their corresponding values.",
@@ -257,6 +264,7 @@
                         "additionalProperties": false,
                         "required": [
                             "tag",
+                            "image_source",
                             "environment",
                             "input_files"
                         ]
