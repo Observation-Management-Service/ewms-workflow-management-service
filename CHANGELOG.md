@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.8 (2025-03-27)
+
+### Other
+
+* Add Taskforce `pilot_config.image_source` ([#65](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/65)) ([`246ac69`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/246ac69930530f9a5cfee44aebab921f2d9c22fa))
+
 ## v0.6.7 (2025-03-11)
 
 ### Other
