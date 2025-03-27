@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.9 (2025-03-27)
+
+### Other
+
+* <ci> modify openapi/jsonschema file(s) ([`86bf99c`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/86bf99cf427d72419fecea5265551144e0544cec))
+* Taskforce `pilot_config.image_source`: "auto" ([`954a068`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/954a068e6989af8e9c8870f13808bcf2e825becc))
+
 ## v0.6.8 (2025-03-27)
 
 ### Other
