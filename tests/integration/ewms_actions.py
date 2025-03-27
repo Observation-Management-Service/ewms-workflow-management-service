@@ -68,6 +68,7 @@ async def user_requests_new_workflow(
     }
     pilot_config = {
         "tag": "latest",
+        "image_source": "cvmfs",
         "environment": {},
         "input_files": [],
     }
@@ -108,7 +109,7 @@ async def user_requests_new_workflow(
                     #
                     "n_workers": n_workers,
                     "worker_config": worker_config,
-                    "pilot_config": pilot_config,
+                    "pilot_config": pilot_config,  # optional
                 }
             ],
             "public_queue_aliases": ["qfoo", "qbar"],
