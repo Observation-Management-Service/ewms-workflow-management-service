@@ -54,7 +54,8 @@
                     "type": "string",
                     "description": "the common name for the source of the image",
                     "enum": [
-                        "cvmfs"
+                        "cvmfs",
+                        "auto"
                     ]
                 },
                 "environment": {
