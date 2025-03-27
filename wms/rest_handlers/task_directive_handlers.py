@@ -51,7 +51,10 @@ def _make_taskforce_object(
         # MUTABLE
         #
         # 'pilot_config.environment' is appended to by workflow_mq_activator
-        "pilot_config": pilot_config,
+        "pilot_config": {
+            **pilot_config,
+            **{"image_source": "cvmfs"},  # FUTURE DEV: dependent on taskforce location?
+        },
         #
         # set ONCE by tms via /tms/condor-submit/taskforces/<id>
         "cluster_id": None,
