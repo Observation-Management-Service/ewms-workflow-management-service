@@ -1,9 +1,10 @@
-# _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response
+# _v1_tms_statuses_taskforces_post_200_response_results_inner
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String** | A unique identifier automatically generated for this taskforce. | [optional] [default to null] |
+| **uuid** | **String** |  | [default to null] |
+| **status** | **String** |  | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
