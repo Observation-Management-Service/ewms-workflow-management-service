@@ -28,7 +28,7 @@ TASK_MQ_ACTIVATOR_SHORTEST_SLEEP = 1
 DEFAULT_WORKFLOW_PRIORITY = 50
 MAX_WORKFLOW_PRIORITY = 100  # any value over this is used to accelerate launch
 
-MQS_VERSION = "1"
+MQS_ROUTE_PREFIX = "v1"
 
 # --------------------------------------------------------------------------------------
 

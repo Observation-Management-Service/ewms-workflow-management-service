@@ -10,7 +10,7 @@ import openapi_core
 from rest_tools.client import RestClient
 from rest_tools.client.utils import request_and_validate
 
-ROUTE_VERSION_PREFIX = "v0"
+ROUTE_VERSION_PREFIX = "v1"
 
 CONDOR_LOCATIONS_LOOKUP = {
     "test-alpha": {

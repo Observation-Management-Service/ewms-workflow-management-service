@@ -10,7 +10,7 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
-from ..config import MQS_VERSION
+from ..config import MQS_ROUTE_PREFIX
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TaskforcePhase
 
@@ -226,7 +226,7 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
             task_directive["input_queues"] + task_directive["output_queues"]
         ):
             resp = await self.mqs_rc.request(
-                "GET", f"/{MQS_VERSION}/mqs/mq-profiles/{mqid}"
+                "GET", f"/{MQS_ROUTE_PREFIX}/mqs/mq-profiles/{mqid}"
             )
             mqprofiles.append(resp)
 

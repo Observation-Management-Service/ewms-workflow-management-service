@@ -11,7 +11,7 @@ from . import auth
 from .base_handlers import BaseWMSHandler
 from .task_directive_handlers import make_task_directive_object_and_taskforce_objects
 from .. import config
-from ..config import DEFAULT_WORKFLOW_PRIORITY, MAX_WORKFLOW_PRIORITY, MQS_VERSION
+from ..config import DEFAULT_WORKFLOW_PRIORITY, MAX_WORKFLOW_PRIORITY, MQS_ROUTE_PREFIX
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import (
     ENDING_OR_FINISHED_TASKFORCE_PHASES,
@@ -87,7 +87,7 @@ class WorkflowHandler(BaseWMSHandler):
         # Reserve queues with MQS -- map to aliases
         resp = await self.mqs_rc.request(
             "POST",
-            f"/{MQS_VERSION}/mqs/workflows/{workflow['workflow_id']}/mq-group/reservation",
+            f"/{MQS_ROUTE_PREFIX}/mqs/workflows/{workflow['workflow_id']}/mq-group/reservation",
             {
                 "queue_aliases": _get_all_queues(self.get_argument("tasks")),
                 "public": self.get_argument("public_queue_aliases"),
