@@ -22,6 +22,7 @@ from rest_tools.client import RestClient, SavedDeviceGrantAuth
 
 LOGGER = logging.getLogger(__name__)
 
+MQS_VERSION = "1"
 
 BUNCH_OF_WORDS = set(
     [
@@ -311,7 +312,7 @@ async def main() -> None:
         mqprofiles = (
             await rc.request(
                 "GET",
-                f"/v0/mqs/workflows/{workflow_id}/mq-profiles/public",
+                f"/{MQS_VERSION}/mqs/workflows/{workflow_id}/mq-profiles/public",
             )
         )["mqprofiles"]
     LOGGER.info(f"{mqprofiles=}")

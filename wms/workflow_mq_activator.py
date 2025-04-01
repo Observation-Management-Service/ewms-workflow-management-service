@@ -10,7 +10,12 @@ from pymongo import ASCENDING, DESCENDING
 from rest_tools.client import RestClient
 
 from . import database
-from .config import ENV, MQS_RETRY_AT_TS_DEFAULT_VALUE, TASK_MQ_ACTIVATOR_SHORTEST_SLEEP
+from .config import (
+    ENV,
+    MQS_RETRY_AT_TS_DEFAULT_VALUE,
+    MQS_VERSION,
+    TASK_MQ_ACTIVATOR_SHORTEST_SLEEP,
+)
 from .database.client import DocumentNotFoundException
 from .schema.enums import TaskforcePhase
 from .utils import get_mqs_connection, resilient_daemon_task
@@ -178,7 +183,7 @@ async def request_activation_to_mqs(
 
     return await mqs_rc.request(
         "POST",
-        f"/v0/mqs/workflows/{workflow['workflow_id']}/mq-group/activation",
+        f"/{MQS_VERSION}/mqs/workflows/{workflow['workflow_id']}/mq-group/activation",
         {
             "workflow_id": workflow["workflow_id"],  # could also use param arg
             "criteria": {

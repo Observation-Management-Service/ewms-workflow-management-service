@@ -10,6 +10,7 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
+from ..config import MQS_VERSION
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TaskforcePhase
 
@@ -224,7 +225,9 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
         for mqid in set(
             task_directive["input_queues"] + task_directive["output_queues"]
         ):
-            resp = await self.mqs_rc.request("GET", f"/v0/mqs/mq-profiles/{mqid}")
+            resp = await self.mqs_rc.request(
+                "GET", f"/{MQS_VERSION}/mqs/mq-profiles/{mqid}"
+            )
             mqprofiles.append(resp)
 
         # NOTE: the taskforce's phase is not advanced until the TMS sends condor-submit
