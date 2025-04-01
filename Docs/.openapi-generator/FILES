@@ -15,7 +15,6 @@ Models/TaskforceObject_worker_config.md
 Models/TaskforceObject_worker_config_worker_disk.md
 Models/TaskforceObject_worker_config_worker_memory.md
 Models/WorkflowObject.md
-Models/_v0__get_400_response.md
 Models/_v0_query_task_directives_post_200_response.md
 Models/_v0_query_task_directives_post_400_response.md
 Models/_v0_query_taskforces_post_200_response.md
