@@ -6,10 +6,10 @@
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
-| *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives | Queries and returns a list of task directive objects based on the provided criteria. |
+| *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0) | **GET** /v0/ | Returns an empty response. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives | Queries and returns a list of task directive objects based on the provided criteria. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces | Queries and returns a list of taskforce objects based on the provided criteria. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows | Queries and returns a list of workflow objects based on the provided criteria. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0root) | **GET** /v0/root | Returns an empty response. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi | Returns the OpenAPI schema. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0task-directivestask_idactionsadd-workers) | **POST** /v0/task-directives/{task_id}/actions/add-workers | Creates a new taskforce (and associated workers) for an existing task directive. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} | Retrieves the task directive that matches the specified task ID. |
@@ -46,6 +46,7 @@
  - [TaskforceObject_worker_config_worker_disk](./Models/TaskforceObject_worker_config_worker_disk.md)
  - [TaskforceObject_worker_config_worker_memory](./Models/TaskforceObject_worker_config_worker_memory.md)
  - [WorkflowObject](./Models/WorkflowObject.md)
+ - [_v0__get_400_response](./Models/_v0__get_400_response.md)
  - [_v0_query_task_directives_post_200_response](./Models/_v0_query_task_directives_post_200_response.md)
  - [_v0_query_task_directives_post_400_response](./Models/_v0_query_task_directives_post_400_response.md)
  - [_v0_query_taskforces_post_200_response](./Models/_v0_query_taskforces_post_200_response.md)

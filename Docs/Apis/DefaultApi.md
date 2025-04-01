@@ -4,10 +4,10 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
+| [_details_](DefaultApi.md#get-v0) | **GET** /v0/ |  |
 | [_details_](DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives |  |
 | [_details_](DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces |  |
 | [_details_](DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows |  |
-| [_details_](DefaultApi.md#get-v0root) | **GET** /v0/root |  |
 | [_details_](DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi |  |
 | [_details_](DefaultApi.md#post-v0task-directivestask_idactionsadd-workers) | **POST** /v0/task-directives/{task_id}/actions/add-workers |  |
 | [_details_](DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} |  |
@@ -25,6 +25,29 @@ All URIs are relative to *http://localhost*
 | [_details_](DefaultApi.md#post-v0workflowsworkflow_idactionsfinished) | **POST** /v0/workflows/{workflow_id}/actions/finished |  |
 | [_details_](DefaultApi.md#get-v0workflowsworkflow_id) | **GET** /v0/workflows/{workflow_id} |  |
 
+
+<a name="GET /v0/"></a>
+# **GET /v0/**
+> GET /v0/()
+
+
+
+    Returns an empty response.
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 <a name="POST /v0/query/task-directives"></a>
 # **POST /v0/query/task-directives**
@@ -102,29 +125,6 @@ All URIs are relative to *http://localhost*
 ### HTTP request headers
 
 - **Content-Type**: application/json
-- **Accept**: application/json
-
-<a name="GET /v0/root"></a>
-# **GET /v0/root**
-> GET /v0/root()
-
-
-
-    Returns an empty response.
-
-### Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
 - **Accept**: application/json
 
 <a name="GET /v0/schema/openapi"></a>
