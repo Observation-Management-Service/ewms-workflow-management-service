@@ -180,8 +180,8 @@ jobs:
       - uses: WIPACrepo/wipac-dev-json-schema-action@versioning
         with:
           rest_openapi_paths_dir: "schema-precompiled/paths"
-          rest_openapi_prebuild_fpath: "schema-precompiled/openapi_prebuild.json"
-          rest_openapi_spec_fpath: "wms/${{ env.REST_OPENAPI_SPEC_FPATH }}"
+          rest_openapi_base_fpath: "schema-precompiled/openapi_prebuild.json"
+          rest_openapi_dest_fpath: "wms/${{ env.REST_OPENAPI_SPEC_FPATH }}"
           db_jsonschema_dir: "wms/${{ env.DB_JSONSCHEMA_DIR }}"
           version: 1
 
