@@ -6,26 +6,26 @@
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
-| *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0query.task-directives) | **POST** /v0/query.task-directives | Queries and returns a list of task directive objects based on the provided criteria. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0query.taskforces) | **POST** /v0/query.taskforces | Queries and returns a list of taskforce objects based on the provided criteria. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0query.workflows) | **POST** /v0/query.workflows | Queries and returns a list of workflow objects based on the provided criteria. |
+| *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives | Queries and returns a list of task directive objects based on the provided criteria. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces | Queries and returns a list of taskforce objects based on the provided criteria. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows | Queries and returns a list of workflow objects based on the provided criteria. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0root) | **GET** /v0/root | Returns an empty response. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0schema.openapi) | **GET** /v0/schema.openapi | Returns the OpenAPI schema. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0task-directives.task_id.actions.add-workers) | **POST** /v0/task-directives.{task_id}.actions.add-workers | Creates a new taskforce (and associated workers) for an existing task directive. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0task-directives.task_id) | **GET** /v0/task-directives.{task_id} | Retrieves the task directive that matches the specified task ID. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0taskforces.taskforce_uuid) | **GET** /v0/taskforces.{taskforce_uuid} | Retrieves the taskforce object that matches the specified taskforce UUID. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tms.condor-complete.taskforces.taskforce_uuid) | **POST** /v0/tms.condor-complete.taskforces.{taskforce_uuid} | For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tms.condor-rm.taskforces.taskforce_uuid.failed) | **POST** /v0/tms.condor-rm.taskforces.{taskforce_uuid}.failed | For internal use only (TMS): Communicates that a taskforce failed to be removed on HTCondor. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tms.condor-rm.taskforces.taskforce_uuid) | **POST** /v0/tms.condor-rm.taskforces.{taskforce_uuid} | For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tms.condor-submit.taskforces.taskforce_uuid.failed) | **POST** /v0/tms.condor-submit.taskforces.{taskforce_uuid}.failed | For internal use only (TMS): Communicates that a taskforce failed to be submitted to HTCondor for execution. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tms.condor-submit.taskforces.taskforce_uuid) | **POST** /v0/tms.condor-submit.taskforces.{taskforce_uuid} | For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tms.pending-starter.taskforces) | **GET** /v0/tms.pending-starter.taskforces | For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tms.pending-stopper.taskforces) | **GET** /v0/tms.pending-stopper.taskforces | For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tms.statuses.taskforces) | **POST** /v0/tms.statuses.taskforces | For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi | Returns the OpenAPI schema. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0task-directivestask_idactionsadd-workers) | **POST** /v0/task-directives/{task_id}/actions/add-workers | Creates a new taskforce (and associated workers) for an existing task directive. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} | Retrieves the task directive that matches the specified task ID. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0taskforcestaskforce_uuid) | **GET** /v0/taskforces/{taskforce_uuid} | Retrieves the taskforce object that matches the specified taskforce UUID. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce_uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} | For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-rmtaskforcestaskforce_uuidfailed) | **POST** /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed | For internal use only (TMS): Communicates that a taskforce failed to be removed on HTCondor. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-rmtaskforcestaskforce_uuid) | **POST** /v0/tms/condor-rm/taskforces/{taskforce_uuid} | For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuidfailed) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed | For internal use only (TMS): Communicates that a taskforce failed to be submitted to HTCondor for execution. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuid) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} | For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-startertaskforces) | **GET** /v0/tms/pending-starter/taskforces | For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces | For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces | For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflows) | **POST** /v0/workflows | Creates a new workflow along with its associated task directives and taskforces. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflows.workflow_id.actions.abort) | **POST** /v0/workflows.{workflow_id}.actions.abort | Aborts the specified workflow (and marks as 'deactivated'), then sends stop commands to the associated taskforces. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflows.workflow_id.actions.finished) | **POST** /v0/workflows.{workflow_id}.actions.finished | Marks the specified workflow as finished (and 'deactivated'), then sends stop commands to the associated taskforces. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0workflows.workflow_id) | **GET** /v0/workflows.{workflow_id} | Retrieves the workflow object that matches the specified workflow ID. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflowsworkflow_idactionsabort) | **POST** /v0/workflows/{workflow_id}/actions/abort | Aborts the specified workflow (and marks as 'deactivated'), then sends stop commands to the associated taskforces. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v0workflowsworkflow_idactionsfinished) | **POST** /v0/workflows/{workflow_id}/actions/finished | Marks the specified workflow as finished (and 'deactivated'), then sends stop commands to the associated taskforces. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#get-v0workflowsworkflow_id) | **GET** /v0/workflows/{workflow_id} | Retrieves the workflow object that matches the specified workflow ID. |
 
 
 <a name="documentation-for-models"></a>
