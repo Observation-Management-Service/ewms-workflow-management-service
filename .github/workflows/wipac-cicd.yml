@@ -183,6 +183,7 @@ jobs:
           version: 1
 
   api-documentation:
+    needs: [ schema-modifications ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
