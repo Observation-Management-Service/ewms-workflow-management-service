@@ -189,7 +189,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
-      - uses: WIPACrepo/wipac-dev-openapi-docs-action@main
+      - uses: WIPACrepo/wipac-dev-openapi-docs-action@v1.0
         with:
           openapi_fpath: "wms/${{ env.REST_OPENAPI_SPEC_FPATH }}"
 
