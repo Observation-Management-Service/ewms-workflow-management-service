@@ -47,7 +47,7 @@ pycparser==2.22
 PyJWT==2.10.1
 pymongo==4.11.3
 PyYAML==6.0.2
-qrcode==8.0
+qrcode==8.1
 referencing==0.36.2
 requests==2.32.3
 requests-futures==1.0.2
@@ -311,7 +311,7 @@ wms
 └── wipac-rest-tools [required: Any, installed: 1.8.6]
     ├── cachetools [required: Any, installed: 5.5.2]
     ├── PyJWT [required: !=2.6.0, installed: 2.10.1]
-    ├── qrcode [required: Any, installed: 8.0]
+    ├── qrcode [required: Any, installed: 8.1]
     ├── requests [required: Any, installed: 2.32.3]
     │   ├── charset-normalizer [required: >=2,<4, installed: 3.4.1]
     │   ├── idna [required: >=2.5,<4, installed: 3.10]
