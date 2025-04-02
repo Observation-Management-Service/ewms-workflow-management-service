@@ -126,7 +126,7 @@ class WorkflowHandler(BaseWMSHandler):
                 ],
                 #
                 {  # add values (default and/or detected)
-                    "tag": config.get_pilot_tag(
+                    "tag": await config.get_pilot_tag(
                         task_input.get("pilot_config", {}).get("tag", "latest")
                     ),
                     "environment": task_input.get("pilot_config", {}).get(
