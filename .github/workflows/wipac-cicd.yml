@@ -41,7 +41,6 @@ jobs:
   # LINTERS
   #############################################################################
 
-
   flake8:
     needs: [ py-versions ]
     runs-on: ubuntu-latest
@@ -75,7 +74,6 @@ jobs:
   #############################################################################
   # PACKAGING
   #############################################################################
-
 
   writable-branch-detect:
     runs-on: ubuntu-latest
@@ -137,7 +135,6 @@ jobs:
   # FORMATTER
   #############################################################################
 
-
   code-format:
     runs-on: ubuntu-latest
     steps:
@@ -191,117 +188,14 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
-      - uses: actions/setup-python@v4
-      - name: Is this the most recent commit? It won't be if the action was reran
-        run: |
-          git fetch &> /dev/null
-          if [[ $(git status -sb | grep behind) ]]; then
-            echo "this commit is not the most recent on this branch -- rest of action will be skipped"
-            echo "IS_GIT_BEHIND=true" >> $GITHUB_ENV
-          else
-            echo "IS_GIT_BEHIND=false" >> $GITHUB_ENV
-          fi
-      - name: Git config
-        if: env.IS_GIT_BEHIND != 'true'
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-      - name: generate docs (README)
-        if: env.IS_GIT_BEHIND != 'true'
-        run: |
-          set -e
-          outdir=Docs
-          git rm -r $outdir || true
-          # generate
-          docker run --rm \
-              -v $PWD:/local \
-              openapitools/openapi-generator-cli generate \
-              --skip-validate-spec \
-              -i /local/wms/$REST_OPENAPI_SPEC_FPATH \
-              -g markdown \
-              -o /local/$outdir
-          sudo chmod -R +777 $outdir  # needed since the 'rm' above wiped previous ownership & now container owns it all
-          # tweak auto-generated contents -- miscellaneous
-          # remove "no auth" mentions
-          sed -i "/All endpoints do not require authorization./d" $outdir/README.md
-          sed -i "\|All URIs are relative to \*http://localhost\*|d" $outdir/README.md
-          #       ^^ alternate delimiter: https://stackoverflow.com/a/1797967
-          find $outdir -type f -exec sed -i '/No authorization required/d' {} +
-          
-          cat "$outdir/README.md"
-          
-          # get mapping -- method (link/header) and request dest
-          declare -A mapping  # associative array (like python dict)
-          in_table=false
-          while IFS= read -r line; do
-              # Check if the line contains the table header
-              if [[ "$line" == *"| Class | Method | HTTP request |"* ]]; then
-                  in_table=true
-                  continue
-              fi
-          
-              # Skip lines until we enter the table
-              if ! $in_table; then
-                  continue
-              fi
-          
-              # Skip the table separator line
-              if [[ "$line" == \|--* ]]; then
-                  continue
-              fi
-          
-              # Stop processing if a blank line is encountered (end of table)
-              [[ -z "$line" ]] && break
-          
-              # the first entry starts with `|`, the following do not: just lstrip all 
-              line=$(echo "$line" | sed 's/^|*//')
-          
-              # Process the table row and extract the relevant fields
-              #    extract the Method and HTTP request fields (second and third columns)
-              method_col_attr=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}')
-              http_request_col_attr=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $3); print $3}')
-              mapping["$method_col_attr"]="$http_request_col_attr"
-          done < "$outdir/README.md"
-          
-          # Now you can access the dictionary and process it as needed
-          for method_col_attr in "${!mapping[@]}"; do
-              http_request_col_attr="${mapping[$method_col_attr]}"
-              echo "$method_col_attr -> $http_request_col_attr"
-          
-              http_request_header=$(echo "$http_request_col_attr" | tr -d '*')  # remove the markdown bold markers
-              http_request_markdown_link=$(echo "$http_request_header" | \
-                  sed -e 's/\*\*//g' \
-                      -e 's/[{}]//g' \
-                      -e 's/[ :]/-/g' \
-                      -e 's/-\+/-/g' \
-                      -e 's/^-//' \
-                      -e 's/-$//' \
-                      -e 's/\///g' \
-                  | tr '[:upper:]' '[:lower:]')   # Remove **, {}, slashes; replace spaces/colons with hyphens; normalize hyphens; convert to lowercase  
-          
-              method_header=$(echo "$method_col_attr" | awk -F'[][]' '{print $2}' | sed 's/\*\*//g')
-              method_markdown_link=$(echo "$method_col_attr" | awk -F'#' '{print $2}' | sed 's/[)]//')
-          
-              set -x
-              # do link first in case the method header and link are too similar 
-              find "$outdir" -type f -exec sed -i "s;#$method_markdown_link;#$http_request_markdown_link;gI" {} +  # case-insensitive replacefind "$outdir" -type f -exec sed -i "s;$method_markdown_link;$http_request_markdown_link;gI" {} +  # case-insensitive replace
-              find "$outdir" -type f -exec sed -i "s;$method_header;$http_request_header;gI" {} +  # case-insensitive replace
-              find "$outdir" -type f -exec sed -i "s;\(\[\)\*\*$http_request_header\*\*\(\](.*\.md#$http_request_markdown_link)\);\1_details_\2;g" {} +  # case-insensitive replace
-              set +x
-          done
-
-      - name: git add, commit, push
-        if: env.IS_GIT_BEHIND != 'true'
-        run: |
-          git add . || true
-          git commit -m "<ci> modify rest documentation" || true
-          git push || true
+      - uses: WIPACrepo/wipac-dev-openapi-docs-action@main
+        with:
+          openapi_fpath: "wms/${{ env.REST_OPENAPI_SPEC_FPATH }}"
 
 
   ############################################################################
   # TESTS
   #############################################################################
-
 
   test-build-docker:
     runs-on: ubuntu-latest
@@ -398,7 +292,6 @@ jobs:
   #############################################################################
   # GITHUB RELEASE
   #############################################################################
-
 
   release:
     # only run on main/master/default
