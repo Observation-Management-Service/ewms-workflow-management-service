@@ -28,7 +28,7 @@ TASK_MQ_ACTIVATOR_SHORTEST_SLEEP = 1
 DEFAULT_WORKFLOW_PRIORITY = 50
 MAX_WORKFLOW_PRIORITY = 100  # any value over this is used to accelerate launch
 
-MQS_ROUTE_PREFIX = "v1"
+MQS_URL_V_PREFIX = "v1"
 
 # --------------------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
 
 
 REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(REST_OPENAPI_SPEC_FPATH)
-ROUTE_VERSION_PREFIX = (  # ex: v0
+URL_V_PREFIX = (  # ex: v0
     "v" + REST_OPENAPI_SPEC.spec.contents()["info"]["version"].split(".", maxsplit=1)[0]
 )
 

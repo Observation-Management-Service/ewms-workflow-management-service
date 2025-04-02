@@ -13,7 +13,7 @@ from . import database
 from .config import (
     ENV,
     MQS_RETRY_AT_TS_DEFAULT_VALUE,
-    MQS_ROUTE_PREFIX,
+    MQS_URL_V_PREFIX,
     TASK_MQ_ACTIVATOR_SHORTEST_SLEEP,
 )
 from .database.client import DocumentNotFoundException
@@ -183,7 +183,7 @@ async def request_activation_to_mqs(
 
     return await mqs_rc.request(
         "POST",
-        f"/{MQS_ROUTE_PREFIX}/mqs/workflows/{workflow['workflow_id']}/mq-group/activation",
+        f"/{MQS_URL_V_PREFIX}/mqs/workflows/{workflow['workflow_id']}/mq-group/activation",
         {
             "workflow_id": workflow["workflow_id"],  # could also use param arg
             "criteria": {

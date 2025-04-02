@@ -36,7 +36,7 @@ class BaseWMSHandler(RestHandler):
 class MainHandler(BaseWMSHandler):
     """MainHandler is a BaseWMSHandler that handles the root route."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
