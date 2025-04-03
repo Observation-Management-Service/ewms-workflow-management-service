@@ -10,6 +10,7 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
+from ..config import MQS_URL_V_PREFIX
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TaskforcePhase
 
@@ -61,7 +62,7 @@ def _get_aggregate_pipeline_phasechangelog_n_failures_and_filter(
 class TMSTaskforcesReportHandler(BaseWMSHandler):
     """Handle actions with statuses for taskforce(s)."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/statuses/taskforces$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/tms/statuses/taskforces$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -151,7 +152,7 @@ class TMSTaskforcesReportHandler(BaseWMSHandler):
 class TaskforcesFindHandler(BaseWMSHandler):
     """Handle actions for finding taskforces."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/query/taskforces$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/query/taskforces$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -176,7 +177,7 @@ class TaskforcesFindHandler(BaseWMSHandler):
 class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
     """Handle actions with a pending taskforce."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/tms/pending-starter/taskforces$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -224,7 +225,9 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
         for mqid in set(
             task_directive["input_queues"] + task_directive["output_queues"]
         ):
-            resp = await self.mqs_rc.request("GET", f"/v0/mqs/mq-profiles/{mqid}")
+            resp = await self.mqs_rc.request(
+                "GET", f"/{MQS_URL_V_PREFIX}/mqs/mq-profiles/{mqid}"
+            )
             mqprofiles.append(resp)
 
         # NOTE: the taskforce's phase is not advanced until the TMS sends condor-submit
@@ -246,7 +249,7 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
 class TMSTaskforceCondorSubmitUUIDHandler(BaseWMSHandler):
     """Handle actions with a condor-submitted taskforce."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -295,7 +298,7 @@ class TMSTaskforceCondorSubmitUUIDHandler(BaseWMSHandler):
 class TMSTaskforceCondorSubmitUUIDFailedHandler(BaseWMSHandler):
     """Handle when a taskforce fails to be condor-submitted."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -338,7 +341,7 @@ class TMSTaskforceCondorSubmitUUIDFailedHandler(BaseWMSHandler):
 class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
     """Handle actions for the top (next) taskforce designated to be stopped."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/tms/pending-stopper/taskforces$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -387,7 +390,9 @@ class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
 class TMSTaskforceCondorRmUUIDHandler(BaseWMSHandler):
     """Handle actions with a taskforce designated to be stopped."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-rm/taskforces/(?P<taskforce_uuid>[\w-]+)$"
+    ROUTE = (
+        rf"/{config.URL_V_PREFIX}/tms/condor-rm/taskforces/(?P<taskforce_uuid>[\w-]+)$"
+    )
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -432,7 +437,7 @@ class TMSTaskforceCondorRmUUIDHandler(BaseWMSHandler):
 class TMSTaskforceCondorRmUUIDFailedHandler(BaseWMSHandler):
     """Handle actions with the taskforce designated to be stopped failed to stop."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-rm/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/tms/condor-rm/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -475,7 +480,7 @@ class TMSTaskforceCondorRmUUIDFailedHandler(BaseWMSHandler):
 class TMSTaskforceCondorCompleteUUIDHandler(BaseWMSHandler):
     """Handle actions with a condor-completed taskforce."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/tms/condor-complete/taskforces/(?P<taskforce_uuid>[\w-]+)$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/tms/condor-complete/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -523,7 +528,7 @@ class TMSTaskforceCondorCompleteUUIDHandler(BaseWMSHandler):
 class TaskforceUUIDHandler(BaseWMSHandler):
     """Handle actions for a taskforce."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/taskforces/(?P<taskforce_uuid>[\w-]+)$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

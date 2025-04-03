@@ -10,7 +10,7 @@ import openapi_core
 from rest_tools.client import RestClient
 from rest_tools.client.utils import request_and_validate
 
-ROUTE_VERSION_PREFIX = "v0"
+_URL_V_PREFIX = "v1"
 
 CONDOR_LOCATIONS_LOOKUP = {
     "test-alpha": {
@@ -72,7 +72,7 @@ async def check_taskforce_states(
         rc,
         openapi_spec,
         "POST",
-        f"/{ROUTE_VERSION_PREFIX}/query/taskforces",
+        f"/{_URL_V_PREFIX}/query/taskforces",
         {
             "query": {"task_id": task_id},
             "projection": ["phase", "phase_change_log"],
@@ -96,7 +96,7 @@ async def check_workflow_deactivation(
         rc,
         openapi_spec,
         "GET",
-        f"/{ROUTE_VERSION_PREFIX}/workflows/{workflow_id}",
+        f"/{_URL_V_PREFIX}/workflows/{workflow_id}",
     )
     assert resp["deactivated"] == kind_of_deactivation
 
@@ -112,7 +112,7 @@ async def check_nothing_to_start(
             rc,
             openapi_spec,
             "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-starter/taskforces",
+            f"/{_URL_V_PREFIX}/tms/pending-starter/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )
 
@@ -128,6 +128,6 @@ async def check_nothing_to_stop(
             rc,
             openapi_spec,
             "GET",
-            f"/{ROUTE_VERSION_PREFIX}/tms/pending-stopper/taskforces",
+            f"/{_URL_V_PREFIX}/tms/pending-stopper/taskforces",
             {"collector": loc["collector"], "schedd": loc["schedd"]},
         )

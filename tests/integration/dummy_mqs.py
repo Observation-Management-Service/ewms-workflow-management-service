@@ -11,7 +11,7 @@ app = Flask(__name__)
 DONT_CALL_IT_A_DB: dict[str, Any] = {}
 
 
-@app.route("/v0/mqs/workflows/<workflow_id>/mq-group/reservation", methods=["POST"])
+@app.route("/v1/mqs/workflows/<workflow_id>/mq-group/reservation", methods=["POST"])
 def dummy_mq_group_reservation_post(workflow_id: str):
     mqgroup_id = f"test-mq-group-{workflow_id}"
     now = time.time()
@@ -42,7 +42,7 @@ def dummy_mq_group_reservation_post(workflow_id: str):
     return jsonify(resp)
 
 
-@app.route("/v0/mqs/workflows/<workflow_id>/mq-group/activation", methods=["POST"])
+@app.route("/v1/mqs/workflows/<workflow_id>/mq-group/activation", methods=["POST"])
 def dummy_mq_group_activation_post(workflow_id: str):
     # in the real mqs, there's a bunch of db logic, etc.
 
@@ -56,7 +56,7 @@ def dummy_mq_group_activation_post(workflow_id: str):
     return jsonify(stored)
 
 
-@app.route("/v0/mqs/mq-profiles/<mqid>", methods=["GET"])
+@app.route("/v1/mqs/mq-profiles/<mqid>", methods=["GET"])
 def dummy_mq_profiles_get(mqid: str):
     # in the real mqs, there's a bunch of db logic, etc.
 

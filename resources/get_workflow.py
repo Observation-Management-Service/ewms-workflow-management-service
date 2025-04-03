@@ -58,14 +58,14 @@ async def main():
     logging.info(f"getting workflow object for workflow {args.workflow_id}")
     resp = await rc.request(
         "GET",
-        f"/v0/workflows/{args.workflow_id}",
+        f"/v1/workflows/{args.workflow_id}",
     )
     print(json.dumps(resp, indent=4), flush=True)
 
     logging.info(f"getting task directives for workflow {args.workflow_id}")
     resp = await rc.request(
         "POST",
-        "/v0/query/task-directives",
+        "/v1/query/task-directives",
         {"query": {"workflow_id": args.workflow_id}},
     )
     print(json.dumps(resp, indent=4), flush=True)
@@ -73,7 +73,7 @@ async def main():
     logging.info(f"getting taskforce objects for workflow {args.workflow_id}")
     resp = await rc.request(
         "POST",
-        "/v0/query/taskforces",
+        "/v1/query/taskforces",
         {"query": {"workflow_id": args.workflow_id}},
     )
     print(json.dumps(resp, indent=4), flush=True)

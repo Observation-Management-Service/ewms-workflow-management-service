@@ -1,9 +1,10 @@
-# _v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request
+# _v1_query_task_directives_post_400_response
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **error** | **String** | a description of why the taskforce failed to be removed on HTCondor | [optional] [default to null] |
+| **code** | **Integer** | http error code | [default to null] |
+| **error** | **String** | http error reason | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

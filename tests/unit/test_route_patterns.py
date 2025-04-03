@@ -3,7 +3,7 @@
 import logging
 import re
 
-from wms import server, config
+from wms import config, server
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,4 +30,4 @@ def test_route_prefixes() -> None:
     """Check that all the routes have correct prefixes."""
     routes = [getattr(h, "ROUTE") for h in server.HANDLERS]
     for pattern in routes:
-        assert pattern.startswith(f"/{config.ROUTE_VERSION_PREFIX}/")
+        assert pattern.startswith(f"/{config.URL_V_PREFIX}/")

@@ -1080,7 +1080,7 @@ async def test_220__add_workers_after_condor(rc: RestClient) -> None:
         requests.exceptions.HTTPError,
         match=re.escape(
             f"422 Client Error: cannot add a taskforce to a deactivated workflow "
-            f"({workflow_id}) for url: http://localhost:8080/v0/task-directives/{task_id}/actions/add-workers"
+            f"({workflow_id}) for url: http://localhost:8080/v1/task-directives/{task_id}/actions/add-workers"
         ),
     ):
         await ewms_actions.add_more_workers(

@@ -11,7 +11,7 @@ from . import auth
 from .base_handlers import BaseWMSHandler
 from .task_directive_handlers import make_task_directive_object_and_taskforce_objects
 from .. import config
-from ..config import DEFAULT_WORKFLOW_PRIORITY, MAX_WORKFLOW_PRIORITY
+from ..config import DEFAULT_WORKFLOW_PRIORITY, MAX_WORKFLOW_PRIORITY, MQS_URL_V_PREFIX
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import (
     ENDING_OR_FINISHED_TASKFORCE_PHASES,
@@ -37,7 +37,7 @@ def _get_all_queues(tasks: list[dict]) -> list[str]:
 class WorkflowHandler(BaseWMSHandler):
     """Handle actions for adding a workflow."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/workflows$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -87,7 +87,7 @@ class WorkflowHandler(BaseWMSHandler):
         # Reserve queues with MQS -- map to aliases
         resp = await self.mqs_rc.request(
             "POST",
-            f"/v0/mqs/workflows/{workflow['workflow_id']}/mq-group/reservation",
+            f"/{MQS_URL_V_PREFIX}/mqs/workflows/{workflow['workflow_id']}/mq-group/reservation",
             {
                 "queue_aliases": _get_all_queues(self.get_argument("tasks")),
                 "public": self.get_argument("public_queue_aliases"),
@@ -126,7 +126,7 @@ class WorkflowHandler(BaseWMSHandler):
                 ],
                 #
                 {  # add values (default and/or detected)
-                    "tag": config.get_pilot_tag(
+                    "tag": await config.get_pilot_tag(
                         task_input.get("pilot_config", {}).get("tag", "latest")
                     ),
                     "environment": task_input.get("pilot_config", {}).get(
@@ -176,7 +176,7 @@ class WorkflowHandler(BaseWMSHandler):
 class WorkflowIDHandler(BaseWMSHandler):
     """Handle basic actions on a workflow."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows/(?P<workflow_id>[\w-]+)$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/workflows/(?P<workflow_id>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -307,7 +307,7 @@ async def deactivate_workflow(
 class WorkflowIDActionsAbortHandler(BaseWMSHandler):
     """Handle aborting a workflow."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows/(?P<workflow_id>[\w-]+)/actions/abort$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/workflows/(?P<workflow_id>[\w-]+)/actions/abort$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -327,7 +327,9 @@ class WorkflowIDActionsAbortHandler(BaseWMSHandler):
 class WorkflowIDActionsFinishedHandler(BaseWMSHandler):
     """Handle marking a workflow as finished."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/workflows/(?P<workflow_id>[\w-]+)/actions/finished$"
+    ROUTE = (
+        rf"/{config.URL_V_PREFIX}/workflows/(?P<workflow_id>[\w-]+)/actions/finished$"
+    )
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -350,7 +352,7 @@ class WorkflowIDActionsFinishedHandler(BaseWMSHandler):
 class WorkflowsFindHandler(BaseWMSHandler):
     """Handle actions for finding workflows."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/query/workflows$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/query/workflows$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

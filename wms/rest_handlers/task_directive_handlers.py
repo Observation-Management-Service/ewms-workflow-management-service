@@ -163,7 +163,7 @@ async def make_task_directive_object_and_taskforce_objects(
 class TaskDirectiveIDHandler(BaseWMSHandler):
     """Handle actions for a task's directive."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/task-directives/(?P<task_id>[\w-]+)$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/task-directives/(?P<task_id>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -193,7 +193,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):
 class TaskDirectivesFindHandler(BaseWMSHandler):
     """Handle actions for finding task directives."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/query/task-directives$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/query/task-directives$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
@@ -218,7 +218,7 @@ class TaskDirectivesFindHandler(BaseWMSHandler):
 class TaskDirectiveIDActionsAddWorkersHandler(BaseWMSHandler):
     """Handle actions for creating additional taskforces."""
 
-    ROUTE = rf"/{config.ROUTE_VERSION_PREFIX}/task-directives/(?P<task_id>[\w-]+)/actions/add-workers$"
+    ROUTE = rf"/{config.URL_V_PREFIX}/task-directives/(?P<task_id>[\w-]+)/actions/add-workers$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
     @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]

@@ -22,6 +22,7 @@ from rest_tools.client import RestClient, SavedDeviceGrantAuth
 
 LOGGER = logging.getLogger(__name__)
 
+_MQS_URL_V_PREFIX = "v1"
 
 BUNCH_OF_WORDS = set(
     [
@@ -138,7 +139,7 @@ async def request_workflow(
             }
         ],
     }
-    resp = await rc.request("POST", "/v0/workflows", post_body)
+    resp = await rc.request("POST", "/v1/workflows", post_body)
 
     LOGGER.debug(json.dumps(resp))
 
@@ -185,12 +186,12 @@ async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
 
         workflow = await rc.request(
             "GET",
-            f"/v0/workflows/{workflow_id}",
+            f"/v1/workflows/{workflow_id}",
         )
         task_directives = (
             await rc.request(
                 "POST",
-                "/v0/query/task-directives",
+                "/v1/query/task-directives",
                 {"query": {"workflow_id": workflow_id}},
             )
         )["task_directives"]
@@ -199,7 +200,7 @@ async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
             taskforces = (
                 await rc.request(
                     "POST",
-                    "/v0/query/taskforces",
+                    "/v1/query/taskforces",
                     {"query": {"workflow_id": workflow_id}},
                 )
             )["taskforces"]
@@ -207,7 +208,7 @@ async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
             taskforces = (
                 await rc.request(
                     "POST",
-                    "/v0/query/taskforces",
+                    "/v1/query/taskforces",
                     {
                         "query": {"workflow_id": workflow_id},
                         "projection": [
@@ -311,7 +312,7 @@ async def main() -> None:
         mqprofiles = (
             await rc.request(
                 "GET",
-                f"/v0/mqs/workflows/{workflow_id}/mq-profiles/public",
+                f"/{_MQS_URL_V_PREFIX}/mqs/workflows/{workflow_id}/mq-profiles/public",
             )
         )["mqprofiles"]
     LOGGER.info(f"{mqprofiles=}")
@@ -342,7 +343,7 @@ async def main() -> None:
     # wait at end, so monitor thread can get some final updates
     await rc.request(  # stop the workers
         "POST",
-        f"/v0/workflows/{workflow_id}/actions/finished",
+        f"/v1/workflows/{workflow_id}/actions/finished",
     )
     await asyncio.sleep(60)
 

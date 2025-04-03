@@ -7,13 +7,13 @@ import re
 from pathlib import Path
 from typing import Any
 
-import cachetools.func
+import aiocache  # type: ignore[import-untyped]
 import jsonschema
 import openapi_core
-import requests
 from jsonschema_path import SchemaPath
 from openapi_spec_validator import validate
 from openapi_spec_validator.readers import read_from_filename
+from rest_tools.client import RestClient
 from tornado import web
 from wipac_dev_tools import from_environment_as_dataclass, logging_tools
 
@@ -27,6 +27,8 @@ TASK_MQ_ACTIVATOR_SHORTEST_SLEEP = 1
 
 DEFAULT_WORKFLOW_PRIORITY = 50
 MAX_WORKFLOW_PRIORITY = 100  # any value over this is used to accelerate launch
+
+MQS_URL_V_PREFIX = "v1"
 
 # --------------------------------------------------------------------------------------
 
@@ -94,7 +96,7 @@ def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
 
 
 REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(REST_OPENAPI_SPEC_FPATH)
-ROUTE_VERSION_PREFIX = (  # ex: v0
+URL_V_PREFIX = (  # ex: v0
     "v" + REST_OPENAPI_SPEC.spec.contents()["info"]["version"].split(".", maxsplit=1)[0]
 )
 
@@ -135,35 +137,44 @@ _PILOT_VERSION_PATTERN = re.compile(r"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$")
 _PILOT_BRANCH_FEATURE_PATTERN = re.compile(r"^[a-z0-9._-]+-[a-z0-9]{1,128}$")
 
 
-@cachetools.func.ttl_cache(ttl=1 * 60)
-def get_pilot_tag(tag: str) -> str:
+@aiocache.cached(ttl=1 * 60)  # don't cache too long, but avoid spamming
+async def get_pilot_tag(tag: str) -> str:
     """Get/validate the tag of the pilot image."""
+    rc = RestClient(GH_API_PILOT_URL)
+
     if tag == "latest":  # convert to immutable version tag
-        url = f"{GH_API_PILOT_URL}/releases/latest"
-        LOGGER.info(f"Retrieving pilot image info from {url} ...")
-        tag = requests.get(url).json()["tag_name"].lstrip("v")
-        LOGGER.info(f"latest pilot tag is {tag}")
-        return tag
-
-    elif _PILOT_VERSION_PATTERN.match(tag):
-        url = f"{GH_API_PILOT_URL}/releases"  # -> list
-        LOGGER.info(f"Retrieving pilot image info from {url} ...")
-        all_em = [a["tag_name"] for a in requests.get(url).json()]
-        if f"v{tag}" in all_em:  # in releases, the tags have a preceding "v"
-            LOGGER.debug(f"found pilot image tag {tag} at {url}")
+        LOGGER.info(f"Retrieving pilot image info ({tag})...")
+        try:
+            resp = await rc.request("GET", "/releases/latest")
+            tag = resp["tag_name"].lstrip("v")
+            LOGGER.info(f"latest pilot tag is {tag}")
             return tag
+        except Exception as e:
+            LOGGER.exception(e)
 
-    elif _PILOT_BRANCH_FEATURE_PATTERN.match(tag):
-        # NOW, we're going to assume that the image tag is a branch tag,
+    elif _PILOT_VERSION_PATTERN.match(tag):  # confirm it exists by name
+        LOGGER.info(f"Retrieving pilot image info ({tag})...")
+        try:
+            resp = await rc.request("GET", "/releases")  # -> list
+            if f"v{tag}" in (a["tag_name"] for a in resp):
+                # in releases, the tags have a preceding "v"
+                LOGGER.debug(f"found pilot image tag {tag}")
+                return tag
+        except Exception as e:
+            LOGGER.exception(e)
+
+    elif _PILOT_BRANCH_FEATURE_PATTERN.match(tag):  # confirm it exists by sha
+        # NOW, we're going to assume that the image tag is a "branch tag",
         #    so, grab the commit sha from it and see if that exists.
         #    Ex: apptainer-debug-68594b0 -> 68594b0
         commit_sha = tag.split("-")[-1]
-        url = f"{GH_API_PILOT_URL}/commits/{commit_sha}"
-        LOGGER.info(f"Retrieving pilot image info from {url} ...")
-        response = requests.get(url)
-        if response.status_code == 200:
-            LOGGER.debug(f"found pilot image tag {tag} at {url}")
+        LOGGER.info(f"Retrieving pilot image info ({tag})...")
+        try:
+            await rc.request("GET", f"/commits/{commit_sha}")
+            LOGGER.debug(f"found pilot image tag (feature branch) {tag}")
             return tag
+        except Exception as e:
+            LOGGER.exception(e)
 
     # fall through
     msg = (

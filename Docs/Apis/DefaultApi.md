@@ -1,34 +1,33 @@
 # DefaultApi
 
-All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [_details_](DefaultApi.md#get-v0) | **GET** /v0/ |  |
-| [_details_](DefaultApi.md#post-v0querytask-directives) | **POST** /v0/query/task-directives |  |
-| [_details_](DefaultApi.md#post-v0querytaskforces) | **POST** /v0/query/taskforces |  |
-| [_details_](DefaultApi.md#post-v0queryworkflows) | **POST** /v0/query/workflows |  |
-| [_details_](DefaultApi.md#get-v0schemaopenapi) | **GET** /v0/schema/openapi |  |
-| [_details_](DefaultApi.md#post-v0task-directivestask_idactionsadd-workers) | **POST** /v0/task-directives/{task_id}/actions/add-workers |  |
-| [_details_](DefaultApi.md#get-v0task-directivestask_id) | **GET** /v0/task-directives/{task_id} |  |
-| [_details_](DefaultApi.md#get-v0taskforcestaskforce_uuid) | **GET** /v0/taskforces/{taskforce_uuid} |  |
-| [_details_](DefaultApi.md#post-v0tmscondor-completetaskforcestaskforce_uuid) | **POST** /v0/tms/condor-complete/taskforces/{taskforce_uuid} |  |
-| [_details_](DefaultApi.md#post-v0tmscondor-rmtaskforcestaskforce_uuidfailed) | **POST** /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed |  |
-| [_details_](DefaultApi.md#post-v0tmscondor-rmtaskforcestaskforce_uuid) | **POST** /v0/tms/condor-rm/taskforces/{taskforce_uuid} |  |
-| [_details_](DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuidfailed) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed |  |
-| [_details_](DefaultApi.md#post-v0tmscondor-submittaskforcestaskforce_uuid) | **POST** /v0/tms/condor-submit/taskforces/{taskforce_uuid} |  |
-| [_details_](DefaultApi.md#get-v0tmspending-startertaskforces) | **GET** /v0/tms/pending-starter/taskforces |  |
-| [_details_](DefaultApi.md#get-v0tmspending-stoppertaskforces) | **GET** /v0/tms/pending-stopper/taskforces |  |
-| [_details_](DefaultApi.md#post-v0tmsstatusestaskforces) | **POST** /v0/tms/statuses/taskforces |  |
-| [_details_](DefaultApi.md#post-v0workflows) | **POST** /v0/workflows |  |
-| [_details_](DefaultApi.md#post-v0workflowsworkflow_idactionsabort) | **POST** /v0/workflows/{workflow_id}/actions/abort |  |
-| [_details_](DefaultApi.md#post-v0workflowsworkflow_idactionsfinished) | **POST** /v0/workflows/{workflow_id}/actions/finished |  |
-| [_details_](DefaultApi.md#get-v0workflowsworkflow_id) | **GET** /v0/workflows/{workflow_id} |  |
+| [_details_](DefaultApi.md#get-v1) | **GET** /v1/ |  |
+| [_details_](DefaultApi.md#post-v1querytask-directives) | **POST** /v1/query/task-directives |  |
+| [_details_](DefaultApi.md#post-v1querytaskforces) | **POST** /v1/query/taskforces |  |
+| [_details_](DefaultApi.md#post-v1queryworkflows) | **POST** /v1/query/workflows |  |
+| [_details_](DefaultApi.md#get-v1schemaopenapi) | **GET** /v1/schema/openapi |  |
+| [_details_](DefaultApi.md#post-v1task-directivestask_idactionsadd-workers) | **POST** /v1/task-directives/{task_id}/actions/add-workers |  |
+| [_details_](DefaultApi.md#get-v1task-directivestask_id) | **GET** /v1/task-directives/{task_id} |  |
+| [_details_](DefaultApi.md#get-v1taskforcestaskforce_uuid) | **GET** /v1/taskforces/{taskforce_uuid} |  |
+| [_details_](DefaultApi.md#post-v1tmscondor-completetaskforcestaskforce_uuid) | **POST** /v1/tms/condor-complete/taskforces/{taskforce_uuid} |  |
+| [_details_](DefaultApi.md#post-v1tmscondor-rmtaskforcestaskforce_uuidfailed) | **POST** /v1/tms/condor-rm/taskforces/{taskforce_uuid}/failed |  |
+| [_details_](DefaultApi.md#post-v1tmscondor-rmtaskforcestaskforce_uuid) | **POST** /v1/tms/condor-rm/taskforces/{taskforce_uuid} |  |
+| [_details_](DefaultApi.md#post-v1tmscondor-submittaskforcestaskforce_uuidfailed) | **POST** /v1/tms/condor-submit/taskforces/{taskforce_uuid}/failed |  |
+| [_details_](DefaultApi.md#post-v1tmscondor-submittaskforcestaskforce_uuid) | **POST** /v1/tms/condor-submit/taskforces/{taskforce_uuid} |  |
+| [_details_](DefaultApi.md#get-v1tmspending-startertaskforces) | **GET** /v1/tms/pending-starter/taskforces |  |
+| [_details_](DefaultApi.md#get-v1tmspending-stoppertaskforces) | **GET** /v1/tms/pending-stopper/taskforces |  |
+| [_details_](DefaultApi.md#post-v1tmsstatusestaskforces) | **POST** /v1/tms/statuses/taskforces |  |
+| [_details_](DefaultApi.md#post-v1workflows) | **POST** /v1/workflows |  |
+| [_details_](DefaultApi.md#post-v1workflowsworkflow_idactionsabort) | **POST** /v1/workflows/{workflow_id}/actions/abort |  |
+| [_details_](DefaultApi.md#post-v1workflowsworkflow_idactionsfinished) | **POST** /v1/workflows/{workflow_id}/actions/finished |  |
+| [_details_](DefaultApi.md#get-v1workflowsworkflow_id) | **GET** /v1/workflows/{workflow_id} |  |
 
 
-<a name="GET /v0/"></a>
-# **GET /v0/**
-> GET /v0/()
+<a name="GET /v1/"></a>
+# **GET /v1/**
+> GET /v1/()
 
 
 
@@ -49,9 +48,9 @@ null (empty response body)
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="POST /v0/query/task-directives"></a>
-# **POST /v0/query/task-directives**
-> _v0_query_task_directives_post_200_response POST /v0/query/task-directives(FindObject)
+<a name="POST /v1/query/task-directives"></a>
+# **POST /v1/query/task-directives**
+> _v1_query_task_directives_post_200_response POST /v1/query/task-directives(FindObject)
 
 
 
@@ -65,7 +64,7 @@ null (empty response body)
 
 ### Return type
 
-[**_v0_query_task_directives_post_200_response**](../Models/_v0_query_task_directives_post_200_response.md)
+[**_v1_query_task_directives_post_200_response**](../Models/_v1_query_task_directives_post_200_response.md)
 
 ### Authorization
 
@@ -75,9 +74,9 @@ null (empty response body)
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="POST /v0/query/taskforces"></a>
-# **POST /v0/query/taskforces**
-> _v0_query_taskforces_post_200_response POST /v0/query/taskforces(FindObject)
+<a name="POST /v1/query/taskforces"></a>
+# **POST /v1/query/taskforces**
+> _v1_query_taskforces_post_200_response POST /v1/query/taskforces(FindObject)
 
 
 
@@ -91,7 +90,7 @@ null (empty response body)
 
 ### Return type
 
-[**_v0_query_taskforces_post_200_response**](../Models/_v0_query_taskforces_post_200_response.md)
+[**_v1_query_taskforces_post_200_response**](../Models/_v1_query_taskforces_post_200_response.md)
 
 ### Authorization
 
@@ -101,9 +100,9 @@ null (empty response body)
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="POST /v0/query/workflows"></a>
-# **POST /v0/query/workflows**
-> _v0_query_workflows_post_200_response POST /v0/query/workflows(FindObject)
+<a name="POST /v1/query/workflows"></a>
+# **POST /v1/query/workflows**
+> _v1_query_workflows_post_200_response POST /v1/query/workflows(FindObject)
 
 
 
@@ -117,7 +116,7 @@ null (empty response body)
 
 ### Return type
 
-[**_v0_query_workflows_post_200_response**](../Models/_v0_query_workflows_post_200_response.md)
+[**_v1_query_workflows_post_200_response**](../Models/_v1_query_workflows_post_200_response.md)
 
 ### Authorization
 
@@ -127,9 +126,9 @@ null (empty response body)
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="GET /v0/schema/openapi"></a>
-# **GET /v0/schema/openapi**
-> Map GET /v0/schema/openapi()
+<a name="GET /v1/schema/openapi"></a>
+# **GET /v1/schema/openapi**
+> Map GET /v1/schema/openapi()
 
 
 
@@ -150,9 +149,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="POST /v0/task-directives/{task_id}/actions/add-workers"></a>
-# **POST /v0/task-directives/{task_id}/actions/add-workers**
-> TaskforceObject POST /v0/task-directives/{task_id}/actions/add-workers(task\_id, \_v0\_task\_directives\_\_task\_id\_\_actions\_add\_workers\_post\_request)
+<a name="POST /v1/task-directives/{task_id}/actions/add-workers"></a>
+# **POST /v1/task-directives/{task_id}/actions/add-workers**
+> TaskforceObject POST /v1/task-directives/{task_id}/actions/add-workers(task\_id, \_v1\_task\_directives\_\_task\_id\_\_actions\_add\_workers\_post\_request)
 
 
 
@@ -163,7 +162,7 @@ This endpoint does not need any parameter.
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **task\_id** | **String**| The ID of the task directive to which the taskforce (and workers) will be added. | [default to null] |
-| **\_v0\_task\_directives\_\_task\_id\_\_actions\_add\_workers\_post\_request** | [**_v0_task_directives__task_id__actions_add_workers_post_request**](../Models/_v0_task_directives__task_id__actions_add_workers_post_request.md)|  | [optional] |
+| **\_v1\_task\_directives\_\_task\_id\_\_actions\_add\_workers\_post\_request** | [**_v1_task_directives__task_id__actions_add_workers_post_request**](../Models/_v1_task_directives__task_id__actions_add_workers_post_request.md)|  | [optional] |
 
 ### Return type
 
@@ -177,9 +176,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="GET /v0/task-directives/{task_id}"></a>
-# **GET /v0/task-directives/{task_id}**
-> TaskDirectiveObject GET /v0/task-directives/{task_id}(task\_id)
+<a name="GET /v1/task-directives/{task_id}"></a>
+# **GET /v1/task-directives/{task_id}**
+> TaskDirectiveObject GET /v1/task-directives/{task_id}(task\_id)
 
 
 
@@ -203,9 +202,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="GET /v0/taskforces/{taskforce_uuid}"></a>
-# **GET /v0/taskforces/{taskforce_uuid}**
-> TaskforceObject GET /v0/taskforces/{taskforce_uuid}(taskforce\_uuid)
+<a name="GET /v1/taskforces/{taskforce_uuid}"></a>
+# **GET /v1/taskforces/{taskforce_uuid}**
+> TaskforceObject GET /v1/taskforces/{taskforce_uuid}(taskforce\_uuid)
 
 
 
@@ -229,9 +228,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="POST /v0/tms/condor-complete/taskforces/{taskforce_uuid}"></a>
-# **POST /v0/tms/condor-complete/taskforces/{taskforce_uuid}**
-> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-complete/taskforces/{taskforce_uuid}(taskforce\_uuid, \_v0\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request)
+<a name="POST /v1/tms/condor-complete/taskforces/{taskforce_uuid}"></a>
+# **POST /v1/tms/condor-complete/taskforces/{taskforce_uuid}**
+> _v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v1/tms/condor-complete/taskforces/{taskforce_uuid}(taskforce\_uuid, \_v1\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request)
 
 
 
@@ -242,11 +241,11 @@ This endpoint does not need any parameter.
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
-| **\_v0\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request** | [**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_request**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_request.md)|  | [optional] |
+| **\_v1\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request** | [**_v1_tms_condor_complete_taskforces__taskforce_uuid__post_request**](../Models/_v1_tms_condor_complete_taskforces__taskforce_uuid__post_request.md)|  | [optional] |
 
 ### Return type
 
-[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
+[**_v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
 
 ### Authorization
 
@@ -256,9 +255,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed"></a>
-# **POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed**
-> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}/failed(taskforce\_uuid, \_v0\_tms\_condor\_rm\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request)
+<a name="POST /v1/tms/condor-rm/taskforces/{taskforce_uuid}/failed"></a>
+# **POST /v1/tms/condor-rm/taskforces/{taskforce_uuid}/failed**
+> _v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v1/tms/condor-rm/taskforces/{taskforce_uuid}/failed(taskforce\_uuid, \_v1\_tms\_condor\_rm\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request)
 
 
 
@@ -269,11 +268,11 @@ This endpoint does not need any parameter.
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
-| **\_v0\_tms\_condor\_rm\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request** | [**_v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request**](../Models/_v0_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request.md)|  | [optional] |
+| **\_v1\_tms\_condor\_rm\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request** | [**_v1_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request**](../Models/_v1_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request.md)|  | [optional] |
 
 ### Return type
 
-[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
+[**_v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
 
 ### Authorization
 
@@ -283,9 +282,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}"></a>
-# **POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}**
-> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-rm/taskforces/{taskforce_uuid}(taskforce\_uuid)
+<a name="POST /v1/tms/condor-rm/taskforces/{taskforce_uuid}"></a>
+# **POST /v1/tms/condor-rm/taskforces/{taskforce_uuid}**
+> _v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v1/tms/condor-rm/taskforces/{taskforce_uuid}(taskforce\_uuid)
 
 
 
@@ -299,7 +298,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
+[**_v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
 
 ### Authorization
 
@@ -309,9 +308,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed"></a>
-# **POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed**
-> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}/failed(taskforce\_uuid, \_v0\_tms\_condor\_submit\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request)
+<a name="POST /v1/tms/condor-submit/taskforces/{taskforce_uuid}/failed"></a>
+# **POST /v1/tms/condor-submit/taskforces/{taskforce_uuid}/failed**
+> _v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v1/tms/condor-submit/taskforces/{taskforce_uuid}/failed(taskforce\_uuid, \_v1\_tms\_condor\_submit\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request)
 
 
 
@@ -322,11 +321,11 @@ This endpoint does not need any parameter.
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
-| **\_v0\_tms\_condor\_submit\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request** | [**_v0_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request**](../Models/_v0_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request.md)|  | [optional] |
+| **\_v1\_tms\_condor\_submit\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request** | [**_v1_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request**](../Models/_v1_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request.md)|  | [optional] |
 
 ### Return type
 
-[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
+[**_v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
 
 ### Authorization
 
@@ -336,9 +335,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}"></a>
-# **POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}**
-> _v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v0/tms/condor-submit/taskforces/{taskforce_uuid}(taskforce\_uuid, TaskforceObject)
+<a name="POST /v1/tms/condor-submit/taskforces/{taskforce_uuid}"></a>
+# **POST /v1/tms/condor-submit/taskforces/{taskforce_uuid}**
+> _v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response POST /v1/tms/condor-submit/taskforces/{taskforce_uuid}(taskforce\_uuid, TaskforceObject)
 
 
 
@@ -353,7 +352,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v0_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
+[**_v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response**](../Models/_v1_tms_condor_complete_taskforces__taskforce_uuid__post_200_response.md)
 
 ### Authorization
 
@@ -363,9 +362,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="GET /v0/tms/pending-starter/taskforces"></a>
-# **GET /v0/tms/pending-starter/taskforces**
-> _v0_tms_pending_starter_taskforces_get_200_response GET /v0/tms/pending-starter/taskforces(collector, schedd)
+<a name="GET /v1/tms/pending-starter/taskforces"></a>
+# **GET /v1/tms/pending-starter/taskforces**
+> _v1_tms_pending_starter_taskforces_get_200_response GET /v1/tms/pending-starter/taskforces(collector, schedd)
 
 
 
@@ -380,7 +379,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**_v0_tms_pending_starter_taskforces_get_200_response**](../Models/_v0_tms_pending_starter_taskforces_get_200_response.md)
+[**_v1_tms_pending_starter_taskforces_get_200_response**](../Models/_v1_tms_pending_starter_taskforces_get_200_response.md)
 
 ### Authorization
 
@@ -390,9 +389,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="GET /v0/tms/pending-stopper/taskforces"></a>
-# **GET /v0/tms/pending-stopper/taskforces**
-> _v0_tms_pending_stopper_taskforces_get_200_response GET /v0/tms/pending-stopper/taskforces(collector, schedd)
+<a name="GET /v1/tms/pending-stopper/taskforces"></a>
+# **GET /v1/tms/pending-stopper/taskforces**
+> _v1_tms_pending_stopper_taskforces_get_200_response GET /v1/tms/pending-stopper/taskforces(collector, schedd)
 
 
 
@@ -407,7 +406,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**_v0_tms_pending_stopper_taskforces_get_200_response**](../Models/_v0_tms_pending_stopper_taskforces_get_200_response.md)
+[**_v1_tms_pending_stopper_taskforces_get_200_response**](../Models/_v1_tms_pending_stopper_taskforces_get_200_response.md)
 
 ### Authorization
 
@@ -417,9 +416,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="POST /v0/tms/statuses/taskforces"></a>
-# **POST /v0/tms/statuses/taskforces**
-> _v0_tms_statuses_taskforces_post_200_response POST /v0/tms/statuses/taskforces(\_v0\_tms\_statuses\_taskforces\_post\_request)
+<a name="POST /v1/tms/statuses/taskforces"></a>
+# **POST /v1/tms/statuses/taskforces**
+> _v1_tms_statuses_taskforces_post_200_response POST /v1/tms/statuses/taskforces(\_v1\_tms\_statuses\_taskforces\_post\_request)
 
 
 
@@ -429,11 +428,11 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **\_v0\_tms\_statuses\_taskforces\_post\_request** | [**_v0_tms_statuses_taskforces_post_request**](../Models/_v0_tms_statuses_taskforces_post_request.md)|  | [optional] |
+| **\_v1\_tms\_statuses\_taskforces\_post\_request** | [**_v1_tms_statuses_taskforces_post_request**](../Models/_v1_tms_statuses_taskforces_post_request.md)|  | [optional] |
 
 ### Return type
 
-[**_v0_tms_statuses_taskforces_post_200_response**](../Models/_v0_tms_statuses_taskforces_post_200_response.md)
+[**_v1_tms_statuses_taskforces_post_200_response**](../Models/_v1_tms_statuses_taskforces_post_200_response.md)
 
 ### Authorization
 
@@ -443,9 +442,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="POST /v0/workflows"></a>
-# **POST /v0/workflows**
-> _v0_workflows_post_200_response POST /v0/workflows(\_v0\_workflows\_post\_request)
+<a name="POST /v1/workflows"></a>
+# **POST /v1/workflows**
+> _v1_workflows_post_200_response POST /v1/workflows(\_v1\_workflows\_post\_request)
 
 
 
@@ -455,11 +454,11 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **\_v0\_workflows\_post\_request** | [**_v0_workflows_post_request**](../Models/_v0_workflows_post_request.md)|  | [optional] |
+| **\_v1\_workflows\_post\_request** | [**_v1_workflows_post_request**](../Models/_v1_workflows_post_request.md)|  | [optional] |
 
 ### Return type
 
-[**_v0_workflows_post_200_response**](../Models/_v0_workflows_post_200_response.md)
+[**_v1_workflows_post_200_response**](../Models/_v1_workflows_post_200_response.md)
 
 ### Authorization
 
@@ -469,9 +468,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="POST /v0/workflows/{workflow_id}/actions/abort"></a>
-# **POST /v0/workflows/{workflow_id}/actions/abort**
-> DeactivatedWorkflowResponseObject POST /v0/workflows/{workflow_id}/actions/abort(workflow\_id)
+<a name="POST /v1/workflows/{workflow_id}/actions/abort"></a>
+# **POST /v1/workflows/{workflow_id}/actions/abort**
+> DeactivatedWorkflowResponseObject POST /v1/workflows/{workflow_id}/actions/abort(workflow\_id)
 
 
 
@@ -495,9 +494,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="POST /v0/workflows/{workflow_id}/actions/finished"></a>
-# **POST /v0/workflows/{workflow_id}/actions/finished**
-> DeactivatedWorkflowResponseObject POST /v0/workflows/{workflow_id}/actions/finished(workflow\_id)
+<a name="POST /v1/workflows/{workflow_id}/actions/finished"></a>
+# **POST /v1/workflows/{workflow_id}/actions/finished**
+> DeactivatedWorkflowResponseObject POST /v1/workflows/{workflow_id}/actions/finished(workflow\_id)
 
 
 
@@ -521,9 +520,9 @@ This endpoint does not need any parameter.
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="GET /v0/workflows/{workflow_id}"></a>
-# **GET /v0/workflows/{workflow_id}**
-> WorkflowObject GET /v0/workflows/{workflow_id}(workflow\_id)
+<a name="GET /v1/workflows/{workflow_id}"></a>
+# **GET /v1/workflows/{workflow_id}**
+> WorkflowObject GET /v1/workflows/{workflow_id}(workflow\_id)
 
 
 
