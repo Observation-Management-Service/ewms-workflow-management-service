@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.0 (2025-04-03)
+
+### Breaking
+
+* Co-authored-by: github-actions <github-actions@github.com> ([`de07c7f`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/de07c7fc29f848f9dfc1f41d9ea1be4559fe496b))
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`c019345`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/c0193453c60317ea3e92cb250c91da26f1b607d2))
+
 ## v0.6.9 (2025-03-27)
 
 ### Other
