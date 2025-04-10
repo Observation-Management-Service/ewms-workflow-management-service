@@ -60,7 +60,7 @@ tornado==6.4.2
 typing_extensions==4.13.2
 urllib3==2.4.0
 Werkzeug==3.1.1
-wipac-dev-tools==1.16.0
+wipac-dev-tools==1.16.1
 wipac-rest-tools==1.8.6
 wipac-telemetry==0.3.1
 wrapt==1.17.2
@@ -182,7 +182,7 @@ wipac-telemetry==0.3.1
 │   └── typing_extensions [required: >=3.7.4, installed: 4.13.2]
 ├── protobuf [required: Any, installed: 5.29.4]
 ├── typing_extensions [required: Any, installed: 4.13.2]
-└── wipac-dev-tools [required: Any, installed: 1.16.0]
+└── wipac-dev-tools [required: Any, installed: 1.16.1]
     ├── requests [required: Any, installed: 2.32.3]
     │   ├── charset-normalizer [required: >=2,<4, installed: 3.4.1]
     │   ├── idna [required: >=2.5,<4, installed: 3.10]
@@ -303,7 +303,7 @@ wms
 │   ├── typing_extensions [required: >=4.8.0,<5.0.0, installed: 4.13.2]
 │   └── Werkzeug [required: <3.1.2, installed: 3.1.1]
 │       └── MarkupSafe [required: >=2.1.1, installed: 3.0.2]
-├── wipac-dev-tools [required: Any, installed: 1.16.0]
+├── wipac-dev-tools [required: Any, installed: 1.16.1]
 │   ├── requests [required: Any, installed: 2.32.3]
 │   │   ├── charset-normalizer [required: >=2,<4, installed: 3.4.1]
 │   │   ├── idna [required: >=2.5,<4, installed: 3.10]
@@ -327,7 +327,7 @@ wms
     │       └── certifi [required: >=2017.4.17, installed: 2025.1.31]
     ├── tornado [required: Any, installed: 6.4.2]
     ├── urllib3 [required: >=2.0.4, installed: 2.4.0]
-    └── wipac-dev-tools [required: Any, installed: 1.16.0]
+    └── wipac-dev-tools [required: Any, installed: 1.16.1]
         ├── requests [required: Any, installed: 2.32.3]
         │   ├── charset-normalizer [required: >=2,<4, installed: 3.4.1]
         │   ├── idna [required: >=2.5,<4, installed: 3.10]
