@@ -174,7 +174,7 @@ async def get_next_workflow_id(
 
 
 async def request_activation_to_mqs(
-    workflows_client: database.client.MongoValidatedCollection,
+    workflows_client: database.client.MongoJSONSchemaValidatedCollection,
     mqs_rc: RestClient,
     workflow_id: str,
 ) -> dict:
@@ -195,7 +195,7 @@ async def request_activation_to_mqs(
 
 
 async def advance_workflows_taskforces_to_prelaunch(
-    taskforces_client: database.client.MongoValidatedCollection,
+    taskforces_client: database.client.MongoJSONSchemaValidatedCollection,
     workflow_id: str,
 ) -> None:
     """Advance taskforces' phases to TaskforcePhase.PRE_LAUNCH."""
@@ -209,7 +209,7 @@ async def advance_workflows_taskforces_to_prelaunch(
 
 
 async def record_mq_activation_failed(
-    taskforces_client: database.client.MongoValidatedCollection,
+    taskforces_client: database.client.MongoJSONSchemaValidatedCollection,
     workflow_id: str,
     reason: str,
 ) -> None:
