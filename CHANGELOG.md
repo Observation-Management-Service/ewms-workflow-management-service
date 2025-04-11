@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.1 (2025-04-11)
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`e8def7b`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/e8def7b09dfde380b85a99ebf786df05ec5fd0fb))
+* Use `wipac_dev_tools.mongo_jsonschema_tools` ([#67](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/67)) ([`7c270ae`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/7c270ae1b9571b0ad56766ce22cf166375dcde34))
+
 ## v1.0.0 (2025-04-03)
 
 ### Breaking
