@@ -7,7 +7,6 @@ import json
 import logging
 import random
 import threading
-import time
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
@@ -80,6 +79,7 @@ BUNCH_OF_WORDS = set(
 
 
 def generate_strings(n: int):
+    """Get list of strings individually sampled from 'BUNCH_OF_WORDS' with an index suffix."""
     return [f"{random.choice(list(BUNCH_OF_WORDS))}{i}" for i in range(n)]
 
 
@@ -113,7 +113,16 @@ async def request_workflow(
                 "input_queue_aliases": ["input-queue"],
                 "output_queue_aliases": ["output-queue"],
                 "task_image": "/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-task-management-service:0.1.44",
-                "task_args": "cp {{INFILE}} {{OUTFILE}}",
+                # ^^^ image doesn't matter since we're just running a bash command
+                "task_args": (
+                    # 'bash -c' is needed so we can use '&&'
+                    "bash -c "
+                    '"'  # quote for bash -c "..."
+                    "sleep 1"  # to increase likelihood that multiple workers are tasking
+                    " && "
+                    "cp {{INFILE}} {{OUTFILE}}"
+                    '"'  # unquote for bash -c "..."
+                ),
                 "n_workers": n_workers,
                 "worker_config": {
                     "condor_requirements": "",
@@ -182,7 +191,7 @@ async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
 
     for i in itertools.count():
         if i > 0:
-            time.sleep(15)  # in thread, so ok
+            await asyncio.sleep(15)
 
         workflow = await rc.request(
             "GET",
@@ -228,7 +237,7 @@ async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
             task_directives,
             taskforces,
         ):
-            LOGGER.info("no change")
+            LOGGER.info("<no changes>")
             continue
         prev_workflow, prev_task_directives, prev_taskforces = (
             workflow,
@@ -272,14 +281,23 @@ async def main() -> None:
         default="",
         help="The workflow id to resume monitoring instead of requesting a new workflow",
     )
+    parser.add_argument(
+        "--ewms-url",
+        required=True,
+        type=lambda x: wipac_dev_tools.argparse_tools.validate_arg(
+            x, x.startswith("https://"), ValueError("must start with https://")
+        ),
+        help="Base HTTPS URL to the EWMS REST API (ex: https://ewms-dev.icecube.aq)",
+    )
     args = parser.parse_args()
     wipac_dev_tools.logging_tools.log_argparse_args(args)
 
+    prefix = args.ewms_url.lstrip("https://").split(".")[0]
     rc = SavedDeviceGrantAuth(
-        "https://ewms-dev.icecube.aq",
+        args.ewms_url,
         token_url="https://keycloak.icecube.wisc.edu/auth/realms/IceCube",
-        filename=str(Path("~/device-refresh-token").expanduser().resolve()),
-        client_id="ewms-dev-public",
+        filename=str(Path(f"~/device-refresh-token-{prefix}").expanduser().resolve()),
+        client_id=f"{prefix}-public",  # ex: ewms-prod-public
         retries=0,
     )
 
@@ -317,7 +335,7 @@ async def main() -> None:
         )["mqprofiles"]
     LOGGER.info(f"{mqprofiles=}")
 
-    # load & read queues
+    # load input queue
     input_mqprofile = next(p for p in mqprofiles if p["mqid"] == input_queue)
     input_events = await load_queue(
         queue=Queue(

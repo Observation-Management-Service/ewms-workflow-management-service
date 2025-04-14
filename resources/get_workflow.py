@@ -7,7 +7,9 @@ import argparse
 import asyncio
 import json
 import logging
+from pathlib import Path
 
+import wipac_dev_tools
 from rest_tools.client import RestClient, SavedDeviceGrantAuth
 
 logging.getLogger().setLevel(logging.INFO)
@@ -18,19 +20,18 @@ def get_rest_client(ewms_url: str) -> RestClient:
 
     This will present a QR code in the terminal for initial validation.
     """
-    if "://" not in ewms_url:
-        ewms_url = "https://" + ewms_url
     logging.info(f"connecting to {ewms_url}...")
 
     # NOTE: If your script will not be interactive (like a cron job),
     # then you need to first run your script manually to validate using
     # the QR code in the terminal.
 
+    prefix = ewms_url.lstrip("https://").split(".")[0]
     return SavedDeviceGrantAuth(
         ewms_url,
         token_url="https://keycloak.icecube.wisc.edu/auth/realms/IceCube",
-        filename="device-refresh-token",
-        client_id="ewms-dev-public",
+        filename=str(Path(f"~/device-refresh-token-{prefix}").expanduser().resolve()),
+        client_id=f"{prefix}-public",  # ex: ewms-prod-public
         retries=10,
     )
 
@@ -47,7 +48,10 @@ async def main():
     parser.add_argument(
         "--ewms-url",
         required=True,
-        help="the url to connect to a EWMS server",
+        type=lambda x: wipac_dev_tools.argparse_tools.validate_arg(
+            x, x.startswith("https://"), ValueError("must start with https://")
+        ),
+        help="Base HTTPS URL to the EWMS REST API (ex: https://ewms-dev.icecube.aq)",
     )
     args = parser.parse_args()
 
