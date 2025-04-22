@@ -71,25 +71,33 @@
                         "minimum": 1
                     },
                     "sort": {
-                        "description": "Sort order, e.g. [['timestamp', -1]]",
                         "type": "array",
+                        "description": "Sort order: a list of fields or [field, direction] pairs (direction: 1 or -1).",
                         "items": {
-                            "type": "array",
-                            "minItems": 2,
-                            "maxItems": 2,
-                            "items": [
+                            "oneOf": [
                                 {
                                     "type": "string"
                                 },
                                 {
-                                    "type": "integer",
-                                    "enum": [
-                                        1,
-                                        -1
+                                    "type": "array",
+                                    "minItems": 2,
+                                    "maxItems": 2,
+                                    "items": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "integer",
+                                            "enum": [
+                                                1,
+                                                -1
+                                            ]
+                                        }
                                     ]
                                 }
                             ]
-                        }
+                        },
+                        "minItems": 1
                     }
                 },
                 "required": [
