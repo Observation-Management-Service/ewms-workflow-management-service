@@ -32,8 +32,7 @@
                                 }
                             },
                             "required": [
-                                "workflows",
-                                "mongo_query_pipeline"
+                                "workflows"
                             ],
                             "additionalProperties": false
                         }
