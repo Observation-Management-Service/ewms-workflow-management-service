@@ -3,6 +3,8 @@ Apis/DefaultApi.md
 Models/DeactivatedWorkflowResponseObject.md
 Models/FindObject.md
 Models/FindObject_sort_inner.md
+Models/MongoQueryAggregationPipeline_inner.md
+Models/MongoQueryAggregationPipeline_inner__project_value.md
 Models/TaskDirectiveObject.md
 Models/TaskforceObject.md
 Models/TaskforceObject_cluster_id.md

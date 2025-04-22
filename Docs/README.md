@@ -34,6 +34,8 @@
  - [DeactivatedWorkflowResponseObject](./Models/DeactivatedWorkflowResponseObject.md)
  - [FindObject](./Models/FindObject.md)
  - [FindObject_sort_inner](./Models/FindObject_sort_inner.md)
+ - [MongoQueryAggregationPipeline_inner](./Models/MongoQueryAggregationPipeline_inner.md)
+ - [MongoQueryAggregationPipeline_inner__project_value](./Models/MongoQueryAggregationPipeline_inner__project_value.md)
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
  - [TaskforceObject_cluster_id](./Models/TaskforceObject_cluster_id.md)
