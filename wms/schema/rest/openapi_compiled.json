@@ -474,7 +474,7 @@
                 "anyOf": [
                     {
                         "type": "string",
-                        "description": "The value to use for pagination for a subsequent call's 'after' field (if 'null', then there are no more pages)"
+                        "description": "The value to supply as 'after' in the next request for pagination. If null, there are no more results."
                     },
                     {
                         "type": "null"
