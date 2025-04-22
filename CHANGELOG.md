@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.3 (2025-04-22)
+
+### Other
+
+* Paginate Large Queries ([#69](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/69)) ([`27b4568`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/27b4568bb1cb91546f1880d8729ead58267dea2a))
+
 ## v1.0.2 (2025-04-14)
 
 ### Other
