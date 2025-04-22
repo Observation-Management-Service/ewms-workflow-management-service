@@ -1,9 +1,12 @@
 """utils.py."""
 
+import json
 import logging
 from urllib.parse import quote_plus
 
+from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
+from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
 from ..config import ENV
 
@@ -70,3 +73,47 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     await make_index(TASKFORCES_COLL_NAME, "priority")
 
     LOGGER.info("Ensured indexes (may continue in background).")
+
+
+async def paginated_find_all(
+    query: dict,
+    after: str | None,
+    projection: list,
+    coll: MongoJSONSchemaValidatedCollection,
+) -> tuple[list, str | None]:
+    """
+    Handle paginated queries to the database.
+
+    NOTE: in order for pagination to work, everything is sorted by '_id'
+    -> ids are time-sortable, so there is less possibility of race condition
+       in results if the db state changes between user's subsequent calls
+    """
+
+    # arg: query -- use 'after'
+    if after:
+        query["_id"] = {"$gt": ObjectId(after)}
+
+    # arg: projection
+    if "_id" in projection:
+        projection.remove("_id")
+
+    # search -- when memory gets too high, stop & send last id to user
+    last_id = None
+    matches = []
+    total_bytes = 0
+    async for m in coll.find_all(query, projection, no_id=False, sort=[("_id", 1)]):
+        total_bytes += len(
+            json.dumps(
+                {k: v for k, v in m.items() if k != "_id"}  # '_id' is not JSON-friendly
+            ).encode()
+        )
+        if total_bytes > ENV.USER_QUERY_MAX_BYTES:
+            break  # stop right before limit is exceeded
+        else:
+            last_id = m.pop("_id")
+            matches.append(m)
+
+    return (
+        matches,
+        str(last_id) if last_id else None,
+    )
