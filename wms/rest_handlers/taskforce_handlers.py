@@ -10,7 +10,7 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
-from ..config import MQS_URL_V_PREFIX
+from ..config import ENV, MQS_URL_V_PREFIX
 from ..database.client import DocumentNotFoundException
 from ..database.utils import build_aggregation_pipeline
 from ..schema.enums import TaskforcePhase
@@ -166,7 +166,7 @@ class TaskforcesFindHandler(BaseWMSHandler):
             query=self.get_argument("query"),
             projection=self.get_argument("projection", []),
             sort=self.get_argument("sort", None),
-            limit=int(self.get_argument("limit", 100)),
+            limit=int(self.get_argument("limit", ENV.USER_REST_MONGO_QUERY_LIMIT)),
         )
 
         matches = []

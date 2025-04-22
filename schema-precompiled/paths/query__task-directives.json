@@ -32,7 +32,8 @@
                                 }
                             },
                             "required": [
-                                "task_directives"
+                                "task_directives",
+                                "mongo_query_pipeline"
                             ],
                             "additionalProperties": false
                         }

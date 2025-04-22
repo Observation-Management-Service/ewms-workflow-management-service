@@ -9,8 +9,9 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
-from ..config import MAX_WORKFLOW_PRIORITY
+from ..config import ENV, MAX_WORKFLOW_PRIORITY
 from ..database.client import DocumentNotFoundException
+from ..database.utils import build_aggregation_pipeline
 from ..schema.enums import TaskforcePhase
 from ..utils import IDFactory
 
@@ -202,14 +203,18 @@ class TaskDirectivesFindHandler(BaseWMSHandler):
 
         Search for task directives matching given query.
         """
+        pipeline = build_aggregation_pipeline(
+            query=self.get_argument("query"),
+            projection=self.get_argument("projection", []),
+            sort=self.get_argument("sort", None),
+            limit=int(self.get_argument("limit", ENV.USER_REST_MONGO_QUERY_LIMIT)),
+        )
+
         matches = []
-        async for m in self.wms_db.task_directives_collection.find_all(
-            self.get_argument("query"),
-            self.get_argument("projection", []),
-        ):
+        async for m in self.wms_db.task_directives_collection.aggregate(pipeline):
             matches.append(m)
 
-        self.write({"task_directives": matches})
+        self.write({"task_directives": matches, "mongo_query_pipeline": pipeline})
 
 
 # --------------------------------------------------------------------------------------

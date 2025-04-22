@@ -11,8 +11,14 @@ from . import auth
 from .base_handlers import BaseWMSHandler
 from .task_directive_handlers import make_task_directive_object_and_taskforce_objects
 from .. import config
-from ..config import DEFAULT_WORKFLOW_PRIORITY, MAX_WORKFLOW_PRIORITY, MQS_URL_V_PREFIX
+from ..config import (
+    DEFAULT_WORKFLOW_PRIORITY,
+    ENV,
+    MAX_WORKFLOW_PRIORITY,
+    MQS_URL_V_PREFIX,
+)
 from ..database.client import DocumentNotFoundException
+from ..database.utils import build_aggregation_pipeline
 from ..schema.enums import (
     ENDING_OR_FINISHED_TASKFORCE_PHASES,
     TaskforcePhase,
@@ -361,14 +367,18 @@ class WorkflowsFindHandler(BaseWMSHandler):
 
         Search for workflows matching given query.
         """
+        pipeline = build_aggregation_pipeline(
+            query=self.get_argument("query"),
+            projection=self.get_argument("projection", []),
+            sort=self.get_argument("sort", None),
+            limit=int(self.get_argument("limit", ENV.USER_REST_MONGO_QUERY_LIMIT)),
+        )
+
         matches = []
-        async for m in self.wms_db.workflows_collection.find_all(
-            self.get_argument("query"),
-            self.get_argument("projection", []),
-        ):
+        async for m in self.wms_db.workflows_collection.aggregate(pipeline):
             matches.append(m)
 
-        self.write({"workflows": matches})
+        self.write({"workflows": matches, "mongo_query_pipeline": pipeline})
 
 
 # --------------------------------------------------------------------------------------
