@@ -3,6 +3,7 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
+| **$match** | [**Object**](.md) | MongoDB match criteria -- always included | [optional] [default to null] |
 | **$project** | [**Map**](MongoQueryAggregationPipeline_inner__project_value.md) | MongoDB projection object | [optional] [default to null] |
 | **$sort** | **Map** | MongoDB sort object | [optional] [default to null] |
 | **$limit** | **Integer** | Maximum number of results | [optional] [default to null] |
