@@ -504,26 +504,15 @@
             "MongoQueryAggregationPipeline": {
                 "description": "A Mongo aggregation pipeline for querying",
                 "type": "array",
-                "prefixItems": [
-                    {
-                        "type": "object",
-                        "required": [
-                            "$match"
-                        ],
-                        "properties": {
-                            "$match": {
-                                "type": "object",
-                                "description": "MongoDB match criteria"
-                            }
-                        },
-                        "additionalProperties": false
-                    }
-                ],
                 "items": {
                     "type": "object",
                     "minProperties": 1,
                     "maxProperties": 1,
                     "properties": {
+                        "$match": {
+                            "type": "object",
+                            "description": "MongoDB match criteria -- always included"
+                        },
                         "$project": {
                             "type": "object",
                             "description": "MongoDB projection object",
@@ -662,7 +651,8 @@
                                         }
                                     },
                                     "required": [
-                                        "task_directives"
+                                        "task_directives",
+                                        "mongo_query_pipeline"
                                     ],
                                     "additionalProperties": false
                                 }
@@ -801,7 +791,8 @@
                                         }
                                     },
                                     "required": [
-                                        "workflows"
+                                        "workflows",
+                                        "mongo_query_pipeline"
                                     ],
                                     "additionalProperties": false
                                 }
