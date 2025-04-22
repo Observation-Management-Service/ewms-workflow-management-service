@@ -12,7 +12,7 @@ from .base_handlers import BaseWMSHandler
 from .. import config
 from ..config import ENV, MQS_URL_V_PREFIX
 from ..database.client import DocumentNotFoundException
-from ..database.utils import build_aggregation_pipeline
+from ..database.utils import build_query_aggregation_pipeline
 from ..schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
@@ -162,11 +162,11 @@ class TaskforcesFindHandler(BaseWMSHandler):
 
         Search for taskforces matching given query.
         """
-        pipeline = build_aggregation_pipeline(
+        pipeline = build_query_aggregation_pipeline(
             query=self.get_argument("query"),
             projection=self.get_argument("projection", []),
             sort=self.get_argument("sort", None),
-            limit=int(self.get_argument("limit", ENV.USER_REST_MONGO_QUERY_LIMIT)),
+            limit=int(self.get_argument("limit", ENV.USER_REST_QUERY_LIMIT_DEFAULT)),
         )
 
         matches = []

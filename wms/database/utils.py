@@ -72,7 +72,7 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     LOGGER.info("Ensured indexes (may continue in background).")
 
 
-def build_aggregation_pipeline(
+def build_query_aggregation_pipeline(
     query: dict,
     projection: list[str] | None = None,
     sort: dict[str, int] | None = None,

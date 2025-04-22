@@ -18,7 +18,7 @@ from ..config import (
     MQS_URL_V_PREFIX,
 )
 from ..database.client import DocumentNotFoundException
-from ..database.utils import build_aggregation_pipeline
+from ..database.utils import build_query_aggregation_pipeline
 from ..schema.enums import (
     ENDING_OR_FINISHED_TASKFORCE_PHASES,
     TaskforcePhase,
@@ -367,11 +367,11 @@ class WorkflowsFindHandler(BaseWMSHandler):
 
         Search for workflows matching given query.
         """
-        pipeline = build_aggregation_pipeline(
+        pipeline = build_query_aggregation_pipeline(
             query=self.get_argument("query"),
             projection=self.get_argument("projection", []),
             sort=self.get_argument("sort", None),
-            limit=int(self.get_argument("limit", ENV.USER_REST_MONGO_QUERY_LIMIT)),
+            limit=int(self.get_argument("limit", ENV.USER_REST_QUERY_LIMIT_DEFAULT)),
         )
 
         matches = []
