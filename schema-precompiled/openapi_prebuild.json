@@ -64,6 +64,10 @@
                             "type": "string"
                         },
                         "minItems": 1
+                    },
+                    "after": {
+                        "description": "The database '_id' to skip to for pagination -- this is given by a previous response's 'next_after' field",
+                        "type": "string"
                     }
                 },
                 "required": [

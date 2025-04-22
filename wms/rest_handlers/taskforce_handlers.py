@@ -1,8 +1,10 @@
 """REST handlers for taskforce-related routes."""
 
+import json
 import logging
 import time
 
+from bson import ObjectId
 from pymongo import ASCENDING, DESCENDING
 from rest_tools.server import validate_request
 from tornado import web
@@ -10,7 +12,7 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
-from ..config import MQS_URL_V_PREFIX
+from ..config import ENV, MQS_URL_V_PREFIX
 from ..database.client import DocumentNotFoundException
 from ..schema.enums import TaskforcePhase
 
@@ -161,14 +163,41 @@ class TaskforcesFindHandler(BaseWMSHandler):
 
         Search for taskforces matching given query.
         """
-        matches = []
-        async for m in self.wms_db.taskforces_collection.find_all(
-            self.get_argument("query"),
-            self.get_argument("projection", []),
-        ):
-            matches.append(m)
 
-        self.write({"taskforces": matches})
+        # NOTE: in order for pagination to work, everything is sorted by '_id'
+        # -> ids are time-sortable, so there is less possibility of race condition
+        #    in results if the db state changes between user's subsequent calls
+
+        # arg: query -- use 'after'
+        query = self.get_argument("query")
+        if after := self.get_argument("after", None):
+            query["_id"] = {"$gt": ObjectId(after)}
+
+        # arg: projection
+        projection = list(self.get_argument("projection", []))
+        if "_id" in projection:
+            projection.remove("_id")
+
+        # search -- when memory gets too high, stop & send last id to user
+        last_id = None
+        matches = []
+        total_bytes = 0
+        async for m in self.wms_db.taskforces_collection.find_all(
+            query, projection, no_id=False, sort=[("_id", 1)]
+        ):
+            total_bytes += len(json.dumps(m).encode("utf-8"))  # bytes (not string len)
+            if total_bytes > ENV.USER_QUERY_MAX_BYTES:
+                break  # stop right before limit is exceeded
+            else:
+                last_id = m.pop("_id")
+                matches.append(m)
+
+        self.write(
+            {
+                "taskforces": matches,
+                "next_after": str(last_id) if last_id else None,
+            }
+        )
 
 
 # --------------------------------------------------------------------------------------

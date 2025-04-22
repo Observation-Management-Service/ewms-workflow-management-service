@@ -26,6 +26,17 @@
                                         "$ref": "#/components/schemas/TaskforceObject"
                                     },
                                     "minItems": 0
+                                },
+                                "next_after": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string",
+                                            "description": "The value to use for pagination for a subsequent call's 'after' field (if 'null', then there are no more pages)"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ]
                                 }
                             },
                             "required": [
