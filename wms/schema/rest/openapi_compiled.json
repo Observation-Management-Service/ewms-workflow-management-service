@@ -459,6 +459,32 @@
                             "type": "string"
                         },
                         "minItems": 1
+                    },
+                    "limit": {
+                        "description": "Maximum number of results to return",
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "sort": {
+                        "description": "Sort order, e.g. [['timestamp', -1]]",
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 2,
+                            "items": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer",
+                                    "enum": [
+                                        1,
+                                        -1
+                                    ]
+                                }
+                            ]
+                        }
                     }
                 },
                 "required": [
