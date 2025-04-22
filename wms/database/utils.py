@@ -70,3 +70,21 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     await make_index(TASKFORCES_COLL_NAME, "priority")
 
     LOGGER.info("Ensured indexes (may continue in background).")
+
+
+def build_aggregation_pipeline(
+    query: dict,
+    projection: list[str] | None = None,
+    sort: dict[str, int] | None = None,
+    limit: int | None = None,
+) -> list[dict]:
+    """Build a MongoDB aggregation pipeline for query/project/sort/limit."""
+    pipeline: list[dict] = [{"$match": query}]
+    if projection:
+        pipeline.append({"$project": {field: 1 for field in projection}})
+    if sort:
+        pipeline.append({"$sort": sort})
+    # must limit last since it truncates results
+    if limit:
+        pipeline.append({"$limit": limit})
+    return pipeline
