@@ -169,12 +169,7 @@ class TaskforcesFindHandler(BaseWMSHandler):
             self.wms_db.taskforces_collection,
         )
 
-        self.write(
-            {
-                "taskforces": matches,
-                "next_after": next_after,
-            }
-        )
+        self.write({"taskforces": matches, "next_after": next_after})
 
 
 # --------------------------------------------------------------------------------------

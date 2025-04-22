@@ -26,10 +26,14 @@
                                         "$ref": "#/components/schemas/WorkflowObject"
                                     },
                                     "minItems": 0
+                                },
+                                "next_after": {
+                                    "$ref": "#/components/schemas/QueryNextAfter"
                                 }
                             },
                             "required": [
-                                "workflows"
+                                "workflows",
+                                "next_after"
                             ],
                             "additionalProperties": false
                         }

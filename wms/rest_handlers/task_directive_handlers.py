@@ -11,6 +11,7 @@ from .base_handlers import BaseWMSHandler
 from .. import config
 from ..config import MAX_WORKFLOW_PRIORITY
 from ..database.client import DocumentNotFoundException
+from ..database.utils import paginated_find_all
 from ..schema.enums import TaskforcePhase
 from ..utils import IDFactory
 
@@ -202,14 +203,14 @@ class TaskDirectivesFindHandler(BaseWMSHandler):
 
         Search for task directives matching given query.
         """
-        matches = []
-        async for m in self.wms_db.task_directives_collection.find_all(
+        matches, next_after = await paginated_find_all(
             self.get_argument("query"),
-            self.get_argument("projection", []),
-        ):
-            matches.append(m)
+            self.get_argument("after", None),
+            list(self.get_argument("projection", [])),
+            self.wms_db.task_directives_collection,
+        )
 
-        self.write({"task_directives": matches})
+        self.write({"task_directives": matches, "next_after": next_after})
 
 
 # --------------------------------------------------------------------------------------

@@ -26,10 +26,14 @@
                                         "$ref": "#/components/schemas/TaskDirectiveObject"
                                     },
                                     "minItems": 0
+                                },
+                                "next_after": {
+                                    "$ref": "#/components/schemas/QueryNextAfter"
                                 }
                             },
                             "required": [
-                                "task_directives"
+                                "task_directives",
+                                "next_after"
                             ],
                             "additionalProperties": false
                         }
