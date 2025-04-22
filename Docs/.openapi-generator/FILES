@@ -2,6 +2,7 @@
 Apis/DefaultApi.md
 Models/DeactivatedWorkflowResponseObject.md
 Models/FindObject.md
+Models/FindObject_sort_inner.md
 Models/TaskDirectiveObject.md
 Models/TaskforceObject.md
 Models/TaskforceObject_cluster_id.md

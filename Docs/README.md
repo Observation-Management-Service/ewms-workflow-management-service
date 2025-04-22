@@ -33,6 +33,7 @@
 
  - [DeactivatedWorkflowResponseObject](./Models/DeactivatedWorkflowResponseObject.md)
  - [FindObject](./Models/FindObject.md)
+ - [FindObject_sort_inner](./Models/FindObject_sort_inner.md)
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
  - [TaskforceObject_cluster_id](./Models/TaskforceObject_cluster_id.md)
