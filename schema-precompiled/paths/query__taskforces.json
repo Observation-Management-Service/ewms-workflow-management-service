@@ -26,6 +26,9 @@
                                         "$ref": "#/components/schemas/TaskforceObject"
                                     },
                                     "minItems": 0
+                                },
+                                "mongo_query_pipeline": {
+                                    "$ref": "#/components/schemas/MongoQueryAggregationPipeline"
                                 }
                             },
                             "required": [
