@@ -97,60 +97,6 @@
                 ],
                 "additionalProperties": false
             },
-            "MongoQueryAggregationPipeline": {
-                "type": "array",
-                "description": "A Mongo aggregation pipeline for querying",
-                "minItems": 1,
-                "items": [
-                    {
-                        "type": "object",
-                        "required": [
-                            "$match"
-                        ],
-                        "properties": {
-                            "$match": {
-                                "type": "object",
-                                "description": "Standard MongoDB query"
-                            }
-                        },
-                        "additionalProperties": false
-                    }
-                ],
-                "additionalItems": {
-                    "type": "object",
-                    "minProperties": 1,
-                    "additionalProperties": false,
-                    "patternProperties": {
-                        "^\\$project$": {
-                            "type": "object",
-                            "description": "Fields to include or exclude",
-                            "additionalProperties": {
-                                "type": "integer",
-                                "enum": [
-                                    0,
-                                    1
-                                ]
-                            }
-                        },
-                        "^\\$sort$": {
-                            "type": "object",
-                            "description": "Sort specification",
-                            "additionalProperties": {
-                                "type": "integer",
-                                "enum": [
-                                    1,
-                                    -1
-                                ]
-                            }
-                        },
-                        "^\\$limit$": {
-                            "type": "integer",
-                            "description": "Maximum number of documents to return",
-                            "minimum": 1
-                        }
-                    }
-                }
-            },
             "DeactivatedWorkflowResponseObject": {
                 "type": "object",
                 "properties": {
