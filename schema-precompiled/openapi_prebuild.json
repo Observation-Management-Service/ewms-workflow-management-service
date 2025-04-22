@@ -116,42 +116,60 @@
                             "$match"
                         ],
                         "properties": {
-                            "$match": {}
-                        },
-                        "additionalProperties": false
-                    },
-                    {
-                        "type": "object",
-                        "required": [
-                            "$project"
-                        ],
-                        "properties": {
-                            "$project": {}
-                        },
-                        "additionalProperties": false
-                    },
-                    {
-                        "type": "object",
-                        "required": [
-                            "$sort"
-                        ],
-                        "properties": {
-                            "$sort": {}
-                        },
-                        "additionalProperties": false
-                    },
-                    {
-                        "type": "object",
-                        "required": [
-                            "$limit"
-                        ],
-                        "properties": {
-                            "$limit": {}
+                            "$match": {
+                                "type": "object",
+                                "description": "MongoDB match criteria"
+                            }
                         },
                         "additionalProperties": false
                     }
                 ],
-                "items": false,
+                "items": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "maxProperties": 1,
+                    "properties": {
+                        "$project": {
+                            "type": "object",
+                            "description": "MongoDB projection object",
+                            "propertyNames": {
+                                "type": "string"
+                            },
+                            "additionalProperties": {
+                                "type": [
+                                    "boolean",
+                                    "integer"
+                                ],
+                                "enum": [
+                                    0,
+                                    1,
+                                    true,
+                                    false
+                                ]
+                            }
+                        },
+                        "$sort": {
+                            "type": "object",
+                            "description": "MongoDB sort object",
+                            "propertyNames": {
+                                "type": "string"
+                            },
+                            "additionalProperties": {
+                                "type": "integer",
+                                "enum": [
+                                    1,
+                                    -1
+                                ]
+                            }
+                        },
+                        "$limit": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "description": "Maximum number of results"
+                        }
+                    },
+                    "additionalProperties": false
+                },
                 "minItems": 1,
                 "maxItems": 4
             },

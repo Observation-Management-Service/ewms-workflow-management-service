@@ -32,7 +32,8 @@
                                 }
                             },
                             "required": [
-                                "taskforces"
+                                "taskforces",
+                                "mongo_query_pipeline"
                             ],
                             "additionalProperties": false
                         }

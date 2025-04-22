@@ -26,10 +26,14 @@
                                         "$ref": "#/components/schemas/WorkflowObject"
                                     },
                                     "minItems": 0
+                                },
+                                "mongo_query_pipeline": {
+                                    "$ref": "#/components/schemas/MongoQueryAggregationPipeline"
                                 }
                             },
                             "required": [
-                                "workflows"
+                                "workflows",
+                                "mongo_query_pipeline"
                             ],
                             "additionalProperties": false
                         }
