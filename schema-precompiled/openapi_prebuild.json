@@ -64,12 +64,27 @@
                             "type": "string"
                         },
                         "minItems": 1
+                    },
+                    "after": {
+                        "description": "The database '_id' to skip to for pagination -- this is given by a previous response's 'next_after' field",
+                        "type": "string"
                     }
                 },
                 "required": [
                     "query"
                 ],
                 "additionalProperties": false
+            },
+            "QueryNextAfter": {
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "description": "The value to supply as 'after' in the next request for pagination. If null, there are no more results."
+                    },
+                    {
+                        "type": "null"
+                    }
+                ]
             },
             "DeactivatedWorkflowResponseObject": {
                 "type": "object",

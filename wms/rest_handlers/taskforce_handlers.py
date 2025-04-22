@@ -12,6 +12,7 @@ from .base_handlers import BaseWMSHandler
 from .. import config
 from ..config import MQS_URL_V_PREFIX
 from ..database.client import DocumentNotFoundException
+from ..database.utils import paginated_find_all
 from ..schema.enums import TaskforcePhase
 
 LOGGER = logging.getLogger(__name__)
@@ -161,14 +162,14 @@ class TaskforcesFindHandler(BaseWMSHandler):
 
         Search for taskforces matching given query.
         """
-        matches = []
-        async for m in self.wms_db.taskforces_collection.find_all(
+        matches, next_after = await paginated_find_all(
             self.get_argument("query"),
-            self.get_argument("projection", []),
-        ):
-            matches.append(m)
+            self.get_argument("after", None),
+            list(self.get_argument("projection", [])),
+            self.wms_db.taskforces_collection,
+        )
 
-        self.write({"taskforces": matches})
+        self.write({"taskforces": matches, "next_after": next_after})
 
 
 # --------------------------------------------------------------------------------------

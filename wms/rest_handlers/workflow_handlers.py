@@ -13,6 +13,7 @@ from .task_directive_handlers import make_task_directive_object_and_taskforce_ob
 from .. import config
 from ..config import DEFAULT_WORKFLOW_PRIORITY, MAX_WORKFLOW_PRIORITY, MQS_URL_V_PREFIX
 from ..database.client import DocumentNotFoundException
+from ..database.utils import paginated_find_all
 from ..schema.enums import (
     ENDING_OR_FINISHED_TASKFORCE_PHASES,
     TaskforcePhase,
@@ -361,14 +362,14 @@ class WorkflowsFindHandler(BaseWMSHandler):
 
         Search for workflows matching given query.
         """
-        matches = []
-        async for m in self.wms_db.workflows_collection.find_all(
+        matches, next_after = await paginated_find_all(
             self.get_argument("query"),
-            self.get_argument("projection", []),
-        ):
-            matches.append(m)
+            self.get_argument("after", None),
+            list(self.get_argument("projection", [])),
+            self.wms_db.workflows_collection,
+        )
 
-        self.write({"workflows": matches})
+        self.write({"workflows": matches, "next_after": next_after})
 
 
 # --------------------------------------------------------------------------------------

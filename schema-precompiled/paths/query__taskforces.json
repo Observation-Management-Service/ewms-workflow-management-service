@@ -26,10 +26,14 @@
                                         "$ref": "#/components/schemas/TaskforceObject"
                                     },
                                     "minItems": 0
+                                },
+                                "next_after": {
+                                    "$ref": "#/components/schemas/QueryNextAfter"
                                 }
                             },
                             "required": [
-                                "taskforces"
+                                "taskforces",
+                                "next_after"
                             ],
                             "additionalProperties": false
                         }
