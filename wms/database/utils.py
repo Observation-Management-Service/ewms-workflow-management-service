@@ -99,6 +99,7 @@ async def paginated_find_all(
 
     # search -- when memory gets too high, stop & send last id to user
     last_id = None
+    next_after = None
     matches = []
     total_bytes = 0
     async for m in coll.find_all(query, projection, no_id=False, sort=[("_id", 1)]):
@@ -108,12 +109,9 @@ async def paginated_find_all(
             ).encode()
         )
         if total_bytes > ENV.USER_QUERY_MAX_BYTES:
+            next_after = str(last_id) if last_id else None
             break  # stop right before limit is exceeded
         else:
-            last_id = m.pop("_id")
             matches.append(m)
 
-    return (
-        matches,
-        str(last_id) if last_id else None,
-    )
+    return matches, next_after
