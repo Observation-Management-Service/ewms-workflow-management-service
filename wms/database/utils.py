@@ -112,6 +112,7 @@ async def paginated_find_all(
             next_after = str(last_id) if last_id else None
             break  # stop right before limit is exceeded
         else:
+            last_id = m.pop("_id")
             matches.append(m)
 
     return matches, next_after
