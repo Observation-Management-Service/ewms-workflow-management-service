@@ -24,7 +24,7 @@ importlib_metadata==8.6.1
 isodate==0.7.2
 jsonschema==4.23.0
 jsonschema-path==0.3.4
-jsonschema-specifications==2024.10.1
+jsonschema-specifications==2025.4.1
 lazy-object-proxy==1.11.0
 MarkupSafe==3.0.2
 more-itertools==10.7.0
@@ -193,7 +193,7 @@ wms
 ├── aiocache [required: Any, installed: 0.12.3]
 ├── jsonschema [required: Any, installed: 4.23.0]
 │   ├── attrs [required: >=22.2.0, installed: 25.3.0]
-│   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2024.10.1]
+│   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2025.4.1]
 │   │   └── referencing [required: >=0.31.0, installed: 0.36.2]
 │   │       ├── attrs [required: >=22.2.0, installed: 25.3.0]
 │   │       ├── rpds-py [required: >=0.7.0, installed: 0.24.0]
@@ -210,7 +210,7 @@ wms
 │   ├── isodate [required: Any, installed: 0.7.2]
 │   ├── jsonschema [required: >=4.18.0,<5.0.0, installed: 4.23.0]
 │   │   ├── attrs [required: >=22.2.0, installed: 25.3.0]
-│   │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2024.10.1]
+│   │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2025.4.1]
 │   │   │   └── referencing [required: >=0.31.0, installed: 0.36.2]
 │   │   │       ├── attrs [required: >=22.2.0, installed: 25.3.0]
 │   │   │       ├── rpds-py [required: >=0.7.0, installed: 0.24.0]
@@ -236,7 +236,7 @@ wms
 │   ├── openapi-schema-validator [required: >=0.6.0,<0.7.0, installed: 0.6.3]
 │   │   ├── jsonschema [required: >=4.19.1,<5.0.0, installed: 4.23.0]
 │   │   │   ├── attrs [required: >=22.2.0, installed: 25.3.0]
-│   │   │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2024.10.1]
+│   │   │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2025.4.1]
 │   │   │   │   └── referencing [required: >=0.31.0, installed: 0.36.2]
 │   │   │   │       ├── attrs [required: >=22.2.0, installed: 25.3.0]
 │   │   │   │       ├── rpds-py [required: >=0.7.0, installed: 0.24.0]
@@ -246,7 +246,7 @@ wms
 │   │   │   │   ├── rpds-py [required: >=0.7.0, installed: 0.24.0]
 │   │   │   │   └── typing_extensions [required: >=4.4.0, installed: 4.13.2]
 │   │   │   └── rpds-py [required: >=0.7.1, installed: 0.24.0]
-│   │   ├── jsonschema-specifications [required: >=2023.5.2, installed: 2024.10.1]
+│   │   ├── jsonschema-specifications [required: >=2023.5.2, installed: 2025.4.1]
 │   │   │   └── referencing [required: >=0.31.0, installed: 0.36.2]
 │   │   │       ├── attrs [required: >=22.2.0, installed: 25.3.0]
 │   │   │       ├── rpds-py [required: >=0.7.0, installed: 0.24.0]
@@ -256,7 +256,7 @@ wms
 │   ├── openapi-spec-validator [required: >=0.7.1,<0.8.0, installed: 0.7.1]
 │   │   ├── jsonschema [required: >=4.18.0,<5.0.0, installed: 4.23.0]
 │   │   │   ├── attrs [required: >=22.2.0, installed: 25.3.0]
-│   │   │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2024.10.1]
+│   │   │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2025.4.1]
 │   │   │   │   └── referencing [required: >=0.31.0, installed: 0.36.2]
 │   │   │   │       ├── attrs [required: >=22.2.0, installed: 25.3.0]
 │   │   │   │       ├── rpds-py [required: >=0.7.0, installed: 0.24.0]
@@ -282,7 +282,7 @@ wms
 │   │   └── openapi-schema-validator [required: >=0.6.0,<0.7.0, installed: 0.6.3]
 │   │       ├── jsonschema [required: >=4.19.1,<5.0.0, installed: 4.23.0]
 │   │       │   ├── attrs [required: >=22.2.0, installed: 25.3.0]
-│   │       │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2024.10.1]
+│   │       │   ├── jsonschema-specifications [required: >=2023.03.6, installed: 2025.4.1]
 │   │       │   │   └── referencing [required: >=0.31.0, installed: 0.36.2]
 │   │       │   │       ├── attrs [required: >=22.2.0, installed: 25.3.0]
 │   │       │   │       ├── rpds-py [required: >=0.7.0, installed: 0.24.0]
@@ -292,7 +292,7 @@ wms
 │   │       │   │   ├── rpds-py [required: >=0.7.0, installed: 0.24.0]
 │   │       │   │   └── typing_extensions [required: >=4.4.0, installed: 4.13.2]
 │   │       │   └── rpds-py [required: >=0.7.1, installed: 0.24.0]
-│   │       ├── jsonschema-specifications [required: >=2023.5.2, installed: 2024.10.1]
+│   │       ├── jsonschema-specifications [required: >=2023.5.2, installed: 2025.4.1]
 │   │       │   └── referencing [required: >=0.31.0, installed: 0.36.2]
 │   │       │       ├── attrs [required: >=22.2.0, installed: 25.3.0]
 │   │       │       ├── rpds-py [required: >=0.7.0, installed: 0.24.0]
