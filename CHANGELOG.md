@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.4 (2025-04-23)
+
+### Other
+
+* Fix Query Pagination; Add Helper Script ([#70](https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues/70)) ([`0087f93`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/0087f93ee26561902a49b27e4101dcb3b4a2ce10))
+
 ## v1.0.3 (2025-04-22)
 
 ### Other
