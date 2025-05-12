@@ -86,6 +86,8 @@ class TMSTaskforcesReportHandler(BaseWMSHandler):
             )
         )
 
+        LOGGER.info(f"received updates for taskforces' statuses: {all_uuids}")
+
         not_founds = []
 
         # put in db
@@ -107,6 +109,7 @@ class TMSTaskforcesReportHandler(BaseWMSHandler):
                         continue
 
                     # db
+                    LOGGER.info(f"updating taskforce status: {uuid=} {update=}")
                     try:
                         await self.wms_db.taskforces_collection.find_one_and_update(
                             {
