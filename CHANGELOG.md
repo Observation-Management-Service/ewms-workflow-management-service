@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.5 (2025-05-12)
+
+### Other
+
+* <bot> update dependencies*.log files(s) ([`fce864e`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/fce864e8ce7fe2a3ac17e55024e6539cfb83fc40))
+* <ci> modify openapi documentation ([`51cd84a`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/51cd84a0d09ec77b7a9726b56cab2f88ac69713d))
+* Taskforce Status (POST): Increase Logging ([`a6282e4`](https://github.com/Observation-Management-Service/ewms-workflow-management-service/commit/a6282e42c450ea774d923ae84a862c19d9a8bee8))
+
 ## v1.0.4 (2025-04-23)
 
 ### Other
