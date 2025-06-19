@@ -118,7 +118,7 @@ async def request_workflow(
                     # 'bash -c' is needed so we can use '&&'
                     "bash -c "
                     '"'  # quote for bash -c "..."
-                    "sleep 1"  # to increase likelihood that multiple workers are tasking
+                    "sleep 10"  # to increase likelihood that multiple workers are tasking
                     " && "
                     "cp {{INFILE}} {{OUTFILE}}"
                     '"'  # unquote for bash -c "..."
@@ -127,7 +127,7 @@ async def request_workflow(
                 "worker_config": {
                     "condor_requirements": "",
                     "do_transfer_worker_stdouterr": True,
-                    "max_worker_runtime": 60 * 10,
+                    "max_worker_runtime": 60 * 60 * 1,  # 1 hour
                     "n_cores": 1,
                     "priority": 51,
                     "worker_disk": "512M",
