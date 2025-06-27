@@ -6,6 +6,7 @@ from urllib.parse import quote_plus
 
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import ASCENDING
 from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
 from ..config import ENV
@@ -45,11 +46,20 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     """
     LOGGER.info("Ensuring indexes...")
 
-    async def make_index(coll: str, attr: str, unique: bool = False) -> None:
-        LOGGER.info(f"creating index for {coll=} {attr=} {unique=}...")
+    async def make_index(
+        coll: str,
+        keys: str | list[tuple[str, int]],
+        unique: bool = False,
+    ) -> None:
+        LOGGER.info(f"creating index for {coll=} {keys=} {unique=}...")
+        index_name = (
+            keys.replace(".", "_") + "_index"
+            if isinstance(keys, str)
+            else "_".join(k for k, _ in keys) + "_compound_index"
+        )
         await mongo_client[_DB_NAME][coll].create_index(  # type: ignore[index]
-            attr,
-            name=f"{attr.replace('.','_')}_index",
+            keys,
+            name=index_name,
             unique=unique,
             background=True,
         )
@@ -71,6 +81,11 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     await make_index(TASKFORCES_COLL_NAME, "phase")
     await make_index(TASKFORCES_COLL_NAME, "timestamp")
     await make_index(TASKFORCES_COLL_NAME, "priority")
+    await make_index(TASKFORCES_COLL_NAME, "job_event_log_fpath")
+    await make_index(
+        TASKFORCES_COLL_NAME,
+        [("collector", ASCENDING), ("schedd", ASCENDING)],
+    )
 
     LOGGER.info("Ensured indexes (may continue in background).")
 
