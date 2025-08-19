@@ -1,7 +1,6 @@
 FROM python:3.12
 
 RUN useradd -m -U app
-
 WORKDIR /home/app
 USER app
 
@@ -12,12 +11,11 @@ USER app
 #  - using '/tmp/pip-cache' allows pip to cache
 RUN --mount=type=cache,target=/tmp/pip-cache \
     pip install --upgrade "pip>=25" "setuptools>=80" "wheel>=0.45"
-RUN --mount=type=bind,source=.,target=/src,rw \
+USER root
+RUN --mount=type=bind,source=.,target=/home/app/src,rw \
     --mount=type=cache,target=/tmp/pip-cache \
-    pip install /src
-
-ENV PYTHONPATH=/home/app
-
+    pip install /home/app/src
 USER app
 
+ENV PYTHONPATH=/home/app
 CMD ["python", "-m", "wms"]
