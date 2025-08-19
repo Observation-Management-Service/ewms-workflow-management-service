@@ -2,29 +2,29 @@
 
 [project]
 dependencies = [
-    "aiocache",
-    "jsonschema",
-    "motor",
-    "openapi-core",
-    "wipac-dev-tools",
-    "wipac-rest-tools[telemetry]",
-] # (can remove comment) originally migrated from 'setup.cfg' by 'WIPACrepo/wipac-dev-py-setup-action' github action package
+  "aiocache",
+  "jsonschema",
+  "motor",
+  "openapi-core",
+  "wipac-dev-tools",
+  "wipac-rest-tools",
+]
 
-[project.optional-dependencies] # (can remove comment) originally migrated from 'setup.cfg' by 'WIPACrepo/wipac-dev-py-setup-action' github action package
+[project.optional-dependencies]
 tests = [
-    "pytest",
-    "pytest-asyncio",
-    "pytest-mock",
-    "nest-asyncio",
-    "flask",
-    "pytest-reverse",
+  "pytest",
+  "pytest-asyncio",
+  "pytest-mock",
+  "nest-asyncio",
+  "flask",
+  "pytest-reverse",
 ]
 mypy = [
-    "mypy",
-    "pytest",
-    "pytest-asyncio",
-    "pytest-mock",
-    "nest-asyncio",
-    "flask",
-    "pytest-reverse",
+  "mypy",
+  "pytest",
+  "pytest-asyncio",
+  "pytest-mock",
+  "nest-asyncio",
+  "flask",
+  "pytest-reverse",
 ]
