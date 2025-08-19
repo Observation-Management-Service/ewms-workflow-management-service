@@ -1,0 +1,30 @@
+# pyproject.toml
+
+[project]
+dependencies = [
+    "aiocache",
+    "jsonschema",
+    "motor",
+    "openapi-core",
+    "wipac-dev-tools",
+    "wipac-rest-tools[telemetry]",
+] # (can remove comment) originally migrated from 'setup.cfg' by 'WIPACrepo/wipac-dev-py-setup-action' github action package
+
+[project.optional-dependencies] # (can remove comment) originally migrated from 'setup.cfg' by 'WIPACrepo/wipac-dev-py-setup-action' github action package
+tests = [
+    "pytest",
+    "pytest-asyncio",
+    "pytest-mock",
+    "nest-asyncio",
+    "flask",
+    "pytest-reverse",
+]
+mypy = [
+    "mypy",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-mock",
+    "nest-asyncio",
+    "flask",
+    "pytest-reverse",
+]
