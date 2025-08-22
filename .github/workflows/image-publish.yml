@@ -2,6 +2,7 @@ name: docker release
 
 
 on:
+  # only on tag pushes
   push:
     branches-ignore:
       - '**'
