@@ -224,7 +224,7 @@ jobs:
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
           fetch-depth: 0  # setuptools-scm needs to access git tags
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.py3 }}
       - uses: docker/build-push-action@v3
@@ -287,7 +287,7 @@ jobs:
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
           fetch-depth: 0  # setuptools-scm needs to access git tags
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.py3 }}
       - name: "pip install .[tests]"
