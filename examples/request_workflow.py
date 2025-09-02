@@ -140,6 +140,7 @@ async def request_workflow(
                             "environment": {},
                             "input_files": [],
                             "tag": pilot_cvmfs_image_tag,
+                            "image_source": "cvmfs",
                         }
                     }
                     if pilot_cvmfs_image_tag
@@ -176,9 +177,10 @@ async def read_queue(queue: Queue, output_events: list[str]) -> None:
             got.add(msg)
             i += 1
             if sorted(got) == sorted(output_events):
-                break
+                LOGGER.info("Done reading queue -- received all output events")
+                return
 
-    LOGGER.info("Done reading queue -- received all output events")
+    raise RuntimeError("Did not receive all output events -- consumer timeout")
 
 
 async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
