@@ -128,7 +128,7 @@ null (empty response body)
 
 <a name="GET /v1/schema/openapi"></a>
 # **GET /v1/schema/openapi**
-> Map GET /v1/schema/openapi()
+> Object GET /v1/schema/openapi()
 
 
 
@@ -139,7 +139,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**Map**](../Models/AnyType.md)
+**Object**
 
 ### Authorization
 
