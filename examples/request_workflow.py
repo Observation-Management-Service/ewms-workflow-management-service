@@ -267,7 +267,7 @@ async def main() -> None:
     )
     parser.add_argument(
         "--pilot-cvmfs-image-tag",
-        default="",
+        required=True,
         help="The tag (version) of the pilot example image that the workers will use. Ex: 0.1.11",
     )
     parser.add_argument(
