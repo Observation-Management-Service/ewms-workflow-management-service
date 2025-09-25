@@ -55,7 +55,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version:
             ${{ matrix.py3 }}
@@ -75,7 +75,7 @@ jobs:
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
           fetch-depth: 0  # setuptools-scm needs to access git tags
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.py3 }}
       - uses: WIPACrepo/wipac-dev-mypy-action@v2.0
@@ -114,7 +114,7 @@ jobs:
           file: Dockerfile
           tags: wms:py-dep-this
           load: true
-      - uses: WIPACrepo/wipac-dev-py-dependencies-action@v3.1
+      - uses: WIPACrepo/wipac-dev-py-dependencies-action@v3.2
 
 
   #############################################################################
@@ -224,7 +224,7 @@ jobs:
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
           fetch-depth: 0  # setuptools-scm needs to access git tags
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.py3 }}
       - uses: docker/build-push-action@v6
@@ -287,7 +287,7 @@ jobs:
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
           fetch-depth: 0  # setuptools-scm needs to access git tags
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.py3 }}
       - name: "pip install .[tests]"
@@ -320,7 +320,7 @@ jobs:
       integration-test-full-wms-workflow,
       unit-tests
     ]
-    uses: WIPACrepo/wipac-dev-workflows/.github/workflows/tag-and-release.yml@v1.11
+    uses: WIPACrepo/wipac-dev-workflows/.github/workflows/tag-and-release.yml@v1.14
     permissions: # for GITHUB_TOKEN
       contents: write
     with:
