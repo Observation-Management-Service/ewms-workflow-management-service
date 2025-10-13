@@ -55,7 +55,7 @@ Every [workflow](#workflow)) originates from a JSON object using [POST @ /v1/wor
     "tasks": [
         {
             "cluster_locations": [
-                "sub-2"
+                "osg"
             ],
             "input_queue_aliases": [
                 "input-queue"
