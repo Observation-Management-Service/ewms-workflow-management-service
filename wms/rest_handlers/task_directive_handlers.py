@@ -57,6 +57,7 @@ def _make_taskforce_object(
         "workflow_id": workflow_id,
         "timestamp": time.time(),
         "priority": priority,
+        "collector": None,  # DEPRECATED: now always None/null
         "schedd": schedd,
         #
         # TODO: make optional/smart
