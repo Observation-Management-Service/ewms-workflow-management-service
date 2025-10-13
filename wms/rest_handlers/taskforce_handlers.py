@@ -358,7 +358,6 @@ class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
                 [
                     {
                         "$match": {
-                            "collector": self.get_argument("collector"),
                             "schedd": self.get_argument("schedd"),
                             "phase": TaskforcePhase.PENDING_STOPPER,
                             "cluster_id": {"$ne": None},
