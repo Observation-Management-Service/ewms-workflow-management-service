@@ -87,6 +87,7 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
         TASKFORCES_COLL_NAME,
         [("collector", ASCENDING), ("schedd", ASCENDING)],
     )
+    await make_index(TASKFORCES_COLL_NAME, "schedd")
 
     LOGGER.info("Ensured indexes (may continue in background).")
 

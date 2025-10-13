@@ -113,8 +113,7 @@ _ALIAS_CLUSTERS: dict[str, str] = {
 # known cluster locations
 _KNOWN_CLUSTERS: dict[str, dict[str, str]] = {
     "osg": {
-        "collector": "glidein-cm.icecube.wisc.edu",
-        "schedd": "sub-2.icecube.wisc.edu",
+        "schedd": "grid-submitter.icecube.wisc.edu",
     },
     # DEPRECATED: 2025-10
     # "sub-2": {
@@ -126,11 +125,9 @@ if ENV.CI:  # just for testing -- can remove when we have 2+ clusters
     _KNOWN_CLUSTERS.update(
         {
             "test-alpha": {
-                "collector": "COLLECTOR1",
                 "schedd": "SCHEDD1",
             },
             "test-beta": {
-                "collector": "COLLECTOR2",
                 "schedd": "SCHEDD2",
             },
         }
@@ -141,22 +138,13 @@ class UnknownClusterLocationException(Exception):
     """Raised when an unknown cluster location is specified."""
 
 
-def _get_cluster_entry(cluster: str) -> dict[str, str]:
-    cluster = _ALIAS_CLUSTERS.get(cluster, cluster)  # if we have an alias, use it
-    try:
-        return _KNOWN_CLUSTERS[cluster]
-    except KeyError:
-        raise UnknownClusterLocationException(cluster)
-
-
-def get_cluster_collector(cluster: str) -> str:
-    """Get the collector for the cluster."""
-    return _get_cluster_entry(cluster)["collector"]
-
-
 def get_cluster_schedd(cluster: str) -> str:
     """Get the schedd for the cluster."""
-    return _get_cluster_entry(cluster)["schedd"]
+    cluster = _ALIAS_CLUSTERS.get(cluster, cluster)  # if we have an alias, use it
+    try:
+        return _KNOWN_CLUSTERS[cluster]["schedd"]
+    except KeyError:
+        raise UnknownClusterLocationException(cluster)
 
 
 # --------------------------------------------------------------------------------------

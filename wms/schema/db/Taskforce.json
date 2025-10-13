@@ -24,7 +24,8 @@
         },
         "collector": {
             "type": "string",
-            "description": "The address of the HTCondor collector."
+            "description": "DEPRECATED: The address of the HTCondor collector -- no longer used/needed.",
+            "deprecated": true
         },
         "schedd": {
             "type": "string",

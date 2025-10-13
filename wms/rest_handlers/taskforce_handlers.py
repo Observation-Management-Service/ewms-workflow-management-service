@@ -195,7 +195,6 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
                 [
                     {
                         "$match": {
-                            "collector": self.get_argument("collector"),
                             "schedd": self.get_argument("schedd"),
                             "phase": TaskforcePhase.PENDING_STARTER,
                         }

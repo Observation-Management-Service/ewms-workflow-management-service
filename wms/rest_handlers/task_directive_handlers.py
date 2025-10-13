@@ -36,9 +36,8 @@ def _make_taskforce_object(
 ) -> dict:
     """Make a taskforce object from user-supplied data."""
 
-    # settle cluster location
+    # cluster location -> schedd name
     try:
-        collector = config.get_cluster_collector(cluster_location)
         schedd = config.get_cluster_schedd(cluster_location)
     except UnknownClusterLocationException as e:
         if raise_400_on_unknown_cluster_location_exception:
@@ -58,7 +57,6 @@ def _make_taskforce_object(
         "workflow_id": workflow_id,
         "timestamp": time.time(),
         "priority": priority,
-        "collector": collector,
         "schedd": schedd,
         #
         # TODO: make optional/smart
