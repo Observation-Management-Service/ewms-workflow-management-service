@@ -364,7 +364,7 @@ This endpoint does not need any parameter.
 
 <a name="GET /v1/tms/pending-starter/taskforces"></a>
 # **GET /v1/tms/pending-starter/taskforces**
-> _v1_tms_pending_starter_taskforces_get_200_response GET /v1/tms/pending-starter/taskforces(collector, schedd)
+> _v1_tms_pending_starter_taskforces_get_200_response GET /v1/tms/pending-starter/taskforces(schedd, collector)
 
 
 
@@ -374,8 +374,8 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **collector** | **String**| name of the condor collector | [default to null] |
 | **schedd** | **String**| name of the condor schedd | [default to null] |
+| **collector** | **String**| DEPRECATED: name of the condor collector -- no longer used/needed | [optional] [default to null] |
 
 ### Return type
 
@@ -391,7 +391,7 @@ This endpoint does not need any parameter.
 
 <a name="GET /v1/tms/pending-stopper/taskforces"></a>
 # **GET /v1/tms/pending-stopper/taskforces**
-> _v1_tms_pending_stopper_taskforces_get_200_response GET /v1/tms/pending-stopper/taskforces(collector, schedd)
+> _v1_tms_pending_stopper_taskforces_get_200_response GET /v1/tms/pending-stopper/taskforces(schedd, collector)
 
 
 
@@ -401,8 +401,8 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **collector** | **String**| name of the condor collector | [default to null] |
 | **schedd** | **String**| name of the condor schedd | [default to null] |
+| **collector** | **String**| DEPRECATED: name of the condor collector -- no longer used/needed | [optional] [default to null] |
 
 ### Return type
 
