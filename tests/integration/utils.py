@@ -14,11 +14,9 @@ _URL_V_PREFIX = "v1"
 
 CONDOR_LOCATIONS_LOOKUP = {
     "test-alpha": {
-        "collector": "COLLECTOR1",
         "schedd": "SCHEDD1",
     },
     "test-beta": {
-        "collector": "COLLECTOR2",
         "schedd": "SCHEDD2",
     },
 }
@@ -29,7 +27,6 @@ class StateForTMS:
     """Complicated tests are bad, but strange dicts are worse."""
 
     shortname: str
-    collector: str
     schedd: str
     n_taskforces: int
     job_event_log_fpath: str = ""
@@ -113,7 +110,7 @@ async def check_nothing_to_start(
             openapi_spec,
             "GET",
             f"/{_URL_V_PREFIX}/tms/pending-starter/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
+            {"schedd": loc["schedd"]},
         )
 
 
@@ -129,5 +126,5 @@ async def check_nothing_to_stop(
             openapi_spec,
             "GET",
             f"/{_URL_V_PREFIX}/tms/pending-stopper/taskforces",
-            {"collector": loc["collector"], "schedd": loc["schedd"]},
+            {"schedd": loc["schedd"]},
         )
