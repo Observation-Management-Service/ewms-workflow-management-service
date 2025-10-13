@@ -28,8 +28,9 @@
             "CondorCollector": {
                 "name": "collector",
                 "in": "query",
-                "required": true,
-                "description": "name of the condor collector",
+                "required": false,
+                "deprecated": true,
+                "description": "DEPRECATED: name of the condor collector -- no longer used/needed",
                 "schema": {
                     "type": "string"
                 }
@@ -196,7 +197,8 @@
                     },
                     "collector": {
                         "type": "string",
-                        "description": "The address of the HTCondor collector."
+                        "description": "DEPRECATED: The address of the HTCondor collector -- no longer used/needed.",
+                        "deprecated": true
                     },
                     "schedd": {
                         "type": "string",
