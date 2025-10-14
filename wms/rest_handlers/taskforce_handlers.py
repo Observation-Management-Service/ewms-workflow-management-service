@@ -165,8 +165,14 @@ class TaskforcesFindHandler(BaseWMSHandler):
 
         Search for taskforces matching given query.
         """
+        query = self.get_argument("query")
+
+        # 'cluster' has been DEPRECATED (and was never useful) so don't use
+        query.pop("cluster", None)
+
+        # query!
         matches, next_after = await paginated_find_all(
-            self.get_argument("query"),
+            query,
             self.get_argument("after", None),
             list(self.get_argument("projection", [])),
             self.wms_db.taskforces_collection,
