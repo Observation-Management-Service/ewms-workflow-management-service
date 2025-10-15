@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
+import cachetools
 import jsonschema
 import openapi_core
 from jsonschema_path import SchemaPath
@@ -149,7 +150,10 @@ if ENV.CI:  # just for testing -- can remove when we have 2+ clusters
 
 _PILOT_IMAGE_NAME = "ewms-pilot"
 
+_get_pilot_tag_cache = cachetools.TTLCache(maxsize=128, ttl=5)  # short ttl is okay
 
+
+@cachetools.cached(_get_pilot_tag_cache)  # cache to appease rapid calls
 def get_pilot_tag(tag: str) -> str:
     """Get/validate/resolve the pilot image tag (singularity/apptainer) on CVMFS."""
     LOGGER.info(f"checking pilot tag: {tag}")

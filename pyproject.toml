@@ -6,6 +6,7 @@
 
 [project]
 dependencies = [
+    'cachetools',
     'jsonschema',
     'motor',
     'openapi-core',
