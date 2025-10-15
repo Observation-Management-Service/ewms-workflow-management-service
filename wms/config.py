@@ -3,19 +3,20 @@
 import dataclasses as dc
 import json
 import logging
-import re
 from pathlib import Path
 from typing import Any
 
-import aiocache  # type: ignore[import-untyped]
 import jsonschema
 import openapi_core
 from jsonschema_path import SchemaPath
 from openapi_spec_validator import validate
 from openapi_spec_validator.readers import read_from_filename
-from rest_tools.client import RestClient
 from tornado import web
 from wipac_dev_tools import from_environment_as_dataclass, logging_tools
+from wipac_dev_tools.container_registry_tools import (
+    CVMFSRegistryTools,
+    ImageNotFoundException,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -65,6 +66,21 @@ class EnvConfig:
     TASKFORCE_LAUNCH_CONTROL_DELAY: int = 1
 
     TMS_ACTION_RETRIES: int = 2  # 2 retries -> 3 total attempts
+
+    CVMFS_PILOT_SINGULARITY_IMAGES_DIR: Path = Path(
+        "/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/"
+    )
+
+    def __post_init__(self):
+        # check that cvmfs images dir is available and non-empty
+        if not self.CVMFS_PILOT_SINGULARITY_IMAGES_DIR.exists():
+            raise FileNotFoundError(self.CVMFS_PILOT_SINGULARITY_IMAGES_DIR)
+        elif not self.CVMFS_PILOT_SINGULARITY_IMAGES_DIR.is_dir():
+            raise NotADirectoryError(self.CVMFS_PILOT_SINGULARITY_IMAGES_DIR)
+        elif not list(self.CVMFS_PILOT_SINGULARITY_IMAGES_DIR.iterdir()):
+            raise RuntimeError(
+                f"cvmfs images directory is empty: {self.CVMFS_PILOT_SINGULARITY_IMAGES_DIR}"
+            )
 
 
 ENV = from_environment_as_dataclass(EnvConfig)
@@ -130,65 +146,34 @@ if ENV.CI:  # just for testing -- can remove when we have 2+ clusters
 
 # --------------------------------------------------------------------------------------
 
-GH_API_PILOT_URL = (
-    "https://api.github.com/repos/Observation-Management-Service/ewms-pilot"
-)
 
-# these are from Taskforce.json
-_PILOT_VERSION_PATTERN = re.compile(r"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$")
-_PILOT_BRANCH_FEATURE_PATTERN = re.compile(r"^[a-z0-9._-]+-[a-z0-9]{1,128}$")
+_PILOT_IMAGE_NAME = "ewms-pilot"
 
 
-@aiocache.cached(ttl=1 * 60)  # don't cache too long, but avoid spamming
-async def get_pilot_tag(tag: str) -> str:
-    """Get/validate the tag of the pilot image."""
-    rc = RestClient(GH_API_PILOT_URL)
+def get_pilot_tag(tag: str) -> str:
+    """Get/validate/resolve the pilot image tag (singularity/apptainer) on CVMFS."""
+    LOGGER.info(f"checking pilot tag: {tag}")
 
-    if tag == "latest":  # convert to immutable version tag
-        LOGGER.info(f"Retrieving pilot image info ({tag})...")
-        try:
-            resp = await rc.request("GET", "/releases/latest")
-            tag = resp["tag_name"].lstrip("v")
-            LOGGER.info(f"latest pilot tag is {tag}")
-            return tag
-        except Exception as e:
-            LOGGER.exception(e)
-
-    elif _PILOT_VERSION_PATTERN.match(tag):  # confirm it exists by name
-        LOGGER.info(f"Retrieving pilot image info ({tag})...")
-        try:
-            resp = await rc.request("GET", "/releases")  # -> list
-            if f"v{tag}" in (a["tag_name"] for a in resp):
-                # in releases, the tags have a preceding "v"
-                LOGGER.debug(f"found pilot image tag {tag}")
-                return tag
-        except Exception as e:
-            LOGGER.exception(e)
-
-    elif _PILOT_BRANCH_FEATURE_PATTERN.match(tag):  # confirm it exists by sha
-        # NOW, we're going to assume that the image tag is a "branch tag",
-        #    so, grab the commit sha from it and see if that exists.
-        #    Ex: apptainer-debug-68594b0 -> 68594b0
-        commit_sha = tag.split("-")[-1]
-        LOGGER.info(f"Retrieving pilot image info ({tag})...")
-        try:
-            await rc.request("GET", f"/commits/{commit_sha}")
-            LOGGER.debug(f"found pilot image tag (feature branch) {tag}")
-            return tag
-        except Exception as e:
-            LOGGER.exception(e)
-
-    # fall through
-    msg = (
-        "Pilot image tag not found. "
-        "It is possible that the image has not finished uploading to its registry. "
-        "If this error persists, contact an EWMS admin."
+    cvmfs = CVMFSRegistryTools(
+        ENV.CVMFS_PILOT_SINGULARITY_IMAGES_DIR, _PILOT_IMAGE_NAME
     )
-    raise web.HTTPError(
-        status_code=400,
-        log_message=msg,
-        reason=msg,  # to client
-    )
+
+    try:
+        tag = cvmfs.resolve_tag(tag)
+    except ImageNotFoundException:
+        msg = (
+            "Pilot image tag not found. "
+            "It is possible that the image has not finished uploading to its registry. "
+            "If this error persists, contact an EWMS admin."
+        )
+        raise web.HTTPError(
+            status_code=400,
+            log_message=msg,
+            reason=msg,  # to client
+        )
+
+    LOGGER.info(f"resolved pilot tag: {tag}")
+    return tag
 
 
 # --------------------------------------------------------------------------------------

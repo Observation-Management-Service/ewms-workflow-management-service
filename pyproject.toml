@@ -6,7 +6,6 @@
 
 [project]
 dependencies = [
-    'aiocache',
     'jsonschema',
     'motor',
     'openapi-core',
