@@ -35,10 +35,6 @@
  - [FindObject](./Models/FindObject.md)
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
- - [TaskforceObject_cluster_id](./Models/TaskforceObject_cluster_id.md)
- - [TaskforceObject_n_workers](./Models/TaskforceObject_n_workers.md)
- - [TaskforceObject_phase_change_log](./Models/TaskforceObject_phase_change_log.md)
- - [TaskforceObject_phase_change_log_source_event_time](./Models/TaskforceObject_phase_change_log_source_event_time.md)
  - [TaskforceObject_pilot_config](./Models/TaskforceObject_pilot_config.md)
  - [TaskforceObject_pilot_config_environment_value](./Models/TaskforceObject_pilot_config_environment_value.md)
  - [TaskforceObject_submit_dict_value](./Models/TaskforceObject_submit_dict_value.md)
@@ -68,10 +64,7 @@
  - [_v1_workflows_post_request](./Models/_v1_workflows_post_request.md)
  - [_v1_workflows_post_request_tasks_inner](./Models/_v1_workflows_post_request_tasks_inner.md)
  - [pilot_config](./Models/pilot_config.md)
- - [pilot_config_environment_value](./Models/pilot_config_environment_value.md)
  - [worker_config](./Models/worker_config.md)
- - [worker_config_worker_disk](./Models/worker_config_worker_disk.md)
- - [worker_config_worker_memory](./Models/worker_config_worker_memory.md)
 
 
 <a name="documentation-for-authorization"></a>
