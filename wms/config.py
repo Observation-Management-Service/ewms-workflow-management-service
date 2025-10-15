@@ -150,10 +150,10 @@ if ENV.CI:  # just for testing -- can remove when we have 2+ clusters
 
 _PILOT_IMAGE_NAME = "ewms-pilot"
 
-_cvmfs_cache = cachetools.TTLCache(maxsize=128, ttl=5)  # see below
+_CVMFS_CACHE: cachetools.TTLCache = cachetools.TTLCache(maxsize=128, ttl=5)  # see below
 
 
-@cachetools.cached(_cvmfs_cache)  # very short ttl just to stop stampedes & for-loops
+@cachetools.cached(_CVMFS_CACHE)  # very short ttl just to stop stampedes & for-loops
 def get_pilot_tag(tag: str) -> str:
     """Get/validate/resolve the pilot image tag (singularity/apptainer) on CVMFS."""
     LOGGER.info(f"checking pilot tag: {tag}")
