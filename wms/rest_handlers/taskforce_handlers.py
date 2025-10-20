@@ -167,9 +167,6 @@ class TaskforcesFindHandler(BaseWMSHandler):
         """
         query = self.get_argument("query")
 
-        # 'cluster' has been DEPRECATED (and was never useful) so don't use
-        query.pop("cluster", None)
-
         # query!
         matches, next_after = await paginated_find_all(
             query,
