@@ -90,6 +90,7 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
         [
             ("schedd", ASCENDING),
             ("job_event_log_fpath", ASCENDING),
+            ("timestamp", ASCENDING),
         ],
     )
     # -- speed up TMS's request queries for '.../query/taskforces' -- completed tfs
