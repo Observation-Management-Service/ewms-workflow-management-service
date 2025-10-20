@@ -83,11 +83,24 @@ async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ign
     await make_index(TASKFORCES_COLL_NAME, "timestamp")
     await make_index(TASKFORCES_COLL_NAME, "priority")
     await make_index(TASKFORCES_COLL_NAME, "job_event_log_fpath")
+    await make_index(TASKFORCES_COLL_NAME, "schedd")
+    # -- speed up TMS's request queries for '.../query/taskforces' -- new tfs
     await make_index(
         TASKFORCES_COLL_NAME,
-        [("collector", ASCENDING), ("schedd", ASCENDING)],
+        [
+            ("schedd", ASCENDING),
+            ("job_event_log_fpath", ASCENDING),
+        ],
     )
-    await make_index(TASKFORCES_COLL_NAME, "schedd")
+    # -- speed up TMS's request queries for '.../query/taskforces' -- completed tfs
+    await make_index(
+        TASKFORCES_COLL_NAME,
+        [
+            ("schedd", ASCENDING),
+            ("job_event_log_fpath", ASCENDING),
+            ("phase", ASCENDING),
+        ],
+    )
 
     LOGGER.info("Ensured indexes (may continue in background).")
 
