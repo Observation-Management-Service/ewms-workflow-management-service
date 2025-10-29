@@ -8,12 +8,12 @@
 | **workflow\_id** | **String** | The identifier of the overarching workflow object (N*M taskforces : M task directives : 1 workflow). | [optional] [default to null] |
 | **timestamp** | **BigDecimal** | The epoch time when this taskforce was created. | [optional] [default to null] |
 | **priority** | **Integer** | The priority level relative to other taskforces (usually, this value is inherited from the parent workflow object). | [optional] [default to null] |
-| **collector** | **String** | The address of the HTCondor collector. | [optional] [default to null] |
+| **collector** | **String** | DEPRECATED: The address of the HTCondor collector -- no longer used/needed. | [optional] [default to null] |
 | **schedd** | **String** | The address of the HTCondor schedd. | [optional] [default to null] |
-| **n\_workers** | [**TaskforceObject_n_workers**](TaskforceObject_n_workers.md) |  | [optional] [default to null] |
+| **n\_workers** | **Integer** | The number of workers in this taskforce&#39;s HTCondor cluster (immutable). | [optional] [default to null] |
 | **pilot\_config** | [**TaskforceObject_pilot_config**](TaskforceObject_pilot_config.md) |  | [optional] [default to null] |
 | **worker\_config** | [**TaskforceObject_worker_config**](TaskforceObject_worker_config.md) |  | [optional] [default to null] |
-| **cluster\_id** | [**TaskforceObject_cluster_id**](TaskforceObject_cluster_id.md) |  | [optional] [default to null] |
+| **cluster\_id** | **Integer** | The identifier for the associated HTCondor cluster. | [optional] [default to null] |
 | **submit\_dict** | [**Map**](TaskforceObject_submit_dict_value.md) | The actual HTCondor submit class ad. | [optional] [default to null] |
 | **job\_event\_log\_fpath** | **String** | The file path on the HTCondor AP containing job event logs. | [optional] [default to null] |
 | **phase** | **String** | The current phase of the taskforce within the workflow&#39;s lifetime. Not all taskforces will enter every phase. | [optional] [default to null] |

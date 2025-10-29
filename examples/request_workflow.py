@@ -109,7 +109,7 @@ async def request_workflow(
         "public_queue_aliases": ["input-queue", "output-queue"],
         "tasks": [
             {
-                "cluster_locations": ["sub-2"],
+                "cluster_locations": ["osg"],
                 "input_queue_aliases": ["input-queue"],
                 "output_queue_aliases": ["output-queue"],
                 "task_image": "/cvmfs/icecube.opensciencegrid.org/containers/ewms/observation-management-service/ewms-task-management-service:0.1.44",

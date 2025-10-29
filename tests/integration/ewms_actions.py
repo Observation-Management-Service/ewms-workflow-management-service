@@ -78,7 +78,6 @@ async def user_requests_new_workflow(
     tms_states = [
         StateForTMS(
             short_name,
-            CONDOR_LOCATIONS_LOOKUP[short_name]["collector"],
             CONDOR_LOCATIONS_LOOKUP[short_name]["schedd"],
             1,
         )
@@ -131,9 +130,13 @@ async def user_requests_new_workflow(
     #
     # taskforce checks
     assert len(workflow_resp["taskforces"]) == sum(s.n_taskforces for s in tms_states)
-    assert sorted(  # check locations were translated correctly to collector+schedd
-        (tf["collector"], tf["schedd"]) for tf in workflow_resp["taskforces"]
-    ) == sorted((tmss.collector, tmss.schedd) for tmss in tms_states)
+    # -- check locations were translated correctly to schedd
+    assert sorted(tf["schedd"] for tf in workflow_resp["taskforces"]) == sorted(
+        tmss.schedd for tmss in tms_states
+    )
+    # -- check all collectors are None
+    assert all(tf["collector"] is None for tf in workflow_resp["taskforces"])
+    # -- other fields
     for tf in workflow_resp["taskforces"]:
         assert tf["phase"] == "pre-mq-activation"
         assert tf["phase_change_log"][-1]["target_phase"] == "pre-mq-activation"
@@ -219,7 +222,7 @@ async def tms_starter(
                 openapi_spec,
                 "GET",
                 f"/{_URL_V_PREFIX}/tms/pending-starter/taskforces",
-                {"collector": tmss.collector, "schedd": tmss.schedd},
+                {"schedd": tmss.schedd},
             )
             assert resp["taskforce"]
             assert resp["task_directive"]
@@ -271,7 +274,6 @@ async def tms_watcher_sends_status_update(
             f"/{_URL_V_PREFIX}/query/taskforces",
             {
                 "query": {
-                    "collector": tmss.collector,
                     "schedd": tmss.schedd,
                     "job_event_log_fpath": tmss.job_event_log_fpath,
                 },
@@ -317,7 +319,6 @@ async def tms_watcher_sends_status_update(
                 "taskforce_uuid",
                 "compound_statuses",
                 "top_task_errors",
-                "collector",
                 "schedd",
             ],
         },
@@ -325,7 +326,7 @@ async def tms_watcher_sends_status_update(
     assert len(resp["taskforces"]) == sum(s.n_taskforces for s in tms_states)
     for tf in resp["taskforces"]:
         for tmss in tms_states:
-            if tmss.collector == tf["collector"] and tmss.schedd == tf["schedd"]:
+            if tmss.schedd == tf["schedd"]:
                 break
         else:
             assert 0  # -> did not find it
@@ -419,7 +420,7 @@ async def tms_stopper(
                 openapi_spec,
                 "GET",
                 f"/{_URL_V_PREFIX}/tms/pending-stopper/taskforces",
-                {"collector": tmss.collector, "schedd": tmss.schedd},
+                {"schedd": tmss.schedd},
             )
             assert taskforce
             # confirm it has stopped
@@ -462,7 +463,6 @@ async def tms_condor_clusters_done(
             f"/{_URL_V_PREFIX}/query/taskforces",
             {
                 "query": {
-                    "collector": tmss.collector,
                     "schedd": tmss.schedd,
                     "job_event_log_fpath": tmss.job_event_log_fpath,
                 },
@@ -544,7 +544,6 @@ async def add_more_workers(
         {
             "query": {
                 "task_id": task_id,
-                "collector": CONDOR_LOCATIONS_LOOKUP[cluster_location]["collector"],
                 "schedd": CONDOR_LOCATIONS_LOOKUP[cluster_location]["schedd"],
             },
         },
@@ -609,7 +608,6 @@ async def add_more_workers(
         {
             "query": {
                 "task_id": task_id,
-                "collector": CONDOR_LOCATIONS_LOOKUP[cluster_location]["collector"],
                 "schedd": CONDOR_LOCATIONS_LOOKUP[cluster_location]["schedd"],
             },
         },

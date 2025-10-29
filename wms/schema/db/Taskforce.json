@@ -23,8 +23,16 @@
             "description": "The priority level relative to other taskforces (usually, this value is inherited from the parent workflow object)."
         },
         "collector": {
-            "type": "string",
-            "description": "The address of the HTCondor collector."
+            "anyOf": [
+                {
+                    "type": "string",
+                    "description": "DEPRECATED: The address of the HTCondor collector -- no longer used/needed.",
+                    "deprecated": true
+                },
+                {
+                    "type": "null"
+                }
+            ]
         },
         "schedd": {
             "type": "string",

@@ -9,7 +9,7 @@ from tornado import web
 from . import auth
 from .base_handlers import BaseWMSHandler
 from .. import config
-from ..config import MAX_WORKFLOW_PRIORITY
+from ..config import MAX_WORKFLOW_PRIORITY, UnknownClusterLocationException
 from ..database.client import DocumentNotFoundException
 from ..database.utils import paginated_find_all
 from ..schema.enums import TaskforcePhase
@@ -31,8 +31,24 @@ def _make_taskforce_object(
     #
     source_entity: str,
     creation_reason: str,
+    #
+    raise_400_on_unknown_cluster_location_exception: bool,
 ) -> dict:
     """Make a taskforce object from user-supplied data."""
+
+    # cluster location -> schedd name
+    try:
+        schedd = config.get_cluster_schedd(cluster_location)
+    except UnknownClusterLocationException as e:
+        if raise_400_on_unknown_cluster_location_exception:
+            raise web.HTTPError(
+                status_code=400,
+                reason=f"condor cluster location not found: {cluster_location}",  # to client
+            )
+        else:
+            raise e
+
+    # taskforce assemble!
     return {
         # IMMUTABLE
         #
@@ -41,8 +57,8 @@ def _make_taskforce_object(
         "workflow_id": workflow_id,
         "timestamp": time.time(),
         "priority": priority,
-        "collector": config.KNOWN_CLUSTERS[cluster_location]["collector"],
-        "schedd": config.KNOWN_CLUSTERS[cluster_location]["schedd"],
+        "collector": None,  # DEPRECATED: now always None/null
+        "schedd": schedd,
         #
         # TODO: make optional/smart
         "n_workers": n_workers,
@@ -130,28 +146,21 @@ async def make_task_directive_object_and_taskforce_objects(
         # none!
     }
 
-    # first, check that locations are legit
-    for location in cluster_locations:
-        if location not in config.KNOWN_CLUSTERS:
-            raise web.HTTPError(
-                status_code=400,
-                reason=f"condor location not found: {location}",  # to client
-            )
-
     # now, create Taskforce entries (important to do now so removals are handled easily--think dangling pointers)
     taskforces = []
-    for location in cluster_locations:
+    for cluster in cluster_locations:
         taskforces.append(
             _make_taskforce_object(
                 task_directive["workflow_id"],  # type: ignore  # could also use 'workflow_id' var
                 priority,
                 task_directive["task_id"],  # type: ignore
-                location,
+                cluster,
                 pilot_config,
                 worker_config,
                 n_workers,
                 "USER",
                 "Created during initial workflow request.",
+                raise_400_on_unknown_cluster_location_exception=True,
             )
         )
 
@@ -268,6 +277,8 @@ class TaskDirectiveIDActionsAddWorkersHandler(BaseWMSHandler):
                     #
                     auth.AuthAccounts(self.auth_roles[0]).name,  # type: ignore
                     "Created when adding more workers for this task directive.",
+                    #
+                    raise_400_on_unknown_cluster_location_exception=True,
                 )
                 taskforce = await self.wms_db.taskforces_collection.insert_one(
                     taskforce,
