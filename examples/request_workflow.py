@@ -385,3 +385,4 @@ if __name__ == "__main__":
         specialty_loggers={"mqclient": "INFO"},
     )
     asyncio.run(main())
+    logging.info("Done.")
