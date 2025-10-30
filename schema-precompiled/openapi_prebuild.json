@@ -28,8 +28,9 @@
             "CondorCollector": {
                 "name": "collector",
                 "in": "query",
-                "required": true,
-                "description": "name of the condor collector",
+                "required": false,
+                "deprecated": true,
+                "description": "DEPRECATED: name of the condor collector -- no longer used/needed",
                 "schema": {
                     "type": "string"
                 }

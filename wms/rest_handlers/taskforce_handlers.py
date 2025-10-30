@@ -165,8 +165,11 @@ class TaskforcesFindHandler(BaseWMSHandler):
 
         Search for taskforces matching given query.
         """
+        query = self.get_argument("query")
+
+        # query!
         matches, next_after = await paginated_find_all(
-            self.get_argument("query"),
+            query,
             self.get_argument("after", None),
             list(self.get_argument("projection", [])),
             self.wms_db.taskforces_collection,
@@ -195,7 +198,6 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
                 [
                     {
                         "$match": {
-                            "collector": self.get_argument("collector"),
                             "schedd": self.get_argument("schedd"),
                             "phase": TaskforcePhase.PENDING_STARTER,
                         }
@@ -359,7 +361,6 @@ class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
                 [
                     {
                         "$match": {
-                            "collector": self.get_argument("collector"),
                             "schedd": self.get_argument("schedd"),
                             "phase": TaskforcePhase.PENDING_STOPPER,
                             "cluster_id": {"$ne": None},
