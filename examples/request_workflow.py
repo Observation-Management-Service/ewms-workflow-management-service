@@ -366,6 +366,7 @@ async def main() -> None:
         f"/v1/workflows/{workflow_id}/actions/finished",
     )
     await asyncio.sleep(60)
+    logging.info("Success!")
 
 
 if __name__ == "__main__":
