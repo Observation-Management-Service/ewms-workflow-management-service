@@ -27,7 +27,7 @@ env:
   WORKFLOW_MQ_ACTIVATOR_DELAY: 2  # need to define for pytests
   WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT: 10  # ''
   TASKFORCE_LAUNCH_CONTROL_DELAY: 2  # ''
-
+  CVMFS_PILOT_SINGULARITY_IMAGES_DIR: "./test-cvmfs/"
 
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
       - id: versions
-        uses: WIPACrepo/wipac-dev-py-versions-action@v2.7
+        uses: WIPACrepo/wipac-dev-py-versions-action@v2.8
 
 
   #############################################################################
@@ -97,7 +97,7 @@ jobs:
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
-      - uses: WIPACrepo/wipac-dev-py-setup-action@v5.7
+      - uses: WIPACrepo/wipac-dev-py-setup-action@v5.8
         with:
           mode: PACKAGING
           python_min: 3.12
@@ -119,7 +119,7 @@ jobs:
           file: Dockerfile
           tags: wms:py-dep-this
           load: true
-      - uses: WIPACrepo/wipac-dev-py-dependencies-action@v3.2
+      - uses: WIPACrepo/wipac-dev-py-dependencies-action@v3.4
 
 
   #############################################################################
@@ -236,20 +236,36 @@ jobs:
         with:
           context: .
           cache-from: type=gha
-          # cache-to: type=gha,mode=min
           file: Dockerfile
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
           load: true
+
+      - name: setup mock CVMFS directory
+        run: |
+          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          mkdir -p "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"
+          # seed some baseline tags
+          touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:0.1.0
+          touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:0.2.0
+          ls -l "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"
+
       - name: "pip install .[tests]"
         run: |
           set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
           pip install .[tests]
+
       - name: test (run servers in background)
         run: |
           set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
           python tests/integration/dummy_mqs.py &> ./dummy_mqs.out &
-          
-          # this needs to be in the same step b/c shell exits when step is done
+
+          # compute latest pilot tag and mirror it into mock CVMFS
+          TEST_PILOT_IMAGE_LATEST_TAG=$( python -c 'import requests; print(requests.get("https://api.github.com/repos/Observation-Management-Service/ewms-pilot/releases/latest").json()["tag_name"].lstrip("v"))' )
+          export TEST_PILOT_IMAGE_LATEST_TAG
+          echo "latest pilot tag: ${TEST_PILOT_IMAGE_LATEST_TAG}"
+          touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:"${TEST_PILOT_IMAGE_LATEST_TAG}"
+
+          # start REST in container with CVMFS dir wired in
           docker run --network='host' --rm --name rest \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
@@ -261,11 +277,13 @@ jobs:
             --env TASKFORCE_LAUNCH_CONTROL_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_DELAY }}" \
             --env WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT="${{ env.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT }}" \
             --env WORKFLOW_MQ_ACTIVATOR_DELAY="${{ env.WORKFLOW_MQ_ACTIVATOR_DELAY }}" \
+            --env CVMFS_PILOT_SINGULARITY_IMAGES_DIR="$( realpath "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR" )" \
             --env CI="true" \
+            --mount type=bind,source="$( realpath "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR" )",target="$( realpath "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR" )",readonly \
             ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
-          
+
           sleep 10
-          export TEST_PILOT_IMAGE_LATEST_TAG=$( python -c 'import requests; print(requests.get("https://api.github.com/repos/Observation-Management-Service/ewms-pilot/releases/latest").json()["tag_name"].lstrip("v"))' )
+          # pytest picks up TEST_PILOT_IMAGE_LATEST_TAG from env if needed
           pytest -vvv --exitfirst --reverse tests/integration/test_tms_workflow.py
       #
       - if: always()
@@ -295,6 +313,14 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.py3 }}
+      - name: setup mock CVMFS directory
+        run: |
+          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          mkdir -p "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"
+          # seed a few tags so resolve_tag() has options
+          touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:0.1.0
+          touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:0.2.0
+          ls -l "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"
       - name: "pip install .[tests]"
         run: |
           set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
