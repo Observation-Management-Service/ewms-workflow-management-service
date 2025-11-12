@@ -21,6 +21,8 @@ from rest_tools.client import RestClient, SavedDeviceGrantAuth
 
 LOGGER = logging.getLogger(__name__)
 
+sdict = dict[str, Any]
+
 _MQS_URL_V_PREFIX = "v1"
 
 BUNCH_OF_WORDS = set(
@@ -179,60 +181,80 @@ async def read_queue(queue: Queue, output_events: list[str]) -> None:
             if sorted(got) == sorted(output_events):
                 LOGGER.info("Done reading queue -- received all output events")
                 return
+            elif not_yet := [x for x in output_events if x not in got]:
+                LOGGER.info(
+                    f"Not yet received {len(not_yet)} output events: "
+                    f"{(not_yet[:50] + ["..."] if len(not_yet) > 50 else not_yet)}"
+                )
+                continue
 
     raise RuntimeError("Did not receive all output events -- consumer timeout")
+
+
+async def query_all(
+    rc: RestClient,
+    workflow_id: str,
+    minimal_tfs: bool = False,
+) -> tuple[sdict, list[sdict], list[sdict]]:
+    """Query for the objects: workflow, task_directives, and taskforces."""
+    workflow = await rc.request(
+        "GET",
+        f"/v1/workflows/{workflow_id}",
+    )
+    task_directives = (
+        await rc.request(
+            "POST",
+            "/v1/query/task-directives",
+            {"query": {"workflow_id": workflow_id}},
+        )
+    )["task_directives"]
+
+    if not minimal_tfs:
+        taskforces = (
+            await rc.request(
+                "POST",
+                "/v1/query/taskforces",
+                {"query": {"workflow_id": workflow_id}},
+            )
+        )["taskforces"]
+    else:
+        taskforces = (
+            await rc.request(
+                "POST",
+                "/v1/query/taskforces",
+                {
+                    "query": {"workflow_id": workflow_id},
+                    "projection": [
+                        "phase",
+                        "phase_change_log",
+                        "compound_statuses",
+                        "top_task_errors",
+                        "taskforce_uuid",
+                        "task_id",
+                    ],
+                },
+            )
+        )["taskforces"]
+
+    return workflow, task_directives, taskforces
 
 
 async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
     """Routinely query WMS."""
     LOGGER.info("Monitoring WMS...")
 
-    prev_workflow = {}  # type: ignore
-    prev_task_directives = []  # type: ignore
-    prev_taskforces = []  # type: ignore
+    prev_workflow: sdict = {}
+    prev_task_directives: list[sdict] = []
+    prev_taskforces: list[sdict] = []
 
     for i in itertools.count():
         if i > 0:
+            LOGGER.info("Looking again in 15 seconds...")
             await asyncio.sleep(15)
 
-        workflow = await rc.request(
-            "GET",
-            f"/v1/workflows/{workflow_id}",
+        workflow, task_directives, taskforces = await query_all(
+            rc, workflow_id, minimal_tfs=(i > 0)
         )
-        task_directives = (
-            await rc.request(
-                "POST",
-                "/v1/query/task-directives",
-                {"query": {"workflow_id": workflow_id}},
-            )
-        )["task_directives"]
-
-        if i == 0:
-            taskforces = (
-                await rc.request(
-                    "POST",
-                    "/v1/query/taskforces",
-                    {"query": {"workflow_id": workflow_id}},
-                )
-            )["taskforces"]
-        else:
-            taskforces = (
-                await rc.request(
-                    "POST",
-                    "/v1/query/taskforces",
-                    {
-                        "query": {"workflow_id": workflow_id},
-                        "projection": [
-                            "phase",
-                            "phase_change_log",
-                            "compound_statuses",
-                            "top_task_errors",
-                            "taskforce_uuid",
-                            "task_id",
-                        ],
-                    },
-                )
-            )["taskforces"]
 
         if (prev_workflow, prev_task_directives, prev_taskforces) == (
             workflow,
@@ -241,21 +263,26 @@ async def monitor_workflow(rc: RestClient, workflow_id: str) -> None:
         ):
             LOGGER.info("<no changes>")
             continue
+
         prev_workflow, prev_task_directives, prev_taskforces = (
             workflow,
             task_directives,
             taskforces,
         )
+        _dump_ewms_objects(workflow, task_directives, taskforces)
 
-        LOGGER.info("WORKFLOW:")
-        LOGGER.info(json.dumps(workflow, indent=4))
-        LOGGER.info("TASK DIRECTIVE(S):")
-        LOGGER.info(json.dumps(task_directives, indent=4))
-        LOGGER.info("TASKFORCES:")
-        LOGGER.info(json.dumps(taskforces, indent=4))
 
-        LOGGER.info("\n\n\n\n\n\n")
-        LOGGER.info("Looking again in 15 seconds...")
+def _dump_ewms_objects(
+    workflow: sdict, task_directives: list[sdict], taskforces: list[sdict]
+):
+    LOGGER.info("WORKFLOW:")
+    LOGGER.info(json.dumps(workflow, indent=4))
+    LOGGER.info("TASK DIRECTIVE(S):")
+    LOGGER.info(json.dumps(task_directives, indent=4))
+    LOGGER.info("TASKFORCES:")
+    LOGGER.info(json.dumps(taskforces, indent=4))
+
+    LOGGER.info("\n\n\n\n\n\n")
 
 
 async def main() -> None:
@@ -366,6 +393,9 @@ async def main() -> None:
         f"/v1/workflows/{workflow_id}/actions/finished",
     )
     await asyncio.sleep(60)
+    # dump a final time
+    logging.info("Final Dump:")
+    _dump_ewms_objects(*(await query_all(rc, workflow_id)))
     logging.info("Success!")
 
 
