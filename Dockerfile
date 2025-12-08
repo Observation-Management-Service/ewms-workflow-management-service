@@ -14,7 +14,7 @@ RUN --mount=type=cache,target=/tmp/pip-cache \
 USER root
 RUN --mount=type=bind,source=.,target=/home/app/src,rw \
     --mount=type=cache,target=/tmp/pip-cache \
-    pip install /home/app/src
+    pip install /home/app/src "git+https://github.com/WIPACrepo/wipac-dev-tools.git@pymongo-async"
 USER app
 
 ENV PYTHONPATH=/home/app
