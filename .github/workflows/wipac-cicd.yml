@@ -268,7 +268,7 @@ jobs:
           touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:"${TEST_PILOT_IMAGE_LATEST_TAG}"
 
           # start REST in container with CVMFS dir wired in
-          docker run --network='host' --rm --name rest \
+          docker run --network='host' --rm --name wms-server \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
             --env REST_HOST="${{ env.REST_HOST }}" \
@@ -282,7 +282,7 @@ jobs:
             --env CVMFS_PILOT_SINGULARITY_IMAGES_DIR="$( realpath "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR" )" \
             --env CI="true" \
             --mount type=bind,source="$( realpath "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR" )",target="$( realpath "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR" )",readonly \
-            ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
+            ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./wms-server.out &
 
           sleep 10
           # pytest picks up TEST_PILOT_IMAGE_LATEST_TAG from env if needed
@@ -294,10 +294,10 @@ jobs:
           set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
           cat ./dummy_mqs.out
       - if: always()
-        name: "docker logs rest || cat ./rest.out"
+        name: "docker logs wms-server || cat ./wms-server.out"
         run: |
           set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
-          docker logs rest || cat ./rest.out
+          docker logs wms-server || cat ./wms-server.out
 
 
   unit-tests:
