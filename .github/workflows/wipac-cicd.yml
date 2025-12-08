@@ -37,7 +37,7 @@ jobs:
     outputs:
       matrix: ${{ steps.versions.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
       - id: versions
@@ -56,7 +56,7 @@ jobs:
       matrix:
         py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
       - uses: actions/setup-python@v6
@@ -75,7 +75,7 @@ jobs:
       matrix:
         py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
           fetch-depth: 0  # setuptools-scm needs to access git tags
@@ -93,11 +93,11 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' }} # dependabot cannot access PAT
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
-      - uses: WIPACrepo/wipac-dev-py-setup-action@v5.8
+      - uses: WIPACrepo/wipac-dev-py-setup-action@v5.9
         with:
           mode: PACKAGING
           python_min: 3.12
@@ -108,7 +108,7 @@ jobs:
     needs: [ flake8 ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
           fetch-depth: 0  # setuptools-scm needs to access git tags
@@ -130,7 +130,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - if: github.actor != 'dependabot[bot]'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
           ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
@@ -163,9 +163,10 @@ jobs:
   #############################################################################
 
   schema-modifications:
+    if: ${{ github.actor != 'dependabot[bot]' }} # dependabot cannot access PAT
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
@@ -178,10 +179,11 @@ jobs:
           version: 1
 
   api-documentation:
+    if: ${{ github.actor != 'dependabot[bot]' }} # dependabot cannot access PAT
     needs: [ schema-modifications ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
           ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
@@ -197,7 +199,7 @@ jobs:
   test-build-docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
           fetch-depth: 0  # setuptools-scm needs to access git tags
@@ -225,7 +227,7 @@ jobs:
         env:
           MONGODB_REPLICA_SET_MODE: primary
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
           fetch-depth: 0  # setuptools-scm needs to access git tags
@@ -266,7 +268,7 @@ jobs:
           touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:"${TEST_PILOT_IMAGE_LATEST_TAG}"
 
           # start REST in container with CVMFS dir wired in
-          docker run --network='host' --rm --name rest \
+          docker run --network='host' --rm --name wms-server \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
             --env REST_HOST="${{ env.REST_HOST }}" \
@@ -280,7 +282,7 @@ jobs:
             --env CVMFS_PILOT_SINGULARITY_IMAGES_DIR="$( realpath "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR" )" \
             --env CI="true" \
             --mount type=bind,source="$( realpath "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR" )",target="$( realpath "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR" )",readonly \
-            ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./rest.out &
+            ${{ env.CI_DOCKER_IMAGE_W_TAG }} &> ./wms-server.out &
 
           sleep 10
           # pytest picks up TEST_PILOT_IMAGE_LATEST_TAG from env if needed
@@ -292,10 +294,10 @@ jobs:
           set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
           cat ./dummy_mqs.out
       - if: always()
-        name: "docker logs rest || cat ./rest.out"
+        name: "docker logs wms-server || cat ./wms-server.out"
         run: |
           set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
-          docker logs rest || cat ./rest.out
+          docker logs wms-server || cat ./wms-server.out
 
 
   unit-tests:
@@ -306,7 +308,7 @@ jobs:
       matrix:
         py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
           fetch-depth: 0  # setuptools-scm needs to access git tags

@@ -6,9 +6,9 @@ import os
 import re
 from pathlib import Path
 
-import openapi_core
 import tornado
 from jsonschema_path import SchemaPath
+from openapi_core.templating.paths.exceptions import PathNotFound
 from openapi_core.templating.paths.finders import APICallPathFinder
 
 from wms import server
@@ -56,7 +56,7 @@ def test_census_routes() -> None:
                     method,
                     route,
                 )
-            except openapi_core.templating.paths.exceptions.PathNotFound:
+            except PathNotFound:
                 missing.append((route, method))
                 LOGGER.info("----> not found")
             else:
