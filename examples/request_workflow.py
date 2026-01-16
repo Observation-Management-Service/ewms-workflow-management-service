@@ -103,6 +103,7 @@ async def request_workflow(
     rc: RestClient,
     pilot_cvmfs_image_tag: str,
     n_workers: int,
+    priority: int,
 ) -> tuple[str, str, str]:
     """Request EWMS (WMS) to process a single-task workflow."""
     LOGGER.info("Requesting single-task workflow to EWMS...")
@@ -131,7 +132,7 @@ async def request_workflow(
                     "do_transfer_worker_stdouterr": True,
                     "max_worker_runtime": 60 * 60 * 1,  # 1 hour
                     "n_cores": 1,
-                    "priority": 51,
+                    "priority": priority,
                     "worker_disk": "512M",
                     "worker_memory": "512M",
                 },
@@ -306,6 +307,12 @@ async def main() -> None:
         help="The number of workers to use",
     )
     parser.add_argument(
+        "--priority",
+        default=50,
+        type=int,
+        help="The workflow priority value",
+    )
+    parser.add_argument(
         "--monitor-workflow-id",
         default="",
         help="The workflow id to resume monitoring instead of requesting a new workflow",
@@ -339,6 +346,7 @@ async def main() -> None:
         rc,
         args.pilot_cvmfs_image_tag,
         args.n_workers,
+        args.priority,
     )
 
     # monitor
