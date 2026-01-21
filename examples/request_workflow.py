@@ -179,7 +179,7 @@ async def read_queue(queue: Queue, output_events: list[str]) -> None:
     async with queue.open_sub() as sub:
         i = 0
         async for msg in sub:
-            LOGGER.debug(f"received #{i}: {msg}")
+            LOGGER.debug(f"msg #{i}: {msg}")
             got.add(msg)
             i += 1
 
