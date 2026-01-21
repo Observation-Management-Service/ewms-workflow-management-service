@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import wipac_dev_tools.logging_tools
+from wipac_dev_tools.timing_tools import IntervalTimer
 
 if TYPE_CHECKING:  # not installing dependency just for example script
     Queue = Any
@@ -173,21 +174,28 @@ async def read_queue(queue: Queue, output_events: list[str]) -> None:
     got: set[Any] = set()
     # alternatively, we could adjust the timeout, but that requires other assumptions
 
+    every_second = IntervalTimer(1, None)
+
     async with queue.open_sub() as sub:
         i = 0
         async for msg in sub:
             LOGGER.debug(f"received #{i}: {msg}")
             got.add(msg)
             i += 1
-            if sorted(got) == sorted(output_events):
+
+            # are we done yet?
+            if len(got) >= len(output_events) and sorted(got) == sorted(output_events):
+                # ^^^ optimization: simple len check first (queue may double-deliver)
                 LOGGER.info("Done reading queue -- received all output events")
                 return
-            elif not_yet := [x for x in output_events if x not in got]:
+
+            # log progress
+            do_log = every_second.has_interval_elapsed()
+            if do_log and (not_yet := [x for x in output_events if x not in got]):
                 LOGGER.info(
                     f"Not yet received {len(not_yet)} output events: "
                     f"{(not_yet[:50] + ["..."] if len(not_yet) > 50 else not_yet)}"
                 )
-                continue
 
     raise RuntimeError("Did not receive all output events -- consumer timeout")
 
