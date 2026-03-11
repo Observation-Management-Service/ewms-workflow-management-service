@@ -22,7 +22,7 @@ from wipac_dev_tools.container_registry_tools import (
 LOGGER = logging.getLogger(__name__)
 
 DB_JSONSCHEMA_DIR = Path(__file__).parent / "schema/db"
-REST_OPENAPI_SPEC_FPATH = Path(__file__).parent / "schema/rest/openapi_compiled.json"
+REST_OPENAPI_SPEC_FPATH = Path(__file__).parent / "schema/openapi.json"
 
 MQS_RETRY_AT_TS_DEFAULT_VALUE = float("inf")
 TASK_MQ_ACTIVATOR_SHORTEST_SLEEP = 1

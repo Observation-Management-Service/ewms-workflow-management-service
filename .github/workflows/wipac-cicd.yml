@@ -21,7 +21,7 @@ env:
   REST_PORT: 8080
   MQS_ADDRESS: http://localhost:8081
   #
-  REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
+  REST_OPENAPI_SPEC_FPATH: "schema/openapi.json"
   DB_JSONSCHEMA_DIR: "schema/db"
   #
   WORKFLOW_MQ_ACTIVATOR_DELAY: 2  # need to define for pytests
