@@ -23,9 +23,7 @@ from .utils import (
 LOGGER = logging.getLogger(__name__)
 
 
-_OPENAPI_JSON = (
-    Path(__file__).parent / "../../wms/" / os.environ["REST_OPENAPI_SPEC_FPATH"]
-)
+_OPENAPI_JSON = Path(__file__).parent / "../../wms/" / os.environ["OPENAPI_PATH"]
 
 
 async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:

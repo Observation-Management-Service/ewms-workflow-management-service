@@ -21,8 +21,7 @@ from wipac_dev_tools.container_registry_tools import (
 
 LOGGER = logging.getLogger(__name__)
 
-DB_JSONSCHEMA_DIR = Path(__file__).parent / "schema/db"
-REST_OPENAPI_SPEC_FPATH = Path(__file__).parent / "schema/openapi.json"
+OPENAPI_PATH = Path(__file__).parent / "schema/openapi.json"
 
 MQS_RETRY_AT_TS_DEFAULT_VALUE = float("inf")
 TASK_MQ_ACTIVATOR_SHORTEST_SLEEP = 1
@@ -114,7 +113,7 @@ def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
     return openapi_core.OpenAPI(SchemaPath.from_file_path(str(fpath)))
 
 
-REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(REST_OPENAPI_SPEC_FPATH)
+REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(OPENAPI_PATH)
 URL_V_PREFIX = (  # ex: v0
     "v" + REST_OPENAPI_SPEC.spec.contents()["info"]["version"].split(".", maxsplit=1)[0]
 )
