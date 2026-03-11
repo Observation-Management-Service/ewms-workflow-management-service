@@ -16,9 +16,8 @@ from .utils import (
     TASK_DIRECTIVES_COLL_NAME,
     WORKFLOWS_COLL_NAME,
     _DB_NAME,
-    get_jsonschema_spec_name,
+    get_jsonschema_spec,
 )
-from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
 
 __all__ = [  # export
     "DocumentNotFoundException",
@@ -55,25 +54,19 @@ class WMSMongoValidatedDatabase:
         self.mongo_client = mongo_client
         self.workflows_collection = MongoJSONSchemaValidatedCollection(
             mongo_client[_DB_NAME][WORKFLOWS_COLL_NAME],
-            MONGO_COLLECTION_JSONSCHEMA_SPECS[
-                get_jsonschema_spec_name(WORKFLOWS_COLL_NAME)
-            ],
+            get_jsonschema_spec(WORKFLOWS_COLL_NAME),
             parent_logger,
             validation_exception_callback=_validation_exception_callback,
         )
         self.task_directives_collection = MongoJSONSchemaValidatedCollection(
             mongo_client[_DB_NAME][TASK_DIRECTIVES_COLL_NAME],
-            MONGO_COLLECTION_JSONSCHEMA_SPECS[
-                get_jsonschema_spec_name(TASK_DIRECTIVES_COLL_NAME)
-            ],
+            get_jsonschema_spec(TASK_DIRECTIVES_COLL_NAME),
             parent_logger,
             validation_exception_callback=_validation_exception_callback,
         )
         self.taskforces_collection = MongoJSONSchemaValidatedCollection(
             mongo_client[_DB_NAME][TASKFORCES_COLL_NAME],
-            MONGO_COLLECTION_JSONSCHEMA_SPECS[
-                get_jsonschema_spec_name(TASKFORCES_COLL_NAME)
-            ],
+            get_jsonschema_spec(TASKFORCES_COLL_NAME),
             parent_logger,
             validation_exception_callback=_validation_exception_callback,
         )

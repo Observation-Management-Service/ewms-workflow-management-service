@@ -1,13 +1,11 @@
 """Config settings."""
 
 import dataclasses as dc
-import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, Hashable, Mapping
 
 import cachetools
-import jsonschema
 import openapi_core
 from jsonschema_path import SchemaPath
 from openapi_spec_validator import validate
@@ -89,31 +87,16 @@ ENV = from_environment_as_dataclass(EnvConfig)
 # --------------------------------------------------------------------------------------
 
 
-def _get_jsonschema_specs(dpath: Path) -> dict[str, dict[str, Any]]:
-    specs: dict[str, dict[str, Any]] = {}
-    for fpath in dpath.iterdir():
-        with open(fpath) as f:
-            specs[fpath.stem] = json.load(f)  # validates keys
-        LOGGER.info(f"validating JSON-schema spec for {fpath}")
-        jsonschema.protocols.Validator.check_schema(specs[fpath.stem])
-    return specs
-
-
-# keyed by the mongo collection name
-MONGO_COLLECTION_JSONSCHEMA_SPECS = _get_jsonschema_specs(DB_JSONSCHEMA_DIR)
-
-
-# --------------------------------------------------------------------------------------
-
-
-def _get_openapi_spec(fpath: Path) -> openapi_core.OpenAPI:
+def _get_openapi_spec(
+    fpath: Path,
+) -> tuple[openapi_core.OpenAPI, Mapping[Hashable, Any]]:
     spec_dict, base_uri = read_from_filename(str(fpath))
     LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
     validate(spec_dict)  # no exception -> spec is valid
-    return openapi_core.OpenAPI(SchemaPath.from_file_path(str(fpath)))
+    return openapi_core.OpenAPI(SchemaPath.from_file_path(str(fpath))), spec_dict
 
 
-REST_OPENAPI_SPEC: openapi_core.OpenAPI = _get_openapi_spec(OPENAPI_PATH)
+REST_OPENAPI_SPEC, REST_OPENAPI_DICT = _get_openapi_spec(OPENAPI_PATH)
 URL_V_PREFIX = (  # ex: v0
     "v" + REST_OPENAPI_SPEC.spec.contents()["info"]["version"].split(".", maxsplit=1)[0]
 )

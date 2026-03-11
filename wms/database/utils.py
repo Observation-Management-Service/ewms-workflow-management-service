@@ -1,5 +1,6 @@
 """utils.py."""
 
+import copy
 import json
 import logging
 from urllib.parse import quote_plus
@@ -9,20 +10,29 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING
 from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
-from ..config import ENV
+from ..config import ENV, REST_OPENAPI_SPEC
 
 LOGGER = logging.getLogger(__name__)
 
-
+# database
 _DB_NAME = "WMS_DB"
+# collections
 WORKFLOWS_COLL_NAME = "WorkflowColl"
 TASK_DIRECTIVES_COLL_NAME = "TaskDirectiveColl"
 TASKFORCES_COLL_NAME = "TaskforceColl"
 
 
-def get_jsonschema_spec_name(collection_name: str) -> str:
-    """Map between the two naming schemes."""
-    return collection_name.removesuffix("Coll")
+def get_jsonschema_spec(collection_name: str) -> dict:
+    """Get the JSONSchema spec for a collection."""
+    name = collection_name.removesuffix("Coll") + "Object"
+    try:
+        subspec = copy.deepcopy(REST_OPENAPI_SPEC["components"]["schemas"][name])
+    except KeyError as e:
+        raise ValueError(f"no JSONSchema spec found: {collection_name}/{name}") from e
+
+    # make all root fields required
+    subspec["required"] = list(subspec["properties"].keys())
+    return subspec
 
 
 async def create_mongodb_client() -> AsyncIOMotorClient:  # type: ignore[valid-type]
