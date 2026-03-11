@@ -10,7 +10,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING
 from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
-from ..config import ENV, REST_OPENAPI_SPEC
+from ..config import ENV, REST_OPENAPI_DICT
 
 LOGGER = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ def get_jsonschema_spec(collection_name: str) -> dict:
     """Get the JSONSchema spec for a collection."""
     name = collection_name.removesuffix("Coll") + "Object"
     try:
-        subspec = copy.deepcopy(REST_OPENAPI_SPEC["components"]["schemas"][name])
+        subspec = copy.deepcopy(REST_OPENAPI_DICT["components"]["schemas"][name])
     except KeyError as e:
         raise ValueError(f"no JSONSchema spec found: {collection_name}/{name}") from e
 
