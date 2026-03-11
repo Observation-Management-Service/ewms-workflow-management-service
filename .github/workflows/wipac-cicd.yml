@@ -21,8 +21,6 @@ env:
   REST_PORT: 8080
   MQS_ADDRESS: http://localhost:8081
   #
-  OPENAPI_PATH: "schema/openapi.json"
-  #
   WORKFLOW_MQ_ACTIVATOR_DELAY: 2  # need to define for pytests
   WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT: 10  # ''
   TASKFORCE_LAUNCH_CONTROL_DELAY: 2  # ''
@@ -171,7 +169,7 @@ jobs:
           ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
       - uses: WIPACrepo/wipac-dev-openapi-docs-action@v1.0
         with:
-          openapi_fpath: "wms/${{ env.OPENAPI_PATH }}"
+          openapi_fpath: "wms/schema/openapi.json"
 
 
   ############################################################################
@@ -256,7 +254,6 @@ jobs:
             --env REST_HOST="${{ env.REST_HOST }}" \
             --env REST_PORT="${{ env.REST_PORT }}" \
             --env MQS_ADDRESS="${{ env.MQS_ADDRESS }}" \
-            --env OPENAPI_PATH="${{ env.OPENAPI_PATH }}" \
             --env TASKFORCE_LAUNCH_CONTROL_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_DELAY }}" \
             --env WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT="${{ env.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT }}" \
             --env WORKFLOW_MQ_ACTIVATOR_DELAY="${{ env.WORKFLOW_MQ_ACTIVATOR_DELAY }}" \

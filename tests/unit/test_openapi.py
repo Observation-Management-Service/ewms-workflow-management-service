@@ -2,7 +2,6 @@
 
 import inspect
 import logging
-import os
 import re
 from pathlib import Path
 
@@ -11,7 +10,7 @@ from jsonschema_path import SchemaPath
 from openapi_core.templating.paths.exceptions import PathNotFound
 from openapi_core.templating.paths.finders import APICallPathFinder
 
-from wms import server
+from wms import config, server
 
 LOGGER = logging.getLogger(__name__)
 
@@ -19,8 +18,13 @@ logging.getLogger("parse").setLevel(logging.INFO)
 
 
 _OPENAPI_SPEC = SchemaPath.from_file_path(
-    str(Path(__file__).parent / "../../wms/" / os.environ["OPENAPI_PATH"])
+    str(Path(__file__).parent / "../../wms/" / config.OPENAPI_PATH)
 )
+
+
+def test_paths() -> None:
+    """Check that the openapi spec is the same as the one in the config."""
+    assert config.REST_OPENAPI_SPEC == _OPENAPI_SPEC
 
 
 def test_census_routes() -> None:
