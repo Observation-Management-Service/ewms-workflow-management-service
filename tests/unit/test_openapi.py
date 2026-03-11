@@ -45,7 +45,7 @@ def test_census_routes() -> None:
             LOGGER.info(f"-> method: {method}")
 
             try:  # except error so we can see what all is missing w/o multiple test runs
-                APICallPathFinder(REST_OPENAPI_SPEC, base_url=None).find(
+                APICallPathFinder(REST_OPENAPI_SPEC.spec, base_url=None).find(
                     method,
                     route,
                 )
