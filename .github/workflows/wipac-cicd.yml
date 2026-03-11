@@ -137,7 +137,7 @@ jobs:
       - if: github.actor != 'dependabot[bot]'
         name: "git config user.name github-actions"
         run: |
-          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          set -euo pipefail
           git config user.name github-actions
           git config user.email github-actions@github.com
           
@@ -162,25 +162,8 @@ jobs:
   # AUTO-GENERATION
   #############################################################################
 
-  schema-modifications:
-    if: ${{ github.actor != 'dependabot[bot]' }} # dependabot cannot access PAT
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
-      - uses: WIPACrepo/wipac-dev-json-schema-action@v2.0
-        with:
-          rest_openapi_paths_dir: "schema-precompiled/paths"
-          rest_openapi_base_fpath: "schema-precompiled/openapi_prebuild.json"
-          rest_openapi_dest_fpath: "wms/${{ env.REST_OPENAPI_SPEC_FPATH }}"
-          db_jsonschema_dir: "wms/${{ env.DB_JSONSCHEMA_DIR }}"
-          version: 1
-
   api-documentation:
     if: ${{ github.actor != 'dependabot[bot]' }} # dependabot cannot access PAT
-    needs: [ schema-modifications ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -213,7 +196,7 @@ jobs:
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
 
   integration-test-full-wms-workflow:
-    needs: [ py-versions, schema-modifications ]
+    needs: [ py-versions ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -244,7 +227,7 @@ jobs:
 
       - name: setup mock CVMFS directory
         run: |
-          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          set -euo pipefail
           mkdir -p "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"
           # seed some baseline tags
           touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:0.1.0
@@ -253,12 +236,12 @@ jobs:
 
       - name: "pip install .[tests]"
         run: |
-          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          set -euo pipefail
           pip install .[tests]
 
       - name: test (run servers in background)
         run: |
-          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          set -euo pipefail
           python tests/integration/dummy_mqs.py &> ./dummy_mqs.out &
 
           # compute latest pilot tag and mirror it into mock CVMFS
@@ -291,17 +274,17 @@ jobs:
       - if: always()
         name: "cat ./dummy_mqs.out"
         run: |
-          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          set -euo pipefail
           cat ./dummy_mqs.out
       - if: always()
         name: "docker logs wms-server || cat ./wms-server.out"
         run: |
-          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          set -euo pipefail
           docker logs wms-server || cat ./wms-server.out
 
 
   unit-tests:
-    needs: [ py-versions, schema-modifications ]
+    needs: [ py-versions ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -317,7 +300,7 @@ jobs:
           python-version: ${{ matrix.py3 }}
       - name: setup mock CVMFS directory
         run: |
-          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          set -euo pipefail
           mkdir -p "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"
           # seed a few tags so resolve_tag() has options
           touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:0.1.0
@@ -325,11 +308,11 @@ jobs:
           ls -l "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"
       - name: "pip install .[tests]"
         run: |
-          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          set -euo pipefail
           pip install .[tests]
       - name: test
         run: |
-          set -euo pipefail; echo "now: $(date -u +"%Y-%m-%dT%H:%M:%S.%3N")"
+          set -euo pipefail
           pytest -vvv tests/unit/
 
 
@@ -347,7 +330,6 @@ jobs:
       py-setup,
       py-dependencies,
       code-format,
-      schema-modifications,
       api-documentation,
       test-build-docker,
       integration-test-full-wms-workflow,
