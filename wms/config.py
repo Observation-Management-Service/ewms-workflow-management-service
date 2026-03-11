@@ -3,7 +3,7 @@
 import dataclasses as dc
 import logging
 from pathlib import Path
-from typing import Any, Hashable, Mapping
+from typing import Any, cast
 
 import cachetools
 import openapi_core
@@ -87,14 +87,18 @@ ENV = from_environment_as_dataclass(EnvConfig)
 # --------------------------------------------------------------------------------------
 
 
-def _get_openapi_spec(
-    fpath: Path,
-) -> tuple[openapi_core.OpenAPI, Mapping[Hashable, Any]]:
+def _get_openapi_spec(fpath: Path) -> tuple[openapi_core.OpenAPI, dict[str, Any]]:
+    # first, validate the spec
     spec_dict, base_uri = read_from_filename(str(fpath))
     LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
     validate(spec_dict)  # no exception -> spec is valid
+    # next, create the OpenAPI object
     _path = SchemaPath.from_file_path(str(fpath))
-    return openapi_core.OpenAPI(_path), spec_dict
+    _spec = openapi_core.OpenAPI(_path)
+    return (
+        _spec,
+        cast(dict[str, Any], spec_dict),
+    )
 
 
 REST_OPENAPI_SPEC, REST_OPENAPI_DICT = _get_openapi_spec(OPENAPI_PATH)
