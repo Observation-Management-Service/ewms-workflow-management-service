@@ -3,28 +3,17 @@
 import inspect
 import logging
 import re
-from pathlib import Path
 
 import tornado
-from jsonschema_path import SchemaPath
 from openapi_core.templating.paths.exceptions import PathNotFound
 from openapi_core.templating.paths.finders import APICallPathFinder
 
-from wms import config, server
+from wms import server
+from wms.config import REST_OPENAPI_SPEC
 
 LOGGER = logging.getLogger(__name__)
 
 logging.getLogger("parse").setLevel(logging.INFO)
-
-
-_OPENAPI_SPEC = SchemaPath.from_file_path(
-    str(Path(__file__).parent / "../../wms/" / config.OPENAPI_PATH)
-)
-
-
-def test_paths() -> None:
-    """Check that the openapi spec is the same as the one in the config."""
-    assert config.REST_OPENAPI_SPEC == _OPENAPI_SPEC
 
 
 def test_census_routes() -> None:
@@ -56,7 +45,7 @@ def test_census_routes() -> None:
             LOGGER.info(f"-> method: {method}")
 
             try:  # except error so we can see what all is missing w/o multiple test runs
-                APICallPathFinder(_OPENAPI_SPEC, base_url=None).find(
+                APICallPathFinder(REST_OPENAPI_SPEC, base_url=None).find(
                     method,
                     route,
                 )

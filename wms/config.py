@@ -93,7 +93,8 @@ def _get_openapi_spec(
     spec_dict, base_uri = read_from_filename(str(fpath))
     LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
     validate(spec_dict)  # no exception -> spec is valid
-    return openapi_core.OpenAPI(SchemaPath.from_file_path(str(fpath))), spec_dict
+    _path = SchemaPath.from_file_path(str(fpath))
+    return openapi_core.OpenAPI(_path), spec_dict
 
 
 REST_OPENAPI_SPEC, REST_OPENAPI_DICT = _get_openapi_spec(OPENAPI_PATH)
