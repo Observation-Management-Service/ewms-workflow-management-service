@@ -21,6 +21,4 @@ class SchemaHandler(BaseWMSHandler):
     async def get(self) -> None:
         """Handle GET."""
         # get the underlying dict (json)
-        self.write(  # NOTE - if this doesn't work then use accessor.open ctx-mgr
-            config.REST_OPENAPI_SPEC.spec.accessor.lookup,  # type: ignore[attr-defined]
-        )
+        self.write(config.REST_OPENAPI_DICT)
