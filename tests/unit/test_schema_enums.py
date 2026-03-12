@@ -5,7 +5,8 @@ import logging
 import jsonschema
 
 from wms import schema
-from wms.database.utils import TASKFORCES_COLL_NAME, get_jsonschema_subspec_from_openapi
+from wms.database.client import get_jsonschema_subspec_from_openapi
+from wms.database.utils import TASKFORCES_COLL_NAME
 
 LOGGER = logging.getLogger(__name__)
 

@@ -1,5 +1,6 @@
 """Tools for interacting with the mongo database."""
 
+import copy
 import logging
 
 import jsonschema
@@ -16,12 +17,26 @@ from .utils import (
     TASK_DIRECTIVES_COLL_NAME,
     WORKFLOWS_COLL_NAME,
     _DB_NAME,
-    get_jsonschema_subspec_from_openapi,
 )
+from ..config import OPENAPI_DICT
 
 __all__ = [  # export
     "DocumentNotFoundException",
 ]
+
+
+def get_jsonschema_subspec_from_openapi(object_name: str) -> dict[str, Any]:
+    """Get a deep-copy of the JSONSchema spec for an 'component.schemas' object.
+
+    Makes all root fields required.
+    """
+    try:
+        subspec = copy.deepcopy(OPENAPI_DICT["components"]["schemas"][object_name])
+    except KeyError as e:
+        raise ValueError(f"no JSONSchema spec found: {object_name}") from e
+
+    subspec["required"] = list(subspec["properties"].keys())
+    return subspec
 
 
 def _validation_exception_callback(exc: Exception) -> Exception:

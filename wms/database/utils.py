@@ -1,9 +1,7 @@
 """utils.py."""
 
-import copy
 import json
 import logging
-from typing import Any
 from urllib.parse import quote_plus
 
 from bson import ObjectId
@@ -11,7 +9,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING
 from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
-from ..config import ENV, OPENAPI_DICT
+from ..config import ENV
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,20 +19,6 @@ _DB_NAME = "WMS_DB"
 WORKFLOWS_COLL_NAME = "WorkflowColl"
 TASK_DIRECTIVES_COLL_NAME = "TaskDirectiveColl"
 TASKFORCES_COLL_NAME = "TaskforceColl"
-
-
-def get_jsonschema_subspec_from_openapi(object_name: str) -> dict[str, Any]:
-    """Get a deep-copy of the JSONSchema spec for an 'component.schemas' object.
-
-    Makes all root fields required.
-    """
-    try:
-        subspec = copy.deepcopy(OPENAPI_DICT["components"]["schemas"][object_name])
-    except KeyError as e:
-        raise ValueError(f"no JSONSchema spec found: {object_name}") from e
-
-    subspec["required"] = list(subspec["properties"].keys())
-    return subspec
 
 
 async def create_mongodb_client() -> AsyncIOMotorClient:  # type: ignore[valid-type]
