@@ -91,8 +91,8 @@ class TMSTaskforcesReportHandler(BaseWMSHandler):
         not_founds = []
 
         # put in db
-        async with await self.wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():  # atomic
+        async with self.wms_db.mongo_client.start_session() as s:
+            async with await s.start_transaction():  # make update batch atomic
                 for uuid in all_uuids:
                     # assemble
                     update = {}

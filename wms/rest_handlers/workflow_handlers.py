@@ -144,8 +144,8 @@ class WorkflowHandler(BaseWMSHandler):
             taskforces.extend(tfs)
 
         # put all into db -- atomically
-        async with await self.wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():  # atomic
+        async with self.wms_db.mongo_client.start_session() as s:
+            async with await s.start_transaction():  # make update batch atomic
                 workflow = await self.wms_db.workflows_collection.insert_one(
                     workflow,
                     session=s,
@@ -210,8 +210,8 @@ async def deactivate_workflow(
     deactivated_type: WorkflowDeactivatedType,
 ):
     """Stop the workflow and mark the taskforces for 'pending-stopper'."""
-    async with await wms_db.mongo_client.start_session() as s:
-        async with s.start_transaction():  # atomic
+    async with wms_db.mongo_client.start_session() as s:
+        async with await s.start_transaction():  # make update batch atomic
             # WORKFLOW
             try:
                 await wms_db.workflows_collection.find_one_and_update(

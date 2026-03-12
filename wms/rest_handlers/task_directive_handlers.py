@@ -237,8 +237,8 @@ class TaskDirectiveIDActionsAddWorkersHandler(BaseWMSHandler):
 
         Create an additional taskforce.
         """
-        async with await self.wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():  # atomic
+        async with self.wms_db.mongo_client.start_session() as s:
+            async with await s.start_transaction():  # make update batch atomic
 
                 # grab fields from an existing taskforce -- copy over common fields
                 an_existing_taskforce = (

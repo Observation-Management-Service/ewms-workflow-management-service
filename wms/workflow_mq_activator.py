@@ -142,8 +142,8 @@ async def get_next_workflow_id(
             },
         ]
 
-        async with await wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():  # atomic
+        async with wms_db.mongo_client.start_session() as s:
+            async with await s.start_transaction():  # make update batch atomic
                 # Execute the aggregation pipeline
                 try:
                     result = await wms_db.taskforces_collection.aggregate_one(pipeline, session=s)  # type: ignore
