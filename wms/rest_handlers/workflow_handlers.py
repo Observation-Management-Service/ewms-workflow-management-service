@@ -41,7 +41,7 @@ class WorkflowHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/workflows$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self) -> None:
         """Handle POST.
 
@@ -180,7 +180,7 @@ class WorkflowIDHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/workflows/(?P<workflow_id>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def get(self, workflow_id: str) -> None:
         """Handle GET.
 
@@ -311,7 +311,7 @@ class WorkflowIDActionsAbortHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/workflows/(?P<workflow_id>[\w-]+)/actions/abort$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self, workflow_id: str) -> None:
         """Handle POST.
 
@@ -333,7 +333,7 @@ class WorkflowIDActionsFinishedHandler(BaseWMSHandler):
     )
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self, workflow_id: str) -> None:
         """Handle POST.
 
@@ -356,7 +356,7 @@ class WorkflowsFindHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/query/workflows$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @validate_request(config.OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self) -> None:
         """Handle POST.
 

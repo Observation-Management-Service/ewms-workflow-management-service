@@ -39,7 +39,7 @@ class MainHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def get(self) -> None:
         """Handle GET."""
         self.write({})
