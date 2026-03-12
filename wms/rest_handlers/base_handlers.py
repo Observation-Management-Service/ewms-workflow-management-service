@@ -3,7 +3,7 @@
 import logging
 from typing import Any
 
-from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo.asynchronous.collection import AsyncCollection
 from rest_tools.server import RestHandler, validate_request
 
 from . import auth
@@ -16,14 +16,14 @@ LOGGER = logging.getLogger(__name__)
 class BaseWMSHandler(RestHandler):
     """BaseWMSHandler is a RestHandler for all WMS routes."""
 
-    def initialize(  # type: ignore  # pylint: disable=W0221
+    def initialize(
         self,
-        mongo_client: AsyncIOMotorClient,
+        mongo_client: AsyncCollection,
         *args: Any,
         **kwargs: Any,
     ) -> None:
         """Initialize a BaseWMSHandler object."""
-        super().initialize(*args, **kwargs)  # type: ignore[no-untyped-call]
+        super().initialize(*args, **kwargs)
         self.wms_db = database.client.WMSMongoValidatedDatabase(mongo_client)
         self.mqs_rc = get_mqs_connection(
             logging.getLogger(f"{LOGGER.name.split('.', maxsplit=1)[0]}.mqs")

@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 import jsonschema
-from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo.asynchronous.collection import AsyncCollection
 from tornado import web
 from wipac_dev_tools.mongo_jsonschema_tools import (
     DocumentNotFoundException,
@@ -64,7 +64,7 @@ class WMSMongoValidatedDatabase:
 
     def __init__(
         self,
-        mongo_client: AsyncIOMotorClient,
+        mongo_client: AsyncCollection,
         parent_logger: logging.Logger | None = None,
     ):
         self.mongo_client = mongo_client

@@ -7,6 +7,7 @@ from urllib.parse import quote_plus
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING
+from pymongo.asynchronous.collection import AsyncCollection
 from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
 from ..config import ENV
@@ -21,7 +22,7 @@ TASK_DIRECTIVES_COLL_NAME = "TaskDirectiveColl"
 TASKFORCES_COLL_NAME = "TaskforceColl"
 
 
-async def create_mongodb_client() -> AsyncIOMotorClient:  # type: ignore[valid-type]
+async def create_mongodb_client() -> AsyncIOMotorClient:
     """Construct the MongoDB client."""
     auth_user = quote_plus(ENV.MONGODB_AUTH_USER)
     auth_pass = quote_plus(ENV.MONGODB_AUTH_PASS)
@@ -31,11 +32,11 @@ async def create_mongodb_client() -> AsyncIOMotorClient:  # type: ignore[valid-t
     else:
         url = f"mongodb://{ENV.MONGODB_HOST}:{ENV.MONGODB_PORT}"
 
-    mongo_client = AsyncIOMotorClient(url)  # type: ignore[var-annotated]
+    mongo_client = AsyncIOMotorClient(url)
     return mongo_client
 
 
-async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
+async def ensure_indexes(mongo_client: AsyncCollection) -> None:
     """Create indexes in collections.
 
     Call on server startup.

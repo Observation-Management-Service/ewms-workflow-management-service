@@ -5,7 +5,6 @@ import logging
 import time
 
 import requests
-from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING, DESCENDING
 from rest_tools.client import RestClient
 
@@ -243,7 +242,7 @@ async def record_mq_activation_failed(
 
 
 @resilient_daemon_task(ENV.WORKFLOW_MQ_ACTIVATOR_DELAY, LOGGER)
-async def run(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
+async def run(mongo_client: AsyncCollection) -> None:
     """Start up the daemon task."""
     LOGGER.info("Starting up workflow_mq_activator...")
 

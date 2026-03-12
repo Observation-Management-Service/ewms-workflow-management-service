@@ -8,8 +8,8 @@
 dependencies = [
     'cachetools',
     'jsonschema',
-    'motor',
     'openapi-core',
+    'pymongo',
     'wipac-dev-tools',
     'wipac-rest-tools',
 ]
