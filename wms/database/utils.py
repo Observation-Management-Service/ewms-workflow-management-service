@@ -7,7 +7,6 @@ from urllib.parse import quote_plus
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING
-from pymongo.asynchronous.collection import AsyncCollection
 from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
 from ..config import ENV
@@ -36,7 +35,7 @@ async def create_mongodb_client() -> AsyncIOMotorClient:
     return mongo_client
 
 
-async def ensure_indexes(mongo_client: AsyncCollection) -> None:
+async def ensure_indexes(mongo_client: AsyncMongoClient) -> None:
     """Create indexes in collections.
 
     Call on server startup.

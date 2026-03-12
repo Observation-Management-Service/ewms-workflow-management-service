@@ -242,7 +242,7 @@ async def record_mq_activation_failed(
 
 
 @resilient_daemon_task(ENV.WORKFLOW_MQ_ACTIVATOR_DELAY, LOGGER)
-async def run(mongo_client: AsyncCollection) -> None:
+async def run(mongo_client: AsyncMongoClient) -> None:
     """Start up the daemon task."""
     LOGGER.info("Starting up workflow_mq_activator...")
 

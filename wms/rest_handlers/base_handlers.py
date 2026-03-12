@@ -3,7 +3,7 @@
 import logging
 from typing import Any
 
-from pymongo.asynchronous.collection import AsyncCollection
+from pymongo import AsyncMongoClient
 from rest_tools.server import RestHandler, validate_request
 
 from . import auth
@@ -16,9 +16,9 @@ LOGGER = logging.getLogger(__name__)
 class BaseWMSHandler(RestHandler):
     """BaseWMSHandler is a RestHandler for all WMS routes."""
 
-    def initialize(
+    def initialize(  # type: ignore[override]
         self,
-        mongo_client: AsyncCollection,
+        mongo_client: AsyncMongoClient,
         *args: Any,
         **kwargs: Any,
     ) -> None:
