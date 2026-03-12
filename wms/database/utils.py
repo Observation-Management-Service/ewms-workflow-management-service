@@ -5,7 +5,6 @@ import logging
 from urllib.parse import quote_plus
 
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING, AsyncMongoClient
 from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
@@ -21,7 +20,7 @@ TASK_DIRECTIVES_COLL_NAME = "TaskDirectiveColl"
 TASKFORCES_COLL_NAME = "TaskforceColl"
 
 
-async def create_mongodb_client() -> AsyncIOMotorClient:
+async def create_mongodb_client() -> AsyncMongoClient:
     """Construct the MongoDB client."""
     auth_user = quote_plus(ENV.MONGODB_AUTH_USER)
     auth_pass = quote_plus(ENV.MONGODB_AUTH_PASS)
@@ -31,8 +30,7 @@ async def create_mongodb_client() -> AsyncIOMotorClient:
     else:
         url = f"mongodb://{ENV.MONGODB_HOST}:{ENV.MONGODB_PORT}"
 
-    mongo_client = AsyncIOMotorClient(url)
-    return mongo_client
+    return AsyncMongoClient(url)
 
 
 async def ensure_indexes(mongo_client: AsyncMongoClient) -> None:
