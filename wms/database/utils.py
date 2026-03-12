@@ -6,7 +6,7 @@ from urllib.parse import quote_plus
 
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo import ASCENDING
+from pymongo import ASCENDING, AsyncMongoClient
 from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
 from ..config import ENV

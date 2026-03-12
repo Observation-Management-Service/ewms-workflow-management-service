@@ -5,9 +5,8 @@ import logging
 import time
 
 import requests
-from pymongo import ASCENDING, DESCENDING
+from pymongo import ASCENDING, AsyncMongoClient, DESCENDING
 from rest_tools.client import RestClient
-
 from . import database
 from .config import (
     ENV,

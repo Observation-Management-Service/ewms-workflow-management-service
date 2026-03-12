@@ -4,7 +4,7 @@ import asyncio
 import logging
 import time
 
-from pymongo import ASCENDING, DESCENDING
+from pymongo import ASCENDING, AsyncMongoClient, DESCENDING
 
 from . import database
 from .config import ENV

@@ -3,6 +3,7 @@
 import logging
 from typing import Any
 
+from pymongo import AsyncMongoClient
 from rest_tools.server import RestHandlerSetup, RestServer
 
 from . import rest_handlers
