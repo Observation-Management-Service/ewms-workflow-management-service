@@ -102,9 +102,7 @@ def _get_openapi_spec(fpath: Path) -> tuple[openapi_core.OpenAPI, dict[str, Any]
 
 
 OPENAPI_SPEC, OPENAPI_DICT = _get_openapi_spec(OPENAPI_PATH)
-URL_V_PREFIX = (  # ex: v0
-    "v" + OPENAPI_SPEC.spec.contents()["info"]["version"].split(".", maxsplit=1)[0]
-)
+URL_V_PREFIX = "v" + OPENAPI_DICT["info"]["version"].split(".", maxsplit=1)[0]  # ex: v0
 
 
 # --------------------------------------------------------------------------------------
