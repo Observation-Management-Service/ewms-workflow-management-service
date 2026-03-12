@@ -95,6 +95,7 @@ jobs:
   #############################################################################
 
   api-documentation:
+    needs: [ lint ]
     if: ${{ github.actor != 'dependabot[bot]' }} # dependabot cannot access PAT
     runs-on: ubuntu-latest
     steps:
