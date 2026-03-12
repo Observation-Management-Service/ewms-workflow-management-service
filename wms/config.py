@@ -204,7 +204,7 @@ def config_logging() -> None:
     logging.getLogger().addHandler(hand)
 
     if not ENV.CI and ENV.LOG_LEVEL.upper() == "DEBUG":
-        demoted_first_parties: dict[str, LoggerLevel] = {
+        demoted_first_parties: dict[logging.Logger | str, LoggerLevel] = {
             "wms.taskforce_launch_control": "INFO",
             "wms.workflow_mq_activator": "INFO",
         }
