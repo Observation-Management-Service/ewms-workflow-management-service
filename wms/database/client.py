@@ -13,13 +13,13 @@ from wipac_dev_tools.mongo_jsonschema_tools import (
     MongoJSONSchemaValidatedCollection,
 )
 
-from .utils import (
-    TASKFORCES_COLL_NAME,
-    TASK_DIRECTIVES_COLL_NAME,
-    WORKFLOWS_COLL_NAME,
-    _DB_NAME,
-)
 from ..config import OPENAPI_DICT
+from .utils import (
+    _DB_NAME,
+    TASK_DIRECTIVES_COLL_NAME,
+    TASKFORCES_COLL_NAME,
+    WORKFLOWS_COLL_NAME,
+)
 
 __all__ = [  # export
     "DocumentNotFoundException",
