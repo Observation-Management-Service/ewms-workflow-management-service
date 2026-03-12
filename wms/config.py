@@ -16,7 +16,7 @@ from wipac_dev_tools.container_registry_tools import (
     CVMFSRegistryTools,
     ImageNotFoundException,
 )
-from wipac_dev_tools.logging_tools import LoggerLevel
+from wipac_dev_tools.logging_tools import LoggerLevel, WIPACDevToolsFormatter
 
 LOGGER = logging.getLogger(__name__)
 
@@ -194,15 +194,6 @@ def config_logging() -> None:
     This is separated into a function for consistency between app and
     testing environments.
     """
-    hand = logging.StreamHandler()
-    hand.setFormatter(
-        logging.Formatter(
-            "%(asctime)s.%(msecs)03d [%(levelname)8s] %(name)s[%(process)d] %(message)s <%(filename)s:%(lineno)s/%(funcName)s()>",
-            datefmt="%Y-%m-%d %H:%M:%S",
-        )
-    )
-    logging.getLogger().addHandler(hand)
-
     if not ENV.CI and ENV.LOG_LEVEL.upper() == "DEBUG":
         demoted_first_parties: dict[logging.Logger | str, LoggerLevel] = {
             "wms.taskforce_launch_control": "INFO",
@@ -222,4 +213,5 @@ def config_logging() -> None:
             "rest_tools": ENV.LOG_LEVEL_REST_TOOLS,
             **demoted_first_parties,
         },
+        formatter=WIPACDevToolsFormatter(),
     )
