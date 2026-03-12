@@ -45,41 +45,12 @@ jobs:
   # LINTERS
   #############################################################################
 
-  flake8:
+  lint:
     needs: [ py-versions ]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
-      - uses: actions/setup-python@v6
-        with:
-          python-version:
-            ${{ matrix.py3 }}
-      - uses: WIPACrepo/wipac-dev-flake8-action@v1.3
-        with:
-          max-complexity: 11  # ideal is ~10-15
-
-  mypy:
-    needs: [ py-versions ]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
-          fetch-depth: 0  # setuptools-scm needs to access git tags
-      - uses: actions/setup-python@v6
-        with:
-          python-version: ${{ matrix.py3 }}
-      - uses: WIPACrepo/wipac-dev-mypy-action@v2.0
+    uses: WIPACrepo/wipac-dev-workflows/.github/workflows/lint-python.yml@linters
+    with:
+      py-matrix-json: ${{ needs.py-versions.outputs.matrix }}
+      max-complexity: 11  # ideal is ~10-15
 
 
   #############################################################################
@@ -102,7 +73,7 @@ jobs:
           auto_mypy_option: True
 
   py-dependencies:
-    needs: [ flake8 ]
+    needs: [ lint ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -141,6 +112,7 @@ jobs:
   #############################################################################
 
   test-build-docker:
+    needs: [ lint ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -157,7 +129,7 @@ jobs:
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
 
   integration-test-full-wms-workflow:
-    needs: [ py-versions ]
+    needs: [ py-versions, lint ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -243,7 +215,7 @@ jobs:
 
 
   unit-tests:
-    needs: [ py-versions ]
+    needs: [ py-versions, lint ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -284,8 +256,7 @@ jobs:
     if: format('refs/heads/{0}', github.event.repository.default_branch) == github.ref
     needs: [
       py-versions,
-      flake8,
-      mypy,
+      lint,
       py-setup,
       py-dependencies,
       api-documentation,
