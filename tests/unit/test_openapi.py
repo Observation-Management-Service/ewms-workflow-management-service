@@ -9,7 +9,7 @@ from openapi_core.templating.paths.exceptions import PathNotFound
 from openapi_core.templating.paths.finders import APICallPathFinder
 
 from wms import server
-from wms.config import REST_OPENAPI_SPEC
+from wms.config import OPENAPI_SPEC
 
 LOGGER = logging.getLogger(__name__)
 
@@ -45,7 +45,7 @@ def test_census_routes() -> None:
             LOGGER.info(f"-> method: {method}")
 
             try:  # except error so we can see what all is missing w/o multiple test runs
-                APICallPathFinder(REST_OPENAPI_SPEC.spec, base_url=None).find(
+                APICallPathFinder(OPENAPI_SPEC.spec, base_url=None).find(
                     method,
                     route,
                 )

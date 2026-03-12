@@ -3,6 +3,7 @@
 import copy
 import json
 import logging
+from typing import Any
 from urllib.parse import quote_plus
 
 from bson import ObjectId
@@ -10,7 +11,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING
 from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
-from ..config import ENV, REST_OPENAPI_DICT
+from ..config import ENV, OPENAPI_DICT
 
 LOGGER = logging.getLogger(__name__)
 
@@ -22,15 +23,16 @@ TASK_DIRECTIVES_COLL_NAME = "TaskDirectiveColl"
 TASKFORCES_COLL_NAME = "TaskforceColl"
 
 
-def get_jsonschema_spec(collection_name: str) -> dict:
-    """Get the JSONSchema spec for a collection."""
-    name = collection_name.removesuffix("Coll") + "Object"
-    try:
-        subspec = copy.deepcopy(REST_OPENAPI_DICT["components"]["schemas"][name])
-    except KeyError as e:
-        raise ValueError(f"no JSONSchema spec found: {collection_name}/{name}") from e
+def get_jsonschema_subspec_from_openapi(object_name: str) -> dict[str, Any]:
+    """Get a deep-copy of the JSONSchema spec for an 'component.schemas' object.
 
-    # make all root fields required
+    Makes all root fields required.
+    """
+    try:
+        subspec = copy.deepcopy(OPENAPI_DICT["components"]["schemas"][object_name])
+    except KeyError as e:
+        raise ValueError(f"no JSONSchema spec found: {object_name}") from e
+
     subspec["required"] = list(subspec["properties"].keys())
     return subspec
 

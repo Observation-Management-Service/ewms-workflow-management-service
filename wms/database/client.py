@@ -16,7 +16,7 @@ from .utils import (
     TASK_DIRECTIVES_COLL_NAME,
     WORKFLOWS_COLL_NAME,
     _DB_NAME,
-    get_jsonschema_spec,
+    get_jsonschema_subspec_from_openapi,
 )
 
 __all__ = [  # export
@@ -54,19 +54,25 @@ class WMSMongoValidatedDatabase:
         self.mongo_client = mongo_client
         self.workflows_collection = MongoJSONSchemaValidatedCollection(
             mongo_client[_DB_NAME][WORKFLOWS_COLL_NAME],
-            get_jsonschema_spec(WORKFLOWS_COLL_NAME),
+            get_jsonschema_subspec_from_openapi(
+                WORKFLOWS_COLL_NAME.removesuffix("Coll") + "Object",
+            ),
             parent_logger,
             validation_exception_callback=_validation_exception_callback,
         )
         self.task_directives_collection = MongoJSONSchemaValidatedCollection(
             mongo_client[_DB_NAME][TASK_DIRECTIVES_COLL_NAME],
-            get_jsonschema_spec(TASK_DIRECTIVES_COLL_NAME),
+            get_jsonschema_subspec_from_openapi(
+                TASK_DIRECTIVES_COLL_NAME.removesuffix("Coll") + "Object",
+            ),
             parent_logger,
             validation_exception_callback=_validation_exception_callback,
         )
         self.taskforces_collection = MongoJSONSchemaValidatedCollection(
             mongo_client[_DB_NAME][TASKFORCES_COLL_NAME],
-            get_jsonschema_spec(TASKFORCES_COLL_NAME),
+            get_jsonschema_subspec_from_openapi(
+                TASKFORCES_COLL_NAME.removesuffix("Coll") + "Object",
+            ),
             parent_logger,
             validation_exception_callback=_validation_exception_callback,
         )
