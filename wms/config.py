@@ -16,6 +16,7 @@ from wipac_dev_tools.container_registry_tools import (
     CVMFSRegistryTools,
     ImageNotFoundException,
 )
+from wipac_dev_tools.logging_tools import LoggerLevel
 
 LOGGER = logging.getLogger(__name__)
 
@@ -53,9 +54,9 @@ class EnvConfig:
     MONGODB_AUTH_USER: str = ""  # None means required to specify
 
     CI: bool = False  # github actions sets this to 'true'
-    LOG_LEVEL: str = "DEBUG"
-    LOG_LEVEL_THIRD_PARTY: str = "INFO"
-    LOG_LEVEL_REST_TOOLS: str = "DEBUG"
+    LOG_LEVEL: LoggerLevel = "DEBUG"
+    LOG_LEVEL_THIRD_PARTY: LoggerLevel = "INFO"
+    LOG_LEVEL_REST_TOOLS: LoggerLevel = "DEBUG"
 
     USER_QUERY_MAX_BYTES: int = 10 * 1024 * 1024  # 10MB
 
@@ -211,14 +212,14 @@ def config_logging() -> None:
         demoted_first_parties = {}
 
     logging_tools.set_level(
-        ENV.LOG_LEVEL,  # type: ignore[arg-type]
+        ENV.LOG_LEVEL,
         first_party_loggers=[__name__.split(".", maxsplit=1)[0]],
-        third_party_level=ENV.LOG_LEVEL_THIRD_PARTY,  # type: ignore[arg-type]
+        third_party_level=ENV.LOG_LEVEL_THIRD_PARTY,
         future_third_parties=[],
         specialty_loggers={
             "wipac-telemetry": "WARNING",
             "parse": "WARNING",  # from openapi
-            "rest_tools": ENV.LOG_LEVEL_REST_TOOLS,  # type: ignore
-            **demoted_first_parties,  # type: ignore
+            "rest_tools": ENV.LOG_LEVEL_REST_TOOLS,
+            **demoted_first_parties,
         },
     )
