@@ -41,7 +41,7 @@ class WorkflowHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/workflows$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self) -> None:
         """Handle POST.
 
@@ -144,8 +144,8 @@ class WorkflowHandler(BaseWMSHandler):
             taskforces.extend(tfs)
 
         # put all into db -- atomically
-        async with await self.wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():  # atomic
+        async with self.wms_db.mongo_client.start_session() as s:
+            async with await s.start_transaction():  # make update batch atomic
                 workflow = await self.wms_db.workflows_collection.insert_one(
                     workflow,
                     session=s,
@@ -180,7 +180,7 @@ class WorkflowIDHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/workflows/(?P<workflow_id>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def get(self, workflow_id: str) -> None:
         """Handle GET.
 
@@ -210,8 +210,8 @@ async def deactivate_workflow(
     deactivated_type: WorkflowDeactivatedType,
 ):
     """Stop the workflow and mark the taskforces for 'pending-stopper'."""
-    async with await wms_db.mongo_client.start_session() as s:
-        async with s.start_transaction():  # atomic
+    async with wms_db.mongo_client.start_session() as s:
+        async with await s.start_transaction():  # make update batch atomic
             # WORKFLOW
             try:
                 await wms_db.workflows_collection.find_one_and_update(
@@ -311,7 +311,7 @@ class WorkflowIDActionsAbortHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/workflows/(?P<workflow_id>[\w-]+)/actions/abort$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self, workflow_id: str) -> None:
         """Handle POST.
 
@@ -333,7 +333,7 @@ class WorkflowIDActionsFinishedHandler(BaseWMSHandler):
     )
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self, workflow_id: str) -> None:
         """Handle POST.
 
@@ -356,7 +356,7 @@ class WorkflowsFindHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/query/workflows$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self) -> None:
         """Handle POST.
 

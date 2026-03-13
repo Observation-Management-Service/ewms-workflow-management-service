@@ -23,9 +23,7 @@ from .utils import (
 LOGGER = logging.getLogger(__name__)
 
 
-_OPENAPI_JSON = (
-    Path(__file__).parent / "../../wms/" / os.environ["REST_OPENAPI_SPEC_FPATH"]
-)
+_OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/openapi.json"
 
 
 async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
@@ -37,6 +35,7 @@ async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
         "GET",
         f"/{_URL_V_PREFIX}/schema/openapi",
     )
+    # check that the schema returned is the same as the one on disk
     with open(_OPENAPI_JSON, "rb") as f:
         assert json.load(f) == resp
     openapi_spec = openapi_core.OpenAPI(SchemaPath.from_dict(resp))

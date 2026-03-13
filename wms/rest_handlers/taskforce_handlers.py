@@ -66,7 +66,7 @@ class TMSTaskforcesReportHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/tms/statuses/taskforces$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self) -> None:
         """Handle POST.
 
@@ -91,8 +91,8 @@ class TMSTaskforcesReportHandler(BaseWMSHandler):
         not_founds = []
 
         # put in db
-        async with await self.wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():  # atomic
+        async with self.wms_db.mongo_client.start_session() as s:
+            async with await s.start_transaction():  # make update batch atomic
                 for uuid in all_uuids:
                     # assemble
                     update = {}
@@ -159,7 +159,7 @@ class TaskforcesFindHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/query/taskforces$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self) -> None:
         """Handle POST.
 
@@ -187,7 +187,7 @@ class TMSTaskforcePendingStarterHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/tms/pending-starter/taskforces$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def get(self) -> None:
         """Handle GET.
 
@@ -258,7 +258,7 @@ class TMSTaskforceCondorSubmitUUIDHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST.
 
@@ -307,7 +307,7 @@ class TMSTaskforceCondorSubmitUUIDFailedHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/tms/condor-submit/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
         error = self.get_argument("error")
@@ -350,7 +350,7 @@ class TMSTaskforcePendingStopperHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/tms/pending-stopper/taskforces$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def get(self) -> None:
         """Handle GET.
 
@@ -400,7 +400,7 @@ class TMSTaskforceCondorRmUUIDHandler(BaseWMSHandler):
     )
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST.
 
@@ -445,7 +445,7 @@ class TMSTaskforceCondorRmUUIDFailedHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/tms/condor-rm/taskforces/(?P<taskforce_uuid>[\w-]+)/failed$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST."""
         error = self.get_argument("error")
@@ -488,7 +488,7 @@ class TMSTaskforceCondorCompleteUUIDHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/tms/condor-complete/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.TMS])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self, taskforce_uuid: str) -> None:
         """Handle POST.
 
@@ -536,7 +536,7 @@ class TaskforceUUIDHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/taskforces/(?P<taskforce_uuid>[\w-]+)$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def get(self, taskforce_uuid: str) -> None:
         """Handle GET.
 

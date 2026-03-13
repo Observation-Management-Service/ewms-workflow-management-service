@@ -5,27 +5,22 @@ import logging
 from urllib.parse import quote_plus
 
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo import ASCENDING
+from pymongo import ASCENDING, AsyncMongoClient
 from wipac_dev_tools.mongo_jsonschema_tools import MongoJSONSchemaValidatedCollection
 
 from ..config import ENV
 
 LOGGER = logging.getLogger(__name__)
 
-
+# database
 _DB_NAME = "WMS_DB"
+# collections
 WORKFLOWS_COLL_NAME = "WorkflowColl"
 TASK_DIRECTIVES_COLL_NAME = "TaskDirectiveColl"
 TASKFORCES_COLL_NAME = "TaskforceColl"
 
 
-def get_jsonschema_spec_name(collection_name: str) -> str:
-    """Map between the two naming schemes."""
-    return collection_name.removesuffix("Coll")
-
-
-async def create_mongodb_client() -> AsyncIOMotorClient:  # type: ignore[valid-type]
+async def create_mongodb_client() -> AsyncMongoClient:
     """Construct the MongoDB client."""
     auth_user = quote_plus(ENV.MONGODB_AUTH_USER)
     auth_pass = quote_plus(ENV.MONGODB_AUTH_PASS)
@@ -35,11 +30,10 @@ async def create_mongodb_client() -> AsyncIOMotorClient:  # type: ignore[valid-t
     else:
         url = f"mongodb://{ENV.MONGODB_HOST}:{ENV.MONGODB_PORT}"
 
-    mongo_client = AsyncIOMotorClient(url)  # type: ignore[var-annotated]
-    return mongo_client
+    return AsyncMongoClient(url)
 
 
-async def ensure_indexes(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
+async def ensure_indexes(mongo_client: AsyncMongoClient) -> None:
     """Create indexes in collections.
 
     Call on server startup.

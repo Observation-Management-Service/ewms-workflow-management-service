@@ -5,10 +5,8 @@ import logging
 import time
 
 import requests
-from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo import ASCENDING, DESCENDING
+from pymongo import ASCENDING, AsyncMongoClient, DESCENDING
 from rest_tools.client import RestClient
-
 from . import database
 from .config import (
     ENV,
@@ -143,8 +141,8 @@ async def get_next_workflow_id(
             },
         ]
 
-        async with await wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():  # atomic
+        async with wms_db.mongo_client.start_session() as s:
+            async with await s.start_transaction():  # make update batch atomic
                 # Execute the aggregation pipeline
                 try:
                     result = await wms_db.taskforces_collection.aggregate_one(pipeline, session=s)  # type: ignore
@@ -243,7 +241,7 @@ async def record_mq_activation_failed(
 
 
 @resilient_daemon_task(ENV.WORKFLOW_MQ_ACTIVATOR_DELAY, LOGGER)
-async def run(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
+async def run(mongo_client: AsyncMongoClient) -> None:
     """Start up the daemon task."""
     LOGGER.info("Starting up workflow_mq_activator...")
 

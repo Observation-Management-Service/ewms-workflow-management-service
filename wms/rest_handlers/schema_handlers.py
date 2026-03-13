@@ -17,10 +17,8 @@ class SchemaHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/schema/openapi$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def get(self) -> None:
         """Handle GET."""
         # get the underlying dict (json)
-        self.write(  # NOTE - if this doesn't work then use accessor.open ctx-mgr
-            config.REST_OPENAPI_SPEC.spec.accessor.lookup,  # type: ignore[attr-defined]
-        )
+        self.write(config.OPENAPI_DICT)

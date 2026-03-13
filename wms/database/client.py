@@ -1,9 +1,11 @@
 """Tools for interacting with the mongo database."""
 
+import copy
 import logging
+from typing import Any
 
 import jsonschema
-from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import AsyncMongoClient
 from tornado import web
 from wipac_dev_tools.mongo_jsonschema_tools import (
     DocumentNotFoundException,
@@ -11,18 +13,31 @@ from wipac_dev_tools.mongo_jsonschema_tools import (
     MongoJSONSchemaValidatedCollection,
 )
 
+from ..config import OPENAPI_DICT
 from .utils import (
-    TASKFORCES_COLL_NAME,
-    TASK_DIRECTIVES_COLL_NAME,
-    WORKFLOWS_COLL_NAME,
     _DB_NAME,
-    get_jsonschema_spec_name,
+    TASK_DIRECTIVES_COLL_NAME,
+    TASKFORCES_COLL_NAME,
+    WORKFLOWS_COLL_NAME,
 )
-from ..config import MONGO_COLLECTION_JSONSCHEMA_SPECS
 
 __all__ = [  # export
     "DocumentNotFoundException",
 ]
+
+
+def get_jsonschema_subspec_from_openapi(object_name: str) -> dict[str, Any]:
+    """Get a deep-copy of the JSONSchema spec for an 'component.schemas' object.
+
+    Makes all root fields required.
+    """
+    try:
+        subspec = copy.deepcopy(OPENAPI_DICT["components"]["schemas"][object_name])
+    except KeyError as e:
+        raise ValueError(f"no JSONSchema spec found: {object_name}") from e
+
+    subspec["required"] = list(subspec["properties"].keys())
+    return subspec
 
 
 def _validation_exception_callback(exc: Exception) -> Exception:
@@ -49,31 +64,31 @@ class WMSMongoValidatedDatabase:
 
     def __init__(
         self,
-        mongo_client: AsyncIOMotorClient,
+        mongo_client: AsyncMongoClient,
         parent_logger: logging.Logger | None = None,
     ):
         self.mongo_client = mongo_client
         self.workflows_collection = MongoJSONSchemaValidatedCollection(
             mongo_client[_DB_NAME][WORKFLOWS_COLL_NAME],
-            MONGO_COLLECTION_JSONSCHEMA_SPECS[
-                get_jsonschema_spec_name(WORKFLOWS_COLL_NAME)
-            ],
+            get_jsonschema_subspec_from_openapi(
+                WORKFLOWS_COLL_NAME.removesuffix("Coll") + "Object",
+            ),
             parent_logger,
             validation_exception_callback=_validation_exception_callback,
         )
         self.task_directives_collection = MongoJSONSchemaValidatedCollection(
             mongo_client[_DB_NAME][TASK_DIRECTIVES_COLL_NAME],
-            MONGO_COLLECTION_JSONSCHEMA_SPECS[
-                get_jsonschema_spec_name(TASK_DIRECTIVES_COLL_NAME)
-            ],
+            get_jsonschema_subspec_from_openapi(
+                TASK_DIRECTIVES_COLL_NAME.removesuffix("Coll") + "Object",
+            ),
             parent_logger,
             validation_exception_callback=_validation_exception_callback,
         )
         self.taskforces_collection = MongoJSONSchemaValidatedCollection(
             mongo_client[_DB_NAME][TASKFORCES_COLL_NAME],
-            MONGO_COLLECTION_JSONSCHEMA_SPECS[
-                get_jsonschema_spec_name(TASKFORCES_COLL_NAME)
-            ],
+            get_jsonschema_subspec_from_openapi(
+                TASKFORCES_COLL_NAME.removesuffix("Coll") + "Object",
+            ),
             parent_logger,
             validation_exception_callback=_validation_exception_callback,
         )
