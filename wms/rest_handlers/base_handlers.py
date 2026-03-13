@@ -26,7 +26,7 @@ class BaseWMSHandler(RestHandler):
         super().initialize(*args, **kwargs)
         self.wms_db = database.client.WMSMongoValidatedDatabase(mongo_client)
         self.mqs_rc = get_mqs_connection(
-            logging.getLogger(f"{LOGGER.name.split('.', maxsplit=1)[0]}.mqs")
+            logging.getLogger(f"{LOGGER.name.split('.', maxsplit=1)[0]}.mqs-client")
         )
 
 
