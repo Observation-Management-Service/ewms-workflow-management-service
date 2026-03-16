@@ -28,7 +28,7 @@ async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
         rc,
         _OPENAPI_SPEC,
         "GET",
-        f"/v1/schema/openapi",
+        "/v1/schema/openapi",
     )
     # check that the schema returned is the same as the one on disk
     assert resp == _OPENAPI_DICT
