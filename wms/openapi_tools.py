@@ -6,7 +6,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Hashable, TYPE_CHECKING, Any
 
 import requests
 import tornado
@@ -28,7 +28,7 @@ except (ImportError, ModuleNotFoundError):
     openapi_available = False
 
 if TYPE_CHECKING:  # prevent circular imports at runtime
-    from .client import RestClient
+    from rest_tools.client import RestClient
 
 
 LOGGER = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ LOGGER = logging.getLogger(__name__)
 def load_openapi_spec(
     fpath: Path,
     add_project_metadata: bool,
-) -> tuple["openapi_core.OpenAPI", dict[str, Any]]:
+) -> tuple["openapi_core.OpenAPI", dict[Hashable, Any]]:
     """Get the OpenAPI spec and its dict representation.
 
     If `add_project_metadata` is True, then the spec's 'info' field will be populated
