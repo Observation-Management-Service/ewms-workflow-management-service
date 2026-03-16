@@ -86,7 +86,7 @@ ENV = from_environment_as_dataclass(EnvConfig)
 # OpenAPI
 
 OPENAPI_SPEC, OPENAPI_DICT = openapi_tools.load_openapi_spec(OPENAPI_PATH, True)
-URL_V_PREFIX = openapi_tools.get_version_vmaj(OPENAPI_SPEC)
+URL_V_PREFIX = openapi_tools.get_version_vmaj(OPENAPI_DICT)
 
 
 # --------------------------------------------------------------------------------------
