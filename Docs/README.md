@@ -1,4 +1,4 @@
-# Documentation for 
+# Documentation for EWMS - Workflow Management Service
 
 <a name="documentation-for-api-endpoints"></a>
 ## Documentation for API Endpoints
