@@ -35,10 +35,9 @@ async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
     )
     # check that the schema returned is the same as the one on disk
     with open(_OPENAPI_JSON, "rb") as f:
-        # don't include the extra 'info' fields populated at runtime
-        for k in resp["info"]:
-            if k not in ("title", "version"):
-                resp.pop(k)
+        resp["info"] = {  # don't include the extra 'info' fields populated at runtime
+            k: v for k, v in resp["info"].items() if k in ("title", "version")
+        }
         assert json.load(f) == resp
     return openapi_core.OpenAPI(SchemaPath.from_dict(resp))
 
