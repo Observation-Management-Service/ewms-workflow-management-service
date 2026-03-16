@@ -4,7 +4,6 @@ import asyncio
 import importlib
 import logging
 import os
-import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
@@ -15,7 +14,6 @@ import tornado
 try:
     import openapi_core
     from jsonschema_path import SchemaPath
-    from jsonschema_path.typing import Schema
     from openapi_core.contrib import requests as openapi_core_requests
     from openapi_core.exceptions import OpenAPIError
     from openapi_core.validation.exceptions import ValidationError
@@ -28,6 +26,7 @@ except (ImportError, ModuleNotFoundError):
     openapi_available = False
 
 if TYPE_CHECKING:  # prevent circular imports at runtime
+    from jsonschema_path.typing import Schema
     from rest_tools.client import RestClient
 
 
