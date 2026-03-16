@@ -43,10 +43,20 @@ def load_openapi_spec(
     fpath: Path,
     add_project_metadata: bool,
 ) -> tuple["openapi_core.OpenAPI", sdict]:
-    """Get the OpenAPI spec and its dict representation.
+    """
+    Loads and validates an OpenAPI specification file while optionally incorporating
+    project metadata.
 
-    If `add_project_metadata` is True, then the spec's 'info' field will be populated
-    using the installed project's metadata.
+    Parameters:
+        fpath: Path
+            The file path to the OpenAPI specification.
+        add_project_metadata: bool
+            A flag indicating whether to include additional project metadata.
+
+    Returns:
+        A tuple containing:
+            - the OpenAPI object,
+            - the original schema as a dictionary, and
     """
     _schema, base_uri = read_from_filename(str(fpath))
     if add_project_metadata:
@@ -111,9 +121,9 @@ def _populate_spec_info_from_installed_metadata(spec: "Schema") -> "Schema":
     return spec
 
 
-def get_version_vmaj(openapi_spec: "openapi_core.OpenAPI") -> str:
+def get_version_vmaj(openapi_dict: sdict) -> str:
     """Get the major version of the OpenAPI spec, like 'v0', 'v1', etc."""
-    return "v" + openapi_spec.version.major
+    return "v" + openapi_dict["version"].split(".")[0]
 
 
 ########################################################################################
