@@ -69,12 +69,12 @@ def _populate_spec_info_from_installed_metadata(spec: Schema) -> Schema:
             "Cannot auto-populate OpenAPI field 'info' -- it's already populated"
         )
 
-    if sys.version_info < (3, 12):
-        # python <= 3.11 does not support PackageMetadata.get()
-        # -- our server apps will need to run on python 3.12+, which most already do
-        raise RuntimeError(
-            "openapi_tools._populate_spec_info_from_installed_metadata() requires python 3.12+"
-        )
+    # if sys.version_info < (3, 12):
+    #     # python <= 3.11 does not support PackageMetadata.get()
+    #     # -- our server apps will need to run on python 3.12+, which most already do
+    #     raise RuntimeError(
+    #         "openapi_tools._populate_spec_info_from_installed_metadata() requires python 3.12+"
+    #     )
 
     top_name = (__package__ or __name__).split(".")[0]
     dist_name = importlib.metadata.packages_distributions()[top_name][0]  # use first
