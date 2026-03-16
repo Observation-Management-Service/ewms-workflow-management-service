@@ -3,13 +3,8 @@
 import dataclasses as dc
 import logging
 from pathlib import Path
-from typing import Any, cast
 
 import cachetools
-import openapi_core
-from jsonschema_path import SchemaPath
-from openapi_spec_validator import validate
-from openapi_spec_validator.readers import read_from_filename
 from tornado import web
 from wipac_dev_tools import from_environment_as_dataclass, logging_tools
 from wipac_dev_tools.container_registry_tools import (
@@ -17,6 +12,8 @@ from wipac_dev_tools.container_registry_tools import (
     ImageNotFoundException,
 )
 from wipac_dev_tools.logging_tools import LoggerLevel, WIPACDevToolsFormatter
+
+from . import openapi_tools
 
 LOGGER = logging.getLogger(__name__)
 
@@ -86,24 +83,10 @@ ENV = from_environment_as_dataclass(EnvConfig)
 
 
 # --------------------------------------------------------------------------------------
+# OpenAPI
 
-
-def _get_openapi_spec(fpath: Path) -> tuple[openapi_core.OpenAPI, dict[str, Any]]:
-    # first, validate the spec
-    spec_dict, base_uri = read_from_filename(str(fpath))
-    LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
-    validate(spec_dict)  # no exception -> spec is valid
-    # next, create the OpenAPI object
-    _path = SchemaPath.from_file_path(str(fpath))
-    _spec = openapi_core.OpenAPI(_path)
-    return (
-        _spec,
-        cast(dict[str, Any], spec_dict),
-    )
-
-
-OPENAPI_SPEC, OPENAPI_DICT = _get_openapi_spec(OPENAPI_PATH)
-URL_V_PREFIX = "v" + OPENAPI_DICT["info"]["version"].split(".", maxsplit=1)[0]  # ex: v0
+OPENAPI_SPEC, OPENAPI_DICT = openapi_tools.load_openapi_spec(OPENAPI_PATH, True)
+URL_V_PREFIX = openapi_tools.get_version_vmaj(OPENAPI_SPEC)
 
 
 # --------------------------------------------------------------------------------------
