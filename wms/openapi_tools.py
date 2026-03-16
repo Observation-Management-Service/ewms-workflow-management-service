@@ -123,7 +123,7 @@ def _populate_spec_info_from_installed_metadata(spec: "Schema") -> "Schema":
 
 def get_version_vmaj(openapi_dict: sdict) -> str:
     """Get the major version of the OpenAPI spec, like 'v0', 'v1', etc."""
-    return "v" + openapi_dict["version"].split(".")[0]
+    return "v" + openapi_dict["info"]["version"].split(".")[0]
 
 
 ########################################################################################
