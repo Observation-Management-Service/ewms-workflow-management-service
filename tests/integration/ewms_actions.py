@@ -1,8 +1,10 @@
 """Common high-level actions that occur in many situations."""
 
+import json
 import logging
 import os
 import time
+from pathlib import Path
 
 import openapi_core
 from jsonschema_path import SchemaPath
@@ -12,8 +14,6 @@ from rest_tools.client.utils import request_and_validate
 from .utils import (
     CONDOR_LOCATIONS_LOOKUP,
     StateForTMS,
-    _OPENAPI_DICT,
-    _OPENAPI_SPEC,
     _request_and_validate_and_print,
     check_taskforce_states,
     sleep_until_background_runners_advance_taskforces,
@@ -21,20 +21,27 @@ from .utils import (
 
 LOGGER = logging.getLogger(__name__)
 
+_OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/openapi.json"
+
 
 async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
     """Get the OpenAPI schema."""
-    resp = await request_and_validate(
+    resp = await request_and_validate(  # here we are asserting the endpoint's response
         rc,
-        _OPENAPI_SPEC,
+        # only read json file for this request
+        openapi_core.OpenAPI(SchemaPath.from_file_path(str(_OPENAPI_JSON))),
         "GET",
         "/v1/schema/openapi",
     )
     # check that the schema returned is the same as the one on disk
-    assert resp == _OPENAPI_DICT
-
-    openapi_spec = openapi_core.OpenAPI(SchemaPath.from_dict(resp))
-    return openapi_spec
+    with open(_OPENAPI_JSON, "rb") as f:
+        on_disk = json.load(f)
+        on_disk["info"] = {  # don't include the extra 'info' fields populated @ runtime
+            "title": on_disk["info"]["title"],
+            "version": on_disk["info"]["version"],
+        }
+        assert on_disk == resp
+    return openapi_core.OpenAPI(SchemaPath.from_dict(resp))
 
 
 async def user_requests_new_workflow(

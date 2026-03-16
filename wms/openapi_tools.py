@@ -55,8 +55,8 @@ def load_openapi_spec(
 
     Returns:
         A tuple containing:
-            - the OpenAPI object,
-            - the original schema as a dictionary, and
+            - the schema as an OpenAPI object
+            - the schema as a dictionary
     """
     _schema, base_uri = read_from_filename(str(fpath))
     if add_project_metadata:
@@ -101,11 +101,13 @@ def _populate_spec_info_from_installed_metadata(spec: "Schema") -> "Schema":
             "",
         )
 
-    info: dict[str, str | Any] = {
-        "title": md.get("Name", ""),
+    new_info: dict[str, str | Any] = {
+        # NOTE: do not add/override 'title' or 'version'
+        # - 'title' and 'version' are required by the OpenAPI spec
+        # - auto-populating 'version' from the project would not allow testing new
+        #       major versions -- think: crossing over from v1 to v2, endpoints may change
         "summary": md.get("Summary", ""),
         "description": md.get("Description", ""),
-        "version": md.get("Version", ""),
         "contact": {
             "name": md.get("Maintainer", md.get("Author", "")),
             "email": md.get("Maintainer-email", md.get("Author-email", "")),
@@ -117,7 +119,10 @@ def _populate_spec_info_from_installed_metadata(spec: "Schema") -> "Schema":
     }
 
     spec = dict(spec)  # cast in order to add key
-    spec["info"] = info
+    spec["info"] = {
+        **spec.get("info", {}),
+        **new_info,  # override/add
+    }
     return spec
 
 

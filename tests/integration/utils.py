@@ -4,16 +4,12 @@ import asyncio
 import dataclasses
 import json
 import os
-from pathlib import Path
 from typing import Any
 
 import openapi_core
 from rest_tools.client import RestClient
 from rest_tools.client.utils import request_and_validate
-from wms import openapi_tools
 
-_OPENAPI_JSON = Path(__file__).parent / "../../wms/schema/openapi.json"
-_OPENAPI_SPEC, _OPENAPI_DICT = openapi_tools.load_openapi_spec(_OPENAPI_JSON, True)
 
 CONDOR_LOCATIONS_LOOKUP = {
     "test-alpha": {
