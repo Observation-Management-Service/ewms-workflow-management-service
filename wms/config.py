@@ -85,7 +85,7 @@ ENV = from_environment_as_dataclass(EnvConfig)
 # --------------------------------------------------------------------------------------
 # OpenAPI
 
-OPENAPI_SPEC, OPENAPI_DICT = openapi_tools.load_openapi_spec(OPENAPI_PATH, True)
+OPENAPI_SPEC, OPENAPI_DICT = openapi_tools.load_openapi_spec(OPENAPI_PATH, "wms")
 URL_V_PREFIX = openapi_tools.get_version_vmaj(OPENAPI_DICT)
 
 

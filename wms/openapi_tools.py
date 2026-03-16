@@ -41,7 +41,7 @@ sdict = dict[str, Any]
 
 def load_openapi_spec(
     fpath: Path,
-    add_project_metadata: bool,
+    metadata_from_package: str,
 ) -> tuple["openapi_core.OpenAPI", sdict]:
     """
     Loads and validates an OpenAPI specification file while optionally incorporating
@@ -50,8 +50,8 @@ def load_openapi_spec(
     Parameters:
         fpath: Path
             The file path to the OpenAPI specification.
-        add_project_metadata: bool
-            A flag indicating whether to include additional project metadata.
+        metadata_from_package: str
+            The name of the package to use for metadata to add to the spec.
 
     Returns:
         A tuple containing:
@@ -59,8 +59,8 @@ def load_openapi_spec(
             - the schema as a dictionary
     """
     _schema, base_uri = read_from_filename(str(fpath))
-    if add_project_metadata:
-        _schema = _populate_spec_info_from_installed_metadata(_schema)
+    if metadata_from_package:
+        _schema = _populate_spec_info_from_pkg_metadata(_schema, metadata_from_package)
 
     # validate the spec
     LOGGER.info(f"validating OpenAPI spec for {base_uri} ({fpath})")
@@ -72,8 +72,8 @@ def load_openapi_spec(
     return _spec, cast(sdict, dict(_schema))
 
 
-def _populate_spec_info_from_installed_metadata(spec: "Schema") -> "Schema":
-    """Populate spec['info'] from installed project metadata only."""
+def _populate_spec_info_from_pkg_metadata(spec: "Schema", dist_name: str) -> "Schema":
+    """Populate the 'info' section of an OpenAPI spec with project metadata, for package dist_name."""
     # if sys.version_info < (3, 12):
     #     # python <= 3.11 does not support PackageMetadata.get()
     #     # -- our server apps will need to run on python 3.12+, which most already do
@@ -81,8 +81,6 @@ def _populate_spec_info_from_installed_metadata(spec: "Schema") -> "Schema":
     #         "openapi_tools._populate_spec_info_from_installed_metadata() requires python 3.12+"
     #     )
 
-    top_name = (__package__ or __name__).split(".")[0]
-    dist_name = importlib.metadata.packages_distributions()[top_name][0]  # use first
     md = importlib.metadata.metadata(dist_name)
 
     def _first_project_url(md: importlib.metadata.PackageMetadata) -> str:
