@@ -74,11 +74,6 @@ def load_openapi_spec(
 
 def _populate_spec_info_from_installed_metadata(spec: "Schema") -> "Schema":
     """Populate spec['info'] from installed project metadata only."""
-    if spec.get("info"):
-        raise RuntimeError(
-            "Cannot auto-populate OpenAPI field 'info' -- it's already populated"
-        )
-
     # if sys.version_info < (3, 12):
     #     # python <= 3.11 does not support PackageMetadata.get()
     #     # -- our server apps will need to run on python 3.12+, which most already do
@@ -117,6 +112,13 @@ def _populate_spec_info_from_installed_metadata(spec: "Schema") -> "Schema":
             "name": md.get("License-Expression", md.get("License", "")),
         },
     }
+
+    # check overrides
+    for k in new_info:
+        if spec["info"].get(k):
+            raise RuntimeError(
+                f"Cannot auto-populate OpenAPI specification field 'info.{k}' -- it's already populated"
+            )
 
     spec = dict(spec)  # cast in order to add key
     spec["info"] = {
