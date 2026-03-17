@@ -12,8 +12,7 @@ from wipac_dev_tools.container_registry_tools import (
     ImageNotFoundException,
 )
 from wipac_dev_tools.logging_tools import LoggerLevel, WIPACDevToolsFormatter
-
-from . import openapi_tools
+from rest_tools import openapi_tools
 
 LOGGER = logging.getLogger(__name__)
 
