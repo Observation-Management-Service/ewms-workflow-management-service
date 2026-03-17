@@ -35,7 +35,7 @@ async def query_for_schema(rc: RestClient) -> openapi_core.OpenAPI:
     )
     # check that the schema returned is the same as the one on disk
     with open(_OPENAPI_JSON, "rb") as f:
-        for k in resp["info"]:
+        for k in list(resp["info"].keys()):  # so to change size during iteration
             # check that the schema was populated correctly
             assert resp["info"][k], f"full info fields: {resp['info']!r}"
             # don't include extra 'info' fields populated @ runtime
