@@ -113,7 +113,7 @@ jobs:
   #############################################################################
 
   test-build-docker:
-#    needs: [ lint ]
+    needs: [ lint ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -130,8 +130,7 @@ jobs:
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
 
   integration-test-full-wms-workflow:
-#    needs: [ py-versions, lint ]
-    needs: [ py-versions ]
+    needs: [ py-versions, lint ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -220,8 +219,7 @@ jobs:
 
 
   unit-tests:
-#    needs: [ py-versions, lint ]
-    needs: [ py-versions ]
+    needs: [ py-versions, lint ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
