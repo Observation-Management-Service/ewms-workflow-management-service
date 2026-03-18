@@ -245,7 +245,6 @@ jobs:
         run: |
           set -euo pipefail
           pip install .[tests]
-          pip install git+https://github.com/WIPACrepo/rest-tools.git@openapi-consolidate
       - name: test
         run: |
           set -euo pipefail
