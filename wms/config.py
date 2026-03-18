@@ -5,6 +5,7 @@ import logging
 from pathlib import Path
 
 import cachetools
+from rest_tools import openapi_tools
 from tornado import web
 from wipac_dev_tools import from_environment_as_dataclass, logging_tools
 from wipac_dev_tools.container_registry_tools import (
@@ -13,7 +14,6 @@ from wipac_dev_tools.container_registry_tools import (
 )
 from wipac_dev_tools.logging_tools import LoggerLevel, WIPACDevToolsFormatter
 
-from . import openapi_tools
 
 LOGGER = logging.getLogger(__name__)
 
