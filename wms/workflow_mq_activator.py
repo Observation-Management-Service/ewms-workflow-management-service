@@ -250,7 +250,7 @@ async def run(mongo_client: AsyncMongoClient) -> None:
         mongo_client, parent_logger=LOGGER
     )
     # rest client
-    mqs_rc = get_mqs_connection(logging.getLogger(f"{LOGGER.name}.mqs"))
+    mqs_rc = get_mqs_connection(logging.getLogger(f"{LOGGER.name}.mqs-client"))
 
     # main loop
     short_sleep = False
