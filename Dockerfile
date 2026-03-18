@@ -14,8 +14,7 @@ RUN --mount=type=cache,target=/tmp/pip-cache \
 USER root
 RUN --mount=type=bind,source=.,target=/home/app/src,rw \
     --mount=type=cache,target=/tmp/pip-cache \
-    pip install /home/app/src
-RUN pip install git+https://github.com/WIPACrepo/rest-tools.git@openapi-consolidate
+    pip install /home/app/src\ git+https://github.com/WIPACrepo/rest-tools.git@openapi-consolidate
 USER app
 
 ENV PYTHONPATH=/home/app
