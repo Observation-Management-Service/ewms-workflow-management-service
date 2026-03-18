@@ -186,6 +186,7 @@ jobs:
           touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:"${TEST_PILOT_IMAGE_LATEST_TAG}"
 
           # start REST in container with CVMFS dir wired in
+          echo "starting REST server..."
           docker run --network='host' --rm --name wms-server \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
@@ -202,6 +203,7 @@ jobs:
 
           sleep 10
           # pytest picks up TEST_PILOT_IMAGE_LATEST_TAG from env if needed
+          echo "starting pytest..."
           pytest -vvv --exitfirst --reverse tests/integration/test_tms_workflow.py
       #
       - if: always()
