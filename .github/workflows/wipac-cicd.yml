@@ -177,6 +177,7 @@ jobs:
       - name: test (run servers in background)
         run: |
           set -euo pipefail
+          pip install git+https://github.com/WIPACrepo/rest-tools.git@openapi-consolidate
           python tests/integration/dummy_mqs.py &> ./dummy_mqs.out &
 
           # compute latest pilot tag and mirror it into mock CVMFS
