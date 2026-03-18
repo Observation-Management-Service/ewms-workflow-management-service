@@ -829,7 +829,13 @@ async def test_210__add_workers_during_condor(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         [  # include just the newbie, aka with n_taskforces=1
-            StateForTMS(**{**asdict(tms_states[0]), **{"n_taskforces": 1}})
+            # StateForTMS + dict -> dict + dict -> dict -> StateForTMS
+            StateForTMS(
+                **{
+                    **asdict(tms_states[0]),
+                    **{"n_taskforces": 1},
+                }  # ty:ignore[invalid-argument-type]
+            )
         ],
     )
     await check_taskforce_states(
@@ -950,7 +956,13 @@ async def test_211__add_workers_during_condor(rc: RestClient) -> None:
         openapi_spec,
         task_id,
         [  # include just the newbie, aka with n_taskforces=1
-            StateForTMS(**{**asdict(tms_states[0]), **{"n_taskforces": 1}})
+            # StateForTMS + dict -> dict + dict -> dict -> StateForTMS
+            StateForTMS(
+                **{
+                    **asdict(tms_states[0]),
+                    **{"n_taskforces": 1},
+                },  # ty:ignore[invalid-argument-type]
+            )
         ],
     )
     await check_taskforce_states(

@@ -4,8 +4,7 @@ import asyncio
 import logging
 import time
 
-from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo import ASCENDING, DESCENDING
+from pymongo import ASCENDING, AsyncMongoClient, DESCENDING
 
 from . import database
 from .config import ENV
@@ -16,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 @resilient_daemon_task(ENV.TASKFORCE_LAUNCH_CONTROL_DELAY, LOGGER)
-async def run(mongo_client: AsyncIOMotorClient) -> None:  # type: ignore[valid-type]
+async def run(mongo_client: AsyncMongoClient) -> None:
     """Start up the daemon task."""
     LOGGER.info("Starting up taskforce_launch_control...")
 

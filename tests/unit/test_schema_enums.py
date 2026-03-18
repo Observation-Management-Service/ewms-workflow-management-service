@@ -1,19 +1,21 @@
 """Test schema.enums.py."""
 
-
-import copy
 import logging
 
 import jsonschema
 
-from wms import config, schema
+from wms import schema
+from wms.database.client import get_jsonschema_subspec_from_openapi
+from wms.database.utils import TASKFORCES_COLL_NAME
 
 LOGGER = logging.getLogger(__name__)
 
 
 def test_tmsaction() -> None:
     """Validate the TaskforcePhase attrs with the jsonschema."""
-    spec = copy.deepcopy(config.MONGO_COLLECTION_JSONSCHEMA_SPECS["Taskforce"])
+    spec = get_jsonschema_subspec_from_openapi(
+        TASKFORCES_COLL_NAME.removesuffix("Coll") + "Object"
+    )
     spec["required"] = []
 
     for attr in [*schema.enums.TaskforcePhase]:

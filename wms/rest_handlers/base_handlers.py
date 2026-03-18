@@ -3,7 +3,7 @@
 import logging
 from typing import Any
 
-from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import AsyncMongoClient
 from rest_tools.server import RestHandler, validate_request
 
 from . import auth
@@ -16,17 +16,17 @@ LOGGER = logging.getLogger(__name__)
 class BaseWMSHandler(RestHandler):
     """BaseWMSHandler is a RestHandler for all WMS routes."""
 
-    def initialize(  # type: ignore  # pylint: disable=W0221
+    def initialize(  # type: ignore[override]
         self,
-        mongo_client: AsyncIOMotorClient,
+        mongo_client: AsyncMongoClient,
         *args: Any,
         **kwargs: Any,
     ) -> None:
         """Initialize a BaseWMSHandler object."""
-        super().initialize(*args, **kwargs)  # type: ignore[no-untyped-call]
+        super().initialize(*args, **kwargs)
         self.wms_db = database.client.WMSMongoValidatedDatabase(mongo_client)
         self.mqs_rc = get_mqs_connection(
-            logging.getLogger(f"{LOGGER.name.split('.', maxsplit=1)[0]}.mqs")
+            logging.getLogger(f"{LOGGER.name.split('.', maxsplit=1)[0]}.mqs-client")
         )
 
 
@@ -39,7 +39,7 @@ class MainHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def get(self) -> None:
         """Handle GET."""
         self.write({})

@@ -176,7 +176,7 @@ class TaskDirectiveIDHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/task-directives/(?P<task_id>[\w-]+)$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def get(self, task_id: str) -> None:
         """Handle GET.
 
@@ -206,7 +206,7 @@ class TaskDirectivesFindHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/query/task-directives$"
 
     @auth.service_account_auth(roles=[auth.AuthAccounts.USER])  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self) -> None:
         """Handle POST.
 
@@ -231,14 +231,14 @@ class TaskDirectiveIDActionsAddWorkersHandler(BaseWMSHandler):
     ROUTE = rf"/{config.URL_V_PREFIX}/task-directives/(?P<task_id>[\w-]+)/actions/add-workers$"
 
     @auth.service_account_auth(roles=auth.ALL_AUTH_ACCOUNTS)  # type: ignore
-    @validate_request(config.REST_OPENAPI_SPEC)  # type: ignore[misc]
+    @validate_request(config.OPENAPI_SPEC)
     async def post(self, task_id: str) -> None:
         """Handle POST.
 
         Create an additional taskforce.
         """
-        async with await self.wms_db.mongo_client.start_session() as s:
-            async with s.start_transaction():  # atomic
+        async with self.wms_db.mongo_client.start_session() as s:
+            async with await s.start_transaction():  # make update batch atomic
 
                 # grab fields from an existing taskforce -- copy over common fields
                 an_existing_taskforce = (

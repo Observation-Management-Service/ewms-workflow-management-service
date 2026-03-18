@@ -8,17 +8,12 @@ import logging
 import random
 import threading
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 import wipac_dev_tools.logging_tools
-from wipac_dev_tools.timing_tools import IntervalTimer
-
-if TYPE_CHECKING:  # not installing dependency just for example script
-    Queue = Any
-else:
-    from mqclient import Queue
-
+from mqclient import Queue
 from rest_tools.client import RestClient, SavedDeviceGrantAuth
+from wipac_dev_tools.timing_tools import IntervalTimer
 
 LOGGER = logging.getLogger(__name__)
 

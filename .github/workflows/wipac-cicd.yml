@@ -21,9 +21,6 @@ env:
   REST_PORT: 8080
   MQS_ADDRESS: http://localhost:8081
   #
-  REST_OPENAPI_SPEC_FPATH: "schema/rest/openapi_compiled.json"
-  DB_JSONSCHEMA_DIR: "schema/db"
-  #
   WORKFLOW_MQ_ACTIVATOR_DELAY: 2  # need to define for pytests
   WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT: 10  # ''
   TASKFORCE_LAUNCH_CONTROL_DELAY: 2  # ''
@@ -48,41 +45,12 @@ jobs:
   # LINTERS
   #############################################################################
 
-  flake8:
+  lint:
     needs: [ py-versions ]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
-      - uses: actions/setup-python@v6
-        with:
-          python-version:
-            ${{ matrix.py3 }}
-      - uses: WIPACrepo/wipac-dev-flake8-action@v1.3
-        with:
-          max-complexity: 11  # ideal is ~10-15
-
-  mypy:
-    needs: [ py-versions ]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        py3: ${{ fromJSON(needs.py-versions.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.sha }}  # lock to triggered commit (github.ref is dynamic)
-          fetch-depth: 0  # setuptools-scm needs to access git tags
-      - uses: actions/setup-python@v6
-        with:
-          python-version: ${{ matrix.py3 }}
-      - uses: WIPACrepo/wipac-dev-mypy-action@v2.0
+    uses: WIPACrepo/wipac-dev-workflows/.github/workflows/lint-python.yml@v1.23
+    with:
+      py-matrix-json: ${{ needs.py-versions.outputs.matrix }}
+      max-complexity: 11  # ideal is ~10-15
 
 
   #############################################################################
@@ -97,7 +65,7 @@ jobs:
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
-      - uses: WIPACrepo/wipac-dev-py-setup-action@v5.9
+      - uses: WIPACrepo/wipac-dev-py-setup-action@v5.10
         with:
           mode: PACKAGING
           python_min: 3.12
@@ -105,7 +73,7 @@ jobs:
           auto_mypy_option: True
 
   py-dependencies:
-    needs: [ flake8 ]
+    needs: [ lint ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -122,47 +90,12 @@ jobs:
       - uses: WIPACrepo/wipac-dev-py-dependencies-action@v3.4
 
 
-  #############################################################################
-  # FORMATTER
-  #############################################################################
-
-  code-format:
-    runs-on: ubuntu-latest
-    steps:
-      - if: github.actor != 'dependabot[bot]'
-        uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
-          ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
-      - if: github.actor != 'dependabot[bot]'
-        name: "git config user.name github-actions"
-        run: |
-          set -euo pipefail
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          
-          # check git status
-          git fetch
-          if [[ $(git status -sb | grep behind) ]]; then
-            echo "this commit is not the most recent on this branch -- rest of action will be skipped"
-            exit 0
-          fi
-          
-          # use literal collection syntax, see https://docs.astral.sh/ruff/rules/unnecessary-collection-call/
-          pip install ruff
-          ruff check --select C408 --fix . --unsafe-fixes
-          
-          # push
-          git add . || true
-          git commit -m "<bot> auto code format file(s)" || true
-          git push || true
-
-
   ############################################################################
-  # AUTO-GENERATION
+  # DOCS GENERATION
   #############################################################################
 
   api-documentation:
+    needs: [ lint ]
     if: ${{ github.actor != 'dependabot[bot]' }} # dependabot cannot access PAT
     runs-on: ubuntu-latest
     steps:
@@ -172,7 +105,7 @@ jobs:
           ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
       - uses: WIPACrepo/wipac-dev-openapi-docs-action@v1.0
         with:
-          openapi_fpath: "wms/${{ env.REST_OPENAPI_SPEC_FPATH }}"
+          openapi_fpath: "wms/schema/openapi.json"
 
 
   ############################################################################
@@ -180,6 +113,7 @@ jobs:
   #############################################################################
 
   test-build-docker:
+    needs: [ lint ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -196,7 +130,7 @@ jobs:
           tags: ${{ env.CI_DOCKER_IMAGE_W_TAG }}
 
   integration-test-full-wms-workflow:
-    needs: [ py-versions ]
+    needs: [ py-versions, lint ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -251,14 +185,13 @@ jobs:
           touch "$CVMFS_PILOT_SINGULARITY_IMAGES_DIR"/ewms-pilot:"${TEST_PILOT_IMAGE_LATEST_TAG}"
 
           # start REST in container with CVMFS dir wired in
+          echo "starting REST server..."
           docker run --network='host' --rm --name wms-server \
             --env MONGODB_HOST="${{ env.MONGODB_HOST }}" \
             --env MONGODB_PORT="${{ env.MONGODB_PORT }}" \
             --env REST_HOST="${{ env.REST_HOST }}" \
             --env REST_PORT="${{ env.REST_PORT }}" \
             --env MQS_ADDRESS="${{ env.MQS_ADDRESS }}" \
-            --env REST_OPENAPI_SPEC_FPATH="${{ env.REST_OPENAPI_SPEC_FPATH }}" \
-            --env DB_JSONSCHEMA_DIR="${{ env.DB_JSONSCHEMA_DIR }}" \
             --env TASKFORCE_LAUNCH_CONTROL_DELAY="${{ env.TASKFORCE_LAUNCH_CONTROL_DELAY }}" \
             --env WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT="${{ env.WORKFLOW_MQ_ACTIVATOR_MQS_RETRY_WAIT }}" \
             --env WORKFLOW_MQ_ACTIVATOR_DELAY="${{ env.WORKFLOW_MQ_ACTIVATOR_DELAY }}" \
@@ -269,6 +202,7 @@ jobs:
 
           sleep 10
           # pytest picks up TEST_PILOT_IMAGE_LATEST_TAG from env if needed
+          echo "starting pytest..."
           pytest -vvv --exitfirst --reverse tests/integration/test_tms_workflow.py
       #
       - if: always()
@@ -284,7 +218,7 @@ jobs:
 
 
   unit-tests:
-    needs: [ py-versions ]
+    needs: [ py-versions, lint ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -325,17 +259,15 @@ jobs:
     if: format('refs/heads/{0}', github.event.repository.default_branch) == github.ref
     needs: [
       py-versions,
-      flake8,
-      mypy,
+      lint,
       py-setup,
       py-dependencies,
-      code-format,
       api-documentation,
       test-build-docker,
       integration-test-full-wms-workflow,
       unit-tests
     ]
-    uses: WIPACrepo/wipac-dev-workflows/.github/workflows/tag-and-release.yml@v1.20
+    uses: WIPACrepo/wipac-dev-workflows/.github/workflows/tag-and-release.yml@v1.23
     permissions: # for GITHUB_TOKEN
       contents: write
     with:
