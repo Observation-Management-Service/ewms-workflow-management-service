@@ -1,10 +1,10 @@
-# _v1_query_task_directives_post_400_response
+# ErrorResponse
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **code** | **Integer** | http error code | [default to null] |
-| **error** | **String** | http error reason | [default to null] |
+| **code** | **Integer** | HTTP error code. | [default to null] |
+| **error** | **String** | HTTP error reason. | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

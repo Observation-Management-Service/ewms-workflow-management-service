@@ -3,7 +3,7 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **error** | **String** | a description of why the taskforce failed to be removed on HTCondor | [optional] [default to null] |
+| **error** | **String** | A description of why the taskforce could not be removed from HTCondor. | [optional] [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

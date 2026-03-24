@@ -3,7 +3,7 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String** | A unique identifier automatically generated for this taskforce. | [optional] [default to null] |
+| **taskforce\_uuid** | **String** | A unique identifier automatically generated for this taskforce. | [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

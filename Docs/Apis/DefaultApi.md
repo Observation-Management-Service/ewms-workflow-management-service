@@ -27,7 +27,7 @@
 
 <a name="GET /v1/"></a>
 # **GET /v1/**
-> GET /v1/()
+> Object GET /v1/()
 
 
 
@@ -38,7 +38,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-null (empty response body)
+**Object**
 
 ### Authorization
 
@@ -60,7 +60,7 @@ null (empty response body)
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **FindObject** | [**FindObject**](../Models/FindObject.md)|  | [optional] |
+| **FindObject** | [**FindObject**](../Models/FindObject.md)|  | |
 
 ### Return type
 
@@ -86,7 +86,7 @@ null (empty response body)
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **FindObject** | [**FindObject**](../Models/FindObject.md)|  | [optional] |
+| **FindObject** | [**FindObject**](../Models/FindObject.md)|  | |
 
 ### Return type
 
@@ -112,7 +112,7 @@ null (empty response body)
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **FindObject** | [**FindObject**](../Models/FindObject.md)|  | [optional] |
+| **FindObject** | [**FindObject**](../Models/FindObject.md)|  | |
 
 ### Return type
 
@@ -162,7 +162,7 @@ This endpoint does not need any parameter.
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **task\_id** | **String**| The ID of the task directive to which the taskforce (and workers) will be added. | [default to null] |
-| **\_v1\_task\_directives\_\_task\_id\_\_actions\_add\_workers\_post\_request** | [**_v1_task_directives__task_id__actions_add_workers_post_request**](../Models/_v1_task_directives__task_id__actions_add_workers_post_request.md)|  | [optional] |
+| **\_v1\_task\_directives\_\_task\_id\_\_actions\_add\_workers\_post\_request** | [**_v1_task_directives__task_id__actions_add_workers_post_request**](../Models/_v1_task_directives__task_id__actions_add_workers_post_request.md)|  | |
 
 ### Return type
 
@@ -214,7 +214,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
+| **taskforce\_uuid** | **String**| UUID of the taskforce. | [default to null] |
 
 ### Return type
 
@@ -240,8 +240,8 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
-| **\_v1\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request** | [**_v1_tms_condor_complete_taskforces__taskforce_uuid__post_request**](../Models/_v1_tms_condor_complete_taskforces__taskforce_uuid__post_request.md)|  | [optional] |
+| **taskforce\_uuid** | **String**| UUID of the taskforce. | [default to null] |
+| **\_v1\_tms\_condor\_complete\_taskforces\_\_taskforce\_uuid\_\_post\_request** | [**_v1_tms_condor_complete_taskforces__taskforce_uuid__post_request**](../Models/_v1_tms_condor_complete_taskforces__taskforce_uuid__post_request.md)|  | |
 
 ### Return type
 
@@ -267,8 +267,8 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
-| **\_v1\_tms\_condor\_rm\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request** | [**_v1_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request**](../Models/_v1_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request.md)|  | [optional] |
+| **taskforce\_uuid** | **String**| UUID of the taskforce. | [default to null] |
+| **\_v1\_tms\_condor\_rm\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request** | [**_v1_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request**](../Models/_v1_tms_condor_rm_taskforces__taskforce_uuid__failed_post_request.md)|  | |
 
 ### Return type
 
@@ -294,7 +294,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
+| **taskforce\_uuid** | **String**| UUID of the taskforce. | [default to null] |
 
 ### Return type
 
@@ -320,8 +320,8 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
-| **\_v1\_tms\_condor\_submit\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request** | [**_v1_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request**](../Models/_v1_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request.md)|  | [optional] |
+| **taskforce\_uuid** | **String**| UUID of the taskforce. | [default to null] |
+| **\_v1\_tms\_condor\_submit\_taskforces\_\_taskforce\_uuid\_\_failed\_post\_request** | [**_v1_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request**](../Models/_v1_tms_condor_submit_taskforces__taskforce_uuid__failed_post_request.md)|  | |
 
 ### Return type
 
@@ -347,8 +347,8 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **taskforce\_uuid** | **String**| uuid of the taskforce | [default to null] |
-| **TaskforceObject** | [**TaskforceObject**](../Models/TaskforceObject.md)|  | [optional] |
+| **taskforce\_uuid** | **String**| UUID of the taskforce. | [default to null] |
+| **TaskforceObject** | [**TaskforceObject**](../Models/TaskforceObject.md)|  | |
 
 ### Return type
 
@@ -374,8 +374,8 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **schedd** | **String**| name of the condor schedd | [default to null] |
-| **collector** | **String**| DEPRECATED: name of the condor collector -- no longer used/needed | [optional] [default to null] |
+| **schedd** | **String**| Name of the HTCondor schedd. | [default to null] |
+| **collector** | **String**| Deprecated. Name of the HTCondor collector; no longer used. | [optional] [default to null] |
 
 ### Return type
 
@@ -401,8 +401,8 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **schedd** | **String**| name of the condor schedd | [default to null] |
-| **collector** | **String**| DEPRECATED: name of the condor collector -- no longer used/needed | [optional] [default to null] |
+| **schedd** | **String**| Name of the HTCondor schedd. | [default to null] |
+| **collector** | **String**| Deprecated. Name of the HTCondor collector; no longer used. | [optional] [default to null] |
 
 ### Return type
 
@@ -428,7 +428,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **\_v1\_tms\_statuses\_taskforces\_post\_request** | [**_v1_tms_statuses_taskforces_post_request**](../Models/_v1_tms_statuses_taskforces_post_request.md)|  | [optional] |
+| **\_v1\_tms\_statuses\_taskforces\_post\_request** | [**_v1_tms_statuses_taskforces_post_request**](../Models/_v1_tms_statuses_taskforces_post_request.md)|  | |
 
 ### Return type
 
@@ -454,7 +454,7 @@ This endpoint does not need any parameter.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **\_v1\_workflows\_post\_request** | [**_v1_workflows_post_request**](../Models/_v1_workflows_post_request.md)|  | [optional] |
+| **\_v1\_workflows\_post\_request** | [**_v1_workflows_post_request**](../Models/_v1_workflows_post_request.md)|  | |
 
 ### Return type
 
@@ -474,7 +474,7 @@ This endpoint does not need any parameter.
 
 
 
-    Aborts the specified workflow (and marks as &#39;deactivated&#39;), then sends stop commands to the associated taskforces.
+    Aborts the specified workflow, marks it as deactivated, and sends stop commands to the associated taskforces.
 
 ### Parameters
 
@@ -500,7 +500,7 @@ This endpoint does not need any parameter.
 
 
 
-    Marks the specified workflow as finished (and &#39;deactivated&#39;), then sends stop commands to the associated taskforces.
+    Marks the specified workflow as finished, marks it as deactivated, and sends stop commands to the associated taskforces.
 
 ### Parameters
 

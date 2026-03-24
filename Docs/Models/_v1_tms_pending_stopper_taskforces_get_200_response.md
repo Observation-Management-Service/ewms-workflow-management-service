@@ -8,7 +8,7 @@
 | **workflow\_id** | **String** | The identifier of the overarching workflow object (N*M taskforces : M task directives : 1 workflow). | [optional] [default to null] |
 | **timestamp** | **BigDecimal** | The epoch time when this taskforce was created. | [optional] [default to null] |
 | **priority** | **Integer** | The priority level relative to other taskforces (usually, this value is inherited from the parent workflow object). | [optional] [default to null] |
-| **collector** | **String** | DEPRECATED: The address of the HTCondor collector -- no longer used/needed. | [optional] [default to null] |
+| **collector** | **String** | Deprecated. Address of the HTCondor collector; no longer used. | [optional] [default to null] |
 | **schedd** | **String** | The address of the HTCondor schedd. | [optional] [default to null] |
 | **n\_workers** | **Integer** | The number of workers in this taskforce&#39;s HTCondor cluster (immutable). | [optional] [default to null] |
 | **pilot\_config** | [**TaskforceObject_pilot_config**](TaskforceObject_pilot_config.md) |  | [optional] [default to null] |
@@ -17,7 +17,7 @@
 | **submit\_dict** | [**Map**](TaskforceObject_submit_dict_value.md) | The actual HTCondor submit class ad. | [optional] [default to null] |
 | **job\_event\_log\_fpath** | **String** | The file path on the HTCondor AP containing job event logs. | [optional] [default to null] |
 | **phase** | **String** | The current phase of the taskforce within the workflow&#39;s lifetime. Not all taskforces will enter every phase. | [optional] [default to null] |
-| **phase\_change\_log** | [**List**](AnyType.md) | A record of all attempted phase changes, including both successful and unsuccessful ones. | [optional] [default to null] |
+| **phase\_change\_log** | [**List**](TaskforceObject_phase_change_log_inner.md) | A record of all attempted phase changes, including both successful and unsuccessful ones. | [optional] [default to null] |
 | **compound\_statuses** | [**Map**](map.md) | Aggregated status of the workers, represented as a nested dictionary mapping HTCondor states to EWMS pilot states and their counts. | [optional] [default to null] |
 | **top\_task\_errors** | **Map** | The most common errors encountered by workers, paired with their occurrence counts. | [optional] [default to null] |
 

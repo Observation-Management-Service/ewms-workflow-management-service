@@ -1,4 +1,4 @@
-# Documentation for EWMS - Workflow Management Service
+# Documentation for EWMS Workflow Management Service
 
 <a name="documentation-for-api-endpoints"></a>
 ## Documentation for API Endpoints
@@ -23,8 +23,8 @@
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v1tmspending-stoppertaskforces) | **GET** /v1/tms/pending-stopper/taskforces | For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v1tmsstatusestaskforces) | **POST** /v1/tms/statuses/taskforces | For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#post-v1workflows) | **POST** /v1/workflows | Creates a new workflow along with its associated task directives and taskforces. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v1workflowsworkflow_idactionsabort) | **POST** /v1/workflows/{workflow_id}/actions/abort | Aborts the specified workflow (and marks as 'deactivated'), then sends stop commands to the associated taskforces. |
-*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v1workflowsworkflow_idactionsfinished) | **POST** /v1/workflows/{workflow_id}/actions/finished | Marks the specified workflow as finished (and 'deactivated'), then sends stop commands to the associated taskforces. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v1workflowsworkflow_idactionsabort) | **POST** /v1/workflows/{workflow_id}/actions/abort | Aborts the specified workflow, marks it as deactivated, and sends stop commands to the associated taskforces. |
+*DefaultApi* | [_details_](Apis/DefaultApi.md#post-v1workflowsworkflow_idactionsfinished) | **POST** /v1/workflows/{workflow_id}/actions/finished | Marks the specified workflow as finished, marks it as deactivated, and sends stop commands to the associated taskforces. |
 *DefaultApi* | [_details_](Apis/DefaultApi.md#get-v1workflowsworkflow_id) | **GET** /v1/workflows/{workflow_id} | Retrieves the workflow object that matches the specified workflow ID. |
 
 
@@ -32,9 +32,11 @@
 ## Documentation for Models
 
  - [DeactivatedWorkflowResponseObject](./Models/DeactivatedWorkflowResponseObject.md)
+ - [ErrorResponse](./Models/ErrorResponse.md)
  - [FindObject](./Models/FindObject.md)
  - [TaskDirectiveObject](./Models/TaskDirectiveObject.md)
  - [TaskforceObject](./Models/TaskforceObject.md)
+ - [TaskforceObject_phase_change_log_inner](./Models/TaskforceObject_phase_change_log_inner.md)
  - [TaskforceObject_pilot_config](./Models/TaskforceObject_pilot_config.md)
  - [TaskforceObject_pilot_config_environment_value](./Models/TaskforceObject_pilot_config_environment_value.md)
  - [TaskforceObject_submit_dict_value](./Models/TaskforceObject_submit_dict_value.md)
@@ -42,9 +44,7 @@
  - [TaskforceObject_worker_config_worker_disk](./Models/TaskforceObject_worker_config_worker_disk.md)
  - [TaskforceObject_worker_config_worker_memory](./Models/TaskforceObject_worker_config_worker_memory.md)
  - [WorkflowObject](./Models/WorkflowObject.md)
- - [_v1__get_400_response](./Models/_v1__get_400_response.md)
  - [_v1_query_task_directives_post_200_response](./Models/_v1_query_task_directives_post_200_response.md)
- - [_v1_query_task_directives_post_400_response](./Models/_v1_query_task_directives_post_400_response.md)
  - [_v1_query_taskforces_post_200_response](./Models/_v1_query_taskforces_post_200_response.md)
  - [_v1_query_workflows_post_200_response](./Models/_v1_query_workflows_post_200_response.md)
  - [_v1_task_directives__task_id__actions_add_workers_post_request](./Models/_v1_task_directives__task_id__actions_add_workers_post_request.md)
