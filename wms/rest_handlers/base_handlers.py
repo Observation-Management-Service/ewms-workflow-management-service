@@ -16,7 +16,7 @@ LOGGER = logging.getLogger(__name__)
 class BaseWMSHandler(RestHandler):
     """BaseWMSHandler is a RestHandler for all WMS routes."""
 
-    def initialize(  # type: ignore[override]
+    def initialize(  # type: ignore[override]  # ty: ignore[invalid-method-override]
         self,
         mongo_client: AsyncMongoClient,
         *args: Any,

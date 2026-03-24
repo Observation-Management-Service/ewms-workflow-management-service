@@ -1,5 +1,5 @@
 """Setup."""
 
-from setuptools import setup  # type: ignore[import-not-found]  # for ci/cd
+from setuptools import setup  # type: ignore[import-not-found]  # ty: ignore[unresolved-import]  # for ci/cd
 
 setup()
