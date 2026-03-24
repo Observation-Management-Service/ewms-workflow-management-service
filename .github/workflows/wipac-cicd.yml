@@ -91,24 +91,6 @@ jobs:
 
 
   ############################################################################
-  # DOCS GENERATION
-  #############################################################################
-
-  api-documentation:
-    needs: [ lint ]
-    if: ${{ github.actor != 'dependabot[bot]' }} # dependabot cannot access PAT
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # fyi, dependabot can't access normal secrets
-          ref: ${{ github.ref }}  # dont lock to sha (action needs to push)
-      - uses: WIPACrepo/wipac-dev-openapi-docs-action@v1.0
-        with:
-          openapi_fpath: "wms/schema/openapi.json"
-
-
-  ############################################################################
   # TESTS
   #############################################################################
 
@@ -262,7 +244,6 @@ jobs:
       lint,
       py-setup,
       py-dependencies,
-      api-documentation,
       test-build-docker,
       integration-test-full-wms-workflow,
       unit-tests
