@@ -1,7 +1,7 @@
 {
     "openapi": "3.1.0",
     "info": {
-        "title": "EWMS - Workflow Management Service",
+        "title": "EWMS Workflow Management Service",
         "version": "1.0.0"
     },
     "components": {
@@ -10,7 +10,7 @@
                 "name": "taskforce_uuid",
                 "in": "path",
                 "required": true,
-                "description": "uuid of the taskforce",
+                "description": "UUID of the taskforce.",
                 "schema": {
                     "type": "string"
                 }
@@ -20,7 +20,7 @@
                 "in": "query",
                 "required": false,
                 "deprecated": true,
-                "description": "DEPRECATED: name of the condor collector -- no longer used/needed",
+                "description": "Deprecated. Name of the HTCondor collector; no longer used.",
                 "schema": {
                     "type": "string"
                 }
@@ -29,7 +29,7 @@
                 "name": "schedd",
                 "in": "query",
                 "required": true,
-                "description": "name of the condor schedd",
+                "description": "Name of the HTCondor schedd.",
                 "schema": {
                     "type": "string"
                 }
@@ -38,7 +38,7 @@
         "schemas": {
             "WorkflowObject": {
                 "type": "object",
-                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main?tab=readme-ov-file#workflow",
+                "description": "Workflow object. See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main?tab=readme-ov-file#workflow",
                 "properties": {
                     "workflow_id": {
                         "type": "string",
@@ -84,7 +84,7 @@
             },
             "TaskDirectiveObject": {
                 "type": "object",
-                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#task-directive",
+                "description": "Task directive object. See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#task-directive",
                 "properties": {
                     "task_id": {
                         "type": "string",
@@ -163,7 +163,7 @@
             },
             "TaskforceObject": {
                 "type": "object",
-                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#taskforce",
+                "description": "Taskforce object. See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#taskforce",
                 "properties": {
                     "taskforce_uuid": {
                         "type": "string",
@@ -189,7 +189,7 @@
                         "anyOf": [
                             {
                                 "type": "string",
-                                "description": "DEPRECATED: The address of the HTCondor collector -- no longer used/needed.",
+                                "description": "Deprecated. Address of the HTCondor collector; no longer used.",
                                 "deprecated": true
                             },
                             {
@@ -223,7 +223,7 @@
                             },
                             "image_source": {
                                 "type": "string",
-                                "description": "the common name for the source of the image",
+                                "description": "The canonical source name for the image.",
                                 "enum": [
                                     "cvmfs",
                                     "auto"
@@ -463,7 +463,7 @@
                         "minItems": 1
                     },
                     "after": {
-                        "description": "The database '_id' to skip to for pagination -- this is given by a previous response's 'next_after' field",
+                        "description": "The database '_id' to resume pagination from, taken from a previous response's 'next_after' field.",
                         "type": "string"
                     }
                 },
@@ -487,11 +487,11 @@
                 "type": "object",
                 "properties": {
                     "workflow_id": {
-                        "description": "The workflow id",
+                        "description": "The workflow ID.",
                         "type": "string"
                     },
                     "n_taskforces": {
-                        "description": "number of to-be stopped taskforces",
+                        "description": "Number of taskforces to be stopped.",
                         "type": "integer"
                     }
                 },
@@ -505,11 +505,11 @@
                 "type": "object",
                 "properties": {
                     "code": {
-                        "description": "http error code",
+                        "description": "HTTP error code.",
                         "type": "integer"
                     },
                     "error": {
-                        "description": "http error reason",
+                        "description": "HTTP error reason.",
                         "type": "string"
                     }
                 },
@@ -560,7 +560,7 @@
                 "description": "Returns an empty response.",
                 "responses": {
                     "200": {
-                        "description": "an empty response",
+                        "description": "Empty response object.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -592,7 +592,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "TODO",
+                        "description": "Matching task directives and pagination metadata.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -641,7 +641,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "TODO",
+                        "description": "Matching taskforces and pagination metadata.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -690,7 +690,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "TODO",
+                        "description": "Matching workflows and pagination metadata.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -729,7 +729,7 @@
                 "description": "Returns the OpenAPI schema.",
                 "responses": {
                     "200": {
-                        "description": "The openapi schema",
+                        "description": "The OpenAPI schema.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -883,7 +883,7 @@
                                 "type": "object",
                                 "properties": {
                                     "condor_complete_ts": {
-                                        "description": "The time that the taskforce's condor cluster ended",
+                                        "description": "The time when the taskforce's HTCondor cluster ended.",
                                         "type": "integer"
                                     }
                                 },
@@ -977,7 +977,7 @@
                                 "type": "object",
                                 "properties": {
                                     "error": {
-                                        "description": "a description of why the taskforce failed to be removed on HTCondor",
+                                        "description": "A description of why the taskforce could not be removed from HTCondor.",
                                         "type": "string"
                                     }
                                 },
@@ -1079,7 +1079,7 @@
                                 "type": "object",
                                 "properties": {
                                     "error": {
-                                        "description": "a description of why the taskforce failed to be submitted",
+                                        "description": "A description of why the taskforce could not be submitted to HTCondor.",
                                         "type": "string"
                                     }
                                 },
@@ -1133,7 +1133,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "The next taskforce to start at the condor location",
+                        "description": "The next taskforce to start at the HTCondor location.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1149,7 +1149,7 @@
                                                 },
                                                 "mqprofiles": {
                                                     "type": "array",
-                                                    "description": "A list of the mq-profiles relevant for this taskforce (see https://github.com/Observation-Management-Service/ewms-message-queue-service/blob/main/Docs/Models/MQProfileObject.md).",
+                                                    "description": "MQ profiles relevant to this taskforce (see https://github.com/Observation-Management-Service/ewms-message-queue-service/blob/main/Docs/Models/MQProfileObject.md).",
                                                     "items": {
                                                         "type": "object"
                                                     },
@@ -1186,7 +1186,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "The next taskforce to stop at the condor location",
+                        "description": "The next taskforce to stop at the HTCondor location.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1257,7 +1257,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "individual results for the updates per uuid",
+                        "description": "Individual update results for each UUID.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1294,7 +1294,7 @@
                         }
                     },
                     "207": {
-                        "description": "individual results for the updates per uuid, with errors",
+                        "description": "Individual update results for each UUID, including errors.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1442,7 +1442,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "a list of the created database objects",
+                        "description": "The created workflow, task directives, and taskforces.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1531,10 +1531,10 @@
                 }
             ],
             "post": {
-                "description": "Aborts the specified workflow (and marks as 'deactivated'), then sends stop commands to the associated taskforces.",
+                "description": "Aborts the specified workflow, marks it as deactivated, and sends stop commands to the associated taskforces.",
                 "responses": {
                     "200": {
-                        "description": "The matching task directive",
+                        "description": "Summary of the deactivated workflow.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1565,10 +1565,10 @@
                 }
             ],
             "post": {
-                "description": "Marks the specified workflow as finished (and 'deactivated'), then sends stop commands to the associated taskforces.",
+                "description": "Marks the specified workflow as finished, marks it as deactivated, and sends stop commands to the associated taskforces.",
                 "responses": {
                     "200": {
-                        "description": "The matching task directive",
+                        "description": "Summary of the deactivated workflow.",
                         "content": {
                             "application/json": {
                                 "schema": {
