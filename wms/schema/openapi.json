@@ -114,7 +114,7 @@
                     "task_env": {
                         "type": "object",
                         "description": "Environment variables (and values) to set in the task instance.",
-                        "items": {
+                        "additionalProperties": {
                             "type": "string"
                         },
                         "minProperties": 0
@@ -130,7 +130,7 @@
                     "init_env": {
                         "type": "object",
                         "description": "Environment variables (and values) to set in the init container.",
-                        "items": {
+                        "additionalProperties": {
                             "type": "string"
                         },
                         "minProperties": 0
@@ -373,49 +373,52 @@
                     "phase_change_log": {
                         "type": "array",
                         "description": "A record of all attempted phase changes, including both successful and unsuccessful ones.",
-                        "properties": {
-                            "target_phase": {
-                                "type": "string",
-                                "description": "The phase that the system was attempting to transition to."
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "target_phase": {
+                                    "type": "string",
+                                    "description": "The phase that the system was attempting to transition to."
+                                },
+                                "timestamp": {
+                                    "type": "number",
+                                    "description": "The epoch timestamp when this phase change attempt was recorded in the system."
+                                },
+                                "was_successful": {
+                                    "type": "boolean",
+                                    "description": "Indicates whether the phase change was completed successfully, i.e. did it actually change?"
+                                },
+                                "source_event_time": {
+                                    "anyOf": [
+                                        {
+                                            "type": "number",
+                                            "description": "The epoch timestamp of the external event that led to this phase change attempt."
+                                        },
+                                        {
+                                            "type": "null",
+                                            "description": "Indicates no specific external event was tied to this phase change."
+                                        }
+                                    ]
+                                },
+                                "source_entity": {
+                                    "type": "string",
+                                    "description": "The entity (person, system, or process) responsible for the external event that triggered this phase change attempt."
+                                },
+                                "context": {
+                                    "type": "string",
+                                    "description": "The circumstances or background information about the phase change attempt."
+                                }
                             },
-                            "timestamp": {
-                                "type": "number",
-                                "description": "The epoch timestamp when this phase change attempt was recorded in the system."
-                            },
-                            "was_successful": {
-                                "type": "boolean",
-                                "description": "Indicates whether the phase change was completed successfully, i.e. did it actually change?"
-                            },
-                            "source_event_time": {
-                                "anyOf": [
-                                    {
-                                        "type": "number",
-                                        "description": "The epoch timestamp of the external event that led to this phase change attempt."
-                                    },
-                                    {
-                                        "type": "null",
-                                        "description": "Indicates no specific external event was tied to this phase change."
-                                    }
-                                ]
-                            },
-                            "source_entity": {
-                                "type": "string",
-                                "description": "The entity (person, system, or process) responsible for the external event that triggered this phase change attempt."
-                            },
-                            "context": {
-                                "type": "string",
-                                "description": "The circumstances or background information about the phase change attempt."
-                            }
+                            "required": [
+                                "target_phase",
+                                "timestamp",
+                                "was_successful",
+                                "source_event_time",
+                                "source_entity",
+                                "context"
+                            ],
+                            "additionalProperties": false
                         },
-                        "additionalProperties": false,
-                        "required": [
-                            "target_phase",
-                            "timestamp",
-                            "was_successful",
-                            "source_event_time",
-                            "source_entity",
-                            "context"
-                        ],
                         "minItems": 0
                     },
                     "compound_statuses": {
@@ -509,7 +512,12 @@
                     "200": {
                         "description": "an empty response",
                         "content": {
-                            "application/json": {}
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false
+                                }
+                            }
                         }
                     },
                     "400": {
@@ -1669,7 +1677,7 @@
                                     "top_task_errors_by_taskforce": {
                                         "description": "The top errors (paired with a count) for each indicated taskforce",
                                         "type": "object",
-                                        "items": {
+                                        "additionalProperties": {
                                             "type": "object",
                                             "additionalProperties": {
                                                 "type": "integer"
@@ -1681,7 +1689,7 @@
                                     "compound_statuses_by_taskforce": {
                                         "description": "The compound statuses (status -> state -> count) for the indicated taskforces",
                                         "type": "object",
-                                        "items": {
+                                        "additionalProperties": {
                                             "type": "object",
                                             "additionalProperties": {
                                                 "type": "object",
