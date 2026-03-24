@@ -559,7 +559,8 @@
                                 "$ref": "#/components/schemas/FindObject"
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -629,7 +630,8 @@
                                 "$ref": "#/components/schemas/FindObject"
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -699,7 +701,8 @@
                                 "$ref": "#/components/schemas/FindObject"
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -915,7 +918,8 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1103,7 +1107,8 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1117,7 +1122,10 @@
                                             "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "taskforce_uuid"
+                                    ]
                                 }
                             }
                         }
@@ -1195,7 +1203,10 @@
                                             "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "taskforce_uuid"
+                                    ]
                                 }
                             }
                         }
@@ -1276,7 +1287,8 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1290,7 +1302,10 @@
                                             "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "taskforce_uuid"
+                                    ]
                                 }
                             }
                         }
@@ -1363,7 +1378,8 @@
                                 "$ref": "#/components/schemas/TaskforceObject"
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1377,7 +1393,10 @@
                                             "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "taskforce_uuid"
+                                    ]
                                 }
                             }
                         }
@@ -1458,7 +1477,8 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1472,7 +1492,10 @@
                                             "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "taskforce_uuid"
+                                    ]
                                 }
                             }
                         }
@@ -1707,7 +1730,8 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1913,7 +1937,8 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1943,7 +1968,12 @@
                                             "minItems": 0
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "workflow",
+                                        "task_directives",
+                                        "taskforces"
+                                    ]
                                 }
                             }
                         }
