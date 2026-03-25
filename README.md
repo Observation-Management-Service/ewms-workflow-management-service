@@ -98,7 +98,7 @@ The task container is built from the user-provided image, specified by the [work
 
 ##### The Init Container
 
-The init container runs once on a worker before any task/event is processed. This is specified by the [workflow request object's `init_image`, `init_args`, and `init_env`](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). See the [EWMS Pilot documentation](https://observation-management-service.github.io/ewms-docs/internal/pilot.html#the-init-container) for more information.
+The init container runs once on a worker before any task/event is processed. This is specified by the [workflow request object's `init_image`, `init_args`, and `init_env`](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). Also, see the [EWMS Pilot documentation](https://observation-management-service.github.io/ewms-docs/internal/pilot.html#the-init-container) for more information.
 
 ##### Locations of Persisted Attributes
 
