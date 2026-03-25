@@ -29,7 +29,7 @@ The WMS is both the central component and the external interface for the Event W
 
 ## API Documentation
 
-See [Docs/](https://observation-management-service.github.io/ewms-docs/apis/wms.html)
+See [here](https://observation-management-service.github.io/ewms-docs/apis/wms.html)
 
 ## Overview
 
