@@ -4,7 +4,7 @@
 
 # Workflow Management Service
 
-A Workflow Management Service for EWMS
+EWMS's Workflow Management Service (WMS): An External Interface, Public Entrypoint
 <!--- Top of README Metadata Section (automated) --->
 
 <!--- note: this information is pulled from the pyproject.toml --->
