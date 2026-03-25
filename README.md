@@ -44,20 +44,20 @@ As described [above](#ewms-workflow-management-service), the WMS has several con
     1. If the MQS indicates that resources are insufficient, the WMS waits and also requests any other pending workflows from the MQS.
     2. Otherwise/eventually, the MQS creates the queues and provides them to the WMS.
 3. The WMS makes tokens for any publicly accessible queues available to the user.
-    - [GET @ /v1/mqs/workflows/{workflow_id}/mq-profiles/public](https://github.com/Observation-Management-Service/ewms-message-queue-service/blob/main/Docs/Apis/DefaultApi.md#v1MqsWorkflowsWorkflowIdMqProfilesPublicGet)
+    - [GET @ /v1/mqs/workflows/{workflow_id}/mq-profiles/public](https://observation-management-service.github.io/ewms-docs/apis/mqs.html#get--v1-mqs-workflows-workflow_id-mq-profiles-public)
 4. The WMS marks the workflow's taskforce(s) as ready for the [TMS](https://github.com/Observation-Management-Service/ewms-task-management-service).
-    - See [`Taskforce.phase`](xxxxxxxxxxxxxx/Models/TaskforceObject.md)
+    - See [`Taskforce.phase`](https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject) 
 5. When ready, the TMS initiates HTCondor jobs for the taskforce(s).
 6. The TMS relays live, aggregated runtime statuses to the WMS until the workflow's taskforces are completed.
-    - See [`Taskforce.compound_statuses`](xxxxxxxxxxxxxx/Models/TaskforceObject.md) and/or [`Taskforce.top_task_errors`](xxxxxxxxxxxxxx/Models/TaskforceObject.md)
+    - See [`Taskforce.compound_statuses`](https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject) and/or [`Taskforce.top_task_errors`](https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject)
 7. The user tells EWMS that the workflow has finished. The workflow is deactivated, and the TMS stops the associated taskforces.
-    - [POST @ /v1/workflows/{workflow_id}/actions/finished](https://github.com/Observation-Management-Service/ewms-message-queue-service/blob/main/Docs/Apis/DefaultApi.md#post-v1workflowsworkflow_idactionsfinished)
+    - [POST @ /v1/workflows/{workflow_id}/actions/finished](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows-workflow_id-actions-finished)
 
 This "story" is also detailed in [request_workflow.py](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/examples/request_workflow.py). However, this script may not suit all your needs. It is recommended to have a solid understanding of the user-facing [API endpoints](https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main/Docs#documentation-for-api-endpoints) and [objects](https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main/Docs#documentation-for-models).
 
 #### Example Workflow Request JSON
 
-Every [workflow](#workflow)) originates from a JSON object using [POST @ /v1/workflows](xxxxxxxxxxxxxx/Apis/DefaultApi.md#post-v1workflows). The following is an example of valid a request object (refer to the [docs](xxxxxxxxxxxxxx/Models/_v1_workflows_post_request.md) for other optional fields not seen here):
+Every [workflow](#workflow)) originates from a JSON object using [POST @ /v1/workflows](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). The following is an example of valid a request object (refer to the [docs](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows) for other optional fields not seen here):
 
 ```json
 {
@@ -94,15 +94,15 @@ Every [workflow](#workflow)) originates from a JSON object using [POST @ /v1/wor
 
 #### The Task Container
 
-The task container is built from the user-provided image, specified by the [workflow request object's `task_image`, `task_args`, and `task_env`](xxxxxxxxxxxxxx/Apis/DefaultApi.md#post-v1workflows). The container runs within an [EWMS Pilot instance](https://github.com/Observation-Management-Service/ewms-pilot) on an HTCondor Execution Point (EP). For configuration and interaction with EWMS [events](#event), refer to the [EWMS Pilot documentation](https://github.com/Observation-Management-Service/ewms-pilot).
+The task container is built from the user-provided image, specified by the [workflow request object's `task_image`, `task_args`, and `task_env`](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). The container runs within an [EWMS Pilot instance](https://github.com/Observation-Management-Service/ewms-pilot) on an HTCondor Execution Point (EP). For configuration and interaction with EWMS [events](#event), refer to the [EWMS Pilot documentation](https://github.com/Observation-Management-Service/ewms-pilot).
 
 ##### The Init Container
 
-The init container runs once on a worker before any task/event is processed. This is specified by the [workflow request object's `init_image`, `init_args`, and `init_env`](xxxxxxxxxxxxxx/Apis/DefaultApi.md#post-v1workflows). See the [EWMS Pilot documentation](https://github.com/Observation-Management-Service/ewms-pilot#the-init-container) for more information.
+The init container runs once on a worker before any task/event is processed. This is specified by the [workflow request object's `init_image`, `init_args`, and `init_env`](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). See the [EWMS Pilot documentation](https://github.com/Observation-Management-Service/ewms-pilot#the-init-container) for more information.
 
 ##### Locations of Persisted Attributes
 
-The [workflow request object's](xxxxxxxxxxxxxx/Apis/DefaultApi.md#post-v1workflows) fields are mostly persisted in similarly-named fields the [`TaskDirective`](#task-directive) object. However, some are located in other places:
+The [workflow request object's](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows) fields are mostly persisted in similarly-named fields the [`TaskDirective`](#task-directive) object. However, some are located in other places:
 
 | POST @ `/v1/workflows` Field | Persisted Destination      |
 |------------------------------|----------------------------|
@@ -124,28 +124,28 @@ Understanding the [objects](#ewms-glossary-applied-to-the-wms) within the WMS (a
 
 _What's a [workflow](#workflow)?_
 
-- Get by ID: [GET @ /v1/workflows/{workflow_id}](xxxxxxxxxxxxxx/Apis/DefaultApi.md#get-v1workflowsworkflow-id)
-- Search by other criteria: [POST @ /v1/query/workflows](xxxxxxxxxxxxxx/Apis/DefaultApi.md#post-v1workflows)
+- Get by ID: [GET @ /v1/workflows/{workflow_id}](https://observation-management-service.github.io/ewms-docs/apis/wms.html#get--v1-workflows-workflow_id)
+- Search by other criteria: [POST @ /v1/query/workflows](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows)
 
 #### Get a Task Directive
 
 _What's a [task directive](#task-directive)?_
 
-- Get by ID: [GET @ /v1/task-directives/{task_id}](xxxxxxxxxxxxxx/Apis/DefaultApi.md#get-v1task-directivestask_id)
-- Search by other criteria: [POST @ /v1/query/task-directives](xxxxxxxxxxxxxx/Apis/DefaultApi.md#post-v1querytask-directives)
+- Get by ID: [GET @ /v1/task-directives/{task_id}](https://observation-management-service.github.io/ewms-docs/apis/wms.html#get--v1-task-directives-task_id)
+- Search by other criteria: [POST @ /v1/query/task-directives](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-query-task-directives)
 
 #### Get a Taskforce
 
 _What's a [taskforce](#taskforce)?_
 
-- Get by ID: [GET @ /v1/taskforces/{taskforce_uuid}](xxxxxxxxxxxxxx/Apis/DefaultApi.md#get-v1taskforcestaskforce_uuid)
-- Search by other criteria: [POST @ /v1/query/taskforces](xxxxxxxxxxxxxx/Apis/DefaultApi.md#post-v1querytaskforces)
+- Get by ID: [GET @ /v1/taskforces/{taskforce_uuid}](https://observation-management-service.github.io/ewms-docs/apis/wms.html#get--v1-taskforces-taskforce_uuid)
+- Search by other criteria: [POST @ /v1/query/taskforces](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-query-taskforces)
 
 ## EWMS Glossary Applied to the WMS
 
 ### Workflow
 
-The **workflow** is the highest-level object in the EWMS hierarchy. It consists of 1+ **tasks**, each described by a **task directive**. These tasks are connected by **message queues**, akin to nodes and edges in a graph. _[See object properties.](xxxxxxxxxxxxxx/Models/WorkflowObject.md)_
+The **workflow** is the highest-level object in the EWMS hierarchy. It consists of 1+ **tasks**, each described by a **task directive**. These tasks are connected by **message queues**, akin to nodes and edges in a graph. _[See object properties.](https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#workflowobject)_
 
 _How is a [workflow](#get-a-workflow) object retrieved?_
 
@@ -170,12 +170,12 @@ _Due to this ambiguity, the [**task directive**](#task-directive) is considered 
 
 ### Task Directive
 
-The **task directive** represents the unique configuration of a [task](#task) (WMS context) and its place within an EWMS **workflow**. This object is immutable, with `task_id` as its primary key. _[See object properties.](xxxxxxxxxxxxxx/Models/TaskDirectiveObject.md)_
+The **task directive** represents the unique configuration of a [task](#task) (WMS context) and its place within an EWMS **workflow**. This object is immutable, with `task_id` as its primary key. _[See object properties.](https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject)_
 
 _How is a [task directive](#get-a-task-directive) object retrieved?_
 
 ### Taskforce
 
-A **taskforce** is not explicitly created by the user. It serves as a two-way bridge between EWMS and HTCondor. A **taskforce** is created for each application of a **task directive** (N:1 mapping) and contains HTCondor compute instructions and runtime status information. Each taskforce is applied to a single HTCondor cluster, with a fixed number of workers. If more compute resources are needed, additional taskforces are created from the same **task directive**. _[See object properties.](xxxxxxxxxxxxxx/Models/TaskforceObject.md)_
+A **taskforce** is not explicitly created by the user. It serves as a two-way bridge between EWMS and HTCondor. A **taskforce** is created for each application of a **task directive** (N:1 mapping) and contains HTCondor compute instructions and runtime status information. Each taskforce is applied to a single HTCondor cluster, with a fixed number of workers. If more compute resources are needed, additional taskforces are created from the same **task directive**. _[See object properties.](https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject)_
 
 _How is a [taskforce](#get-a-taskforce) object retrieved?_
