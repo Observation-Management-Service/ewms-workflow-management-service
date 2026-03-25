@@ -13,7 +13,7 @@ EWMS's Workflow Management Service (WMS): An External Interface, Public Entrypoi
     <dt><sub>Keywords</sub></dt>
     <dd><sub>EWMS&nbsp;&nbsp;·&nbsp;&nbsp;task&nbsp;&nbsp;·&nbsp;&nbsp;Workflow Management Service&nbsp;&nbsp;·&nbsp;&nbsp;WIPAC&nbsp;&nbsp;·&nbsp;&nbsp;IceCube&nbsp;&nbsp;·&nbsp;&nbsp;Observation Management Service</sub></dd>
     <dt><sub>URLs</sub></dt>
-    <dd><sub><a href='https://github.com/Observation-Management-Service/ewms-workflow-management-service'>Homepage</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href='https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues'>Tracker</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href='https://github.com/Observation-Management-Service/ewms-workflow-management-service'>Source</a></sub></dd>
+    <dd><sub><a href='https://github.com/Observation-Management-Service/ewms-workflow-management-service'>Homepage</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href='https://github.com/Observation-Management-Service/ewms-workflow-management-service/issues'>Tracker</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href='https://github.com/Observation-Management-Service/ewms-workflow-management-service'>Source</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href='https://observation-management-service.github.io/ewms-docs/services/wms.html'>Documentation</a></sub></dd>
 </dl>
 
 <br>
