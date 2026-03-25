@@ -10,8 +10,6 @@ EWMS's Workflow Management Service (WMS): An External Interface, Public Entrypoi
 <!--- note: this information is pulled from the pyproject.toml --->
 
 <dl>
-    <dt><sub>Description</sub></dt>
-    <dd><sub>EWMS's Workflow Management Service (WMS): An External Interface, Public Entrypoint</sub></dd>
     <dt><sub>Keywords</sub></dt>
     <dd><sub>EWMS&nbsp;&nbsp;·&nbsp;&nbsp;task&nbsp;&nbsp;·&nbsp;&nbsp;Workflow Management Service&nbsp;&nbsp;·&nbsp;&nbsp;WIPAC&nbsp;&nbsp;·&nbsp;&nbsp;IceCube&nbsp;&nbsp;·&nbsp;&nbsp;Observation Management Service</sub></dd>
     <dt><sub>URLs</sub></dt>
