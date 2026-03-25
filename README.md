@@ -40,12 +40,12 @@ As described [above](#ewms-workflow-management-service), the WMS has several con
 1. The user requests a new [workflow](#workflow). The WMS translates this workflow into _n_ [task directives](#task-directive), _m_ [taskforces](#taskforce), and determines the number of required queues.
     - [POST @ /v1/workflows](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows)
     - See [Example Workflow Request JSON](#example-workflow-request-json)
-2. The WMS requests _p_ queues from the [MQS](https://github.com/Observation-Management-Service/ewms-message-queue-service):
+2. The WMS requests _p_ queues from the [MQS](https://observation-management-service.github.io/ewms-docs/services/mqs.html):
     1. If the MQS indicates that resources are insufficient, the WMS waits and also requests any other pending workflows from the MQS.
     2. Otherwise/eventually, the MQS creates the queues and provides them to the WMS.
 3. The WMS makes tokens for any publicly accessible queues available to the user.
     - [GET @ /v1/mqs/workflows/{workflow_id}/mq-profiles/public](https://observation-management-service.github.io/ewms-docs/apis/mqs.html#get--v1-mqs-workflows-workflow_id-mq-profiles-public)
-4. The WMS marks the workflow's taskforce(s) as ready for the [TMS](https://github.com/Observation-Management-Service/ewms-task-management-service).
+4. The WMS marks the workflow's taskforce(s) as ready for the [TMS](https://observation-management-service.github.io/ewms-docs/internal/tms.html).
     - See [`Taskforce.phase`](https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject) 
 5. When ready, the TMS initiates HTCondor jobs for the taskforce(s).
 6. The TMS relays live, aggregated runtime statuses to the WMS until the workflow's taskforces are completed.
@@ -53,7 +53,7 @@ As described [above](#ewms-workflow-management-service), the WMS has several con
 7. The user tells EWMS that the workflow has finished. The workflow is deactivated, and the TMS stops the associated taskforces.
     - [POST @ /v1/workflows/{workflow_id}/actions/finished](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows-workflow_id-actions-finished)
 
-This "story" is also detailed in [request_workflow.py](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/readme/examples/request_workflow.py). However, this script may not suit all your needs. It is recommended to have a solid understanding of the user-facing [API endpoints](https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main/Docs#documentation-for-api-endpoints) and [objects](https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main/Docs#documentation-for-models).
+This "story" is also detailed in [request_workflow.py](https://github.com/Observation-Management-Service/ewms-workflow-management-service/blob/main/examples/request_workflow.py). However, this script may not suit all your needs. It is recommended to have a solid understanding of the user-facing [API endpoints](https://observation-management-service.github.io/ewms-docs/apis/wms.html) and [objects](https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html).
 
 #### Example Workflow Request JSON
 
@@ -94,11 +94,11 @@ Every [workflow](#workflow)) originates from a JSON object using [POST @ /v1/wor
 
 #### The Task Container
 
-The task container is built from the user-provided image, specified by the [workflow request object's `task_image`, `task_args`, and `task_env`](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). The container runs within an [EWMS Pilot instance](https://github.com/Observation-Management-Service/ewms-pilot) on an HTCondor Execution Point (EP). For configuration and interaction with EWMS [events](#event), refer to the [EWMS Pilot documentation](https://github.com/Observation-Management-Service/ewms-pilot).
+The task container is built from the user-provided image, specified by the [workflow request object's `task_image`, `task_args`, and `task_env`](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). The container runs within an [EWMS Pilot instance](https://observation-management-service.github.io/ewms-docs/internal/pilot.html) on an HTCondor Execution Point (EP). For configuration and interaction with EWMS [events](#event), refer to the [EWMS Pilot documentation](https://observation-management-service.github.io/ewms-docs/internal/pilot.html).
 
 ##### The Init Container
 
-The init container runs once on a worker before any task/event is processed. This is specified by the [workflow request object's `init_image`, `init_args`, and `init_env`](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). See the [EWMS Pilot documentation](https://github.com/Observation-Management-Service/ewms-pilot#the-init-container) for more information.
+The init container runs once on a worker before any task/event is processed. This is specified by the [workflow request object's `init_image`, `init_args`, and `init_env`](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). See the [EWMS Pilot documentation](https://observation-management-service.github.io/ewms-docs/internal/pilot.html#the-init-container) for more information.
 
 ##### Locations of Persisted Attributes
 
