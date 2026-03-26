@@ -1161,7 +1161,7 @@
         "/v1/tms/pending-starter/taskforces": {
             "parameters": [],
             "get": {
-                "description": "For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_, `TaskDirectiveObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject>`_.",
+                "description": "For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_, `TaskDirectiveObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject>`_, `MQProfileObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/mqs-objects.html#mqprofileobject>`_.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
