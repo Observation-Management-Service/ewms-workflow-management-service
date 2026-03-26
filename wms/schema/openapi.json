@@ -624,7 +624,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: task-directives"
+                    "task-directives"
                 ]
             }
         },
@@ -676,7 +676,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: taskforces"
+                    "taskforces"
                 ]
             }
         },
@@ -728,7 +728,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: workflows"
+                    "workflows"
                 ]
             }
         },
@@ -754,7 +754,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: openapi"
+                    "openapi"
                 ]
             }
         },
@@ -791,7 +791,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: task-directives"
+                    "task-directives"
                 ]
             }
         },
@@ -854,7 +854,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: task-directives"
+                    "task-directives"
                 ]
             }
         },
@@ -885,7 +885,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: taskforces"
+                    "taskforces"
                 ]
             }
         },
@@ -945,7 +945,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: tms - internal"
+                    "tms - internal"
                 ]
             }
         },
@@ -985,7 +985,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: tms - internal"
+                    "tms - internal"
                 ]
             }
         },
@@ -1043,7 +1043,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: tms - internal"
+                    "tms - internal"
                 ]
             }
         },
@@ -1093,7 +1093,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: tms - internal"
+                    "tms - internal"
                 ]
             }
         },
@@ -1151,7 +1151,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: tms - internal"
+                    "tms - internal"
                 ]
             }
         },
@@ -1207,7 +1207,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: tms - internal"
+                    "tms - internal"
                 ]
             }
         },
@@ -1247,7 +1247,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: tms - internal"
+                    "tms - internal"
                 ]
             }
         },
@@ -1380,7 +1380,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: tms - internal"
+                    "tms - internal"
                 ]
             }
         },
@@ -1528,7 +1528,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: workflows"
+                    "workflows"
                 ]
             }
         },
@@ -1565,7 +1565,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: workflows"
+                    "workflows"
                 ]
             }
         },
@@ -1602,7 +1602,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: workflows"
+                    "workflows"
                 ]
             }
         },
@@ -1639,7 +1639,7 @@
                     }
                 },
                 "tags": [
-                    "Endpoints: workflows"
+                    "workflows"
                 ]
             }
         }
