@@ -582,7 +582,7 @@
         "/v1/query/task-directives": {
             "parameters": [],
             "post": {
-                "description": "Queries and returns a list of task directive objects based on the provided criteria.",
+                "description": "Queries and returns a list of task directive objects based on the provided criteria. See `FindObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#findobject>`_, `TaskDirectiveObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -634,7 +634,7 @@
         "/v1/query/taskforces": {
             "parameters": [],
             "post": {
-                "description": "Queries and returns a list of taskforce objects based on the provided criteria.",
+                "description": "Queries and returns a list of taskforce objects based on the provided criteria. See `FindObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#findobject>`_, `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -686,7 +686,7 @@
         "/v1/query/workflows": {
             "parameters": [],
             "post": {
-                "description": "Queries and returns a list of workflow objects based on the provided criteria.",
+                "description": "Queries and returns a list of workflow objects based on the provided criteria. See `FindObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#findobject>`_, `WorkflowObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#workflowobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -774,7 +774,7 @@
                 }
             ],
             "get": {
-                "description": "Retrieves the task directive that matches the specified task ID.",
+                "description": "Retrieves the task directive that matches the specified task ID. See `TaskDirectiveObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject>`_.",
                 "responses": {
                     "200": {
                         "description": "The matching task directive",
@@ -811,7 +811,7 @@
                 }
             ],
             "post": {
-                "description": "Creates a new taskforce (and associated workers) for an existing task directive.",
+                "description": "Creates a new taskforce (and associated workers) for an existing task directive. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -868,7 +868,7 @@
                 }
             ],
             "get": {
-                "description": "Retrieves the taskforce object that matches the specified taskforce UUID.",
+                "description": "Retrieves the taskforce object that matches the specified taskforce UUID. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "responses": {
                     "200": {
                         "description": "The matching taskforce object",
@@ -899,7 +899,7 @@
                 }
             ],
             "post": {
-                "description": "For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster.",
+                "description": "For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -959,7 +959,7 @@
                 }
             ],
             "post": {
-                "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
+                "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "responses": {
                     "200": {
                         "description": "The UUID of the updated taskforce object",
@@ -999,7 +999,7 @@
                 }
             ],
             "post": {
-                "description": "For internal use only (TMS): Communicates that a taskforce failed to be removed on HTCondor.",
+                "description": "For internal use only (TMS): Communicates that a taskforce failed to be removed on HTCondor. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1057,7 +1057,7 @@
                 }
             ],
             "post": {
-                "description": "For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution.",
+                "description": "For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1107,7 +1107,7 @@
                 }
             ],
             "post": {
-                "description": "For internal use only (TMS): Communicates that a taskforce failed to be submitted to HTCondor for execution.",
+                "description": "For internal use only (TMS): Communicates that a taskforce failed to be submitted to HTCondor for execution. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1161,7 +1161,7 @@
         "/v1/tms/pending-starter/taskforces": {
             "parameters": [],
             "get": {
-                "description": "For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location.",
+                "description": "For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_, `TaskDirectiveObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject>`_.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
@@ -1217,7 +1217,7 @@
         "/v1/tms/pending-stopper/taskforces": {
             "parameters": [],
             "get": {
-                "description": "For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location.",
+                "description": "For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
@@ -1257,7 +1257,7 @@
         "/v1/tms/statuses/taskforces": {
             "parameters": [],
             "post": {
-                "description": "For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces.",
+                "description": "For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1390,7 +1390,7 @@
         "/v1/workflows": {
             "parameters": [],
             "post": {
-                "description": "Creates a new workflow along with its associated task directives and taskforces.",
+                "description": "Creates a new workflow along with its associated task directives and taskforces. See `WorkflowObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#workflowobject>`_, `TaskDirectiveObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject>`_, `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1548,7 +1548,7 @@
                 }
             ],
             "get": {
-                "description": "Retrieves the workflow object that matches the specified workflow ID.",
+                "description": "Retrieves the workflow object that matches the specified workflow ID. See `WorkflowObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#workflowobject>`_.",
                 "responses": {
                     "200": {
                         "description": "The matching workflow object",
@@ -1585,7 +1585,7 @@
                 }
             ],
             "post": {
-                "description": "Aborts the specified workflow, marks it as deactivated, and sends stop commands to the associated taskforces.",
+                "description": "Aborts the specified workflow, marks it as deactivated, and sends stop commands to the associated taskforces. See `DeactivatedWorkflowResponseObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#deactivatedworkflowresponseobject>`_.",
                 "responses": {
                     "200": {
                         "description": "Summary of the deactivated workflow.",
@@ -1622,7 +1622,7 @@
                 }
             ],
             "post": {
-                "description": "Marks the specified workflow as finished, marks it as deactivated, and sends stop commands to the associated taskforces.",
+                "description": "Marks the specified workflow as finished, marks it as deactivated, and sends stop commands to the associated taskforces. See `DeactivatedWorkflowResponseObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#deactivatedworkflowresponseobject>`_.",
                 "responses": {
                     "200": {
                         "description": "Summary of the deactivated workflow.",
