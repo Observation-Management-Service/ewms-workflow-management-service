@@ -38,7 +38,7 @@
         "schemas": {
             "WorkflowObject": {
                 "type": "object",
-                "description": "Workflow object. See `https://observation-management-service.github.io/ewms-docs/services/wms.html#workflow`.",
+                "description": "Workflow object. See https://observation-management-service.github.io/ewms-docs/services/wms.html#workflow.",
                 "properties": {
                     "workflow_id": {
                         "type": "string",
@@ -84,7 +84,7 @@
             },
             "TaskDirectiveObject": {
                 "type": "object",
-                "description": "Task directive object. See `https://observation-management-service.github.io/ewms-docs/services/wms.html#task-directive`.",
+                "description": "Task directive object. See https://observation-management-service.github.io/ewms-docs/services/wms.html#task-directive.",
                 "properties": {
                     "task_id": {
                         "type": "string",
@@ -163,7 +163,7 @@
             },
             "TaskforceObject": {
                 "type": "object",
-                "description": "Taskforce object. See `https://observation-management-service.github.io/ewms-docs/services/wms.html#taskforce`",
+                "description": "Taskforce object. See https://observation-management-service.github.io/ewms-docs/services/wms.html#taskforce.",
                 "properties": {
                     "taskforce_uuid": {
                         "type": "string",
@@ -1149,7 +1149,7 @@
                                                 },
                                                 "mqprofiles": {
                                                     "type": "array",
-                                                    "description": "MQ profiles relevant to this taskforce. See `https://observation-management-service.github.io/ewms-docs/apis/_generated/mqs-objects.html#mqprofileobject`.",
+                                                    "description": "MQ profiles relevant to this taskforce. See https://observation-management-service.github.io/ewms-docs/apis/_generated/mqs-objects.html#mqprofileobject.",
                                                     "items": {
                                                         "type": "object"
                                                     },
