@@ -573,7 +573,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "misc"
+                ]
             }
         },
         "/v1/query/task-directives": {
@@ -622,7 +625,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "task-directives"
+                ]
             }
         },
         "/v1/query/taskforces": {
@@ -671,7 +677,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "taskforces"
+                ]
             }
         },
         "/v1/query/workflows": {
@@ -720,7 +729,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "workflows"
+                ]
             }
         },
         "/v1/schema/openapi": {
@@ -743,7 +755,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "misc"
+                ]
             }
         },
         "/v1/task-directives/{task_id}": {
@@ -777,7 +792,10 @@
                     "404": {
                         "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "task-directives"
+                ]
             }
         },
         "/v1/task-directives/{task_id}/actions/add-workers": {
@@ -837,7 +855,10 @@
                     "404": {
                         "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "task-directives"
+                ]
             }
         },
         "/v1/taskforces/{taskforce_uuid}": {
@@ -865,7 +886,10 @@
                     "404": {
                         "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "taskforces"
+                ]
             }
         },
         "/v1/tms/condor-complete/taskforces/{taskforce_uuid}": {
@@ -922,7 +946,10 @@
                     "404": {
                         "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "tms-internal"
+                ]
             }
         },
         "/v1/tms/condor-rm/taskforces/{taskforce_uuid}": {
@@ -959,7 +986,10 @@
                     "404": {
                         "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "tms-internal"
+                ]
             }
         },
         "/v1/tms/condor-rm/taskforces/{taskforce_uuid}/failed": {
@@ -1014,7 +1044,10 @@
                     "404": {
                         "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "tms-internal"
+                ]
             }
         },
         "/v1/tms/condor-submit/taskforces/{taskforce_uuid}": {
@@ -1061,7 +1094,10 @@
                     "404": {
                         "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "tms-internal"
+                ]
             }
         },
         "/v1/tms/condor-submit/taskforces/{taskforce_uuid}/failed": {
@@ -1116,7 +1152,10 @@
                     "404": {
                         "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "tms-internal"
+                ]
             }
         },
         "/v1/tms/pending-starter/taskforces": {
@@ -1169,7 +1208,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "tms-internal"
+                ]
             }
         },
         "/v1/tms/pending-stopper/taskforces": {
@@ -1206,7 +1248,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "tms-internal"
+                ]
             }
         },
         "/v1/tms/statuses/taskforces": {
@@ -1336,7 +1381,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "tms-internal"
+                ]
             }
         },
         "/v1/workflows": {
@@ -1481,7 +1529,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "workflows"
+                ]
             }
         },
         "/v1/workflows/{workflow_id}": {
@@ -1515,7 +1566,10 @@
                     "404": {
                         "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "workflows"
+                ]
             }
         },
         "/v1/workflows/{workflow_id}/actions/abort": {
@@ -1549,7 +1603,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "workflows"
+                ]
             }
         },
         "/v1/workflows/{workflow_id}/actions/finished": {
@@ -1583,7 +1640,10 @@
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "workflows"
+                ]
             }
         }
     }
