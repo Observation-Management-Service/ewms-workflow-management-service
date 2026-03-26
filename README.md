@@ -57,7 +57,7 @@ This "story" is also detailed in [request_workflow.py](https://github.com/Observ
 
 #### Example Workflow Request JSON
 
-Every [workflow](#workflow)) originates from a JSON object using [POST @ /v1/workflows](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). The following is an example of valid a request object (refer to the [docs](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows) for other optional fields not seen here):
+Every [workflow](#workflow) originates from a JSON object using [POST @ /v1/workflows](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows). The following is an example of valid a request object (refer to the [docs](https://observation-management-service.github.io/ewms-docs/apis/wms.html#post--v1-workflows) for other optional fields not seen here):
 
 ```json
 {
