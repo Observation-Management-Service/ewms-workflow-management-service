@@ -1,7 +1,7 @@
 {
     "openapi": "3.1.0",
     "info": {
-        "title": "EWMS - Workflow Management Service",
+        "title": "EWMS Workflow Management Service",
         "version": "1"
     },
     "components": {
@@ -10,7 +10,7 @@
                 "name": "taskforce_uuid",
                 "in": "path",
                 "required": true,
-                "description": "uuid of the taskforce",
+                "description": "UUID of the taskforce.",
                 "schema": {
                     "type": "string"
                 }
@@ -20,7 +20,7 @@
                 "in": "query",
                 "required": false,
                 "deprecated": true,
-                "description": "DEPRECATED: name of the condor collector -- no longer used/needed",
+                "description": "Deprecated. Name of the HTCondor collector; no longer used.",
                 "schema": {
                     "type": "string"
                 }
@@ -29,7 +29,7 @@
                 "name": "schedd",
                 "in": "query",
                 "required": true,
-                "description": "name of the condor schedd",
+                "description": "Name of the HTCondor schedd.",
                 "schema": {
                     "type": "string"
                 }
@@ -38,7 +38,7 @@
         "schemas": {
             "WorkflowObject": {
                 "type": "object",
-                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main?tab=readme-ov-file#workflow",
+                "description": "Workflow object. See https://observation-management-service.github.io/ewms-docs/services/wms.html#workflow.",
                 "properties": {
                     "workflow_id": {
                         "type": "string",
@@ -84,7 +84,7 @@
             },
             "TaskDirectiveObject": {
                 "type": "object",
-                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#task-directive",
+                "description": "Task directive object. See https://observation-management-service.github.io/ewms-docs/services/wms.html#task-directive.",
                 "properties": {
                     "task_id": {
                         "type": "string",
@@ -114,7 +114,7 @@
                     "task_env": {
                         "type": "object",
                         "description": "Environment variables (and values) to set in the task instance.",
-                        "items": {
+                        "additionalProperties": {
                             "type": "string"
                         },
                         "minProperties": 0
@@ -130,7 +130,7 @@
                     "init_env": {
                         "type": "object",
                         "description": "Environment variables (and values) to set in the init container.",
-                        "items": {
+                        "additionalProperties": {
                             "type": "string"
                         },
                         "minProperties": 0
@@ -163,7 +163,7 @@
             },
             "TaskforceObject": {
                 "type": "object",
-                "description": "See https://github.com/Observation-Management-Service/ewms-workflow-management-service/tree/main#taskforce",
+                "description": "Taskforce object. See https://observation-management-service.github.io/ewms-docs/services/wms.html#taskforce.",
                 "properties": {
                     "taskforce_uuid": {
                         "type": "string",
@@ -189,7 +189,7 @@
                         "anyOf": [
                             {
                                 "type": "string",
-                                "description": "DEPRECATED: The address of the HTCondor collector -- no longer used/needed.",
+                                "description": "Deprecated. Address of the HTCondor collector; no longer used.",
                                 "deprecated": true
                             },
                             {
@@ -223,7 +223,7 @@
                             },
                             "image_source": {
                                 "type": "string",
-                                "description": "the common name for the source of the image",
+                                "description": "The canonical source name for the image.",
                                 "enum": [
                                     "cvmfs",
                                     "auto"
@@ -373,49 +373,52 @@
                     "phase_change_log": {
                         "type": "array",
                         "description": "A record of all attempted phase changes, including both successful and unsuccessful ones.",
-                        "properties": {
-                            "target_phase": {
-                                "type": "string",
-                                "description": "The phase that the system was attempting to transition to."
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "target_phase": {
+                                    "type": "string",
+                                    "description": "The phase that the system was attempting to transition to."
+                                },
+                                "timestamp": {
+                                    "type": "number",
+                                    "description": "The epoch timestamp when this phase change attempt was recorded in the system."
+                                },
+                                "was_successful": {
+                                    "type": "boolean",
+                                    "description": "Indicates whether the phase change was completed successfully, i.e. did it actually change?"
+                                },
+                                "source_event_time": {
+                                    "anyOf": [
+                                        {
+                                            "type": "number",
+                                            "description": "The epoch timestamp of the external event that led to this phase change attempt."
+                                        },
+                                        {
+                                            "type": "null",
+                                            "description": "Indicates no specific external event was tied to this phase change."
+                                        }
+                                    ]
+                                },
+                                "source_entity": {
+                                    "type": "string",
+                                    "description": "The entity (person, system, or process) responsible for the external event that triggered this phase change attempt."
+                                },
+                                "context": {
+                                    "type": "string",
+                                    "description": "The circumstances or background information about the phase change attempt."
+                                }
                             },
-                            "timestamp": {
-                                "type": "number",
-                                "description": "The epoch timestamp when this phase change attempt was recorded in the system."
-                            },
-                            "was_successful": {
-                                "type": "boolean",
-                                "description": "Indicates whether the phase change was completed successfully, i.e. did it actually change?"
-                            },
-                            "source_event_time": {
-                                "anyOf": [
-                                    {
-                                        "type": "number",
-                                        "description": "The epoch timestamp of the external event that led to this phase change attempt."
-                                    },
-                                    {
-                                        "type": "null",
-                                        "description": "Indicates no specific external event was tied to this phase change."
-                                    }
-                                ]
-                            },
-                            "source_entity": {
-                                "type": "string",
-                                "description": "The entity (person, system, or process) responsible for the external event that triggered this phase change attempt."
-                            },
-                            "context": {
-                                "type": "string",
-                                "description": "The circumstances or background information about the phase change attempt."
-                            }
+                            "required": [
+                                "target_phase",
+                                "timestamp",
+                                "was_successful",
+                                "source_event_time",
+                                "source_entity",
+                                "context"
+                            ],
+                            "additionalProperties": false
                         },
-                        "additionalProperties": false,
-                        "required": [
-                            "target_phase",
-                            "timestamp",
-                            "was_successful",
-                            "source_event_time",
-                            "source_entity",
-                            "context"
-                        ],
                         "minItems": 0
                     },
                     "compound_statuses": {
@@ -460,7 +463,7 @@
                         "minItems": 1
                     },
                     "after": {
-                        "description": "The database '_id' to skip to for pagination -- this is given by a previous response's 'next_after' field",
+                        "description": "The database '_id' to resume pagination from, taken from a previous response's 'next_after' field.",
                         "type": "string"
                     }
                 },
@@ -484,11 +487,11 @@
                 "type": "object",
                 "properties": {
                     "workflow_id": {
-                        "description": "The workflow id",
+                        "description": "The workflow ID.",
                         "type": "string"
                     },
                     "n_taskforces": {
-                        "description": "number of to-be stopped taskforces",
+                        "description": "Number of taskforces to be stopped.",
                         "type": "integer"
                     }
                 },
@@ -497,6 +500,56 @@
                     "n_taskforces"
                 ],
                 "additionalProperties": false
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "description": "HTTP error code.",
+                        "type": "integer"
+                    },
+                    "error": {
+                        "description": "HTTP error reason.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "code",
+                    "error"
+                ],
+                "additionalProperties": false
+            }
+        },
+        "responses": {
+            "BadRequest": {
+                "description": "Invalid request arguments",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "NotFound": {
+                "description": "Not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "UnprocessableEntity": {
+                "description": "Unprocessable Entity",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    }
+                }
             }
         }
     },
@@ -507,35 +560,18 @@
                 "description": "Returns an empty response.",
                 "responses": {
                     "200": {
-                        "description": "an empty response",
-                        "content": {
-                            "application/json": {}
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request arguments",
+                        "description": "Empty response object.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
                                     "additionalProperties": false
                                 }
                             }
                         }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
                     }
                 }
             }
@@ -543,7 +579,7 @@
         "/v1/query/task-directives": {
             "parameters": [],
             "post": {
-                "description": "Queries and returns a list of task directive objects based on the provided criteria.",
+                "description": "Queries and returns a list of task directive objects based on the provided criteria. See `FindObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#findobject>`_, `TaskDirectiveObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -551,11 +587,12 @@
                                 "$ref": "#/components/schemas/FindObject"
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
-                        "description": "TODO",
+                        "description": "Matching task directives and pagination metadata.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -583,37 +620,18 @@
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "task-directives"
+                ]
             }
         },
         "/v1/query/taskforces": {
             "parameters": [],
             "post": {
-                "description": "Queries and returns a list of taskforce objects based on the provided criteria.",
+                "description": "Queries and returns a list of taskforce objects based on the provided criteria. See `FindObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#findobject>`_, `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -621,11 +639,12 @@
                                 "$ref": "#/components/schemas/FindObject"
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
-                        "description": "TODO",
+                        "description": "Matching taskforces and pagination metadata.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -653,37 +672,18 @@
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "taskforces"
+                ]
             }
         },
         "/v1/query/workflows": {
             "parameters": [],
             "post": {
-                "description": "Queries and returns a list of workflow objects based on the provided criteria.",
+                "description": "Queries and returns a list of workflow objects based on the provided criteria. See `FindObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#findobject>`_, `WorkflowObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#workflowobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -691,11 +691,12 @@
                                 "$ref": "#/components/schemas/FindObject"
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
-                        "description": "TODO",
+                        "description": "Matching workflows and pagination metadata.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -723,31 +724,12 @@
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "workflows"
+                ]
             }
         },
         "/v1/schema/openapi": {
@@ -756,7 +738,7 @@
                 "description": "Returns the OpenAPI schema.",
                 "responses": {
                     "200": {
-                        "description": "The openapi schema",
+                        "description": "The OpenAPI schema.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -768,31 +750,12 @@
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "openapi"
+                ]
             }
         },
         "/v1/task-directives/{task_id}": {
@@ -808,7 +771,7 @@
                 }
             ],
             "get": {
-                "description": "Retrieves the task directive that matches the specified task ID.",
+                "description": "Retrieves the task directive that matches the specified task ID. See `TaskDirectiveObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject>`_.",
                 "responses": {
                     "200": {
                         "description": "The matching task directive",
@@ -821,56 +784,15 @@
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "task-directives"
+                ]
             }
         },
         "/v1/task-directives/{task_id}/actions/add-workers": {
@@ -886,7 +808,7 @@
                 }
             ],
             "post": {
-                "description": "Creates a new taskforce (and associated workers) for an existing task directive.",
+                "description": "Creates a new taskforce (and associated workers) for an existing task directive. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -907,7 +829,8 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -921,81 +844,18 @@
                         }
                     },
                     "422": {
-                        "description": "Unprocessable Entity",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/UnprocessableEntity"
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "task-directives"
+                ]
             }
         },
         "/v1/taskforces/{taskforce_uuid}": {
@@ -1005,7 +865,7 @@
                 }
             ],
             "get": {
-                "description": "Retrieves the taskforce object that matches the specified taskforce UUID.",
+                "description": "Retrieves the taskforce object that matches the specified taskforce UUID. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "responses": {
                     "200": {
                         "description": "The matching taskforce object",
@@ -1018,56 +878,15 @@
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "taskforces"
+                ]
             }
         },
         "/v1/tms/condor-complete/taskforces/{taskforce_uuid}": {
@@ -1077,7 +896,7 @@
                 }
             ],
             "post": {
-                "description": "For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster.",
+                "description": "For internal use only (TMS): Updates the specified taskforce with the completion timestamp of the HTCondor cluster. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1085,7 +904,7 @@
                                 "type": "object",
                                 "properties": {
                                     "condor_complete_ts": {
-                                        "description": "The time that the taskforce's condor cluster ended",
+                                        "description": "The time when the taskforce's HTCondor cluster ended.",
                                         "type": "integer"
                                     }
                                 },
@@ -1095,7 +914,8 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1109,62 +929,24 @@
                                             "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "taskforce_uuid"
+                                    ]
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "tms - internal"
+                ]
             }
         },
         "/v1/tms/condor-rm/taskforces/{taskforce_uuid}": {
@@ -1174,7 +956,7 @@
                 }
             ],
             "post": {
-                "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor.",
+                "description": "For internal use only (TMS): Confirms that a taskforce has been removed on HTCondor. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "responses": {
                     "200": {
                         "description": "The UUID of the updated taskforce object",
@@ -1187,62 +969,24 @@
                                             "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "taskforce_uuid"
+                                    ]
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "tms - internal"
+                ]
             }
         },
         "/v1/tms/condor-rm/taskforces/{taskforce_uuid}/failed": {
@@ -1252,7 +996,7 @@
                 }
             ],
             "post": {
-                "description": "For internal use only (TMS): Communicates that a taskforce failed to be removed on HTCondor.",
+                "description": "For internal use only (TMS): Communicates that a taskforce failed to be removed on HTCondor. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1260,7 +1004,7 @@
                                 "type": "object",
                                 "properties": {
                                     "error": {
-                                        "description": "a description of why the taskforce failed to be removed on HTCondor",
+                                        "description": "A description of why the taskforce could not be removed from HTCondor.",
                                         "type": "string"
                                     }
                                 },
@@ -1268,7 +1012,8 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1282,62 +1027,24 @@
                                             "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "taskforce_uuid"
+                                    ]
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "tms - internal"
+                ]
             }
         },
         "/v1/tms/condor-submit/taskforces/{taskforce_uuid}": {
@@ -1347,7 +1054,7 @@
                 }
             ],
             "post": {
-                "description": "For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution.",
+                "description": "For internal use only (TMS): Confirms that a taskforce has been submitted to HTCondor for execution. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1355,7 +1062,8 @@
                                 "$ref": "#/components/schemas/TaskforceObject"
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1369,62 +1077,24 @@
                                             "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "taskforce_uuid"
+                                    ]
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "tms - internal"
+                ]
             }
         },
         "/v1/tms/condor-submit/taskforces/{taskforce_uuid}/failed": {
@@ -1434,7 +1104,7 @@
                 }
             ],
             "post": {
-                "description": "For internal use only (TMS): Communicates that a taskforce failed to be submitted to HTCondor for execution.",
+                "description": "For internal use only (TMS): Communicates that a taskforce failed to be submitted to HTCondor for execution. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1442,7 +1112,7 @@
                                 "type": "object",
                                 "properties": {
                                     "error": {
-                                        "description": "a description of why the taskforce failed to be submitted",
+                                        "description": "A description of why the taskforce could not be submitted to HTCondor.",
                                         "type": "string"
                                     }
                                 },
@@ -1450,7 +1120,8 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
@@ -1464,68 +1135,30 @@
                                             "$ref": "#/components/schemas/TaskforceObject/properties/taskforce_uuid"
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "taskforce_uuid"
+                                    ]
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "tms - internal"
+                ]
             }
         },
         "/v1/tms/pending-starter/taskforces": {
             "parameters": [],
             "get": {
-                "description": "For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location.",
+                "description": "For internal use only (TMS): Retrieves the next taskforce ready to start at the specified HTCondor location. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_, `TaskDirectiveObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject>`_, `MQProfileObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/mqs-objects.html#mqprofileobject>`_.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
@@ -1536,7 +1169,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "The next taskforce to start at the condor location",
+                        "description": "The next taskforce to start at the HTCondor location.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1552,7 +1185,7 @@
                                                 },
                                                 "mqprofiles": {
                                                     "type": "array",
-                                                    "description": "A list of the mq-profiles relevant for this taskforce (see https://github.com/Observation-Management-Service/ewms-message-queue-service/blob/main/Docs/Models/MQProfileObject.md).",
+                                                    "description": "MQ profiles relevant to this taskforce. See https://observation-management-service.github.io/ewms-docs/apis/_generated/mqs-objects.html#mqprofileobject.",
                                                     "items": {
                                                         "type": "object"
                                                     },
@@ -1570,37 +1203,18 @@
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "tms - internal"
+                ]
             }
         },
         "/v1/tms/pending-stopper/taskforces": {
             "parameters": [],
             "get": {
-                "description": "For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location.",
+                "description": "For internal use only (TMS): Retrieves the next taskforce ready to stop at the specified HTCondor location. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/CondorCollector"
@@ -1611,7 +1225,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "The next taskforce to stop at the condor location",
+                        "description": "The next taskforce to stop at the HTCondor location.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1629,37 +1243,18 @@
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "tms - internal"
+                ]
             }
         },
         "/v1/tms/statuses/taskforces": {
             "parameters": [],
             "post": {
-                "description": "For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces.",
+                "description": "For internal use only (TMS): Updates and returns the statuses and errors for the specified taskforces. See `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1669,7 +1264,7 @@
                                     "top_task_errors_by_taskforce": {
                                         "description": "The top errors (paired with a count) for each indicated taskforce",
                                         "type": "object",
-                                        "items": {
+                                        "additionalProperties": {
                                             "type": "object",
                                             "additionalProperties": {
                                                 "type": "integer"
@@ -1681,7 +1276,7 @@
                                     "compound_statuses_by_taskforce": {
                                         "description": "The compound statuses (status -> state -> count) for the indicated taskforces",
                                         "type": "object",
-                                        "items": {
+                                        "additionalProperties": {
                                             "type": "object",
                                             "additionalProperties": {
                                                 "type": "object",
@@ -1699,11 +1294,12 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
-                        "description": "individual results for the updates per uuid",
+                        "description": "Individual update results for each UUID.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1740,7 +1336,7 @@
                         }
                     },
                     "207": {
-                        "description": "individual results for the updates per uuid, with errors",
+                        "description": "Individual update results for each UUID, including errors.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1780,37 +1376,18 @@
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "tms - internal"
+                ]
             }
         },
         "/v1/workflows": {
             "parameters": [],
             "post": {
-                "description": "Creates a new workflow along with its associated task directives and taskforces.",
+                "description": "Creates a new workflow along with its associated task directives and taskforces. See `WorkflowObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#workflowobject>`_, `TaskDirectiveObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskdirectiveobject>`_, `TaskforceObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#taskforceobject>`_.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1905,11 +1482,12 @@
                                 "additionalProperties": false
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "responses": {
                     "200": {
-                        "description": "a list of the created database objects",
+                        "description": "The created workflow, task directives, and taskforces.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1935,37 +1513,23 @@
                                             "minItems": 0
                                         }
                                     },
-                                    "additionalProperties": false
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "workflow",
+                                        "task_directives",
+                                        "taskforces"
+                                    ]
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "workflows"
+                ]
             }
         },
         "/v1/workflows/{workflow_id}": {
@@ -1981,7 +1545,7 @@
                 }
             ],
             "get": {
-                "description": "Retrieves the workflow object that matches the specified workflow ID.",
+                "description": "Retrieves the workflow object that matches the specified workflow ID. See `WorkflowObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#workflowobject>`_.",
                 "responses": {
                     "200": {
                         "description": "The matching workflow object",
@@ -1994,56 +1558,15 @@
                         }
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
-                }
+                },
+                "tags": [
+                    "workflows"
+                ]
             }
         },
         "/v1/workflows/{workflow_id}/actions/abort": {
@@ -2059,10 +1582,10 @@
                 }
             ],
             "post": {
-                "description": "Aborts the specified workflow (and marks as 'deactivated'), then sends stop commands to the associated taskforces.",
+                "description": "Aborts the specified workflow, marks it as deactivated, and sends stop commands to the associated taskforces. See `DeactivatedWorkflowResponseObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#deactivatedworkflowresponseobject>`_.",
                 "responses": {
                     "200": {
-                        "description": "The matching task directive",
+                        "description": "Summary of the deactivated workflow.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2072,56 +1595,15 @@
                         }
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "workflows"
+                ]
             }
         },
         "/v1/workflows/{workflow_id}/actions/finished": {
@@ -2137,10 +1619,10 @@
                 }
             ],
             "post": {
-                "description": "Marks the specified workflow as finished (and 'deactivated'), then sends stop commands to the associated taskforces.",
+                "description": "Marks the specified workflow as finished, marks it as deactivated, and sends stop commands to the associated taskforces. See `DeactivatedWorkflowResponseObject <https://observation-management-service.github.io/ewms-docs/apis/_generated/wms-objects.html#deactivatedworkflowresponseobject>`_.",
                 "responses": {
                     "200": {
-                        "description": "The matching task directive",
+                        "description": "Summary of the deactivated workflow.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2150,56 +1632,15 @@
                         }
                     },
                     "404": {
-                        "description": "not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     },
                     "400": {
-                        "description": "invalid request arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "description": "http error code",
-                                            "type": "integer"
-                                        },
-                                        "error": {
-                                            "description": "http error reason",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "error"
-                                    ],
-                                    "additionalProperties": false
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     }
-                }
+                },
+                "tags": [
+                    "workflows"
+                ]
             }
         }
     }

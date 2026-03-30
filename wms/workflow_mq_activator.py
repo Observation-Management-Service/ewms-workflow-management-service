@@ -183,7 +183,6 @@ async def request_activation_to_mqs(
         "POST",
         f"/{MQS_URL_V_PREFIX}/mqs/workflows/{workflow['workflow_id']}/mq-group/activation",
         {
-            "workflow_id": workflow["workflow_id"],  # could also use param arg
             "criteria": {
                 "priority": workflow["priority"],
                 # TODO (future PR) - add other fields
